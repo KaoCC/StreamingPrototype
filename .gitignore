@@ -27,3 +27,8 @@
 *.exe
 *.out
 *.app
+
+!Tool/premake/win/*
+
+Build/*
+Generated/*
