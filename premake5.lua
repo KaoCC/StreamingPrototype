@@ -41,5 +41,12 @@ workspace "StreamingPrototype"
         kind "ConsoleApp"
 
         includedirs {"SP/include"}
-        files {"SP/**.cpp"}
+        files {"SP/**.cpp", "SP/**.hpp"}
+
+
+    project "Test"
+
+        kind "ConsoleApp"
+        includedirs {"Test/include"}
+        files {"Test/**.cpp"}
 
