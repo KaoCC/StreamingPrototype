@@ -29,6 +29,7 @@
 *.app
 
 !Tool/premake/win/*
+!Tool/protoc/win32/bin/*
 
 Build/*
 Generated/*
