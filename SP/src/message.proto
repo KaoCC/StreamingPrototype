@@ -1,0 +1,70 @@
+syntax = "proto3";
+
+package StreamingFormat;
+
+
+enum MessageType {
+    msgInit = 0;
+	msgDefaultPos = 1;
+	msgCameraInfo = 2;
+	msgImage = 3;
+	msgEnding = 4;
+}
+
+
+message Init {
+    //MessageType type = 1;
+    uint32 width = 2;
+    uint32 hight = 3;
+    uint32 moduleID = 4;
+
+    // Time format ?
+}
+
+message DefaultPos {
+    //MessageType type = 1;
+    uint32 x = 2;
+	uint32 y = 3;
+	uint32 z = 4;
+	uint32 vx = 5;
+	uint32 vy = 6;
+	uint32 vz = 7;
+}
+
+message Camera {
+	//MessageType type = 1;
+	uint32 serialNumber = 2;
+	uint32 delta_x = 3;
+	uint32 delta_y = 4;
+	uint32 delta_z = 5;
+	uint32 delta_vx = 6;
+	uint32 delta_vy = 7;
+	uint32 delta_vz = 8;
+}
+
+
+message Image {
+    //MessageType type = 1;
+    uint32 serialNumber = 2;
+	uint32 status = 3;
+	// time ?
+	uint32 size = 4;
+	// data ?
+	// ...
+}
+
+message Ending {
+    //MessageType type = 1;
+}
+
+
+message StreamingMessage {
+
+	MessageType type = 1;
+	
+	Init initMsg = 2;
+	DefaultPos defaultPosMsg = 3;
+	Camera cameraMsg = 4;
+	Image imageMsg = 5;
+	Ending endingMsg = 6;
+}
