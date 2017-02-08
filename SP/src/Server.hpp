@@ -4,6 +4,8 @@
 
 #include <boost/asio.hpp>
 
+#include "Connection.hpp"
+
 namespace SP {
 
 	class Server {
@@ -15,7 +17,7 @@ namespace SP {
 	private:
 
 		void startAccept();
-		void handleAccept();
+		void handleAccept(Connection::ConnectionPointer newConnection, const boost::system::error_code& err);
 
 
 

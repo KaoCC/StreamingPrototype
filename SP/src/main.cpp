@@ -4,7 +4,7 @@
 
 //#include "Common.hpp"
 
-//#include "Server.hpp"
+#include "Server.hpp"
 
 
 
@@ -20,8 +20,8 @@ int main(int argc, char *argv[]) {
 	std::cout << "Server : Listen on Port " << port << std::endl;
 
 	try {
-		//boost::asio::io_service ios;
-		//SP::Server(ios, port);
+		boost::asio::io_service ios;
+		SP::Server(ios, port);
 
 	} catch (std::exception& e) {
 		std::cerr << e.what() << std::endl;

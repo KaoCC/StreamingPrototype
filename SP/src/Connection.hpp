@@ -16,7 +16,10 @@ namespace SP {
 		
 		// get socket ref ?
 
+		boost::asio::ip::tcp::socket& getSocketRef();
+
 		void start();
+
 
 	private:
 
