@@ -78,6 +78,28 @@ namespace SP {
 
 
 		switch (msgPtr->type()) {
+		case StreamingFormat::MessageType::MsgInit:
+
+			break;
+		case StreamingFormat::MessageType::MsgDefaultPos:
+
+
+			break;
+
+		case StreamingFormat::MessageType::MsgCameraInfo:
+			break;
+
+		case StreamingFormat::MessageType::MsgImage:
+
+			break;
+
+		case StreamingFormat::MessageType::MsgEnding:
+
+			break;
+
+		default:
+			// error ?
+			break;
 		}
 
 
