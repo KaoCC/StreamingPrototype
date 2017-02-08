@@ -15,12 +15,12 @@ namespace SP {
 
 	class Packet {
 
+	public:
+
 		static const size_t HEADER_SIZE = 4;
 
 		using MessagePointer = std::shared_ptr<StreamingFormat::StreamingMessage>;
 		using DataBuffer = std::vector<uint8_t>;
-
-	public:
 
 		Packet(MessagePointer msgPtr);
 

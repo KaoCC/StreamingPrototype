@@ -4,6 +4,8 @@
 #include <memory>
 #include <boost/asio.hpp>
 
+#include "Packet.hpp"
+
 namespace SP {
 
 	class Connection : std::enable_shared_from_this<Connection> {
@@ -14,8 +16,7 @@ namespace SP {
 
 		static ConnectionPointer create(boost::asio::io_service& ios);
 		
-		// get socket ref ?
-
+		// get socket reference
 		boost::asio::ip::tcp::socket& getSocketRef();
 
 		void start();
@@ -26,10 +27,20 @@ namespace SP {
 		Connection(boost::asio::io_service& io_service);
 
 
+		void startReadHeader();
+		void handleReadHeader(const boost::system::error_code& error);
+
+		void startReadMessage(size_t msgSize);
+		void handleReadMessage(const boost::system::error_code& error);
+
 
 		boost::asio::ip::tcp::socket streamingSocket;
 
-		// buffers ?
+		// buffers
+		Packet::DataBuffer localBuffer;
+
+		// packet structure
+		Packet packet;
 	};
 
 
