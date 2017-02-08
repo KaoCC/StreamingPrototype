@@ -195,8 +195,8 @@ void AddDescriptorsImpl() {
       "treamingFormat.Camera\022(\n\010imageMsg\030\005 \001(\0132"
       "\026.StreamingFormat.Image\022*\n\tendingMsg\030\006 \001"
       "(\0132\027.StreamingFormat.Ending*]\n\013MessageTy"
-      "pe\022\013\n\007msgInit\020\000\022\021\n\rmsgDefaultPos\020\001\022\021\n\rms"
-      "gCameraInfo\020\002\022\014\n\010msgImage\020\003\022\r\n\tmsgEnding"
+      "pe\022\013\n\007MsgInit\020\000\022\021\n\rMsgDefaultPos\020\001\022\021\n\rMs"
+      "gCameraInfo\020\002\022\014\n\010MsgImage\020\003\022\r\n\tMsgEnding"
       "\020\004b\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(

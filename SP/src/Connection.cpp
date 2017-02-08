@@ -50,9 +50,39 @@ namespace SP {
 
 			// KAOCC: TODO: Yet to be done !!!!!!!
 
+			resolvePacket();
+
+
+			// more here !!!
 		}
 
 
+	}
+
+	void Connection::resolvePacket() {
+
+		if (packet.unpacking(localBuffer)) {
+			Packet::MessagePointer msgPtr = packet.getMessagePtr();
+
+
+			Packet::MessagePointer responsePtr = createResponse(msgPtr);
+			// More here ...
+
+		}
+
+	}
+
+	Packet::MessagePointer Connection::createResponse(Packet::MessagePointer msgPtr) {
+
+		// KAOCC: Yet to be done !
+
+
+		switch (msgPtr->type()) {
+		}
+
+
+		// KAOCC: check the return !
+		return Packet::MessagePointer();
 	}
 
 

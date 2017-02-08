@@ -65,17 +65,17 @@ void InitDefaults();
 }  // namespace protobuf_message_2eproto
 
 enum MessageType {
-  msgInit = 0,
-  msgDefaultPos = 1,
-  msgCameraInfo = 2,
-  msgImage = 3,
-  msgEnding = 4,
+  MsgInit = 0,
+  MsgDefaultPos = 1,
+  MsgCameraInfo = 2,
+  MsgImage = 3,
+  MsgEnding = 4,
   MessageType_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
   MessageType_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
 };
 bool MessageType_IsValid(int value);
-const MessageType MessageType_MIN = msgInit;
-const MessageType MessageType_MAX = msgEnding;
+const MessageType MessageType_MIN = MsgInit;
+const MessageType MessageType_MAX = MsgEnding;
 const int MessageType_ARRAYSIZE = MessageType_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* MessageType_descriptor();
