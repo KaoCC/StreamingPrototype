@@ -4,11 +4,11 @@ package StreamingFormat;
 
 
 enum MessageType {
-    msgInit = 0;
-	msgDefaultPos = 1;
-	msgCameraInfo = 2;
-	msgImage = 3;
-	msgEnding = 4;
+    MsgInit = 0;
+	MsgDefaultPos = 1;
+	MsgCameraInfo = 2;
+	MsgImage = 3;
+	MsgEnding = 4;
 }
 
 
