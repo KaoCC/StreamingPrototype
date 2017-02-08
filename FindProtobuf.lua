@@ -9,7 +9,7 @@ if os.is("windows") then
     print("protobuf : user input path:", protobufUserInput)
 
     -- tmp: include protobuf here
-    local protobufPath = "H:\\protobuf_master_install"
+    local protobufPath = "H:\\protobuf_320_install"
 
     if (protobufUserInput ~= "") then 
         protobufPath = protobufUserInput

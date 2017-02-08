@@ -18,250 +18,213 @@
 // @@protoc_insertion_point(includes)
 
 namespace StreamingFormat {
+class InitDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<Init> {
+} _Init_default_instance_;
+class DefaultPosDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<DefaultPos> {
+} _DefaultPos_default_instance_;
+class CameraDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<Camera> {
+} _Camera_default_instance_;
+class ImageDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<Image> {
+} _Image_default_instance_;
+class EndingDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<Ending> {
+} _Ending_default_instance_;
+class StreamingMessageDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<StreamingMessage> {
+} _StreamingMessage_default_instance_;
+
+namespace protobuf_message_2eproto {
+
 
 namespace {
 
-const ::google::protobuf::Descriptor* Init_descriptor_ = NULL;
-const ::google::protobuf::internal::GeneratedMessageReflection*
-  Init_reflection_ = NULL;
-const ::google::protobuf::Descriptor* DefaultPos_descriptor_ = NULL;
-const ::google::protobuf::internal::GeneratedMessageReflection*
-  DefaultPos_reflection_ = NULL;
-const ::google::protobuf::Descriptor* Camera_descriptor_ = NULL;
-const ::google::protobuf::internal::GeneratedMessageReflection*
-  Camera_reflection_ = NULL;
-const ::google::protobuf::Descriptor* Image_descriptor_ = NULL;
-const ::google::protobuf::internal::GeneratedMessageReflection*
-  Image_reflection_ = NULL;
-const ::google::protobuf::Descriptor* Ending_descriptor_ = NULL;
-const ::google::protobuf::internal::GeneratedMessageReflection*
-  Ending_reflection_ = NULL;
-const ::google::protobuf::Descriptor* StreamingMessage_descriptor_ = NULL;
-const ::google::protobuf::internal::GeneratedMessageReflection*
-  StreamingMessage_reflection_ = NULL;
-const ::google::protobuf::EnumDescriptor* MessageType_descriptor_ = NULL;
+::google::protobuf::Metadata file_level_metadata[6];
+const ::google::protobuf::EnumDescriptor* file_level_enum_descriptors[1];
 
 }  // namespace
 
+const ::google::protobuf::uint32 TableStruct::offsets[] = {
+  ~0u,  // no _has_bits_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Init, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Init, width_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Init, hight_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Init, moduleid_),
+  ~0u,  // no _has_bits_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DefaultPos, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DefaultPos, x_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DefaultPos, y_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DefaultPos, z_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DefaultPos, vx_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DefaultPos, vy_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DefaultPos, vz_),
+  ~0u,  // no _has_bits_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Camera, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Camera, serialnumber_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Camera, delta_x_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Camera, delta_y_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Camera, delta_z_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Camera, delta_vx_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Camera, delta_vy_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Camera, delta_vz_),
+  ~0u,  // no _has_bits_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Image, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Image, serialnumber_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Image, status_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Image, size_),
+  ~0u,  // no _has_bits_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Ending, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _has_bits_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(StreamingMessage, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(StreamingMessage, type_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(StreamingMessage, initmsg_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(StreamingMessage, defaultposmsg_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(StreamingMessage, cameramsg_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(StreamingMessage, imagemsg_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(StreamingMessage, endingmsg_),
+};
 
-void protobuf_AssignDesc_message_2eproto() GOOGLE_ATTRIBUTE_COLD;
-void protobuf_AssignDesc_message_2eproto() {
-  protobuf_AddDesc_message_2eproto();
-  const ::google::protobuf::FileDescriptor* file =
-    ::google::protobuf::DescriptorPool::generated_pool()->FindFileByName(
-      "message.proto");
-  GOOGLE_CHECK(file != NULL);
-  Init_descriptor_ = file->message_type(0);
-  static const int Init_offsets_[3] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Init, width_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Init, hight_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Init, moduleid_),
-  };
-  Init_reflection_ =
-    ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
-      Init_descriptor_,
-      Init::default_instance_,
-      Init_offsets_,
-      -1,
-      -1,
-      -1,
-      sizeof(Init),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Init, _internal_metadata_),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Init, _is_default_instance_));
-  DefaultPos_descriptor_ = file->message_type(1);
-  static const int DefaultPos_offsets_[6] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DefaultPos, x_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DefaultPos, y_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DefaultPos, z_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DefaultPos, vx_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DefaultPos, vy_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DefaultPos, vz_),
-  };
-  DefaultPos_reflection_ =
-    ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
-      DefaultPos_descriptor_,
-      DefaultPos::default_instance_,
-      DefaultPos_offsets_,
-      -1,
-      -1,
-      -1,
-      sizeof(DefaultPos),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DefaultPos, _internal_metadata_),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DefaultPos, _is_default_instance_));
-  Camera_descriptor_ = file->message_type(2);
-  static const int Camera_offsets_[7] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Camera, serialnumber_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Camera, delta_x_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Camera, delta_y_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Camera, delta_z_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Camera, delta_vx_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Camera, delta_vy_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Camera, delta_vz_),
-  };
-  Camera_reflection_ =
-    ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
-      Camera_descriptor_,
-      Camera::default_instance_,
-      Camera_offsets_,
-      -1,
-      -1,
-      -1,
-      sizeof(Camera),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Camera, _internal_metadata_),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Camera, _is_default_instance_));
-  Image_descriptor_ = file->message_type(3);
-  static const int Image_offsets_[3] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Image, serialnumber_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Image, status_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Image, size_),
-  };
-  Image_reflection_ =
-    ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
-      Image_descriptor_,
-      Image::default_instance_,
-      Image_offsets_,
-      -1,
-      -1,
-      -1,
-      sizeof(Image),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Image, _internal_metadata_),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Image, _is_default_instance_));
-  Ending_descriptor_ = file->message_type(4);
-  static const int Ending_offsets_[1] = {
-  };
-  Ending_reflection_ =
-    ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
-      Ending_descriptor_,
-      Ending::default_instance_,
-      Ending_offsets_,
-      -1,
-      -1,
-      -1,
-      sizeof(Ending),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Ending, _internal_metadata_),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Ending, _is_default_instance_));
-  StreamingMessage_descriptor_ = file->message_type(5);
-  static const int StreamingMessage_offsets_[6] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(StreamingMessage, type_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(StreamingMessage, initmsg_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(StreamingMessage, defaultposmsg_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(StreamingMessage, cameramsg_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(StreamingMessage, imagemsg_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(StreamingMessage, endingmsg_),
-  };
-  StreamingMessage_reflection_ =
-    ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
-      StreamingMessage_descriptor_,
-      StreamingMessage::default_instance_,
-      StreamingMessage_offsets_,
-      -1,
-      -1,
-      -1,
-      sizeof(StreamingMessage),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(StreamingMessage, _internal_metadata_),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(StreamingMessage, _is_default_instance_));
-  MessageType_descriptor_ = file->enum_type(0);
-}
+static const ::google::protobuf::internal::MigrationSchema schemas[] = {
+  { 0, -1, sizeof(Init)},
+  { 7, -1, sizeof(DefaultPos)},
+  { 17, -1, sizeof(Camera)},
+  { 28, -1, sizeof(Image)},
+  { 35, -1, sizeof(Ending)},
+  { 39, -1, sizeof(StreamingMessage)},
+};
+
+static ::google::protobuf::Message const * const file_default_instances[] = {
+  reinterpret_cast<const ::google::protobuf::Message*>(&_Init_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&_DefaultPos_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&_Camera_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&_Image_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&_Ending_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&_StreamingMessage_default_instance_),
+};
 
 namespace {
 
-GOOGLE_PROTOBUF_DECLARE_ONCE(protobuf_AssignDescriptors_once_);
-inline void protobuf_AssignDescriptorsOnce() {
-  ::google::protobuf::GoogleOnceInit(&protobuf_AssignDescriptors_once_,
-                 &protobuf_AssignDesc_message_2eproto);
+void protobuf_AssignDescriptors() {
+  AddDescriptors();
+  ::google::protobuf::MessageFactory* factory = NULL;
+  AssignDescriptors(
+      "message.proto", schemas, file_default_instances, TableStruct::offsets, factory,
+      file_level_metadata, file_level_enum_descriptors, NULL);
+}
+
+void protobuf_AssignDescriptorsOnce() {
+  static GOOGLE_PROTOBUF_DECLARE_ONCE(once);
+  ::google::protobuf::GoogleOnceInit(&once, &protobuf_AssignDescriptors);
 }
 
 void protobuf_RegisterTypes(const ::std::string&) GOOGLE_ATTRIBUTE_COLD;
 void protobuf_RegisterTypes(const ::std::string&) {
   protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-      Init_descriptor_, &Init::default_instance());
-  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-      DefaultPos_descriptor_, &DefaultPos::default_instance());
-  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-      Camera_descriptor_, &Camera::default_instance());
-  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-      Image_descriptor_, &Image::default_instance());
-  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-      Ending_descriptor_, &Ending::default_instance());
-  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-      StreamingMessage_descriptor_, &StreamingMessage::default_instance());
+  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 6);
 }
 
 }  // namespace
 
-void protobuf_ShutdownFile_message_2eproto() {
-  delete Init::default_instance_;
-  delete Init_reflection_;
-  delete DefaultPos::default_instance_;
-  delete DefaultPos_reflection_;
-  delete Camera::default_instance_;
-  delete Camera_reflection_;
-  delete Image::default_instance_;
-  delete Image_reflection_;
-  delete Ending::default_instance_;
-  delete Ending_reflection_;
-  delete StreamingMessage::default_instance_;
-  delete StreamingMessage_reflection_;
+void TableStruct::Shutdown() {
+  _Init_default_instance_.Shutdown();
+  delete file_level_metadata[0].reflection;
+  _DefaultPos_default_instance_.Shutdown();
+  delete file_level_metadata[1].reflection;
+  _Camera_default_instance_.Shutdown();
+  delete file_level_metadata[2].reflection;
+  _Image_default_instance_.Shutdown();
+  delete file_level_metadata[3].reflection;
+  _Ending_default_instance_.Shutdown();
+  delete file_level_metadata[4].reflection;
+  _StreamingMessage_default_instance_.Shutdown();
+  delete file_level_metadata[5].reflection;
 }
 
-void protobuf_AddDesc_message_2eproto() GOOGLE_ATTRIBUTE_COLD;
-void protobuf_AddDesc_message_2eproto() {
-  static bool already_here = false;
-  if (already_here) return;
-  already_here = true;
+void TableStruct::InitDefaultsImpl() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
-  ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\rmessage.proto\022\017StreamingFormat\"6\n\004Init"
-    "\022\r\n\005width\030\002 \001(\r\022\r\n\005hight\030\003 \001(\r\022\020\n\010module"
-    "ID\030\004 \001(\r\"Q\n\nDefaultPos\022\t\n\001x\030\002 \001(\r\022\t\n\001y\030\003"
-    " \001(\r\022\t\n\001z\030\004 \001(\r\022\n\n\002vx\030\005 \001(\r\022\n\n\002vy\030\006 \001(\r\022"
-    "\n\n\002vz\030\007 \001(\r\"\207\001\n\006Camera\022\024\n\014serialNumber\030\002"
-    " \001(\r\022\017\n\007delta_x\030\003 \001(\r\022\017\n\007delta_y\030\004 \001(\r\022\017"
-    "\n\007delta_z\030\005 \001(\r\022\020\n\010delta_vx\030\006 \001(\r\022\020\n\010del"
-    "ta_vy\030\007 \001(\r\022\020\n\010delta_vz\030\010 \001(\r\";\n\005Image\022\024"
-    "\n\014serialNumber\030\002 \001(\r\022\016\n\006status\030\003 \001(\r\022\014\n\004"
-    "size\030\004 \001(\r\"\010\n\006Ending\"\234\002\n\020StreamingMessag"
-    "e\022*\n\004type\030\001 \001(\0162\034.StreamingFormat.Messag"
-    "eType\022&\n\007initMsg\030\002 \001(\0132\025.StreamingFormat"
-    ".Init\0222\n\rdefaultPosMsg\030\003 \001(\0132\033.Streaming"
-    "Format.DefaultPos\022*\n\tcameraMsg\030\004 \001(\0132\027.S"
-    "treamingFormat.Camera\022(\n\010imageMsg\030\005 \001(\0132"
-    "\026.StreamingFormat.Image\022*\n\tendingMsg\030\006 \001"
-    "(\0132\027.StreamingFormat.Ending*]\n\013MessageTy"
-    "pe\022\013\n\007msgInit\020\000\022\021\n\rmsgDefaultPos\020\001\022\021\n\rms"
-    "gCameraInfo\020\002\022\014\n\010msgImage\020\003\022\r\n\tmsgEnding"
-    "\020\004b\006proto3", 770);
-  ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
-    "message.proto", &protobuf_RegisterTypes);
-  Init::default_instance_ = new Init();
-  DefaultPos::default_instance_ = new DefaultPos();
-  Camera::default_instance_ = new Camera();
-  Image::default_instance_ = new Image();
-  Ending::default_instance_ = new Ending();
-  StreamingMessage::default_instance_ = new StreamingMessage();
-  Init::default_instance_->InitAsDefaultInstance();
-  DefaultPos::default_instance_->InitAsDefaultInstance();
-  Camera::default_instance_->InitAsDefaultInstance();
-  Image::default_instance_->InitAsDefaultInstance();
-  Ending::default_instance_->InitAsDefaultInstance();
-  StreamingMessage::default_instance_->InitAsDefaultInstance();
-  ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_message_2eproto);
+  ::google::protobuf::internal::InitProtobufDefaults();
+  _Init_default_instance_.DefaultConstruct();
+  _DefaultPos_default_instance_.DefaultConstruct();
+  _Camera_default_instance_.DefaultConstruct();
+  _Image_default_instance_.DefaultConstruct();
+  _Ending_default_instance_.DefaultConstruct();
+  _StreamingMessage_default_instance_.DefaultConstruct();
+  _StreamingMessage_default_instance_.get_mutable()->initmsg_ = const_cast< ::StreamingFormat::Init*>(
+      ::StreamingFormat::Init::internal_default_instance());
+  _StreamingMessage_default_instance_.get_mutable()->defaultposmsg_ = const_cast< ::StreamingFormat::DefaultPos*>(
+      ::StreamingFormat::DefaultPos::internal_default_instance());
+  _StreamingMessage_default_instance_.get_mutable()->cameramsg_ = const_cast< ::StreamingFormat::Camera*>(
+      ::StreamingFormat::Camera::internal_default_instance());
+  _StreamingMessage_default_instance_.get_mutable()->imagemsg_ = const_cast< ::StreamingFormat::Image*>(
+      ::StreamingFormat::Image::internal_default_instance());
+  _StreamingMessage_default_instance_.get_mutable()->endingmsg_ = const_cast< ::StreamingFormat::Ending*>(
+      ::StreamingFormat::Ending::internal_default_instance());
 }
 
+void InitDefaults() {
+  static GOOGLE_PROTOBUF_DECLARE_ONCE(once);
+  ::google::protobuf::GoogleOnceInit(&once, &TableStruct::InitDefaultsImpl);
+}
+void AddDescriptorsImpl() {
+  InitDefaults();
+  static const char descriptor[] = {
+      "\n\rmessage.proto\022\017StreamingFormat\"6\n\004Init"
+      "\022\r\n\005width\030\002 \001(\r\022\r\n\005hight\030\003 \001(\r\022\020\n\010module"
+      "ID\030\004 \001(\r\"Q\n\nDefaultPos\022\t\n\001x\030\002 \001(\r\022\t\n\001y\030\003"
+      " \001(\r\022\t\n\001z\030\004 \001(\r\022\n\n\002vx\030\005 \001(\r\022\n\n\002vy\030\006 \001(\r\022"
+      "\n\n\002vz\030\007 \001(\r\"\207\001\n\006Camera\022\024\n\014serialNumber\030\002"
+      " \001(\r\022\017\n\007delta_x\030\003 \001(\r\022\017\n\007delta_y\030\004 \001(\r\022\017"
+      "\n\007delta_z\030\005 \001(\r\022\020\n\010delta_vx\030\006 \001(\r\022\020\n\010del"
+      "ta_vy\030\007 \001(\r\022\020\n\010delta_vz\030\010 \001(\r\";\n\005Image\022\024"
+      "\n\014serialNumber\030\002 \001(\r\022\016\n\006status\030\003 \001(\r\022\014\n\004"
+      "size\030\004 \001(\r\"\010\n\006Ending\"\234\002\n\020StreamingMessag"
+      "e\022*\n\004type\030\001 \001(\0162\034.StreamingFormat.Messag"
+      "eType\022&\n\007initMsg\030\002 \001(\0132\025.StreamingFormat"
+      ".Init\0222\n\rdefaultPosMsg\030\003 \001(\0132\033.Streaming"
+      "Format.DefaultPos\022*\n\tcameraMsg\030\004 \001(\0132\027.S"
+      "treamingFormat.Camera\022(\n\010imageMsg\030\005 \001(\0132"
+      "\026.StreamingFormat.Image\022*\n\tendingMsg\030\006 \001"
+      "(\0132\027.StreamingFormat.Ending*]\n\013MessageTy"
+      "pe\022\013\n\007msgInit\020\000\022\021\n\rmsgDefaultPos\020\001\022\021\n\rms"
+      "gCameraInfo\020\002\022\014\n\010msgImage\020\003\022\r\n\tmsgEnding"
+      "\020\004b\006proto3"
+  };
+  ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
+      descriptor, 770);
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
+    "message.proto", &protobuf_RegisterTypes);
+  ::google::protobuf::internal::OnShutdown(&TableStruct::Shutdown);
+}
+
+void AddDescriptors() {
+  static GOOGLE_PROTOBUF_DECLARE_ONCE(once);
+  ::google::protobuf::GoogleOnceInit(&once, &AddDescriptorsImpl);
+}
 // Force AddDescriptors() to be called at static initialization time.
-struct StaticDescriptorInitializer_message_2eproto {
-  StaticDescriptorInitializer_message_2eproto() {
-    protobuf_AddDesc_message_2eproto();
+struct StaticDescriptorInitializer {
+  StaticDescriptorInitializer() {
+    AddDescriptors();
   }
-} static_descriptor_initializer_message_2eproto_;
+} static_descriptor_initializer;
+
+}  // namespace protobuf_message_2eproto
+
 const ::google::protobuf::EnumDescriptor* MessageType_descriptor() {
-  protobuf_AssignDescriptorsOnce();
-  return MessageType_descriptor_;
+  protobuf_message_2eproto::protobuf_AssignDescriptorsOnce();
+  return protobuf_message_2eproto::file_level_enum_descriptors[0];
 }
 bool MessageType_IsValid(int value) {
-  switch(value) {
+  switch (value) {
     case 0:
     case 1:
     case 2:
@@ -284,28 +247,27 @@ const int Init::kModuleIDFieldNumber;
 
 Init::Init()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
+    protobuf_message_2eproto::InitDefaults();
+  }
   SharedCtor();
   // @@protoc_insertion_point(constructor:StreamingFormat.Init)
 }
-
-void Init::InitAsDefaultInstance() {
-  _is_default_instance_ = true;
-}
-
 Init::Init(const Init& from)
   : ::google::protobuf::Message(),
-    _internal_metadata_(NULL) {
-  SharedCtor();
-  MergeFrom(from);
+      _internal_metadata_(NULL),
+      _cached_size_(0) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::memcpy(&width_, &from.width_,
+    reinterpret_cast<char*>(&moduleid_) -
+    reinterpret_cast<char*>(&width_) + sizeof(moduleid_));
   // @@protoc_insertion_point(copy_constructor:StreamingFormat.Init)
 }
 
 void Init::SharedCtor() {
-    _is_default_instance_ = false;
+  ::memset(&width_, 0, reinterpret_cast<char*>(&moduleid_) -
+    reinterpret_cast<char*>(&width_) + sizeof(moduleid_));
   _cached_size_ = 0;
-  width_ = 0u;
-  hight_ = 0u;
-  moduleid_ = 0u;
 }
 
 Init::~Init() {
@@ -314,8 +276,6 @@ Init::~Init() {
 }
 
 void Init::SharedDtor() {
-  if (this != default_instance_) {
-  }
 }
 
 void Init::SetCachedSize(int size) const {
@@ -324,16 +284,14 @@ void Init::SetCachedSize(int size) const {
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
 }
 const ::google::protobuf::Descriptor* Init::descriptor() {
-  protobuf_AssignDescriptorsOnce();
-  return Init_descriptor_;
+  protobuf_message_2eproto::protobuf_AssignDescriptorsOnce();
+  return protobuf_message_2eproto::file_level_metadata[0].descriptor;
 }
 
 const Init& Init::default_instance() {
-  if (default_instance_ == NULL) protobuf_AddDesc_message_2eproto();
-  return *default_instance_;
+  protobuf_message_2eproto::InitDefaults();
+  return *internal_default_instance();
 }
-
-Init* Init::default_instance_ = NULL;
 
 Init* Init::New(::google::protobuf::Arena* arena) const {
   Init* n = new Init;
@@ -345,27 +303,8 @@ Init* Init::New(::google::protobuf::Arena* arena) const {
 
 void Init::Clear() {
 // @@protoc_insertion_point(message_clear_start:StreamingFormat.Init)
-#if defined(__clang__)
-#define ZR_HELPER_(f) \
-  _Pragma("clang diagnostic push") \
-  _Pragma("clang diagnostic ignored \"-Winvalid-offsetof\"") \
-  __builtin_offsetof(Init, f) \
-  _Pragma("clang diagnostic pop")
-#else
-#define ZR_HELPER_(f) reinterpret_cast<char*>(\
-  &reinterpret_cast<Init*>(16)->f)
-#endif
-
-#define ZR_(first, last) do {\
-  ::memset(&first, 0,\
-           ZR_HELPER_(last) - ZR_HELPER_(first) + sizeof(last));\
-} while (0)
-
-  ZR_(width_, moduleid_);
-
-#undef ZR_HELPER_
-#undef ZR_
-
+  ::memset(&width_, 0, reinterpret_cast<char*>(&moduleid_) -
+    reinterpret_cast<char*>(&width_) + sizeof(moduleid_));
 }
 
 bool Init::MergePartialFromCodedStream(
@@ -374,51 +313,46 @@ bool Init::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:StreamingFormat.Init)
   for (;;) {
-    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // optional uint32 width = 2;
+      // uint32 width = 2;
       case 2: {
-        if (tag == 16) {
+        if (tag == 16u) {
+
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
                  input, &width_)));
-
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(24)) goto parse_hight;
         break;
       }
 
-      // optional uint32 hight = 3;
+      // uint32 hight = 3;
       case 3: {
-        if (tag == 24) {
-         parse_hight:
+        if (tag == 24u) {
+
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
                  input, &hight_)));
-
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(32)) goto parse_moduleID;
         break;
       }
 
-      // optional uint32 moduleID = 4;
+      // uint32 moduleID = 4;
       case 4: {
-        if (tag == 32) {
-         parse_moduleID:
+        if (tag == 32u) {
+
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
                  input, &moduleid_)));
-
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectAtEnd()) goto success;
         break;
       }
 
@@ -446,17 +380,17 @@ failure:
 void Init::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // @@protoc_insertion_point(serialize_start:StreamingFormat.Init)
-  // optional uint32 width = 2;
+  // uint32 width = 2;
   if (this->width() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteUInt32(2, this->width(), output);
   }
 
-  // optional uint32 hight = 3;
+  // uint32 hight = 3;
   if (this->hight() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteUInt32(3, this->hight(), output);
   }
 
-  // optional uint32 moduleID = 4;
+  // uint32 moduleID = 4;
   if (this->moduleid() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteUInt32(4, this->moduleid(), output);
   }
@@ -466,18 +400,19 @@ void Init::SerializeWithCachedSizes(
 
 ::google::protobuf::uint8* Init::InternalSerializeWithCachedSizesToArray(
     bool deterministic, ::google::protobuf::uint8* target) const {
+  (void)deterministic;  // Unused
   // @@protoc_insertion_point(serialize_to_array_start:StreamingFormat.Init)
-  // optional uint32 width = 2;
+  // uint32 width = 2;
   if (this->width() != 0) {
     target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(2, this->width(), target);
   }
 
-  // optional uint32 hight = 3;
+  // uint32 hight = 3;
   if (this->hight() != 0) {
     target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(3, this->hight(), target);
   }
 
-  // optional uint32 moduleID = 4;
+  // uint32 moduleID = 4;
   if (this->moduleid() != 0) {
     target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(4, this->moduleid(), target);
   }
@@ -486,43 +421,42 @@ void Init::SerializeWithCachedSizes(
   return target;
 }
 
-int Init::ByteSize() const {
+size_t Init::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:StreamingFormat.Init)
-  int total_size = 0;
+  size_t total_size = 0;
 
-  // optional uint32 width = 2;
+  // uint32 width = 2;
   if (this->width() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::UInt32Size(
         this->width());
   }
 
-  // optional uint32 hight = 3;
+  // uint32 hight = 3;
   if (this->hight() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::UInt32Size(
         this->hight());
   }
 
-  // optional uint32 moduleID = 4;
+  // uint32 moduleID = 4;
   if (this->moduleid() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::UInt32Size(
         this->moduleid());
   }
 
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = total_size;
+  _cached_size_ = cached_size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
   return total_size;
 }
 
 void Init::MergeFrom(const ::google::protobuf::Message& from) {
 // @@protoc_insertion_point(generalized_merge_from_start:StreamingFormat.Init)
-  if (GOOGLE_PREDICT_FALSE(&from == this)) {
-    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
-  }
-  const Init* source = 
+  GOOGLE_DCHECK_NE(&from, this);
+  const Init* source =
       ::google::protobuf::internal::DynamicCastToGenerated<const Init>(
           &from);
   if (source == NULL) {
@@ -536,9 +470,8 @@ void Init::MergeFrom(const ::google::protobuf::Message& from) {
 
 void Init::MergeFrom(const Init& from) {
 // @@protoc_insertion_point(class_specific_merge_from_start:StreamingFormat.Init)
-  if (GOOGLE_PREDICT_FALSE(&from == this)) {
-    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
-  }
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
   if (from.width() != 0) {
     set_width(from.width());
   }
@@ -565,7 +498,6 @@ void Init::CopyFrom(const Init& from) {
 }
 
 bool Init::IsInitialized() const {
-
   return true;
 }
 
@@ -577,58 +509,54 @@ void Init::InternalSwap(Init* other) {
   std::swap(width_, other->width_);
   std::swap(hight_, other->hight_);
   std::swap(moduleid_, other->moduleid_);
-  _internal_metadata_.Swap(&other->_internal_metadata_);
   std::swap(_cached_size_, other->_cached_size_);
 }
 
 ::google::protobuf::Metadata Init::GetMetadata() const {
-  protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::Metadata metadata;
-  metadata.descriptor = Init_descriptor_;
-  metadata.reflection = Init_reflection_;
-  return metadata;
+  protobuf_message_2eproto::protobuf_AssignDescriptorsOnce();
+  return protobuf_message_2eproto::file_level_metadata[0];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
 // Init
 
-// optional uint32 width = 2;
+// uint32 width = 2;
 void Init::clear_width() {
   width_ = 0u;
 }
- ::google::protobuf::uint32 Init::width() const {
+::google::protobuf::uint32 Init::width() const {
   // @@protoc_insertion_point(field_get:StreamingFormat.Init.width)
   return width_;
 }
- void Init::set_width(::google::protobuf::uint32 value) {
+void Init::set_width(::google::protobuf::uint32 value) {
   
   width_ = value;
   // @@protoc_insertion_point(field_set:StreamingFormat.Init.width)
 }
 
-// optional uint32 hight = 3;
+// uint32 hight = 3;
 void Init::clear_hight() {
   hight_ = 0u;
 }
- ::google::protobuf::uint32 Init::hight() const {
+::google::protobuf::uint32 Init::hight() const {
   // @@protoc_insertion_point(field_get:StreamingFormat.Init.hight)
   return hight_;
 }
- void Init::set_hight(::google::protobuf::uint32 value) {
+void Init::set_hight(::google::protobuf::uint32 value) {
   
   hight_ = value;
   // @@protoc_insertion_point(field_set:StreamingFormat.Init.hight)
 }
 
-// optional uint32 moduleID = 4;
+// uint32 moduleID = 4;
 void Init::clear_moduleid() {
   moduleid_ = 0u;
 }
- ::google::protobuf::uint32 Init::moduleid() const {
+::google::protobuf::uint32 Init::moduleid() const {
   // @@protoc_insertion_point(field_get:StreamingFormat.Init.moduleID)
   return moduleid_;
 }
- void Init::set_moduleid(::google::protobuf::uint32 value) {
+void Init::set_moduleid(::google::protobuf::uint32 value) {
   
   moduleid_ = value;
   // @@protoc_insertion_point(field_set:StreamingFormat.Init.moduleID)
@@ -649,31 +577,27 @@ const int DefaultPos::kVzFieldNumber;
 
 DefaultPos::DefaultPos()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
+    protobuf_message_2eproto::InitDefaults();
+  }
   SharedCtor();
   // @@protoc_insertion_point(constructor:StreamingFormat.DefaultPos)
 }
-
-void DefaultPos::InitAsDefaultInstance() {
-  _is_default_instance_ = true;
-}
-
 DefaultPos::DefaultPos(const DefaultPos& from)
   : ::google::protobuf::Message(),
-    _internal_metadata_(NULL) {
-  SharedCtor();
-  MergeFrom(from);
+      _internal_metadata_(NULL),
+      _cached_size_(0) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::memcpy(&x_, &from.x_,
+    reinterpret_cast<char*>(&vz_) -
+    reinterpret_cast<char*>(&x_) + sizeof(vz_));
   // @@protoc_insertion_point(copy_constructor:StreamingFormat.DefaultPos)
 }
 
 void DefaultPos::SharedCtor() {
-    _is_default_instance_ = false;
+  ::memset(&x_, 0, reinterpret_cast<char*>(&vz_) -
+    reinterpret_cast<char*>(&x_) + sizeof(vz_));
   _cached_size_ = 0;
-  x_ = 0u;
-  y_ = 0u;
-  z_ = 0u;
-  vx_ = 0u;
-  vy_ = 0u;
-  vz_ = 0u;
 }
 
 DefaultPos::~DefaultPos() {
@@ -682,8 +606,6 @@ DefaultPos::~DefaultPos() {
 }
 
 void DefaultPos::SharedDtor() {
-  if (this != default_instance_) {
-  }
 }
 
 void DefaultPos::SetCachedSize(int size) const {
@@ -692,16 +614,14 @@ void DefaultPos::SetCachedSize(int size) const {
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
 }
 const ::google::protobuf::Descriptor* DefaultPos::descriptor() {
-  protobuf_AssignDescriptorsOnce();
-  return DefaultPos_descriptor_;
+  protobuf_message_2eproto::protobuf_AssignDescriptorsOnce();
+  return protobuf_message_2eproto::file_level_metadata[1].descriptor;
 }
 
 const DefaultPos& DefaultPos::default_instance() {
-  if (default_instance_ == NULL) protobuf_AddDesc_message_2eproto();
-  return *default_instance_;
+  protobuf_message_2eproto::InitDefaults();
+  return *internal_default_instance();
 }
-
-DefaultPos* DefaultPos::default_instance_ = NULL;
 
 DefaultPos* DefaultPos::New(::google::protobuf::Arena* arena) const {
   DefaultPos* n = new DefaultPos;
@@ -713,27 +633,8 @@ DefaultPos* DefaultPos::New(::google::protobuf::Arena* arena) const {
 
 void DefaultPos::Clear() {
 // @@protoc_insertion_point(message_clear_start:StreamingFormat.DefaultPos)
-#if defined(__clang__)
-#define ZR_HELPER_(f) \
-  _Pragma("clang diagnostic push") \
-  _Pragma("clang diagnostic ignored \"-Winvalid-offsetof\"") \
-  __builtin_offsetof(DefaultPos, f) \
-  _Pragma("clang diagnostic pop")
-#else
-#define ZR_HELPER_(f) reinterpret_cast<char*>(\
-  &reinterpret_cast<DefaultPos*>(16)->f)
-#endif
-
-#define ZR_(first, last) do {\
-  ::memset(&first, 0,\
-           ZR_HELPER_(last) - ZR_HELPER_(first) + sizeof(last));\
-} while (0)
-
-  ZR_(x_, vz_);
-
-#undef ZR_HELPER_
-#undef ZR_
-
+  ::memset(&x_, 0, reinterpret_cast<char*>(&vz_) -
+    reinterpret_cast<char*>(&x_) + sizeof(vz_));
 }
 
 bool DefaultPos::MergePartialFromCodedStream(
@@ -742,96 +643,85 @@ bool DefaultPos::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:StreamingFormat.DefaultPos)
   for (;;) {
-    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // optional uint32 x = 2;
+      // uint32 x = 2;
       case 2: {
-        if (tag == 16) {
+        if (tag == 16u) {
+
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
                  input, &x_)));
-
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(24)) goto parse_y;
         break;
       }
 
-      // optional uint32 y = 3;
+      // uint32 y = 3;
       case 3: {
-        if (tag == 24) {
-         parse_y:
+        if (tag == 24u) {
+
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
                  input, &y_)));
-
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(32)) goto parse_z;
         break;
       }
 
-      // optional uint32 z = 4;
+      // uint32 z = 4;
       case 4: {
-        if (tag == 32) {
-         parse_z:
+        if (tag == 32u) {
+
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
                  input, &z_)));
-
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(40)) goto parse_vx;
         break;
       }
 
-      // optional uint32 vx = 5;
+      // uint32 vx = 5;
       case 5: {
-        if (tag == 40) {
-         parse_vx:
+        if (tag == 40u) {
+
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
                  input, &vx_)));
-
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(48)) goto parse_vy;
         break;
       }
 
-      // optional uint32 vy = 6;
+      // uint32 vy = 6;
       case 6: {
-        if (tag == 48) {
-         parse_vy:
+        if (tag == 48u) {
+
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
                  input, &vy_)));
-
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(56)) goto parse_vz;
         break;
       }
 
-      // optional uint32 vz = 7;
+      // uint32 vz = 7;
       case 7: {
-        if (tag == 56) {
-         parse_vz:
+        if (tag == 56u) {
+
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
                  input, &vz_)));
-
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectAtEnd()) goto success;
         break;
       }
 
@@ -859,32 +749,32 @@ failure:
 void DefaultPos::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // @@protoc_insertion_point(serialize_start:StreamingFormat.DefaultPos)
-  // optional uint32 x = 2;
+  // uint32 x = 2;
   if (this->x() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteUInt32(2, this->x(), output);
   }
 
-  // optional uint32 y = 3;
+  // uint32 y = 3;
   if (this->y() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteUInt32(3, this->y(), output);
   }
 
-  // optional uint32 z = 4;
+  // uint32 z = 4;
   if (this->z() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteUInt32(4, this->z(), output);
   }
 
-  // optional uint32 vx = 5;
+  // uint32 vx = 5;
   if (this->vx() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteUInt32(5, this->vx(), output);
   }
 
-  // optional uint32 vy = 6;
+  // uint32 vy = 6;
   if (this->vy() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteUInt32(6, this->vy(), output);
   }
 
-  // optional uint32 vz = 7;
+  // uint32 vz = 7;
   if (this->vz() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteUInt32(7, this->vz(), output);
   }
@@ -894,33 +784,34 @@ void DefaultPos::SerializeWithCachedSizes(
 
 ::google::protobuf::uint8* DefaultPos::InternalSerializeWithCachedSizesToArray(
     bool deterministic, ::google::protobuf::uint8* target) const {
+  (void)deterministic;  // Unused
   // @@protoc_insertion_point(serialize_to_array_start:StreamingFormat.DefaultPos)
-  // optional uint32 x = 2;
+  // uint32 x = 2;
   if (this->x() != 0) {
     target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(2, this->x(), target);
   }
 
-  // optional uint32 y = 3;
+  // uint32 y = 3;
   if (this->y() != 0) {
     target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(3, this->y(), target);
   }
 
-  // optional uint32 z = 4;
+  // uint32 z = 4;
   if (this->z() != 0) {
     target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(4, this->z(), target);
   }
 
-  // optional uint32 vx = 5;
+  // uint32 vx = 5;
   if (this->vx() != 0) {
     target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(5, this->vx(), target);
   }
 
-  // optional uint32 vy = 6;
+  // uint32 vy = 6;
   if (this->vy() != 0) {
     target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(6, this->vy(), target);
   }
 
-  // optional uint32 vz = 7;
+  // uint32 vz = 7;
   if (this->vz() != 0) {
     target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(7, this->vz(), target);
   }
@@ -929,64 +820,63 @@ void DefaultPos::SerializeWithCachedSizes(
   return target;
 }
 
-int DefaultPos::ByteSize() const {
+size_t DefaultPos::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:StreamingFormat.DefaultPos)
-  int total_size = 0;
+  size_t total_size = 0;
 
-  // optional uint32 x = 2;
+  // uint32 x = 2;
   if (this->x() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::UInt32Size(
         this->x());
   }
 
-  // optional uint32 y = 3;
+  // uint32 y = 3;
   if (this->y() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::UInt32Size(
         this->y());
   }
 
-  // optional uint32 z = 4;
+  // uint32 z = 4;
   if (this->z() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::UInt32Size(
         this->z());
   }
 
-  // optional uint32 vx = 5;
+  // uint32 vx = 5;
   if (this->vx() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::UInt32Size(
         this->vx());
   }
 
-  // optional uint32 vy = 6;
+  // uint32 vy = 6;
   if (this->vy() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::UInt32Size(
         this->vy());
   }
 
-  // optional uint32 vz = 7;
+  // uint32 vz = 7;
   if (this->vz() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::UInt32Size(
         this->vz());
   }
 
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = total_size;
+  _cached_size_ = cached_size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
   return total_size;
 }
 
 void DefaultPos::MergeFrom(const ::google::protobuf::Message& from) {
 // @@protoc_insertion_point(generalized_merge_from_start:StreamingFormat.DefaultPos)
-  if (GOOGLE_PREDICT_FALSE(&from == this)) {
-    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
-  }
-  const DefaultPos* source = 
+  GOOGLE_DCHECK_NE(&from, this);
+  const DefaultPos* source =
       ::google::protobuf::internal::DynamicCastToGenerated<const DefaultPos>(
           &from);
   if (source == NULL) {
@@ -1000,9 +890,8 @@ void DefaultPos::MergeFrom(const ::google::protobuf::Message& from) {
 
 void DefaultPos::MergeFrom(const DefaultPos& from) {
 // @@protoc_insertion_point(class_specific_merge_from_start:StreamingFormat.DefaultPos)
-  if (GOOGLE_PREDICT_FALSE(&from == this)) {
-    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
-  }
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
   if (from.x() != 0) {
     set_x(from.x());
   }
@@ -1038,7 +927,6 @@ void DefaultPos::CopyFrom(const DefaultPos& from) {
 }
 
 bool DefaultPos::IsInitialized() const {
-
   return true;
 }
 
@@ -1053,100 +941,96 @@ void DefaultPos::InternalSwap(DefaultPos* other) {
   std::swap(vx_, other->vx_);
   std::swap(vy_, other->vy_);
   std::swap(vz_, other->vz_);
-  _internal_metadata_.Swap(&other->_internal_metadata_);
   std::swap(_cached_size_, other->_cached_size_);
 }
 
 ::google::protobuf::Metadata DefaultPos::GetMetadata() const {
-  protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::Metadata metadata;
-  metadata.descriptor = DefaultPos_descriptor_;
-  metadata.reflection = DefaultPos_reflection_;
-  return metadata;
+  protobuf_message_2eproto::protobuf_AssignDescriptorsOnce();
+  return protobuf_message_2eproto::file_level_metadata[1];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
 // DefaultPos
 
-// optional uint32 x = 2;
+// uint32 x = 2;
 void DefaultPos::clear_x() {
   x_ = 0u;
 }
- ::google::protobuf::uint32 DefaultPos::x() const {
+::google::protobuf::uint32 DefaultPos::x() const {
   // @@protoc_insertion_point(field_get:StreamingFormat.DefaultPos.x)
   return x_;
 }
- void DefaultPos::set_x(::google::protobuf::uint32 value) {
+void DefaultPos::set_x(::google::protobuf::uint32 value) {
   
   x_ = value;
   // @@protoc_insertion_point(field_set:StreamingFormat.DefaultPos.x)
 }
 
-// optional uint32 y = 3;
+// uint32 y = 3;
 void DefaultPos::clear_y() {
   y_ = 0u;
 }
- ::google::protobuf::uint32 DefaultPos::y() const {
+::google::protobuf::uint32 DefaultPos::y() const {
   // @@protoc_insertion_point(field_get:StreamingFormat.DefaultPos.y)
   return y_;
 }
- void DefaultPos::set_y(::google::protobuf::uint32 value) {
+void DefaultPos::set_y(::google::protobuf::uint32 value) {
   
   y_ = value;
   // @@protoc_insertion_point(field_set:StreamingFormat.DefaultPos.y)
 }
 
-// optional uint32 z = 4;
+// uint32 z = 4;
 void DefaultPos::clear_z() {
   z_ = 0u;
 }
- ::google::protobuf::uint32 DefaultPos::z() const {
+::google::protobuf::uint32 DefaultPos::z() const {
   // @@protoc_insertion_point(field_get:StreamingFormat.DefaultPos.z)
   return z_;
 }
- void DefaultPos::set_z(::google::protobuf::uint32 value) {
+void DefaultPos::set_z(::google::protobuf::uint32 value) {
   
   z_ = value;
   // @@protoc_insertion_point(field_set:StreamingFormat.DefaultPos.z)
 }
 
-// optional uint32 vx = 5;
+// uint32 vx = 5;
 void DefaultPos::clear_vx() {
   vx_ = 0u;
 }
- ::google::protobuf::uint32 DefaultPos::vx() const {
+::google::protobuf::uint32 DefaultPos::vx() const {
   // @@protoc_insertion_point(field_get:StreamingFormat.DefaultPos.vx)
   return vx_;
 }
- void DefaultPos::set_vx(::google::protobuf::uint32 value) {
+void DefaultPos::set_vx(::google::protobuf::uint32 value) {
   
   vx_ = value;
   // @@protoc_insertion_point(field_set:StreamingFormat.DefaultPos.vx)
 }
 
-// optional uint32 vy = 6;
+// uint32 vy = 6;
 void DefaultPos::clear_vy() {
   vy_ = 0u;
 }
- ::google::protobuf::uint32 DefaultPos::vy() const {
+::google::protobuf::uint32 DefaultPos::vy() const {
   // @@protoc_insertion_point(field_get:StreamingFormat.DefaultPos.vy)
   return vy_;
 }
- void DefaultPos::set_vy(::google::protobuf::uint32 value) {
+void DefaultPos::set_vy(::google::protobuf::uint32 value) {
   
   vy_ = value;
   // @@protoc_insertion_point(field_set:StreamingFormat.DefaultPos.vy)
 }
 
-// optional uint32 vz = 7;
+// uint32 vz = 7;
 void DefaultPos::clear_vz() {
   vz_ = 0u;
 }
- ::google::protobuf::uint32 DefaultPos::vz() const {
+::google::protobuf::uint32 DefaultPos::vz() const {
   // @@protoc_insertion_point(field_get:StreamingFormat.DefaultPos.vz)
   return vz_;
 }
- void DefaultPos::set_vz(::google::protobuf::uint32 value) {
+void DefaultPos::set_vz(::google::protobuf::uint32 value) {
   
   vz_ = value;
   // @@protoc_insertion_point(field_set:StreamingFormat.DefaultPos.vz)
@@ -1168,32 +1052,27 @@ const int Camera::kDeltaVzFieldNumber;
 
 Camera::Camera()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
+    protobuf_message_2eproto::InitDefaults();
+  }
   SharedCtor();
   // @@protoc_insertion_point(constructor:StreamingFormat.Camera)
 }
-
-void Camera::InitAsDefaultInstance() {
-  _is_default_instance_ = true;
-}
-
 Camera::Camera(const Camera& from)
   : ::google::protobuf::Message(),
-    _internal_metadata_(NULL) {
-  SharedCtor();
-  MergeFrom(from);
+      _internal_metadata_(NULL),
+      _cached_size_(0) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::memcpy(&serialnumber_, &from.serialnumber_,
+    reinterpret_cast<char*>(&delta_vz_) -
+    reinterpret_cast<char*>(&serialnumber_) + sizeof(delta_vz_));
   // @@protoc_insertion_point(copy_constructor:StreamingFormat.Camera)
 }
 
 void Camera::SharedCtor() {
-    _is_default_instance_ = false;
+  ::memset(&serialnumber_, 0, reinterpret_cast<char*>(&delta_vz_) -
+    reinterpret_cast<char*>(&serialnumber_) + sizeof(delta_vz_));
   _cached_size_ = 0;
-  serialnumber_ = 0u;
-  delta_x_ = 0u;
-  delta_y_ = 0u;
-  delta_z_ = 0u;
-  delta_vx_ = 0u;
-  delta_vy_ = 0u;
-  delta_vz_ = 0u;
 }
 
 Camera::~Camera() {
@@ -1202,8 +1081,6 @@ Camera::~Camera() {
 }
 
 void Camera::SharedDtor() {
-  if (this != default_instance_) {
-  }
 }
 
 void Camera::SetCachedSize(int size) const {
@@ -1212,16 +1089,14 @@ void Camera::SetCachedSize(int size) const {
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
 }
 const ::google::protobuf::Descriptor* Camera::descriptor() {
-  protobuf_AssignDescriptorsOnce();
-  return Camera_descriptor_;
+  protobuf_message_2eproto::protobuf_AssignDescriptorsOnce();
+  return protobuf_message_2eproto::file_level_metadata[2].descriptor;
 }
 
 const Camera& Camera::default_instance() {
-  if (default_instance_ == NULL) protobuf_AddDesc_message_2eproto();
-  return *default_instance_;
+  protobuf_message_2eproto::InitDefaults();
+  return *internal_default_instance();
 }
-
-Camera* Camera::default_instance_ = NULL;
 
 Camera* Camera::New(::google::protobuf::Arena* arena) const {
   Camera* n = new Camera;
@@ -1233,27 +1108,8 @@ Camera* Camera::New(::google::protobuf::Arena* arena) const {
 
 void Camera::Clear() {
 // @@protoc_insertion_point(message_clear_start:StreamingFormat.Camera)
-#if defined(__clang__)
-#define ZR_HELPER_(f) \
-  _Pragma("clang diagnostic push") \
-  _Pragma("clang diagnostic ignored \"-Winvalid-offsetof\"") \
-  __builtin_offsetof(Camera, f) \
-  _Pragma("clang diagnostic pop")
-#else
-#define ZR_HELPER_(f) reinterpret_cast<char*>(\
-  &reinterpret_cast<Camera*>(16)->f)
-#endif
-
-#define ZR_(first, last) do {\
-  ::memset(&first, 0,\
-           ZR_HELPER_(last) - ZR_HELPER_(first) + sizeof(last));\
-} while (0)
-
-  ZR_(serialnumber_, delta_vz_);
-
-#undef ZR_HELPER_
-#undef ZR_
-
+  ::memset(&serialnumber_, 0, reinterpret_cast<char*>(&delta_vz_) -
+    reinterpret_cast<char*>(&serialnumber_) + sizeof(delta_vz_));
 }
 
 bool Camera::MergePartialFromCodedStream(
@@ -1262,111 +1118,98 @@ bool Camera::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:StreamingFormat.Camera)
   for (;;) {
-    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // optional uint32 serialNumber = 2;
+      // uint32 serialNumber = 2;
       case 2: {
-        if (tag == 16) {
+        if (tag == 16u) {
+
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
                  input, &serialnumber_)));
-
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(24)) goto parse_delta_x;
         break;
       }
 
-      // optional uint32 delta_x = 3;
+      // uint32 delta_x = 3;
       case 3: {
-        if (tag == 24) {
-         parse_delta_x:
+        if (tag == 24u) {
+
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
                  input, &delta_x_)));
-
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(32)) goto parse_delta_y;
         break;
       }
 
-      // optional uint32 delta_y = 4;
+      // uint32 delta_y = 4;
       case 4: {
-        if (tag == 32) {
-         parse_delta_y:
+        if (tag == 32u) {
+
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
                  input, &delta_y_)));
-
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(40)) goto parse_delta_z;
         break;
       }
 
-      // optional uint32 delta_z = 5;
+      // uint32 delta_z = 5;
       case 5: {
-        if (tag == 40) {
-         parse_delta_z:
+        if (tag == 40u) {
+
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
                  input, &delta_z_)));
-
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(48)) goto parse_delta_vx;
         break;
       }
 
-      // optional uint32 delta_vx = 6;
+      // uint32 delta_vx = 6;
       case 6: {
-        if (tag == 48) {
-         parse_delta_vx:
+        if (tag == 48u) {
+
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
                  input, &delta_vx_)));
-
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(56)) goto parse_delta_vy;
         break;
       }
 
-      // optional uint32 delta_vy = 7;
+      // uint32 delta_vy = 7;
       case 7: {
-        if (tag == 56) {
-         parse_delta_vy:
+        if (tag == 56u) {
+
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
                  input, &delta_vy_)));
-
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(64)) goto parse_delta_vz;
         break;
       }
 
-      // optional uint32 delta_vz = 8;
+      // uint32 delta_vz = 8;
       case 8: {
-        if (tag == 64) {
-         parse_delta_vz:
+        if (tag == 64u) {
+
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
                  input, &delta_vz_)));
-
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectAtEnd()) goto success;
         break;
       }
 
@@ -1394,37 +1237,37 @@ failure:
 void Camera::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // @@protoc_insertion_point(serialize_start:StreamingFormat.Camera)
-  // optional uint32 serialNumber = 2;
+  // uint32 serialNumber = 2;
   if (this->serialnumber() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteUInt32(2, this->serialnumber(), output);
   }
 
-  // optional uint32 delta_x = 3;
+  // uint32 delta_x = 3;
   if (this->delta_x() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteUInt32(3, this->delta_x(), output);
   }
 
-  // optional uint32 delta_y = 4;
+  // uint32 delta_y = 4;
   if (this->delta_y() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteUInt32(4, this->delta_y(), output);
   }
 
-  // optional uint32 delta_z = 5;
+  // uint32 delta_z = 5;
   if (this->delta_z() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteUInt32(5, this->delta_z(), output);
   }
 
-  // optional uint32 delta_vx = 6;
+  // uint32 delta_vx = 6;
   if (this->delta_vx() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteUInt32(6, this->delta_vx(), output);
   }
 
-  // optional uint32 delta_vy = 7;
+  // uint32 delta_vy = 7;
   if (this->delta_vy() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteUInt32(7, this->delta_vy(), output);
   }
 
-  // optional uint32 delta_vz = 8;
+  // uint32 delta_vz = 8;
   if (this->delta_vz() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteUInt32(8, this->delta_vz(), output);
   }
@@ -1434,38 +1277,39 @@ void Camera::SerializeWithCachedSizes(
 
 ::google::protobuf::uint8* Camera::InternalSerializeWithCachedSizesToArray(
     bool deterministic, ::google::protobuf::uint8* target) const {
+  (void)deterministic;  // Unused
   // @@protoc_insertion_point(serialize_to_array_start:StreamingFormat.Camera)
-  // optional uint32 serialNumber = 2;
+  // uint32 serialNumber = 2;
   if (this->serialnumber() != 0) {
     target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(2, this->serialnumber(), target);
   }
 
-  // optional uint32 delta_x = 3;
+  // uint32 delta_x = 3;
   if (this->delta_x() != 0) {
     target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(3, this->delta_x(), target);
   }
 
-  // optional uint32 delta_y = 4;
+  // uint32 delta_y = 4;
   if (this->delta_y() != 0) {
     target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(4, this->delta_y(), target);
   }
 
-  // optional uint32 delta_z = 5;
+  // uint32 delta_z = 5;
   if (this->delta_z() != 0) {
     target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(5, this->delta_z(), target);
   }
 
-  // optional uint32 delta_vx = 6;
+  // uint32 delta_vx = 6;
   if (this->delta_vx() != 0) {
     target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(6, this->delta_vx(), target);
   }
 
-  // optional uint32 delta_vy = 7;
+  // uint32 delta_vy = 7;
   if (this->delta_vy() != 0) {
     target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(7, this->delta_vy(), target);
   }
 
-  // optional uint32 delta_vz = 8;
+  // uint32 delta_vz = 8;
   if (this->delta_vz() != 0) {
     target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(8, this->delta_vz(), target);
   }
@@ -1474,71 +1318,70 @@ void Camera::SerializeWithCachedSizes(
   return target;
 }
 
-int Camera::ByteSize() const {
+size_t Camera::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:StreamingFormat.Camera)
-  int total_size = 0;
+  size_t total_size = 0;
 
-  // optional uint32 serialNumber = 2;
+  // uint32 serialNumber = 2;
   if (this->serialnumber() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::UInt32Size(
         this->serialnumber());
   }
 
-  // optional uint32 delta_x = 3;
+  // uint32 delta_x = 3;
   if (this->delta_x() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::UInt32Size(
         this->delta_x());
   }
 
-  // optional uint32 delta_y = 4;
+  // uint32 delta_y = 4;
   if (this->delta_y() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::UInt32Size(
         this->delta_y());
   }
 
-  // optional uint32 delta_z = 5;
+  // uint32 delta_z = 5;
   if (this->delta_z() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::UInt32Size(
         this->delta_z());
   }
 
-  // optional uint32 delta_vx = 6;
+  // uint32 delta_vx = 6;
   if (this->delta_vx() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::UInt32Size(
         this->delta_vx());
   }
 
-  // optional uint32 delta_vy = 7;
+  // uint32 delta_vy = 7;
   if (this->delta_vy() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::UInt32Size(
         this->delta_vy());
   }
 
-  // optional uint32 delta_vz = 8;
+  // uint32 delta_vz = 8;
   if (this->delta_vz() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::UInt32Size(
         this->delta_vz());
   }
 
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = total_size;
+  _cached_size_ = cached_size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
   return total_size;
 }
 
 void Camera::MergeFrom(const ::google::protobuf::Message& from) {
 // @@protoc_insertion_point(generalized_merge_from_start:StreamingFormat.Camera)
-  if (GOOGLE_PREDICT_FALSE(&from == this)) {
-    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
-  }
-  const Camera* source = 
+  GOOGLE_DCHECK_NE(&from, this);
+  const Camera* source =
       ::google::protobuf::internal::DynamicCastToGenerated<const Camera>(
           &from);
   if (source == NULL) {
@@ -1552,9 +1395,8 @@ void Camera::MergeFrom(const ::google::protobuf::Message& from) {
 
 void Camera::MergeFrom(const Camera& from) {
 // @@protoc_insertion_point(class_specific_merge_from_start:StreamingFormat.Camera)
-  if (GOOGLE_PREDICT_FALSE(&from == this)) {
-    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
-  }
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
   if (from.serialnumber() != 0) {
     set_serialnumber(from.serialnumber());
   }
@@ -1593,7 +1435,6 @@ void Camera::CopyFrom(const Camera& from) {
 }
 
 bool Camera::IsInitialized() const {
-
   return true;
 }
 
@@ -1609,114 +1450,110 @@ void Camera::InternalSwap(Camera* other) {
   std::swap(delta_vx_, other->delta_vx_);
   std::swap(delta_vy_, other->delta_vy_);
   std::swap(delta_vz_, other->delta_vz_);
-  _internal_metadata_.Swap(&other->_internal_metadata_);
   std::swap(_cached_size_, other->_cached_size_);
 }
 
 ::google::protobuf::Metadata Camera::GetMetadata() const {
-  protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::Metadata metadata;
-  metadata.descriptor = Camera_descriptor_;
-  metadata.reflection = Camera_reflection_;
-  return metadata;
+  protobuf_message_2eproto::protobuf_AssignDescriptorsOnce();
+  return protobuf_message_2eproto::file_level_metadata[2];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
 // Camera
 
-// optional uint32 serialNumber = 2;
+// uint32 serialNumber = 2;
 void Camera::clear_serialnumber() {
   serialnumber_ = 0u;
 }
- ::google::protobuf::uint32 Camera::serialnumber() const {
+::google::protobuf::uint32 Camera::serialnumber() const {
   // @@protoc_insertion_point(field_get:StreamingFormat.Camera.serialNumber)
   return serialnumber_;
 }
- void Camera::set_serialnumber(::google::protobuf::uint32 value) {
+void Camera::set_serialnumber(::google::protobuf::uint32 value) {
   
   serialnumber_ = value;
   // @@protoc_insertion_point(field_set:StreamingFormat.Camera.serialNumber)
 }
 
-// optional uint32 delta_x = 3;
+// uint32 delta_x = 3;
 void Camera::clear_delta_x() {
   delta_x_ = 0u;
 }
- ::google::protobuf::uint32 Camera::delta_x() const {
+::google::protobuf::uint32 Camera::delta_x() const {
   // @@protoc_insertion_point(field_get:StreamingFormat.Camera.delta_x)
   return delta_x_;
 }
- void Camera::set_delta_x(::google::protobuf::uint32 value) {
+void Camera::set_delta_x(::google::protobuf::uint32 value) {
   
   delta_x_ = value;
   // @@protoc_insertion_point(field_set:StreamingFormat.Camera.delta_x)
 }
 
-// optional uint32 delta_y = 4;
+// uint32 delta_y = 4;
 void Camera::clear_delta_y() {
   delta_y_ = 0u;
 }
- ::google::protobuf::uint32 Camera::delta_y() const {
+::google::protobuf::uint32 Camera::delta_y() const {
   // @@protoc_insertion_point(field_get:StreamingFormat.Camera.delta_y)
   return delta_y_;
 }
- void Camera::set_delta_y(::google::protobuf::uint32 value) {
+void Camera::set_delta_y(::google::protobuf::uint32 value) {
   
   delta_y_ = value;
   // @@protoc_insertion_point(field_set:StreamingFormat.Camera.delta_y)
 }
 
-// optional uint32 delta_z = 5;
+// uint32 delta_z = 5;
 void Camera::clear_delta_z() {
   delta_z_ = 0u;
 }
- ::google::protobuf::uint32 Camera::delta_z() const {
+::google::protobuf::uint32 Camera::delta_z() const {
   // @@protoc_insertion_point(field_get:StreamingFormat.Camera.delta_z)
   return delta_z_;
 }
- void Camera::set_delta_z(::google::protobuf::uint32 value) {
+void Camera::set_delta_z(::google::protobuf::uint32 value) {
   
   delta_z_ = value;
   // @@protoc_insertion_point(field_set:StreamingFormat.Camera.delta_z)
 }
 
-// optional uint32 delta_vx = 6;
+// uint32 delta_vx = 6;
 void Camera::clear_delta_vx() {
   delta_vx_ = 0u;
 }
- ::google::protobuf::uint32 Camera::delta_vx() const {
+::google::protobuf::uint32 Camera::delta_vx() const {
   // @@protoc_insertion_point(field_get:StreamingFormat.Camera.delta_vx)
   return delta_vx_;
 }
- void Camera::set_delta_vx(::google::protobuf::uint32 value) {
+void Camera::set_delta_vx(::google::protobuf::uint32 value) {
   
   delta_vx_ = value;
   // @@protoc_insertion_point(field_set:StreamingFormat.Camera.delta_vx)
 }
 
-// optional uint32 delta_vy = 7;
+// uint32 delta_vy = 7;
 void Camera::clear_delta_vy() {
   delta_vy_ = 0u;
 }
- ::google::protobuf::uint32 Camera::delta_vy() const {
+::google::protobuf::uint32 Camera::delta_vy() const {
   // @@protoc_insertion_point(field_get:StreamingFormat.Camera.delta_vy)
   return delta_vy_;
 }
- void Camera::set_delta_vy(::google::protobuf::uint32 value) {
+void Camera::set_delta_vy(::google::protobuf::uint32 value) {
   
   delta_vy_ = value;
   // @@protoc_insertion_point(field_set:StreamingFormat.Camera.delta_vy)
 }
 
-// optional uint32 delta_vz = 8;
+// uint32 delta_vz = 8;
 void Camera::clear_delta_vz() {
   delta_vz_ = 0u;
 }
- ::google::protobuf::uint32 Camera::delta_vz() const {
+::google::protobuf::uint32 Camera::delta_vz() const {
   // @@protoc_insertion_point(field_get:StreamingFormat.Camera.delta_vz)
   return delta_vz_;
 }
- void Camera::set_delta_vz(::google::protobuf::uint32 value) {
+void Camera::set_delta_vz(::google::protobuf::uint32 value) {
   
   delta_vz_ = value;
   // @@protoc_insertion_point(field_set:StreamingFormat.Camera.delta_vz)
@@ -1734,28 +1571,27 @@ const int Image::kSizeFieldNumber;
 
 Image::Image()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
+    protobuf_message_2eproto::InitDefaults();
+  }
   SharedCtor();
   // @@protoc_insertion_point(constructor:StreamingFormat.Image)
 }
-
-void Image::InitAsDefaultInstance() {
-  _is_default_instance_ = true;
-}
-
 Image::Image(const Image& from)
   : ::google::protobuf::Message(),
-    _internal_metadata_(NULL) {
-  SharedCtor();
-  MergeFrom(from);
+      _internal_metadata_(NULL),
+      _cached_size_(0) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::memcpy(&serialnumber_, &from.serialnumber_,
+    reinterpret_cast<char*>(&size_) -
+    reinterpret_cast<char*>(&serialnumber_) + sizeof(size_));
   // @@protoc_insertion_point(copy_constructor:StreamingFormat.Image)
 }
 
 void Image::SharedCtor() {
-    _is_default_instance_ = false;
+  ::memset(&serialnumber_, 0, reinterpret_cast<char*>(&size_) -
+    reinterpret_cast<char*>(&serialnumber_) + sizeof(size_));
   _cached_size_ = 0;
-  serialnumber_ = 0u;
-  status_ = 0u;
-  size_ = 0u;
 }
 
 Image::~Image() {
@@ -1764,8 +1600,6 @@ Image::~Image() {
 }
 
 void Image::SharedDtor() {
-  if (this != default_instance_) {
-  }
 }
 
 void Image::SetCachedSize(int size) const {
@@ -1774,16 +1608,14 @@ void Image::SetCachedSize(int size) const {
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
 }
 const ::google::protobuf::Descriptor* Image::descriptor() {
-  protobuf_AssignDescriptorsOnce();
-  return Image_descriptor_;
+  protobuf_message_2eproto::protobuf_AssignDescriptorsOnce();
+  return protobuf_message_2eproto::file_level_metadata[3].descriptor;
 }
 
 const Image& Image::default_instance() {
-  if (default_instance_ == NULL) protobuf_AddDesc_message_2eproto();
-  return *default_instance_;
+  protobuf_message_2eproto::InitDefaults();
+  return *internal_default_instance();
 }
-
-Image* Image::default_instance_ = NULL;
 
 Image* Image::New(::google::protobuf::Arena* arena) const {
   Image* n = new Image;
@@ -1795,27 +1627,8 @@ Image* Image::New(::google::protobuf::Arena* arena) const {
 
 void Image::Clear() {
 // @@protoc_insertion_point(message_clear_start:StreamingFormat.Image)
-#if defined(__clang__)
-#define ZR_HELPER_(f) \
-  _Pragma("clang diagnostic push") \
-  _Pragma("clang diagnostic ignored \"-Winvalid-offsetof\"") \
-  __builtin_offsetof(Image, f) \
-  _Pragma("clang diagnostic pop")
-#else
-#define ZR_HELPER_(f) reinterpret_cast<char*>(\
-  &reinterpret_cast<Image*>(16)->f)
-#endif
-
-#define ZR_(first, last) do {\
-  ::memset(&first, 0,\
-           ZR_HELPER_(last) - ZR_HELPER_(first) + sizeof(last));\
-} while (0)
-
-  ZR_(serialnumber_, size_);
-
-#undef ZR_HELPER_
-#undef ZR_
-
+  ::memset(&serialnumber_, 0, reinterpret_cast<char*>(&size_) -
+    reinterpret_cast<char*>(&serialnumber_) + sizeof(size_));
 }
 
 bool Image::MergePartialFromCodedStream(
@@ -1824,51 +1637,46 @@ bool Image::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:StreamingFormat.Image)
   for (;;) {
-    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // optional uint32 serialNumber = 2;
+      // uint32 serialNumber = 2;
       case 2: {
-        if (tag == 16) {
+        if (tag == 16u) {
+
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
                  input, &serialnumber_)));
-
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(24)) goto parse_status;
         break;
       }
 
-      // optional uint32 status = 3;
+      // uint32 status = 3;
       case 3: {
-        if (tag == 24) {
-         parse_status:
+        if (tag == 24u) {
+
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
                  input, &status_)));
-
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(32)) goto parse_size;
         break;
       }
 
-      // optional uint32 size = 4;
+      // uint32 size = 4;
       case 4: {
-        if (tag == 32) {
-         parse_size:
+        if (tag == 32u) {
+
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
                  input, &size_)));
-
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectAtEnd()) goto success;
         break;
       }
 
@@ -1896,17 +1704,17 @@ failure:
 void Image::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // @@protoc_insertion_point(serialize_start:StreamingFormat.Image)
-  // optional uint32 serialNumber = 2;
+  // uint32 serialNumber = 2;
   if (this->serialnumber() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteUInt32(2, this->serialnumber(), output);
   }
 
-  // optional uint32 status = 3;
+  // uint32 status = 3;
   if (this->status() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteUInt32(3, this->status(), output);
   }
 
-  // optional uint32 size = 4;
+  // uint32 size = 4;
   if (this->size() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteUInt32(4, this->size(), output);
   }
@@ -1916,18 +1724,19 @@ void Image::SerializeWithCachedSizes(
 
 ::google::protobuf::uint8* Image::InternalSerializeWithCachedSizesToArray(
     bool deterministic, ::google::protobuf::uint8* target) const {
+  (void)deterministic;  // Unused
   // @@protoc_insertion_point(serialize_to_array_start:StreamingFormat.Image)
-  // optional uint32 serialNumber = 2;
+  // uint32 serialNumber = 2;
   if (this->serialnumber() != 0) {
     target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(2, this->serialnumber(), target);
   }
 
-  // optional uint32 status = 3;
+  // uint32 status = 3;
   if (this->status() != 0) {
     target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(3, this->status(), target);
   }
 
-  // optional uint32 size = 4;
+  // uint32 size = 4;
   if (this->size() != 0) {
     target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(4, this->size(), target);
   }
@@ -1936,43 +1745,42 @@ void Image::SerializeWithCachedSizes(
   return target;
 }
 
-int Image::ByteSize() const {
+size_t Image::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:StreamingFormat.Image)
-  int total_size = 0;
+  size_t total_size = 0;
 
-  // optional uint32 serialNumber = 2;
+  // uint32 serialNumber = 2;
   if (this->serialnumber() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::UInt32Size(
         this->serialnumber());
   }
 
-  // optional uint32 status = 3;
+  // uint32 status = 3;
   if (this->status() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::UInt32Size(
         this->status());
   }
 
-  // optional uint32 size = 4;
+  // uint32 size = 4;
   if (this->size() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::UInt32Size(
         this->size());
   }
 
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = total_size;
+  _cached_size_ = cached_size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
   return total_size;
 }
 
 void Image::MergeFrom(const ::google::protobuf::Message& from) {
 // @@protoc_insertion_point(generalized_merge_from_start:StreamingFormat.Image)
-  if (GOOGLE_PREDICT_FALSE(&from == this)) {
-    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
-  }
-  const Image* source = 
+  GOOGLE_DCHECK_NE(&from, this);
+  const Image* source =
       ::google::protobuf::internal::DynamicCastToGenerated<const Image>(
           &from);
   if (source == NULL) {
@@ -1986,9 +1794,8 @@ void Image::MergeFrom(const ::google::protobuf::Message& from) {
 
 void Image::MergeFrom(const Image& from) {
 // @@protoc_insertion_point(class_specific_merge_from_start:StreamingFormat.Image)
-  if (GOOGLE_PREDICT_FALSE(&from == this)) {
-    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
-  }
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
   if (from.serialnumber() != 0) {
     set_serialnumber(from.serialnumber());
   }
@@ -2015,7 +1822,6 @@ void Image::CopyFrom(const Image& from) {
 }
 
 bool Image::IsInitialized() const {
-
   return true;
 }
 
@@ -2027,58 +1833,54 @@ void Image::InternalSwap(Image* other) {
   std::swap(serialnumber_, other->serialnumber_);
   std::swap(status_, other->status_);
   std::swap(size_, other->size_);
-  _internal_metadata_.Swap(&other->_internal_metadata_);
   std::swap(_cached_size_, other->_cached_size_);
 }
 
 ::google::protobuf::Metadata Image::GetMetadata() const {
-  protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::Metadata metadata;
-  metadata.descriptor = Image_descriptor_;
-  metadata.reflection = Image_reflection_;
-  return metadata;
+  protobuf_message_2eproto::protobuf_AssignDescriptorsOnce();
+  return protobuf_message_2eproto::file_level_metadata[3];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
 // Image
 
-// optional uint32 serialNumber = 2;
+// uint32 serialNumber = 2;
 void Image::clear_serialnumber() {
   serialnumber_ = 0u;
 }
- ::google::protobuf::uint32 Image::serialnumber() const {
+::google::protobuf::uint32 Image::serialnumber() const {
   // @@protoc_insertion_point(field_get:StreamingFormat.Image.serialNumber)
   return serialnumber_;
 }
- void Image::set_serialnumber(::google::protobuf::uint32 value) {
+void Image::set_serialnumber(::google::protobuf::uint32 value) {
   
   serialnumber_ = value;
   // @@protoc_insertion_point(field_set:StreamingFormat.Image.serialNumber)
 }
 
-// optional uint32 status = 3;
+// uint32 status = 3;
 void Image::clear_status() {
   status_ = 0u;
 }
- ::google::protobuf::uint32 Image::status() const {
+::google::protobuf::uint32 Image::status() const {
   // @@protoc_insertion_point(field_get:StreamingFormat.Image.status)
   return status_;
 }
- void Image::set_status(::google::protobuf::uint32 value) {
+void Image::set_status(::google::protobuf::uint32 value) {
   
   status_ = value;
   // @@protoc_insertion_point(field_set:StreamingFormat.Image.status)
 }
 
-// optional uint32 size = 4;
+// uint32 size = 4;
 void Image::clear_size() {
   size_ = 0u;
 }
- ::google::protobuf::uint32 Image::size() const {
+::google::protobuf::uint32 Image::size() const {
   // @@protoc_insertion_point(field_get:StreamingFormat.Image.size)
   return size_;
 }
- void Image::set_size(::google::protobuf::uint32 value) {
+void Image::set_size(::google::protobuf::uint32 value) {
   
   size_ = value;
   // @@protoc_insertion_point(field_set:StreamingFormat.Image.size)
@@ -2093,24 +1895,21 @@ void Image::clear_size() {
 
 Ending::Ending()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
+    protobuf_message_2eproto::InitDefaults();
+  }
   SharedCtor();
   // @@protoc_insertion_point(constructor:StreamingFormat.Ending)
 }
-
-void Ending::InitAsDefaultInstance() {
-  _is_default_instance_ = true;
-}
-
 Ending::Ending(const Ending& from)
   : ::google::protobuf::Message(),
-    _internal_metadata_(NULL) {
-  SharedCtor();
-  MergeFrom(from);
+      _internal_metadata_(NULL),
+      _cached_size_(0) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
   // @@protoc_insertion_point(copy_constructor:StreamingFormat.Ending)
 }
 
 void Ending::SharedCtor() {
-    _is_default_instance_ = false;
   _cached_size_ = 0;
 }
 
@@ -2120,8 +1919,6 @@ Ending::~Ending() {
 }
 
 void Ending::SharedDtor() {
-  if (this != default_instance_) {
-  }
 }
 
 void Ending::SetCachedSize(int size) const {
@@ -2130,16 +1927,14 @@ void Ending::SetCachedSize(int size) const {
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
 }
 const ::google::protobuf::Descriptor* Ending::descriptor() {
-  protobuf_AssignDescriptorsOnce();
-  return Ending_descriptor_;
+  protobuf_message_2eproto::protobuf_AssignDescriptorsOnce();
+  return protobuf_message_2eproto::file_level_metadata[4].descriptor;
 }
 
 const Ending& Ending::default_instance() {
-  if (default_instance_ == NULL) protobuf_AddDesc_message_2eproto();
-  return *default_instance_;
+  protobuf_message_2eproto::InitDefaults();
+  return *internal_default_instance();
 }
-
-Ending* Ending::default_instance_ = NULL;
 
 Ending* Ending::New(::google::protobuf::Arena* arena) const {
   Ending* n = new Ending;
@@ -2159,7 +1954,7 @@ bool Ending::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:StreamingFormat.Ending)
   for (;;) {
-    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
   handle_unusual:
@@ -2187,27 +1982,27 @@ void Ending::SerializeWithCachedSizes(
 
 ::google::protobuf::uint8* Ending::InternalSerializeWithCachedSizesToArray(
     bool deterministic, ::google::protobuf::uint8* target) const {
+  (void)deterministic;  // Unused
   // @@protoc_insertion_point(serialize_to_array_start:StreamingFormat.Ending)
   // @@protoc_insertion_point(serialize_to_array_end:StreamingFormat.Ending)
   return target;
 }
 
-int Ending::ByteSize() const {
+size_t Ending::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:StreamingFormat.Ending)
-  int total_size = 0;
+  size_t total_size = 0;
 
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = total_size;
+  _cached_size_ = cached_size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
   return total_size;
 }
 
 void Ending::MergeFrom(const ::google::protobuf::Message& from) {
 // @@protoc_insertion_point(generalized_merge_from_start:StreamingFormat.Ending)
-  if (GOOGLE_PREDICT_FALSE(&from == this)) {
-    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
-  }
-  const Ending* source = 
+  GOOGLE_DCHECK_NE(&from, this);
+  const Ending* source =
       ::google::protobuf::internal::DynamicCastToGenerated<const Ending>(
           &from);
   if (source == NULL) {
@@ -2221,9 +2016,8 @@ void Ending::MergeFrom(const ::google::protobuf::Message& from) {
 
 void Ending::MergeFrom(const Ending& from) {
 // @@protoc_insertion_point(class_specific_merge_from_start:StreamingFormat.Ending)
-  if (GOOGLE_PREDICT_FALSE(&from == this)) {
-    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
-  }
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
 }
 
 void Ending::CopyFrom(const ::google::protobuf::Message& from) {
@@ -2241,7 +2035,6 @@ void Ending::CopyFrom(const Ending& from) {
 }
 
 bool Ending::IsInitialized() const {
-
   return true;
 }
 
@@ -2250,16 +2043,12 @@ void Ending::Swap(Ending* other) {
   InternalSwap(other);
 }
 void Ending::InternalSwap(Ending* other) {
-  _internal_metadata_.Swap(&other->_internal_metadata_);
   std::swap(_cached_size_, other->_cached_size_);
 }
 
 ::google::protobuf::Metadata Ending::GetMetadata() const {
-  protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::Metadata metadata;
-  metadata.descriptor = Ending_descriptor_;
-  metadata.reflection = Ending_reflection_;
-  return metadata;
+  protobuf_message_2eproto::protobuf_AssignDescriptorsOnce();
+  return protobuf_message_2eproto::file_level_metadata[4];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -2280,36 +2069,50 @@ const int StreamingMessage::kEndingMsgFieldNumber;
 
 StreamingMessage::StreamingMessage()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
+    protobuf_message_2eproto::InitDefaults();
+  }
   SharedCtor();
   // @@protoc_insertion_point(constructor:StreamingFormat.StreamingMessage)
 }
-
-void StreamingMessage::InitAsDefaultInstance() {
-  _is_default_instance_ = true;
-  initmsg_ = const_cast< ::StreamingFormat::Init*>(&::StreamingFormat::Init::default_instance());
-  defaultposmsg_ = const_cast< ::StreamingFormat::DefaultPos*>(&::StreamingFormat::DefaultPos::default_instance());
-  cameramsg_ = const_cast< ::StreamingFormat::Camera*>(&::StreamingFormat::Camera::default_instance());
-  imagemsg_ = const_cast< ::StreamingFormat::Image*>(&::StreamingFormat::Image::default_instance());
-  endingmsg_ = const_cast< ::StreamingFormat::Ending*>(&::StreamingFormat::Ending::default_instance());
-}
-
 StreamingMessage::StreamingMessage(const StreamingMessage& from)
   : ::google::protobuf::Message(),
-    _internal_metadata_(NULL) {
-  SharedCtor();
-  MergeFrom(from);
+      _internal_metadata_(NULL),
+      _cached_size_(0) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  if (from.has_initmsg()) {
+    initmsg_ = new ::StreamingFormat::Init(*from.initmsg_);
+  } else {
+    initmsg_ = NULL;
+  }
+  if (from.has_defaultposmsg()) {
+    defaultposmsg_ = new ::StreamingFormat::DefaultPos(*from.defaultposmsg_);
+  } else {
+    defaultposmsg_ = NULL;
+  }
+  if (from.has_cameramsg()) {
+    cameramsg_ = new ::StreamingFormat::Camera(*from.cameramsg_);
+  } else {
+    cameramsg_ = NULL;
+  }
+  if (from.has_imagemsg()) {
+    imagemsg_ = new ::StreamingFormat::Image(*from.imagemsg_);
+  } else {
+    imagemsg_ = NULL;
+  }
+  if (from.has_endingmsg()) {
+    endingmsg_ = new ::StreamingFormat::Ending(*from.endingmsg_);
+  } else {
+    endingmsg_ = NULL;
+  }
+  type_ = from.type_;
   // @@protoc_insertion_point(copy_constructor:StreamingFormat.StreamingMessage)
 }
 
 void StreamingMessage::SharedCtor() {
-    _is_default_instance_ = false;
+  ::memset(&initmsg_, 0, reinterpret_cast<char*>(&type_) -
+    reinterpret_cast<char*>(&initmsg_) + sizeof(type_));
   _cached_size_ = 0;
-  type_ = 0;
-  initmsg_ = NULL;
-  defaultposmsg_ = NULL;
-  cameramsg_ = NULL;
-  imagemsg_ = NULL;
-  endingmsg_ = NULL;
 }
 
 StreamingMessage::~StreamingMessage() {
@@ -2318,11 +2121,19 @@ StreamingMessage::~StreamingMessage() {
 }
 
 void StreamingMessage::SharedDtor() {
-  if (this != default_instance_) {
+  if (this != internal_default_instance()) {
     delete initmsg_;
+  }
+  if (this != internal_default_instance()) {
     delete defaultposmsg_;
+  }
+  if (this != internal_default_instance()) {
     delete cameramsg_;
+  }
+  if (this != internal_default_instance()) {
     delete imagemsg_;
+  }
+  if (this != internal_default_instance()) {
     delete endingmsg_;
   }
 }
@@ -2333,16 +2144,14 @@ void StreamingMessage::SetCachedSize(int size) const {
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
 }
 const ::google::protobuf::Descriptor* StreamingMessage::descriptor() {
-  protobuf_AssignDescriptorsOnce();
-  return StreamingMessage_descriptor_;
+  protobuf_message_2eproto::protobuf_AssignDescriptorsOnce();
+  return protobuf_message_2eproto::file_level_metadata[5].descriptor;
 }
 
 const StreamingMessage& StreamingMessage::default_instance() {
-  if (default_instance_ == NULL) protobuf_AddDesc_message_2eproto();
-  return *default_instance_;
+  protobuf_message_2eproto::InitDefaults();
+  return *internal_default_instance();
 }
-
-StreamingMessage* StreamingMessage::default_instance_ = NULL;
 
 StreamingMessage* StreamingMessage::New(::google::protobuf::Arena* arena) const {
   StreamingMessage* n = new StreamingMessage;
@@ -2354,17 +2163,27 @@ StreamingMessage* StreamingMessage::New(::google::protobuf::Arena* arena) const 
 
 void StreamingMessage::Clear() {
 // @@protoc_insertion_point(message_clear_start:StreamingFormat.StreamingMessage)
-  type_ = 0;
-  if (GetArenaNoVirtual() == NULL && initmsg_ != NULL) delete initmsg_;
+  if (GetArenaNoVirtual() == NULL && initmsg_ != NULL) {
+    delete initmsg_;
+  }
   initmsg_ = NULL;
-  if (GetArenaNoVirtual() == NULL && defaultposmsg_ != NULL) delete defaultposmsg_;
+  if (GetArenaNoVirtual() == NULL && defaultposmsg_ != NULL) {
+    delete defaultposmsg_;
+  }
   defaultposmsg_ = NULL;
-  if (GetArenaNoVirtual() == NULL && cameramsg_ != NULL) delete cameramsg_;
+  if (GetArenaNoVirtual() == NULL && cameramsg_ != NULL) {
+    delete cameramsg_;
+  }
   cameramsg_ = NULL;
-  if (GetArenaNoVirtual() == NULL && imagemsg_ != NULL) delete imagemsg_;
+  if (GetArenaNoVirtual() == NULL && imagemsg_ != NULL) {
+    delete imagemsg_;
+  }
   imagemsg_ = NULL;
-  if (GetArenaNoVirtual() == NULL && endingmsg_ != NULL) delete endingmsg_;
+  if (GetArenaNoVirtual() == NULL && endingmsg_ != NULL) {
+    delete endingmsg_;
+  }
   endingmsg_ = NULL;
+  type_ = 0;
 }
 
 bool StreamingMessage::MergePartialFromCodedStream(
@@ -2373,13 +2192,13 @@ bool StreamingMessage::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:StreamingFormat.StreamingMessage)
   for (;;) {
-    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // optional .StreamingFormat.MessageType type = 1;
+      // .StreamingFormat.MessageType type = 1;
       case 1: {
-        if (tag == 8) {
+        if (tag == 8u) {
           int value;
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
@@ -2388,72 +2207,61 @@ bool StreamingMessage::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(18)) goto parse_initMsg;
         break;
       }
 
-      // optional .StreamingFormat.Init initMsg = 2;
+      // .StreamingFormat.Init initMsg = 2;
       case 2: {
-        if (tag == 18) {
-         parse_initMsg:
+        if (tag == 18u) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
                input, mutable_initmsg()));
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(26)) goto parse_defaultPosMsg;
         break;
       }
 
-      // optional .StreamingFormat.DefaultPos defaultPosMsg = 3;
+      // .StreamingFormat.DefaultPos defaultPosMsg = 3;
       case 3: {
-        if (tag == 26) {
-         parse_defaultPosMsg:
+        if (tag == 26u) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
                input, mutable_defaultposmsg()));
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(34)) goto parse_cameraMsg;
         break;
       }
 
-      // optional .StreamingFormat.Camera cameraMsg = 4;
+      // .StreamingFormat.Camera cameraMsg = 4;
       case 4: {
-        if (tag == 34) {
-         parse_cameraMsg:
+        if (tag == 34u) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
                input, mutable_cameramsg()));
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(42)) goto parse_imageMsg;
         break;
       }
 
-      // optional .StreamingFormat.Image imageMsg = 5;
+      // .StreamingFormat.Image imageMsg = 5;
       case 5: {
-        if (tag == 42) {
-         parse_imageMsg:
+        if (tag == 42u) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
                input, mutable_imagemsg()));
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(50)) goto parse_endingMsg;
         break;
       }
 
-      // optional .StreamingFormat.Ending endingMsg = 6;
+      // .StreamingFormat.Ending endingMsg = 6;
       case 6: {
-        if (tag == 50) {
-         parse_endingMsg:
+        if (tag == 50u) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
                input, mutable_endingmsg()));
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectAtEnd()) goto success;
         break;
       }
 
@@ -2481,37 +2289,37 @@ failure:
 void StreamingMessage::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // @@protoc_insertion_point(serialize_start:StreamingFormat.StreamingMessage)
-  // optional .StreamingFormat.MessageType type = 1;
+  // .StreamingFormat.MessageType type = 1;
   if (this->type() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteEnum(
       1, this->type(), output);
   }
 
-  // optional .StreamingFormat.Init initMsg = 2;
+  // .StreamingFormat.Init initMsg = 2;
   if (this->has_initmsg()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       2, *this->initmsg_, output);
   }
 
-  // optional .StreamingFormat.DefaultPos defaultPosMsg = 3;
+  // .StreamingFormat.DefaultPos defaultPosMsg = 3;
   if (this->has_defaultposmsg()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       3, *this->defaultposmsg_, output);
   }
 
-  // optional .StreamingFormat.Camera cameraMsg = 4;
+  // .StreamingFormat.Camera cameraMsg = 4;
   if (this->has_cameramsg()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       4, *this->cameramsg_, output);
   }
 
-  // optional .StreamingFormat.Image imageMsg = 5;
+  // .StreamingFormat.Image imageMsg = 5;
   if (this->has_imagemsg()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       5, *this->imagemsg_, output);
   }
 
-  // optional .StreamingFormat.Ending endingMsg = 6;
+  // .StreamingFormat.Ending endingMsg = 6;
   if (this->has_endingmsg()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       6, *this->endingmsg_, output);
@@ -2522,42 +2330,43 @@ void StreamingMessage::SerializeWithCachedSizes(
 
 ::google::protobuf::uint8* StreamingMessage::InternalSerializeWithCachedSizesToArray(
     bool deterministic, ::google::protobuf::uint8* target) const {
+  (void)deterministic;  // Unused
   // @@protoc_insertion_point(serialize_to_array_start:StreamingFormat.StreamingMessage)
-  // optional .StreamingFormat.MessageType type = 1;
+  // .StreamingFormat.MessageType type = 1;
   if (this->type() != 0) {
     target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
       1, this->type(), target);
   }
 
-  // optional .StreamingFormat.Init initMsg = 2;
+  // .StreamingFormat.Init initMsg = 2;
   if (this->has_initmsg()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageNoVirtualToArray(
         2, *this->initmsg_, false, target);
   }
 
-  // optional .StreamingFormat.DefaultPos defaultPosMsg = 3;
+  // .StreamingFormat.DefaultPos defaultPosMsg = 3;
   if (this->has_defaultposmsg()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageNoVirtualToArray(
         3, *this->defaultposmsg_, false, target);
   }
 
-  // optional .StreamingFormat.Camera cameraMsg = 4;
+  // .StreamingFormat.Camera cameraMsg = 4;
   if (this->has_cameramsg()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageNoVirtualToArray(
         4, *this->cameramsg_, false, target);
   }
 
-  // optional .StreamingFormat.Image imageMsg = 5;
+  // .StreamingFormat.Image imageMsg = 5;
   if (this->has_imagemsg()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageNoVirtualToArray(
         5, *this->imagemsg_, false, target);
   }
 
-  // optional .StreamingFormat.Ending endingMsg = 6;
+  // .StreamingFormat.Ending endingMsg = 6;
   if (this->has_endingmsg()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageNoVirtualToArray(
@@ -2568,63 +2377,62 @@ void StreamingMessage::SerializeWithCachedSizes(
   return target;
 }
 
-int StreamingMessage::ByteSize() const {
+size_t StreamingMessage::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:StreamingFormat.StreamingMessage)
-  int total_size = 0;
+  size_t total_size = 0;
 
-  // optional .StreamingFormat.MessageType type = 1;
-  if (this->type() != 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::EnumSize(this->type());
-  }
-
-  // optional .StreamingFormat.Init initMsg = 2;
+  // .StreamingFormat.Init initMsg = 2;
   if (this->has_initmsg()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
         *this->initmsg_);
   }
 
-  // optional .StreamingFormat.DefaultPos defaultPosMsg = 3;
+  // .StreamingFormat.DefaultPos defaultPosMsg = 3;
   if (this->has_defaultposmsg()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
         *this->defaultposmsg_);
   }
 
-  // optional .StreamingFormat.Camera cameraMsg = 4;
+  // .StreamingFormat.Camera cameraMsg = 4;
   if (this->has_cameramsg()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
         *this->cameramsg_);
   }
 
-  // optional .StreamingFormat.Image imageMsg = 5;
+  // .StreamingFormat.Image imageMsg = 5;
   if (this->has_imagemsg()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
         *this->imagemsg_);
   }
 
-  // optional .StreamingFormat.Ending endingMsg = 6;
+  // .StreamingFormat.Ending endingMsg = 6;
   if (this->has_endingmsg()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
         *this->endingmsg_);
   }
 
+  // .StreamingFormat.MessageType type = 1;
+  if (this->type() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::EnumSize(this->type());
+  }
+
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = total_size;
+  _cached_size_ = cached_size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
   return total_size;
 }
 
 void StreamingMessage::MergeFrom(const ::google::protobuf::Message& from) {
 // @@protoc_insertion_point(generalized_merge_from_start:StreamingFormat.StreamingMessage)
-  if (GOOGLE_PREDICT_FALSE(&from == this)) {
-    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
-  }
-  const StreamingMessage* source = 
+  GOOGLE_DCHECK_NE(&from, this);
+  const StreamingMessage* source =
       ::google::protobuf::internal::DynamicCastToGenerated<const StreamingMessage>(
           &from);
   if (source == NULL) {
@@ -2638,12 +2446,8 @@ void StreamingMessage::MergeFrom(const ::google::protobuf::Message& from) {
 
 void StreamingMessage::MergeFrom(const StreamingMessage& from) {
 // @@protoc_insertion_point(class_specific_merge_from_start:StreamingFormat.StreamingMessage)
-  if (GOOGLE_PREDICT_FALSE(&from == this)) {
-    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
-  }
-  if (from.type() != 0) {
-    set_type(from.type());
-  }
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
   if (from.has_initmsg()) {
     mutable_initmsg()->::StreamingFormat::Init::MergeFrom(from.initmsg());
   }
@@ -2658,6 +2462,9 @@ void StreamingMessage::MergeFrom(const StreamingMessage& from) {
   }
   if (from.has_endingmsg()) {
     mutable_endingmsg()->::StreamingFormat::Ending::MergeFrom(from.endingmsg());
+  }
+  if (from.type() != 0) {
+    set_type(from.type());
   }
 }
 
@@ -2676,7 +2483,6 @@ void StreamingMessage::CopyFrom(const StreamingMessage& from) {
 }
 
 bool StreamingMessage::IsInitialized() const {
-
   return true;
 }
 
@@ -2685,44 +2491,40 @@ void StreamingMessage::Swap(StreamingMessage* other) {
   InternalSwap(other);
 }
 void StreamingMessage::InternalSwap(StreamingMessage* other) {
-  std::swap(type_, other->type_);
   std::swap(initmsg_, other->initmsg_);
   std::swap(defaultposmsg_, other->defaultposmsg_);
   std::swap(cameramsg_, other->cameramsg_);
   std::swap(imagemsg_, other->imagemsg_);
   std::swap(endingmsg_, other->endingmsg_);
-  _internal_metadata_.Swap(&other->_internal_metadata_);
+  std::swap(type_, other->type_);
   std::swap(_cached_size_, other->_cached_size_);
 }
 
 ::google::protobuf::Metadata StreamingMessage::GetMetadata() const {
-  protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::Metadata metadata;
-  metadata.descriptor = StreamingMessage_descriptor_;
-  metadata.reflection = StreamingMessage_reflection_;
-  return metadata;
+  protobuf_message_2eproto::protobuf_AssignDescriptorsOnce();
+  return protobuf_message_2eproto::file_level_metadata[5];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
 // StreamingMessage
 
-// optional .StreamingFormat.MessageType type = 1;
+// .StreamingFormat.MessageType type = 1;
 void StreamingMessage::clear_type() {
   type_ = 0;
 }
- ::StreamingFormat::MessageType StreamingMessage::type() const {
+::StreamingFormat::MessageType StreamingMessage::type() const {
   // @@protoc_insertion_point(field_get:StreamingFormat.StreamingMessage.type)
   return static_cast< ::StreamingFormat::MessageType >(type_);
 }
- void StreamingMessage::set_type(::StreamingFormat::MessageType value) {
+void StreamingMessage::set_type(::StreamingFormat::MessageType value) {
   
   type_ = value;
   // @@protoc_insertion_point(field_set:StreamingFormat.StreamingMessage.type)
 }
 
-// optional .StreamingFormat.Init initMsg = 2;
+// .StreamingFormat.Init initMsg = 2;
 bool StreamingMessage::has_initmsg() const {
-  return !_is_default_instance_ && initmsg_ != NULL;
+  return this != internal_default_instance() && initmsg_ != NULL;
 }
 void StreamingMessage::clear_initmsg() {
   if (GetArenaNoVirtual() == NULL && initmsg_ != NULL) delete initmsg_;
@@ -2730,7 +2532,8 @@ void StreamingMessage::clear_initmsg() {
 }
 const ::StreamingFormat::Init& StreamingMessage::initmsg() const {
   // @@protoc_insertion_point(field_get:StreamingFormat.StreamingMessage.initMsg)
-  return initmsg_ != NULL ? *initmsg_ : *default_instance_->initmsg_;
+  return initmsg_ != NULL ? *initmsg_
+                         : *::StreamingFormat::Init::internal_default_instance();
 }
 ::StreamingFormat::Init* StreamingMessage::mutable_initmsg() {
   
@@ -2758,9 +2561,9 @@ void StreamingMessage::set_allocated_initmsg(::StreamingFormat::Init* initmsg) {
   // @@protoc_insertion_point(field_set_allocated:StreamingFormat.StreamingMessage.initMsg)
 }
 
-// optional .StreamingFormat.DefaultPos defaultPosMsg = 3;
+// .StreamingFormat.DefaultPos defaultPosMsg = 3;
 bool StreamingMessage::has_defaultposmsg() const {
-  return !_is_default_instance_ && defaultposmsg_ != NULL;
+  return this != internal_default_instance() && defaultposmsg_ != NULL;
 }
 void StreamingMessage::clear_defaultposmsg() {
   if (GetArenaNoVirtual() == NULL && defaultposmsg_ != NULL) delete defaultposmsg_;
@@ -2768,7 +2571,8 @@ void StreamingMessage::clear_defaultposmsg() {
 }
 const ::StreamingFormat::DefaultPos& StreamingMessage::defaultposmsg() const {
   // @@protoc_insertion_point(field_get:StreamingFormat.StreamingMessage.defaultPosMsg)
-  return defaultposmsg_ != NULL ? *defaultposmsg_ : *default_instance_->defaultposmsg_;
+  return defaultposmsg_ != NULL ? *defaultposmsg_
+                         : *::StreamingFormat::DefaultPos::internal_default_instance();
 }
 ::StreamingFormat::DefaultPos* StreamingMessage::mutable_defaultposmsg() {
   
@@ -2796,9 +2600,9 @@ void StreamingMessage::set_allocated_defaultposmsg(::StreamingFormat::DefaultPos
   // @@protoc_insertion_point(field_set_allocated:StreamingFormat.StreamingMessage.defaultPosMsg)
 }
 
-// optional .StreamingFormat.Camera cameraMsg = 4;
+// .StreamingFormat.Camera cameraMsg = 4;
 bool StreamingMessage::has_cameramsg() const {
-  return !_is_default_instance_ && cameramsg_ != NULL;
+  return this != internal_default_instance() && cameramsg_ != NULL;
 }
 void StreamingMessage::clear_cameramsg() {
   if (GetArenaNoVirtual() == NULL && cameramsg_ != NULL) delete cameramsg_;
@@ -2806,7 +2610,8 @@ void StreamingMessage::clear_cameramsg() {
 }
 const ::StreamingFormat::Camera& StreamingMessage::cameramsg() const {
   // @@protoc_insertion_point(field_get:StreamingFormat.StreamingMessage.cameraMsg)
-  return cameramsg_ != NULL ? *cameramsg_ : *default_instance_->cameramsg_;
+  return cameramsg_ != NULL ? *cameramsg_
+                         : *::StreamingFormat::Camera::internal_default_instance();
 }
 ::StreamingFormat::Camera* StreamingMessage::mutable_cameramsg() {
   
@@ -2834,9 +2639,9 @@ void StreamingMessage::set_allocated_cameramsg(::StreamingFormat::Camera* camera
   // @@protoc_insertion_point(field_set_allocated:StreamingFormat.StreamingMessage.cameraMsg)
 }
 
-// optional .StreamingFormat.Image imageMsg = 5;
+// .StreamingFormat.Image imageMsg = 5;
 bool StreamingMessage::has_imagemsg() const {
-  return !_is_default_instance_ && imagemsg_ != NULL;
+  return this != internal_default_instance() && imagemsg_ != NULL;
 }
 void StreamingMessage::clear_imagemsg() {
   if (GetArenaNoVirtual() == NULL && imagemsg_ != NULL) delete imagemsg_;
@@ -2844,7 +2649,8 @@ void StreamingMessage::clear_imagemsg() {
 }
 const ::StreamingFormat::Image& StreamingMessage::imagemsg() const {
   // @@protoc_insertion_point(field_get:StreamingFormat.StreamingMessage.imageMsg)
-  return imagemsg_ != NULL ? *imagemsg_ : *default_instance_->imagemsg_;
+  return imagemsg_ != NULL ? *imagemsg_
+                         : *::StreamingFormat::Image::internal_default_instance();
 }
 ::StreamingFormat::Image* StreamingMessage::mutable_imagemsg() {
   
@@ -2872,9 +2678,9 @@ void StreamingMessage::set_allocated_imagemsg(::StreamingFormat::Image* imagemsg
   // @@protoc_insertion_point(field_set_allocated:StreamingFormat.StreamingMessage.imageMsg)
 }
 
-// optional .StreamingFormat.Ending endingMsg = 6;
+// .StreamingFormat.Ending endingMsg = 6;
 bool StreamingMessage::has_endingmsg() const {
-  return !_is_default_instance_ && endingmsg_ != NULL;
+  return this != internal_default_instance() && endingmsg_ != NULL;
 }
 void StreamingMessage::clear_endingmsg() {
   if (GetArenaNoVirtual() == NULL && endingmsg_ != NULL) delete endingmsg_;
@@ -2882,7 +2688,8 @@ void StreamingMessage::clear_endingmsg() {
 }
 const ::StreamingFormat::Ending& StreamingMessage::endingmsg() const {
   // @@protoc_insertion_point(field_get:StreamingFormat.StreamingMessage.endingMsg)
-  return endingmsg_ != NULL ? *endingmsg_ : *default_instance_->endingmsg_;
+  return endingmsg_ != NULL ? *endingmsg_
+                         : *::StreamingFormat::Ending::internal_default_instance();
 }
 ::StreamingFormat::Ending* StreamingMessage::mutable_endingmsg() {
   
