@@ -26,13 +26,11 @@ namespace SP {
 
 		encodeHeader(buffer, msgSize);
 
-		// KAOCC: check the argument
-		return messagePtr->SerializeWithCachedSizesToArray(&buffer[HEADER_SIZE]);
-
+		return messagePtr->SerializeToArray(&buffer[HEADER_SIZE], msgSize);
 	}
 
 	bool Packet::unpacking(const DataBuffer & buffer) {
-		//return messagePtr->;
+		return messagePtr->ParseFromArray(&buffer[HEADER_SIZE], buffer.size() - HEADER_SIZE);
 	}
 
 	size_t Packet::decodeHeader(const DataBuffer & buffer) const {
@@ -55,7 +53,6 @@ namespace SP {
 	void Packet::encodeHeader(DataBuffer & buffer, size_t size) const {
 
 		// KAOCC: check the endianness
-
 		buffer[0] = static_cast<uint8_t>((size >> 24) & 0xFF);
 		buffer[1] = static_cast<uint8_t>((size >> 16) & 0xFF);
 		buffer[2] = static_cast<uint8_t>((size >> 8) & 0xFF);
