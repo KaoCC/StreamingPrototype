@@ -2,8 +2,17 @@
 
 if os.is("windows") then
 
+    print("Boost : please input path (enter for the default):")
+    io.flush()
+    local boostUserInput = io.read()
+    print("Boost : user input path:", boostUserInput)
+
     -- tmp: include boost here
-    local boostPath = "E:\\boost_1_63_0"
+    local boostPath = "H:\\boost_1_63_0"
+
+    if (boostUserInput ~= "") then 
+        boostPath = boostUserInput
+    end
 
     if (os.isdir(boostPath) and boostPath ~= "") then
         boostPath = string.gsub(boostPath, "\\", "/");
@@ -15,13 +24,13 @@ if os.is("windows") then
         if (os.isdir(boostInclude) and os.isdir(boostLibs)) then
 
             print ("Boost include path: ", boostInclude)
-            print ("C++ Library path: ", boostLibs)
+            print ("C++ Boost Library path: ", boostLibs)
 
             includedirs {boostInclude}
             libdirs {boostLibs}
 
         else
-            print("include path and libraries NOT FOUND")
+            print("Boost : include path and libraries NOT FOUND")
         end
 
     else

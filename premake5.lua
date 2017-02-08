@@ -35,6 +35,9 @@ workspace "StreamingPrototype"
 
     -- find include dirs and link with Boost
     dofile ("./FindBoost.lua")
+
+    -- find include dirs and link with protobuf
+    dofile ("./FindProtobuf.lua")
     
     project "SP"
 
