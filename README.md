@@ -1,6 +1,12 @@
 # StreamingPrototype
 Streaming Prototype
 
+## System requirements
+
+- [C++ Boost 1.63](http://www.boost.org/)
+- [Google Protocol Buffer v3.2.0](https://github.com/google/protobuf)
+
+
 ## Build
 
 ### Windows
