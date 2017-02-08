@@ -29,6 +29,7 @@ if os.is("windows") then
 
             includedirs {protobufInclude}
             libdirs {protobufLibs}
+            links {"libprotobuf"}
 
         else
             print("protobuf : include path and libraries NOT FOUND")

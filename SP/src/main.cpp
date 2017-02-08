@@ -2,14 +2,30 @@
 
 #include <iostream>
 
-#include "Common.hpp"
+//#include "Common.hpp"
+
+//#include "Server.hpp"
 
 
 
 
+int main(int argc, char *argv[]) {
 
-int main() {
+	unsigned port = 8051;
+	
+	if (argc > 1) {
+		//port = std::stoi(std::string(argv[1]));
+	}
 
+	std::cout << "Server : Listen on Port " << port << std::endl;
+
+	try {
+		//boost::asio::io_service ios;
+		//SP::Server(ios, port);
+
+	} catch (std::exception& e) {
+		std::cerr << e.what() << std::endl;
+	}
 
 
 

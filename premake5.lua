@@ -1,4 +1,7 @@
 
+if os.is("windows") then
+    defines{ "WIN32" }
+end
 
 workspace "StreamingPrototype"
 
@@ -42,6 +45,9 @@ workspace "StreamingPrototype"
     project "SP"
 
         kind "ConsoleApp"
+
+        -- tmp
+        flags { "StaticRuntime" }
 
         includedirs {"SP/include"}
         files {"SP/**.cpp", "SP/**.hpp", "SP/**.h", "SP/**.cc"}
