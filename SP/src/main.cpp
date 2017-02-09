@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
 	unsigned port = 8051;
 	
 	if (argc > 1) {
-		//port = std::stoi(std::string(argv[1]));
+		port = std::stoi(std::string(argv[1]));
 	}
 
 	std::cout << "Server : Listen on Port " << port << std::endl;
@@ -22,6 +22,7 @@ int main(int argc, char *argv[]) {
 	try {
 		boost::asio::io_service ios;
 		SP::Server(ios, port);
+		ios.run();
 
 	} catch (std::exception& e) {
 		std::cerr << e.what() << std::endl;
