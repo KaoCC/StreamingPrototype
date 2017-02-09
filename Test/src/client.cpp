@@ -2,6 +2,7 @@
 #include <iostream>
 #include <boost/asio.hpp>
 
+#include "message.pb.h"
 
 using boost::asio::ip::tcp;
 
@@ -31,6 +32,10 @@ int main(int argc, char* argv[]) {
 		//}
 
 		boost::system::error_code error;
+
+
+		//StreamingFormat::Init init;
+		//init.set_width(0);
 
 		// ...
 

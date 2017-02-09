@@ -49,13 +49,17 @@ workspace "StreamingPrototype"
         -- tmp
         flags { "StaticRuntime" }
 
-        includedirs {"SP/include"}
-        files {"SP/**.cpp", "SP/**.hpp", "SP/**.h", "SP/**.cc"}
+        includedirs {"SP/include", "Protocol/"}
+        files {"SP/**.cpp", "SP/**.hpp", "SP/**.h", "SP/**.cc", "Protocol/**.cc", "Protocol/**.h"}
 
 
     project "Test"
 
         kind "ConsoleApp"
-        includedirs {"Test/include"}
-        files {"Test/**.cpp"}
+
+        -- tmp
+        flags { "StaticRuntime" }
+
+        includedirs {"Test/include", "SP/include", "Protocol/"}
+        files {"Test/**.cpp", "Protocol/**.cc", "Protocol/**.h"}
 
