@@ -34,10 +34,16 @@ namespace SP {
 		void handleReadMessage(const boost::system::error_code& error);
 
 
-		void resolvePacket();
+		Packet::MessagePointer resolvePacket();
 
 		Packet::MessagePointer createResponse(Packet::MessagePointer msgPtr);
 
+		void writeRseponse(Packet::MessagePointer msgPtr);
+
+
+		// data members 
+
+		// socket
 		boost::asio::ip::tcp::socket streamingSocket;
 
 		// buffers
