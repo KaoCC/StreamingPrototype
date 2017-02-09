@@ -13,48 +13,47 @@ enum MessageType {
 
 
 message Init {
-    //MessageType type = 1;
+
     uint32 width = 2;
-    uint32 hight = 3;
+    uint32 height = 3;
     uint32 moduleID = 4;
 
     // Time format ?
 }
 
 message DefaultPos {
-    //MessageType type = 1;
-    uint32 x = 2;
-	uint32 y = 3;
-	uint32 z = 4;
-	uint32 vx = 5;
-	uint32 vy = 6;
-	uint32 vz = 7;
+
+    float x = 2;
+	float y = 3;
+	float z = 4;
+	float vx = 5;
+	float vy = 6;
+	float vz = 7;
 }
 
 message Camera {
-	//MessageType type = 1;
+
 	uint32 serialNumber = 2;
-	uint32 delta_x = 3;
-	uint32 delta_y = 4;
-	uint32 delta_z = 5;
-	uint32 delta_vx = 6;
-	uint32 delta_vy = 7;
-	uint32 delta_vz = 8;
+	float delta_x = 3;
+	float delta_y = 4;
+	float delta_z = 5;
+	float delta_vx = 6;
+	float delta_vy = 7;
+	float delta_vz = 8;
 }
 
 
 message Image {
-    //MessageType type = 1;
+
     uint32 serialNumber = 2;
 	uint32 status = 3;
 	// time ?
-	uint32 size = 4;
-	// data ?
-	// ...
+	uint32 byteSize = 4;
+	bytes imageData = 5;
 }
 
 message Ending {
-    //MessageType type = 1;
+
 }
 
 

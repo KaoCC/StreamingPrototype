@@ -4,73 +4,84 @@
 
 
 #include <cstdint>
+#include <vector>
 
 
 namespace SP {
 
 
+	struct Position {
 
-	enum PacketType : uint8_t {
-		PkktInit = 0,
-		PktDefaultPos = 1,
-		PktCameraInfo = 2,
-		PktImage = 3,
-		PktEnding = 4
+		Position(float xIn, float yIn, float zIn) : x(xIn), y(yIn), z(zIn) {
+		}
+
+		float x;
+		float y;
+		float z;
+	};
+
+	struct Direction {
+
+		Direction(float vxIn, float vyIn, float vzIn) : vx(vxIn), vy(vyIn), vz(vzIn) {
+		}
+
+		float vx;
+		float vy;
+		float vz;
+	};
+
+	struct CameraConfig {
+
+		CameraConfig(Position p, Direction d): pos(p), dir(d) {
+		}
+
+		Position pos;
+		Direction dir;
 	};
 
 
-	// Host Format !
-	// Pending: ntohs, nothl, htons, and htonl.
 
-	struct InItPacket {
-		const uint8_t type = PkktInit;
+	struct ScreenConfig {
+
+		ScreenConfig(uint32_t w, uint32_t h) : width(w), height(h){
+
+		}
+
 		uint32_t width;
-		uint32_t hight;
-		uint32_t moduleID;
-
-		// Time ?
-	};
-
-	struct DefaultPosPacket {
-		const uint8_t type = PktDefaultPos;
-		uint32_t x;
-		uint32_t y;
-		uint32_t z;
-		uint32_t vx;
-		uint32_t vy;
-		uint32_t vz;
-
-	};
-
-	struct CameraPacket {
-		const uint8_t type = PktCameraInfo;
-		uint32_t serialNumber;
-		uint32_t delta_x;
-		uint32_t delta_y;
-		uint32_t delta_z;
-		uint32_t delta_vx;
-		uint32_t delta_vy;
-		uint32_t delta_vz;
+		uint32_t height;
 	};
 
 
-	struct ImagePacket {
-		const uint8_t type = PktImage;
-		uint32_t serialNumber;
-		uint32_t status;
-		// time ?
-		uint32_t size;
-		// data ?
+	class ImageConfig {
+	public:
+		using ImageBuffer = std::vector<uint8_t>;
+
+		// for testing only
+		ImageConfig(uint8_t init, size_t size) {
+			imageData.resize(size);
+
+			for (size_t i = 0; i < size; ++i) {
+				imageData[i] = init;
+			}
+		}
+
+		size_t getByteSize() const {
+			return imageData.size() * sizeof(uint8_t);
+		}
+
+		const uint8_t* getImageData() const {
+			return imageData.data();
+		}
+
 		// ...
+
+	private:
+
+		ImageBuffer imageData;
 	};
 
 
-	struct EndingPacket {
-		const uint8_t type = PktEnding;
-	};
 
-	// KAOCC:
-	// need a lot of memcpy stuff ....
 
 }
 

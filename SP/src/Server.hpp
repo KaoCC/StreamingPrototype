@@ -6,6 +6,7 @@
 
 #include "Connection.hpp"
 
+
 namespace SP {
 
 	class Server {
@@ -23,6 +24,7 @@ namespace SP {
 
 		// acceptor
 		boost::asio::ip::tcp::acceptor acc;
+
 
 	};
 

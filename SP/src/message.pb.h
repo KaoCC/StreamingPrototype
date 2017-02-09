@@ -163,11 +163,11 @@ class Init : public ::google::protobuf::Message /* @@protoc_insertion_point(clas
   ::google::protobuf::uint32 width() const;
   void set_width(::google::protobuf::uint32 value);
 
-  // uint32 hight = 3;
-  void clear_hight();
-  static const int kHightFieldNumber = 3;
-  ::google::protobuf::uint32 hight() const;
-  void set_hight(::google::protobuf::uint32 value);
+  // uint32 height = 3;
+  void clear_height();
+  static const int kHeightFieldNumber = 3;
+  ::google::protobuf::uint32 height() const;
+  void set_height(::google::protobuf::uint32 value);
 
   // uint32 moduleID = 4;
   void clear_moduleid();
@@ -180,7 +180,7 @@ class Init : public ::google::protobuf::Message /* @@protoc_insertion_point(clas
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::google::protobuf::uint32 width_;
-  ::google::protobuf::uint32 hight_;
+  ::google::protobuf::uint32 height_;
   ::google::protobuf::uint32 moduleid_;
   mutable int _cached_size_;
   friend struct  protobuf_message_2eproto::TableStruct;
@@ -254,52 +254,52 @@ class DefaultPos : public ::google::protobuf::Message /* @@protoc_insertion_poin
 
   // accessors -------------------------------------------------------
 
-  // uint32 x = 2;
+  // float x = 2;
   void clear_x();
   static const int kXFieldNumber = 2;
-  ::google::protobuf::uint32 x() const;
-  void set_x(::google::protobuf::uint32 value);
+  float x() const;
+  void set_x(float value);
 
-  // uint32 y = 3;
+  // float y = 3;
   void clear_y();
   static const int kYFieldNumber = 3;
-  ::google::protobuf::uint32 y() const;
-  void set_y(::google::protobuf::uint32 value);
+  float y() const;
+  void set_y(float value);
 
-  // uint32 z = 4;
+  // float z = 4;
   void clear_z();
   static const int kZFieldNumber = 4;
-  ::google::protobuf::uint32 z() const;
-  void set_z(::google::protobuf::uint32 value);
+  float z() const;
+  void set_z(float value);
 
-  // uint32 vx = 5;
+  // float vx = 5;
   void clear_vx();
   static const int kVxFieldNumber = 5;
-  ::google::protobuf::uint32 vx() const;
-  void set_vx(::google::protobuf::uint32 value);
+  float vx() const;
+  void set_vx(float value);
 
-  // uint32 vy = 6;
+  // float vy = 6;
   void clear_vy();
   static const int kVyFieldNumber = 6;
-  ::google::protobuf::uint32 vy() const;
-  void set_vy(::google::protobuf::uint32 value);
+  float vy() const;
+  void set_vy(float value);
 
-  // uint32 vz = 7;
+  // float vz = 7;
   void clear_vz();
   static const int kVzFieldNumber = 7;
-  ::google::protobuf::uint32 vz() const;
-  void set_vz(::google::protobuf::uint32 value);
+  float vz() const;
+  void set_vz(float value);
 
   // @@protoc_insertion_point(class_scope:StreamingFormat.DefaultPos)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  ::google::protobuf::uint32 x_;
-  ::google::protobuf::uint32 y_;
-  ::google::protobuf::uint32 z_;
-  ::google::protobuf::uint32 vx_;
-  ::google::protobuf::uint32 vy_;
-  ::google::protobuf::uint32 vz_;
+  float x_;
+  float y_;
+  float z_;
+  float vx_;
+  float vy_;
+  float vz_;
   mutable int _cached_size_;
   friend struct  protobuf_message_2eproto::TableStruct;
 };
@@ -378,53 +378,53 @@ class Camera : public ::google::protobuf::Message /* @@protoc_insertion_point(cl
   ::google::protobuf::uint32 serialnumber() const;
   void set_serialnumber(::google::protobuf::uint32 value);
 
-  // uint32 delta_x = 3;
+  // float delta_x = 3;
   void clear_delta_x();
   static const int kDeltaXFieldNumber = 3;
-  ::google::protobuf::uint32 delta_x() const;
-  void set_delta_x(::google::protobuf::uint32 value);
+  float delta_x() const;
+  void set_delta_x(float value);
 
-  // uint32 delta_y = 4;
+  // float delta_y = 4;
   void clear_delta_y();
   static const int kDeltaYFieldNumber = 4;
-  ::google::protobuf::uint32 delta_y() const;
-  void set_delta_y(::google::protobuf::uint32 value);
+  float delta_y() const;
+  void set_delta_y(float value);
 
-  // uint32 delta_z = 5;
+  // float delta_z = 5;
   void clear_delta_z();
   static const int kDeltaZFieldNumber = 5;
-  ::google::protobuf::uint32 delta_z() const;
-  void set_delta_z(::google::protobuf::uint32 value);
+  float delta_z() const;
+  void set_delta_z(float value);
 
-  // uint32 delta_vx = 6;
+  // float delta_vx = 6;
   void clear_delta_vx();
   static const int kDeltaVxFieldNumber = 6;
-  ::google::protobuf::uint32 delta_vx() const;
-  void set_delta_vx(::google::protobuf::uint32 value);
+  float delta_vx() const;
+  void set_delta_vx(float value);
 
-  // uint32 delta_vy = 7;
+  // float delta_vy = 7;
   void clear_delta_vy();
   static const int kDeltaVyFieldNumber = 7;
-  ::google::protobuf::uint32 delta_vy() const;
-  void set_delta_vy(::google::protobuf::uint32 value);
+  float delta_vy() const;
+  void set_delta_vy(float value);
 
-  // uint32 delta_vz = 8;
+  // float delta_vz = 8;
   void clear_delta_vz();
   static const int kDeltaVzFieldNumber = 8;
-  ::google::protobuf::uint32 delta_vz() const;
-  void set_delta_vz(::google::protobuf::uint32 value);
+  float delta_vz() const;
+  void set_delta_vz(float value);
 
   // @@protoc_insertion_point(class_scope:StreamingFormat.Camera)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::google::protobuf::uint32 serialnumber_;
-  ::google::protobuf::uint32 delta_x_;
-  ::google::protobuf::uint32 delta_y_;
-  ::google::protobuf::uint32 delta_z_;
-  ::google::protobuf::uint32 delta_vx_;
-  ::google::protobuf::uint32 delta_vy_;
-  ::google::protobuf::uint32 delta_vz_;
+  float delta_x_;
+  float delta_y_;
+  float delta_z_;
+  float delta_vx_;
+  float delta_vy_;
+  float delta_vz_;
   mutable int _cached_size_;
   friend struct  protobuf_message_2eproto::TableStruct;
 };
@@ -497,6 +497,20 @@ class Image : public ::google::protobuf::Message /* @@protoc_insertion_point(cla
 
   // accessors -------------------------------------------------------
 
+  // bytes imageData = 5;
+  void clear_imagedata();
+  static const int kImageDataFieldNumber = 5;
+  const ::std::string& imagedata() const;
+  void set_imagedata(const ::std::string& value);
+  #if LANG_CXX11
+  void set_imagedata(::std::string&& value);
+  #endif
+  void set_imagedata(const char* value);
+  void set_imagedata(const void* value, size_t size);
+  ::std::string* mutable_imagedata();
+  ::std::string* release_imagedata();
+  void set_allocated_imagedata(::std::string* imagedata);
+
   // uint32 serialNumber = 2;
   void clear_serialnumber();
   static const int kSerialNumberFieldNumber = 2;
@@ -509,19 +523,20 @@ class Image : public ::google::protobuf::Message /* @@protoc_insertion_point(cla
   ::google::protobuf::uint32 status() const;
   void set_status(::google::protobuf::uint32 value);
 
-  // uint32 size = 4;
-  void clear_size();
-  static const int kSizeFieldNumber = 4;
-  ::google::protobuf::uint32 size() const;
-  void set_size(::google::protobuf::uint32 value);
+  // uint32 byteSize = 4;
+  void clear_bytesize();
+  static const int kByteSizeFieldNumber = 4;
+  ::google::protobuf::uint32 bytesize() const;
+  void set_bytesize(::google::protobuf::uint32 value);
 
   // @@protoc_insertion_point(class_scope:StreamingFormat.Image)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::internal::ArenaStringPtr imagedata_;
   ::google::protobuf::uint32 serialnumber_;
   ::google::protobuf::uint32 status_;
-  ::google::protobuf::uint32 size_;
+  ::google::protobuf::uint32 bytesize_;
   mutable int _cached_size_;
   friend struct  protobuf_message_2eproto::TableStruct;
 };
@@ -756,18 +771,18 @@ inline void Init::set_width(::google::protobuf::uint32 value) {
   // @@protoc_insertion_point(field_set:StreamingFormat.Init.width)
 }
 
-// uint32 hight = 3;
-inline void Init::clear_hight() {
-  hight_ = 0u;
+// uint32 height = 3;
+inline void Init::clear_height() {
+  height_ = 0u;
 }
-inline ::google::protobuf::uint32 Init::hight() const {
-  // @@protoc_insertion_point(field_get:StreamingFormat.Init.hight)
-  return hight_;
+inline ::google::protobuf::uint32 Init::height() const {
+  // @@protoc_insertion_point(field_get:StreamingFormat.Init.height)
+  return height_;
 }
-inline void Init::set_hight(::google::protobuf::uint32 value) {
+inline void Init::set_height(::google::protobuf::uint32 value) {
   
-  hight_ = value;
-  // @@protoc_insertion_point(field_set:StreamingFormat.Init.hight)
+  height_ = value;
+  // @@protoc_insertion_point(field_set:StreamingFormat.Init.height)
 }
 
 // uint32 moduleID = 4;
@@ -788,85 +803,85 @@ inline void Init::set_moduleid(::google::protobuf::uint32 value) {
 
 // DefaultPos
 
-// uint32 x = 2;
+// float x = 2;
 inline void DefaultPos::clear_x() {
-  x_ = 0u;
+  x_ = 0;
 }
-inline ::google::protobuf::uint32 DefaultPos::x() const {
+inline float DefaultPos::x() const {
   // @@protoc_insertion_point(field_get:StreamingFormat.DefaultPos.x)
   return x_;
 }
-inline void DefaultPos::set_x(::google::protobuf::uint32 value) {
+inline void DefaultPos::set_x(float value) {
   
   x_ = value;
   // @@protoc_insertion_point(field_set:StreamingFormat.DefaultPos.x)
 }
 
-// uint32 y = 3;
+// float y = 3;
 inline void DefaultPos::clear_y() {
-  y_ = 0u;
+  y_ = 0;
 }
-inline ::google::protobuf::uint32 DefaultPos::y() const {
+inline float DefaultPos::y() const {
   // @@protoc_insertion_point(field_get:StreamingFormat.DefaultPos.y)
   return y_;
 }
-inline void DefaultPos::set_y(::google::protobuf::uint32 value) {
+inline void DefaultPos::set_y(float value) {
   
   y_ = value;
   // @@protoc_insertion_point(field_set:StreamingFormat.DefaultPos.y)
 }
 
-// uint32 z = 4;
+// float z = 4;
 inline void DefaultPos::clear_z() {
-  z_ = 0u;
+  z_ = 0;
 }
-inline ::google::protobuf::uint32 DefaultPos::z() const {
+inline float DefaultPos::z() const {
   // @@protoc_insertion_point(field_get:StreamingFormat.DefaultPos.z)
   return z_;
 }
-inline void DefaultPos::set_z(::google::protobuf::uint32 value) {
+inline void DefaultPos::set_z(float value) {
   
   z_ = value;
   // @@protoc_insertion_point(field_set:StreamingFormat.DefaultPos.z)
 }
 
-// uint32 vx = 5;
+// float vx = 5;
 inline void DefaultPos::clear_vx() {
-  vx_ = 0u;
+  vx_ = 0;
 }
-inline ::google::protobuf::uint32 DefaultPos::vx() const {
+inline float DefaultPos::vx() const {
   // @@protoc_insertion_point(field_get:StreamingFormat.DefaultPos.vx)
   return vx_;
 }
-inline void DefaultPos::set_vx(::google::protobuf::uint32 value) {
+inline void DefaultPos::set_vx(float value) {
   
   vx_ = value;
   // @@protoc_insertion_point(field_set:StreamingFormat.DefaultPos.vx)
 }
 
-// uint32 vy = 6;
+// float vy = 6;
 inline void DefaultPos::clear_vy() {
-  vy_ = 0u;
+  vy_ = 0;
 }
-inline ::google::protobuf::uint32 DefaultPos::vy() const {
+inline float DefaultPos::vy() const {
   // @@protoc_insertion_point(field_get:StreamingFormat.DefaultPos.vy)
   return vy_;
 }
-inline void DefaultPos::set_vy(::google::protobuf::uint32 value) {
+inline void DefaultPos::set_vy(float value) {
   
   vy_ = value;
   // @@protoc_insertion_point(field_set:StreamingFormat.DefaultPos.vy)
 }
 
-// uint32 vz = 7;
+// float vz = 7;
 inline void DefaultPos::clear_vz() {
-  vz_ = 0u;
+  vz_ = 0;
 }
-inline ::google::protobuf::uint32 DefaultPos::vz() const {
+inline float DefaultPos::vz() const {
   // @@protoc_insertion_point(field_get:StreamingFormat.DefaultPos.vz)
   return vz_;
 }
-inline void DefaultPos::set_vz(::google::protobuf::uint32 value) {
+inline void DefaultPos::set_vz(float value) {
   
   vz_ = value;
   // @@protoc_insertion_point(field_set:StreamingFormat.DefaultPos.vz)
@@ -890,85 +905,85 @@ inline void Camera::set_serialnumber(::google::protobuf::uint32 value) {
   // @@protoc_insertion_point(field_set:StreamingFormat.Camera.serialNumber)
 }
 
-// uint32 delta_x = 3;
+// float delta_x = 3;
 inline void Camera::clear_delta_x() {
-  delta_x_ = 0u;
+  delta_x_ = 0;
 }
-inline ::google::protobuf::uint32 Camera::delta_x() const {
+inline float Camera::delta_x() const {
   // @@protoc_insertion_point(field_get:StreamingFormat.Camera.delta_x)
   return delta_x_;
 }
-inline void Camera::set_delta_x(::google::protobuf::uint32 value) {
+inline void Camera::set_delta_x(float value) {
   
   delta_x_ = value;
   // @@protoc_insertion_point(field_set:StreamingFormat.Camera.delta_x)
 }
 
-// uint32 delta_y = 4;
+// float delta_y = 4;
 inline void Camera::clear_delta_y() {
-  delta_y_ = 0u;
+  delta_y_ = 0;
 }
-inline ::google::protobuf::uint32 Camera::delta_y() const {
+inline float Camera::delta_y() const {
   // @@protoc_insertion_point(field_get:StreamingFormat.Camera.delta_y)
   return delta_y_;
 }
-inline void Camera::set_delta_y(::google::protobuf::uint32 value) {
+inline void Camera::set_delta_y(float value) {
   
   delta_y_ = value;
   // @@protoc_insertion_point(field_set:StreamingFormat.Camera.delta_y)
 }
 
-// uint32 delta_z = 5;
+// float delta_z = 5;
 inline void Camera::clear_delta_z() {
-  delta_z_ = 0u;
+  delta_z_ = 0;
 }
-inline ::google::protobuf::uint32 Camera::delta_z() const {
+inline float Camera::delta_z() const {
   // @@protoc_insertion_point(field_get:StreamingFormat.Camera.delta_z)
   return delta_z_;
 }
-inline void Camera::set_delta_z(::google::protobuf::uint32 value) {
+inline void Camera::set_delta_z(float value) {
   
   delta_z_ = value;
   // @@protoc_insertion_point(field_set:StreamingFormat.Camera.delta_z)
 }
 
-// uint32 delta_vx = 6;
+// float delta_vx = 6;
 inline void Camera::clear_delta_vx() {
-  delta_vx_ = 0u;
+  delta_vx_ = 0;
 }
-inline ::google::protobuf::uint32 Camera::delta_vx() const {
+inline float Camera::delta_vx() const {
   // @@protoc_insertion_point(field_get:StreamingFormat.Camera.delta_vx)
   return delta_vx_;
 }
-inline void Camera::set_delta_vx(::google::protobuf::uint32 value) {
+inline void Camera::set_delta_vx(float value) {
   
   delta_vx_ = value;
   // @@protoc_insertion_point(field_set:StreamingFormat.Camera.delta_vx)
 }
 
-// uint32 delta_vy = 7;
+// float delta_vy = 7;
 inline void Camera::clear_delta_vy() {
-  delta_vy_ = 0u;
+  delta_vy_ = 0;
 }
-inline ::google::protobuf::uint32 Camera::delta_vy() const {
+inline float Camera::delta_vy() const {
   // @@protoc_insertion_point(field_get:StreamingFormat.Camera.delta_vy)
   return delta_vy_;
 }
-inline void Camera::set_delta_vy(::google::protobuf::uint32 value) {
+inline void Camera::set_delta_vy(float value) {
   
   delta_vy_ = value;
   // @@protoc_insertion_point(field_set:StreamingFormat.Camera.delta_vy)
 }
 
-// uint32 delta_vz = 8;
+// float delta_vz = 8;
 inline void Camera::clear_delta_vz() {
-  delta_vz_ = 0u;
+  delta_vz_ = 0;
 }
-inline ::google::protobuf::uint32 Camera::delta_vz() const {
+inline float Camera::delta_vz() const {
   // @@protoc_insertion_point(field_get:StreamingFormat.Camera.delta_vz)
   return delta_vz_;
 }
-inline void Camera::set_delta_vz(::google::protobuf::uint32 value) {
+inline void Camera::set_delta_vz(float value) {
   
   delta_vz_ = value;
   // @@protoc_insertion_point(field_set:StreamingFormat.Camera.delta_vz)
@@ -1006,18 +1021,70 @@ inline void Image::set_status(::google::protobuf::uint32 value) {
   // @@protoc_insertion_point(field_set:StreamingFormat.Image.status)
 }
 
-// uint32 size = 4;
-inline void Image::clear_size() {
-  size_ = 0u;
+// uint32 byteSize = 4;
+inline void Image::clear_bytesize() {
+  bytesize_ = 0u;
 }
-inline ::google::protobuf::uint32 Image::size() const {
-  // @@protoc_insertion_point(field_get:StreamingFormat.Image.size)
-  return size_;
+inline ::google::protobuf::uint32 Image::bytesize() const {
+  // @@protoc_insertion_point(field_get:StreamingFormat.Image.byteSize)
+  return bytesize_;
 }
-inline void Image::set_size(::google::protobuf::uint32 value) {
+inline void Image::set_bytesize(::google::protobuf::uint32 value) {
   
-  size_ = value;
-  // @@protoc_insertion_point(field_set:StreamingFormat.Image.size)
+  bytesize_ = value;
+  // @@protoc_insertion_point(field_set:StreamingFormat.Image.byteSize)
+}
+
+// bytes imageData = 5;
+inline void Image::clear_imagedata() {
+  imagedata_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& Image::imagedata() const {
+  // @@protoc_insertion_point(field_get:StreamingFormat.Image.imageData)
+  return imagedata_.GetNoArena();
+}
+inline void Image::set_imagedata(const ::std::string& value) {
+  
+  imagedata_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:StreamingFormat.Image.imageData)
+}
+#if LANG_CXX11
+inline void Image::set_imagedata(::std::string&& value) {
+  
+  imagedata_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:StreamingFormat.Image.imageData)
+}
+#endif
+inline void Image::set_imagedata(const char* value) {
+  
+  imagedata_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:StreamingFormat.Image.imageData)
+}
+inline void Image::set_imagedata(const void* value, size_t size) {
+  
+  imagedata_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:StreamingFormat.Image.imageData)
+}
+inline ::std::string* Image::mutable_imagedata() {
+  
+  // @@protoc_insertion_point(field_mutable:StreamingFormat.Image.imageData)
+  return imagedata_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* Image::release_imagedata() {
+  // @@protoc_insertion_point(field_release:StreamingFormat.Image.imageData)
+  
+  return imagedata_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Image::set_allocated_imagedata(::std::string* imagedata) {
+  if (imagedata != NULL) {
+    
+  } else {
+    
+  }
+  imagedata_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), imagedata);
+  // @@protoc_insertion_point(field_set_allocated:StreamingFormat.Image.imageData)
 }
 
 // -------------------------------------------------------------------

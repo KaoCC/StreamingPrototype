@@ -86,7 +86,10 @@ namespace SP {
 
 			// read the msg (init info)
 
-			uint32_t moduleID = msgPtr->initmsg().moduleid();
+			// KAOCC: do we need a lock ?
+			cfgManager.setScreen(msgPtr->initmsg().width(), msgPtr->initmsg().height());
+			cfgManager.setModuleID(msgPtr->initmsg().moduleid());
+
 
 			// more from here
 			//...
@@ -99,13 +102,15 @@ namespace SP {
 			auto defPosPtr = new StreamingFormat::DefaultPos;
 
 			// for testing only
-			defPosPtr->set_x(0);
-			defPosPtr->set_y(100);
-			defPosPtr->set_z(10000);
+			CameraConfig camCfg = cfgManager.getCamera();
 
-			defPosPtr->set_vx(100);
-			defPosPtr->set_vy(200);
-			defPosPtr->set_vz(300);
+			defPosPtr->set_x(camCfg.pos.x);
+			defPosPtr->set_y(camCfg.pos.y);
+			defPosPtr->set_z(camCfg.pos.z);
+
+			defPosPtr->set_vx(camCfg.dir.vx);
+			defPosPtr->set_vy(camCfg.dir.vy);
+			defPosPtr->set_vz(camCfg.dir.vz);
 
 			responsePtr->set_allocated_defaultposmsg(defPosPtr);
 
@@ -137,10 +142,11 @@ namespace SP {
 			// for testing only
 			imagePtr->set_serialnumber(serialNumber);
 			imagePtr->set_status(0);  // tmp
-			imagePtr->set_size(512 * 512);
+			imagePtr->set_bytesize(cfgManager.getImageRef(serialNumber).getByteSize()); // tmp
 
 			// image data ????
-
+			// need to check
+			imagePtr->set_imagedata(reinterpret_cast<const char*>(cfgManager.getImageRef(serialNumber).getImageData()));
 
 			responsePtr->set_allocated_imagemsg(imagePtr);
 
