@@ -55,7 +55,7 @@ namespace SP {
 			// KAOCC: throw exception here if null ?
 			Packet::MessagePointer msgPtr = resolvePacket();
 
-			writeRseponse(createResponse(msgPtr));
+			writeResponse(createResponse(msgPtr));
 
 			// repeat
 			startReadHeader();
@@ -99,7 +99,7 @@ namespace SP {
 			responsePtr->set_type(StreamingFormat::MessageType::MsgDefaultPos);
 
 			// must be on the heap
-			auto defPosPtr = new StreamingFormat::DefaultPos;
+			StreamingFormat::DefaultPos* defPosPtr = new StreamingFormat::DefaultPos;
 
 			// for testing only
 			CameraConfig camCfg = cfgManager.getCamera();
@@ -137,7 +137,7 @@ namespace SP {
 			// reply the images
 			responsePtr->set_type(StreamingFormat::MessageType::MsgImage);
 
-			auto imagePtr = new StreamingFormat::Image;
+			StreamingFormat::Image* imagePtr = new StreamingFormat::Image;
 
 			// for testing only
 			imagePtr->set_serialnumber(serialNumber);
