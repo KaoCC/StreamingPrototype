@@ -50,7 +50,7 @@ workspace "StreamingPrototype"
         flags { "StaticRuntime" }
 
         includedirs {"SP/include", "Protocol/"}
-        files {"SP/**.cpp", "SP/**.hpp", "SP/**.h", "SP/**.cc", "Protocol/**.cc", "Protocol/**.h"}
+        files {"SP/**.cpp", "SP/**.hpp", "Protocol/**.cc", "Protocol/**.h"}
 
 
     project "Test"
@@ -61,5 +61,5 @@ workspace "StreamingPrototype"
         flags { "StaticRuntime" }
 
         includedirs {"Test/include", "SP/include", "Protocol/"}
-        files {"Test/**.cpp", "Protocol/**.cc", "Protocol/**.h"}
+        files {"Test/**.cpp", "Protocol/**.cc", "Protocol/**.h", "SP/include/Packet.hpp", "SP/src/Packet.cpp"}
 
