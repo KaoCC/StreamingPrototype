@@ -33,9 +33,13 @@ int main(int argc, char* argv[]) {
 
 		boost::system::error_code error;
 
+		// allocate on the heap
+		StreamingFormat::Init* init = new StreamingFormat::Init;
+		init->set_width(1024);
+		init->set_height(768);
+		init->set_moduleid(10);
 
-		//StreamingFormat::Init init;
-		//init.set_width(0);
+
 
 		// ...
 

@@ -40,7 +40,7 @@ namespace SP {
 
 		Packet::MessagePointer createResponse(Packet::MessagePointer msgPtr);
 
-		void writeRseponse(Packet::MessagePointer msgPtr);
+		void writeResponse(Packet::MessagePointer msgPtr);
 
 
 		// data members 

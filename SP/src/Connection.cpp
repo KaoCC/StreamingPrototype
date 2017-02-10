@@ -180,7 +180,7 @@ namespace SP {
 		return responsePtr;
 	}
 
-	void Connection::writeRseponse(Packet::MessagePointer msgPtr) {
+	void Connection::writeResponse(Packet::MessagePointer msgPtr) {
 
 		Packet::DataBuffer writeBuffer;
 		Packet responsePacket(msgPtr);
