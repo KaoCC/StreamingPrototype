@@ -78,6 +78,7 @@ namespace SP {
 
 		// KAOCC: Yet to be done !
 
+		// KAOCC: TODO: prevent creating new Messages for optimization
 		Packet::MessagePointer responsePtr(new StreamingFormat::StreamingMessage);
 
 		switch (msgPtr->type()) {
