@@ -10,7 +10,7 @@
 
 namespace SP {
 
-	class Connection : std::enable_shared_from_this<Connection> {
+	class Connection : public std::enable_shared_from_this<Connection> {
 
 	public:
 		using ConnectionPointer = std::shared_ptr<Connection>;

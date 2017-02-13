@@ -21,8 +21,10 @@ int main(int argc, char *argv[]) {
 
 	try {
 		boost::asio::io_service ios;
-		SP::Server(ios, port);
+		SP::Server* s = new SP::Server(ios, port);		// WHY ???
 		ios.run();
+
+		std::cerr << "End Server" << std::endl;
 
 	} catch (std::exception& e) {
 		std::cerr << e.what() << std::endl;

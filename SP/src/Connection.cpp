@@ -142,7 +142,7 @@ namespace SP {
 
 			// for testing only
 			imagePtr->set_serialnumber(serialNumber);
-			imagePtr->set_status(0);  // tmp
+			imagePtr->set_status(8051);  // tmp
 			imagePtr->set_bytesize(cfgManager.getImageRef(serialNumber).getByteSize()); // tmp
 
 			// image data ????

@@ -56,6 +56,8 @@ namespace SP {
 	public:
 		using ImageBuffer = std::vector<uint8_t>;
 
+		ImageConfig() = default;
+
 		// for testing only
 		ImageConfig(uint8_t init, size_t size) {
 			imageData.resize(size);
@@ -70,6 +72,10 @@ namespace SP {
 		}
 
 		const uint8_t* getImageData() const {
+			return imageData.data();
+		}
+
+		uint8_t* getImageData() {
 			return imageData.data();
 		}
 

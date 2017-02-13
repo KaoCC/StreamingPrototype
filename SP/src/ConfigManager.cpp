@@ -6,6 +6,8 @@ namespace SP {
 	ConfigManager::ConfigManager() : cameraCfg(Position(0, 100, 10000), Direction(1234, 5678, 1024)), screenCfg(512, 1024) {
 
 		// KAOCC: TODO: load images
+
+		loadImages();
 	}
 
 	CameraConfig ConfigManager::getCamera() {
