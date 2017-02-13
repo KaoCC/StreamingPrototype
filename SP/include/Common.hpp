@@ -71,11 +71,20 @@ namespace SP {
 			return imageData.size() * sizeof(uint8_t);
 		}
 
-		const uint8_t* getImageData() const {
+
+		ImageBuffer& getImageData() {
+			return imageData;
+		}
+
+		const ImageBuffer& getImageData() const{
+			return imageData;
+		}
+
+		const uint8_t* getImageRawData() const {
 			return imageData.data();
 		}
 
-		uint8_t* getImageData() {
+		uint8_t* getImageRawData() {
 			return imageData.data();
 		}
 

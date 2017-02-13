@@ -102,12 +102,16 @@ int main(int argc, char* argv[]) {
 		init->set_height(768);
 		init->set_moduleid(10);
 
+		std::cerr << "Set Init" << std::endl;
+
 		requestPtr->set_type(StreamingFormat::MessageType::MsgInit);
 		requestPtr->set_allocated_initmsg(init);
 
 
 		SP::Packet::DataBuffer writeBuffer;
 		SP::Packet requestPacket(requestPtr);
+
+		std::cerr << "Pack" << std::endl;
 
 		if (requestPacket.packing(writeBuffer)) {
 			boost::asio::write(streamingSocket, boost::asio::buffer(writeBuffer));
@@ -119,10 +123,13 @@ int main(int argc, char* argv[]) {
 		}
 
 
+		std::cerr << "Active" << std::endl;
+
 		// Read Response Messages ----------
 
 
 		bool activeFlag = true;
+		uint32_t serialNumber = 0;
 
 		// currently not an optimal setting ...
 		while (activeFlag) {
@@ -132,6 +139,8 @@ int main(int argc, char* argv[]) {
 			// header first
 			readBuffer.resize(SP::Packet::HEADER_SIZE);
 			boost::asio::read(streamingSocket, boost::asio::buffer(readBuffer));
+
+			std::cerr << "After Read" << std::endl;
 
 			// decode header
 			SP::Packet::MessagePointer responsePtr(new StreamingFormat::StreamingMessage);
@@ -154,7 +163,7 @@ int main(int argc, char* argv[]) {
 			}
 
 			// test only !!!!!
-			uint32_t serialNumber = 0;
+			//uint32_t serialNumber = 0;
 
 			images.resize(MAX_IMAGE_COUNT);
 
@@ -163,6 +172,9 @@ int main(int argc, char* argv[]) {
 
 			case StreamingFormat::MessageType::MsgDefaultPos:
 			{
+
+				std::cerr << "MsgDefaultPos !" << std::endl;
+
 				globalCamera.pos.x = msg->defaultposmsg().x();
 				globalCamera.pos.y = msg->defaultposmsg().y();
 				globalCamera.pos.z = msg->defaultposmsg().z();
@@ -179,6 +191,8 @@ int main(int argc, char* argv[]) {
 
 			case StreamingFormat::MessageType::MsgImage:
 			{
+				std::cerr << "MsgImage !" << std::endl;
+
 				uint32_t returnedSerialNumber = msg->imagemsg().serialnumber();
 
 				// should be "8051"
@@ -190,8 +204,15 @@ int main(int argc, char* argv[]) {
 				// where is the image ?
 				// get the image
 
+
 				// this one should be avoid
-				std::copy(msg->imagemsg().imagedata().begin(), msg->imagemsg().imagedata().end(), images[returnedSerialNumber].getImageData());
+				SP::ImageConfig localImage;
+				localImage.getImageData().resize(byteSize);
+				std::copy(msg->imagemsg().imagedata().begin(), msg->imagemsg().imagedata().end(), localImage.getImageData().begin());
+
+				std::cerr << "Copy !" << std::endl;
+
+				images[returnedSerialNumber] = localImage;
 
 				// generate next camera delta
 				++serialNumber;
