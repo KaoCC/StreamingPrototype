@@ -8,15 +8,6 @@
 
 namespace SP {
 
-
-	void handleTest(const boost::system::error_code& err) {
-		if (!err) {
-			std::cerr << "Pass";
-		} else {
-			std::cerr << "NOOOOOOOO ! " << err << std::endl;
-		}
-	}
-
 	Server::Server(boost::asio::io_service & ios, unsigned port) : acc(ios, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port)) {
 		startAccept();
 	}
@@ -41,9 +32,7 @@ namespace SP {
 			newConnection->start();
 		} else {
 			std::cerr << "Error:" << err << std::endl;
-
-
-			throw "Error Accept";
+			throw "Error in Async Accept";
 		}
 
 
