@@ -88,6 +88,7 @@ namespace SP {
 			// read the msg (init info)
 
 			// KAOCC: do we need a lock ?
+			// KAOCC: currently we have one cfg per connection
 			cfgManager.setScreen(msgPtr->initmsg().width(), msgPtr->initmsg().height());
 			cfgManager.setModuleID(msgPtr->initmsg().moduleid());
 
@@ -133,6 +134,26 @@ namespace SP {
 
 			// more here
 			//...
+			// should read camera info
+
+			float dx = msgPtr->cameramsg().delta_x();
+			float dy = msgPtr->cameramsg().delta_y();
+			float dz = msgPtr->cameramsg().delta_z();
+			
+			float dvx = msgPtr->cameramsg().delta_vx();
+			float dvy = msgPtr->cameramsg().delta_vy();
+			float dvz = msgPtr->cameramsg().delta_vz();
+
+			// KAOCC: check if we need locks 
+
+			// position
+			cfgManager.setPositionDelta(dx, dy, dz);
+
+			// direction ?
+			// missing ...
+
+
+			// insert rendering code & encoder here
 
 
 			// reply the images
@@ -147,7 +168,7 @@ namespace SP {
 
 			// image data ????
 			// need to check
-			imagePtr->set_imagedata(reinterpret_cast<const char*>(cfgManager.getImageRef(serialNumber).getImageData()));
+			imagePtr->set_imagedata(reinterpret_cast<const char*>(cfgManager.getImageRef(serialNumber).getImageRawData()));
 
 			responsePtr->set_allocated_imagemsg(imagePtr);
 
@@ -164,7 +185,6 @@ namespace SP {
 			// tmp: for testing only
 			// Echo the Ending msg back ?
 			responsePtr->set_type(StreamingFormat::MessageType::MsgEnding);
-
 
 			// TODO:
 			// Close the connection !

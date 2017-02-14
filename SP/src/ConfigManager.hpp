@@ -20,6 +20,7 @@ namespace SP {
 
 		void setModuleID(uint32_t mID);
 
+		void setPositionDelta(float dx, float dy, float dz);
 
 		const ImageConfig& getImageRef(size_t index);
 

@@ -19,13 +19,9 @@ namespace SP {
 
 		//acc.accept(newConnection->getSocketRef());
 		acc.async_accept(newConnection->getSocketRef(), std::bind(&Server::handleAccept, this, newConnection, std::placeholders::_1));
-		//acc.async_accept(newConnection->getSocketRef(), std::bind(handleTest, std::placeholders::_1));
-		std::cerr << "End" << std::endl;
 	}
 
 	void Server::handleAccept(Connection::ConnectionPointer newConnection, const boost::system::error_code& err) {
-
-		std::cerr << "Handle Acc" << std::endl;
 
 		if (!err) {
 			std::cerr << "Start connection" << std::endl;

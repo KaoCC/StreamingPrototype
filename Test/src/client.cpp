@@ -179,10 +179,13 @@ int main(int argc, char* argv[]) {
 				globalCamera.pos.y = msg->defaultposmsg().y();
 				globalCamera.pos.z = msg->defaultposmsg().z();
 
-				globalCamera.dir.vx = msg->defaultposmsg().vx();
-				globalCamera.dir.vx = msg->defaultposmsg().vy();
-				globalCamera.dir.vx = msg->defaultposmsg().vz();
+				std::cerr << "x, y, z: " << globalCamera.pos.x << " " <<globalCamera.pos.y << " " <<globalCamera.pos.z << std::endl;
 
+				globalCamera.dir.vx = msg->defaultposmsg().vx();
+				globalCamera.dir.vy = msg->defaultposmsg().vy();
+				globalCamera.dir.vz = msg->defaultposmsg().vz();
+
+				std::cerr << "vx, vy, vz: " << globalCamera.dir.vx << " " << globalCamera.dir.vy << " " << globalCamera.dir.vz << std::endl;
 
 				configCameraDelta(serialNumber, requestPtr, requestPacket);
 
@@ -194,25 +197,32 @@ int main(int argc, char* argv[]) {
 				std::cerr << "MsgImage !" << std::endl;
 
 				uint32_t returnedSerialNumber = msg->imagemsg().serialnumber();
+				std::cerr << "returned Serial number:" << returnedSerialNumber << std::endl;
 
 				// should be "8051"
 				uint32_t statusCode = msg->imagemsg().status();
+				std::cerr << "status code:" << statusCode << std::endl;
 
 				// resolve byte size
 				uint32_t byteSize = msg->imagemsg().bytesize();
+				std::cerr << "byteSize:" << byteSize << std::endl;
 
 				// where is the image ?
 				// get the image
 
-
 				// this one should be avoid
-				SP::ImageConfig localImage;
-				localImage.getImageData().resize(byteSize);
-				std::copy(msg->imagemsg().imagedata().begin(), msg->imagemsg().imagedata().end(), localImage.getImageData().begin());
+				images[returnedSerialNumber].getImageData().resize(byteSize);
+				std::copy(msg->imagemsg().imagedata().begin(), msg->imagemsg().imagedata().end(), images[returnedSerialNumber].getImageData().begin());
 
-				std::cerr << "Copy !" << std::endl;
+				std::cerr << "Get image !" << std::endl;
 
-				images[returnedSerialNumber] = localImage;
+				// visualize some of them :)
+
+				std::cerr << "the first 10 elements: " << std::endl;
+				for (int v = 0; v < 10; ++v) {
+					std::cerr << (int) images[returnedSerialNumber].getImageData()[v] <<" ";
+				}
+				std::cerr << std::endl;
 
 				// generate next camera delta
 				++serialNumber;
@@ -226,6 +236,8 @@ int main(int argc, char* argv[]) {
 			case StreamingFormat::MessageType::MsgEnding:
 			{
 				// Yet to be done !
+
+
 				break;
 			}
 
@@ -235,7 +247,7 @@ int main(int argc, char* argv[]) {
 				break;
 			}
 
-
+			// test only
 			// overwrite the msg with ENDING message
 			if (serialNumber >= MAX_IMAGE_COUNT) {
 

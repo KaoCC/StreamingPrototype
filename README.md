@@ -5,7 +5,7 @@ Streaming Prototype
 
 - [C++ Boost 1.63](http://www.boost.org/)
 - [Google Protocol Buffer v3.2.0](https://github.com/google/protobuf)
-
+- [x264](http://www.videolan.org/developers/x264.html)
 
 ## Build
 
@@ -18,6 +18,6 @@ Streaming Prototype
 
 - (Optional) Create C++ classes from Google Protocol Buffer to modify the message format
 
-`./Tool/protoc/win32/bin/protoc.exe -I="./SP/src/" --cpp_out="./SP/src/" ./SP/src/message.proto`
+`./Tool/protoc/win32/bin/protoc.exe -I="./SP/src/" --cpp_out="./Protocol" ./Protocol/message.proto`
 
 

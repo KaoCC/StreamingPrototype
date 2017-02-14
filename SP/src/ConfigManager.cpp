@@ -27,6 +27,12 @@ namespace SP {
 		moduleID = mID;
 	}
 
+	void ConfigManager::setPositionDelta(float dx, float dy, float dz) {
+		cameraCfg.pos.x += dx;
+		cameraCfg.pos.y += dy;
+		cameraCfg.pos.z += dz;
+	}
+
 	const ImageConfig & ConfigManager::getImageRef(size_t index) {
 		return images[index];
 	}
