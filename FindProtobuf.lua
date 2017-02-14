@@ -1,5 +1,6 @@
 
 
+-- KAOCC: change the path according to the OS
 if os.is("windows") then
 
     print("protobuf : please input path (enter for the default):")
@@ -29,7 +30,12 @@ if os.is("windows") then
 
             includedirs {protobufInclude}
             libdirs {protobufLibs}
-            links {"libprotobuf"}
+
+            filter {"configurations:Release" }
+                links {"libprotobuf"}
+            filter {"configurations:Debug"}
+                links {"libprotobufd"}
+            filter {}
 
         else
             print("protobuf : include path and libraries NOT FOUND")

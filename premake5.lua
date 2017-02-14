@@ -27,6 +27,7 @@ workspace "StreamingPrototype"
         -- Release should be optimized
         optimize "On"
 
+
     -- Reset the filter for other settings
     filter { }
 
@@ -41,6 +42,9 @@ workspace "StreamingPrototype"
 
     -- find include dirs and link with protobuf
     dofile ("./FindProtobuf.lua")
+
+
+
     
     project "SP"
 
