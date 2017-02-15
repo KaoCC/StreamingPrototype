@@ -30,6 +30,7 @@
 
 !Tool/premake/win/*
 !Tool/protoc/win32/bin/*
+!3rdparty/**
 
 Build/*
 Generated/*

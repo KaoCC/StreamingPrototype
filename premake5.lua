@@ -41,9 +41,17 @@ workspace "StreamingPrototype"
     dofile ("./FindBoost.lua")
 
     -- find include dirs and link with protobuf
-    dofile ("./FindProtobuf.lua")
+    -- dofile ("./FindProtobuf.lua")
 
+    -- Google Protocol Buffer
+    includedirs {"./3rdparty/protobuf/include"}
+    libdirs {"./3rdparty/protobuf/include"}
 
+    filter {"configurations:Release" }
+        links {"libprotobuf"}
+    filter {"configurations:Debug"}
+        links {"libprotobufd"}
+    filter {}
 
     
     project "SP"
