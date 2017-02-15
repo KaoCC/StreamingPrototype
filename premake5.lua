@@ -45,7 +45,7 @@ workspace "StreamingPrototype"
 
     -- Google Protocol Buffer
     includedirs {"./3rdparty/protobuf/include"}
-    libdirs {"./3rdparty/protobuf/include"}
+    libdirs {"./3rdparty/protobuf/lib"}
 
     filter {"configurations:Release" }
         links {"libprotobuf"}
