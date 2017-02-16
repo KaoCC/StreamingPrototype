@@ -17,6 +17,9 @@ int main(int argc, char *argv[]) {
 		port = std::stoi(std::string(argv[1]));
 	}
 
+
+	// KAOCC: create Thread for Rendering / Encoding
+
 	std::cout << "Server : Listen on Port " << port << std::endl;
 
 	try {
