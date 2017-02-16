@@ -1,0 +1,3 @@
+[submodule "HeterogeneousQueue"]
+	path = HeterogeneousQueue
+	url = https://github.com/KaoCC/HeterogeneousQueue.git
