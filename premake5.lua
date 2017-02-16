@@ -53,6 +53,11 @@ workspace "StreamingPrototype"
         links {"libprotobufd"}
     filter {}
 
+
+    -- Radeon Rays
+    includedirs {"./3rdparty/RadeonRays/include"}
+    libdirs {"./3rdparty/RadeonRays/lib"}
+
     
     project "SP"
 

@@ -5,6 +5,8 @@
 
 #include <cstdint>
 
+#include "math/float3.h"
+#include "math/int2.h"
 
 namespace SP {
 
