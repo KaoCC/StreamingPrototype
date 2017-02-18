@@ -64,7 +64,15 @@ workspace "StreamingPrototype"
         links {"RadeonRays"}
     filter {}
 
-    
+    --OIIO
+    includedirs {"./3rdparty/oiio/include"}
+    libdirs {"./3rdparty/oiio/lib/%{cfg.platform}"}
+
+    filter {"configurations:Release" }
+        links {"OpenImageIO"}
+    filter {"configurations:Debug"}
+        links {"OpenImageIOD"}
+    filter {}
 
     
     project "SP"
