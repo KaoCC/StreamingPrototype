@@ -8,9 +8,6 @@
 namespace SP {
 
 
-	SceneIO * SceneIO::createSceneIO() {
-		return new SceneIOImpl();
-	}
 
 
 	class SceneIOImpl : public SceneIO {
@@ -25,7 +22,6 @@ namespace SP {
 	};
 
 
-
 	Scene * SceneIOImpl::loadScene(std::string const & filename, std::string const & basepath) const {
 
 
@@ -36,4 +32,10 @@ namespace SP {
 		return nullptr;
 	}
 
+
+
+
+	SceneIO * SceneIO::createSceneIO() {
+		return new SceneIOImpl();
+	}
 }
