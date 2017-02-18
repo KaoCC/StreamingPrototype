@@ -28,6 +28,9 @@ namespace SP {
 
 		// Allocate space ?
 
+
+		// init HQ ?
+
 	}
 
 	Output * PtRenderer::createOutput(std::uint32_t w, std::uint32_t h) const {
