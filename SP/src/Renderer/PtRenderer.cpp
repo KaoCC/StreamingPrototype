@@ -15,6 +15,9 @@ namespace SP {
 		RadeonRays::Buffer* hits = nullptr;
 		RadeonRays::Buffer* intersections = nullptr;
 		RadeonRays::Buffer* hitcount = nullptr;				// types ?
+
+
+
 	};
 
 
@@ -40,7 +43,22 @@ namespace SP {
 	void PtRenderer::preprocess(Scene const & scene) {
 	}
 
+	// this is the entry point of the main path tracing algorithm
 	void PtRenderer::render(Scene const & scene) {
+
+		// ray gen ?
+
+		for (std::uint32_t pass = 0; pass < numOfBounces; ++pass) {
+
+			//... 
+
+			// T and I here
+
+			// rendering here
+		}
+
+
+		++frameCount;
 	}
 
 	void PtRenderer::setOutput(Output * output) {

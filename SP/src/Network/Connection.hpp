@@ -6,7 +6,7 @@
 
 #include "Packet.hpp"
 
-#include "ConfigManager.hpp"
+#include "../ConfigManager.hpp"
 
 namespace SP {
 

@@ -10,6 +10,9 @@ namespace SP {
 
 
 		// ... 
+
+		api->SetOption("acc.type", "fatbvh");
+		api->SetOption("bvh.builder", "sah");
 	}
 
 	SceneTracker::~SceneTracker() {

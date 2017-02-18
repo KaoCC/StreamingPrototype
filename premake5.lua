@@ -58,6 +58,14 @@ workspace "StreamingPrototype"
     includedirs {"./3rdparty/RadeonRays/include"}
     libdirs {"./3rdparty/RadeonRays/lib"}
 
+    filter {"platforms:x64"}
+        links {"RadeonRays64"}
+    filter {"platforms:x86"}
+        links {"RadeonRays"}
+    filter {}
+
+    
+
     
     project "SP"
 

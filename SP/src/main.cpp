@@ -4,7 +4,7 @@
 
 //#include "Common.hpp"
 
-#include "Server.hpp"
+#include "Network/Server.hpp"
 
 
 
