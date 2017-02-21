@@ -3,7 +3,7 @@
 #include "SceneIO.hpp"
 
 
-
+#include <vector>
 
 namespace SP {
 
@@ -24,10 +24,13 @@ namespace SP {
 
 	Scene * SceneIOImpl::loadScene(std::string const & filename, std::string const & basepath) const {
 
+		//using namespace tinyobj;
 
 		// Yet To Be Done ! 
 
-
+		// data buffers
+		//std::vector<shape_t> objshapes;
+		//std::vector<material_t> objmaterials;
 
 		return nullptr;
 	}

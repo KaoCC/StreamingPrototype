@@ -33,6 +33,25 @@ namespace SP {
 	};
 
 
+	inline SceneObject::~SceneObject() {
+	}
+
+	inline bool SceneObject::isDirty() const {
+		return dirtyFlag;
+	}
+
+	inline void SceneObject::setDirty(bool dirty) const {
+		dirtyFlag = dirty;
+	}
+
+	inline void SceneObject::setName(std::string const & name) {
+		this->name = name;
+	}
+
+	inline std::string SceneObject::getName() const {
+		return name;
+	}
+
 }
 
 
