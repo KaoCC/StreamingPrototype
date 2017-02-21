@@ -84,7 +84,7 @@ namespace SP {
 		// cleanup
 		delete input;
 
-
+		// KAOCC: check the move syntax
 		return new Texture(std::move(textureData.data()), RadeonRays::int2(spec.width, spec.height), format);;
 	}
 
