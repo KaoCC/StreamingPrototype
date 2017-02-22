@@ -42,7 +42,7 @@ namespace SP {
 	protected:
 
 		// Generate rays
-		void GeneratePrimaryRays();
+		void generatePrimaryRays();
 
 	private:
 
@@ -50,7 +50,7 @@ namespace SP {
 
 		std::unique_ptr<RenderData> renderData;
 
-		std::vector<RadeonRays::Shape*> shapes;
+		//std::vector<RadeonRays::Shape*> shapes;
 
 
 		std::uint32_t numOfBounces;

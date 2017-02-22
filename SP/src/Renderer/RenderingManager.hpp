@@ -7,12 +7,17 @@
 #include <thread>
 #include <vector>
 
+#include <string>
+
+#include "Scene/Scene.hpp"
+
 namespace SP {
 
 
 
 	class RenderingManager {
 
+	public:
 
 		RenderingManager();
 
@@ -24,6 +29,7 @@ namespace SP {
 
 
 		// Camera
+		//std::unique_ptr<SP::Camera> camera;
 
 		// Rendering Thread
 
@@ -33,6 +39,13 @@ namespace SP {
 		const int windowHeight = 512;
 
 		const int numberOfBounce = 5;
+
+
+		// tmp
+		const std::string defaultPath = "../Resources/CornellBox";
+		const std::string defaultModelname = "orig.objm";
+
+		std::unique_ptr<SP::Scene> sceneDataPtr;
 
 	};
 

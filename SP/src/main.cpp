@@ -6,7 +6,7 @@
 
 #include "Network/Server.hpp"
 
-
+#include "Renderer/RenderingManager.hpp"
 
 
 int main(int argc, char *argv[]) {
@@ -17,6 +17,12 @@ int main(int argc, char *argv[]) {
 		port = std::stoi(std::string(argv[1]));
 	}
 
+	SP::RenderingManager tmpRendering;
+
+	// tmp
+
+	int n;
+	std::cin >> n;
 
 	// KAOCC: create Thread for Rendering / Encoding
 
