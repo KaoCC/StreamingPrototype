@@ -16,9 +16,18 @@ namespace SP {
 	void Mesh::setIndices(IndexType const * ind, std::size_t num_indices) {
 
 		// Resize internal array and copy data
-		indices.reset(new IndexType[num_indices]);
+		verticeIndices.reset(new std::uint32_t[num_indices]);
+		normalIndices.reset(new std::uint32_t[num_indices]);
+		texcoordIndices.reset(new std::uint32_t[num_indices]);
 
-		std::copy(ind, ind + num_indices, indices.get());
+		//std::copy(ind, ind + num_indices, indices.get());
+
+		for (size_t i = 0; i < num_indices; ++i) {
+			verticeIndices[i] = ind[num_indices].vertexIndex;
+			normalIndices[i] = ind[num_indices].normalIndex;
+			texcoordIndices[i] = ind[num_indices].texcoordIndex;
+		}
+
 
 		numIndices = num_indices;
 		setDirty(true);
@@ -26,6 +35,10 @@ namespace SP {
 
 	std::size_t Mesh::getNumIndices() const {
 		return numIndices;
+	}
+
+	std::uint32_t const * Mesh::getVerticeIndices() const {
+		return verticeIndices.get();
 	}
 
 	void Mesh::setVertices(float const * vert, std::size_t num_vertices) {

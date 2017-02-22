@@ -51,7 +51,7 @@ namespace SP {
 		// Set and get index array
 		void setIndices(IndexType const* indices, std::size_t num_indices);
 		std::size_t getNumIndices() const;
-		IndexType const* getIndices() const;
+		std::uint32_t const* getVerticeIndices() const;
 
 		// Set and get vertex array
 		void setVertices(RadeonRays::float3 const* vertices, std::size_t num_vertices);
@@ -80,7 +80,11 @@ namespace SP {
 		std::unique_ptr<RadeonRays::float3[]> vertices;
 		std::unique_ptr<RadeonRays::float3[]> normals;
 		std::unique_ptr<RadeonRays::float2[]> uvs;
-		std::unique_ptr<IndexType> indices;
+		//std::unique_ptr<IndexType> indices;
+
+		std::unique_ptr<std::uint32_t[]> verticeIndices;
+		std::unique_ptr<std::uint32_t[]> normalIndices;
+		std::unique_ptr<std::uint32_t[]> texcoordIndices;
 
 		std::size_t numVertices = 0;
 		std::size_t numNormals = 0;
