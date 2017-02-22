@@ -3,23 +3,31 @@
 
 #include "radeon_rays.h"
 
+#include "Scene/Scene.hpp"
 
 namespace SP {
 
 	class SceneTracker {
 
+	public:
 
 		SceneTracker(int devidx);
 
 		virtual ~SceneTracker();
 
+		RadeonRays::IntersectionApi* getIntersectionApi();
 
+
+		void compileSceneTest(const Scene& scene);
 
 	private:
 
 
 		RadeonRays::IntersectionApi* api;
 
+		// track curent scene
+
+		const Scene* currentScenePtr = nullptr;
 
 	};
 

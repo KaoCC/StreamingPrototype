@@ -19,5 +19,35 @@ namespace SP {
 		RadeonRays::IntersectionApi::Delete(api);
 	}
 
+	RadeonRays::IntersectionApi * SceneTracker::getIntersectionApi() {
+		return api;
+	}
+
+	void SceneTracker::compileSceneTest(const Scene& scene) {
+		// yet to be done
+
+
+		// this is for testing only
+
+		// first time ?
+		if (currentScenePtr == nullptr) {
+			currentScenePtr = &scene;
+
+
+			// create mesh
+
+		}
+
+
+		// test
+		if (currentScenePtr != &scene) {
+			// detatch all
+		}
+
+
+		api->Commit();
+
+	}
+
 
 }

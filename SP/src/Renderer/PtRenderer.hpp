@@ -2,6 +2,7 @@
 #define _SP_PTRENDERER_HPP_
 
 #include "Renderer.hpp"
+#include "SceneTracker.hpp"
 
 #include <vector>
 #include <memory>
@@ -46,7 +47,7 @@ namespace SP {
 
 	private:
 
-
+		SceneTracker sceneTracker;
 
 		std::unique_ptr<RenderData> renderData;
 

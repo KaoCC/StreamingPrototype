@@ -23,13 +23,18 @@ namespace SP {
 
 
 
-	PtRenderer::PtRenderer(int devidx, int num_bounces) : renderData(new RenderData), numOfBounces(num_bounces) {
+	PtRenderer::PtRenderer(int devidx, int num_bounces) : renderData(new RenderData), numOfBounces(num_bounces), sceneTracker(devidx) {
 
 
 		// Allocate space ?
 
 
 		// init HQ ?
+
+
+		// scene tracking
+
+		//sceneTracker.compileSceneTest();
 
 	}
 
@@ -48,6 +53,9 @@ namespace SP {
 
 	// this is the entry point of the main path tracing algorithm
 	void PtRenderer::render(Scene const & scene) {
+
+		auto api = sceneTracker.getIntersectionApi();
+		sceneTracker.compileSceneTest(scene);
 
 		// ray gen ?
 
