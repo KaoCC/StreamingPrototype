@@ -6,10 +6,13 @@
 #include <memory>
 #include <thread>
 #include <vector>
-
+#include <memory>
 #include <string>
 
 #include "Scene/Scene.hpp"
+#include "../SyncBuffer.hpp"
+#include "Common.hpp"
+#include "PtRenderer.hpp"
 
 namespace SP {
 
@@ -19,10 +22,20 @@ namespace SP {
 
 	public:
 
-		RenderingManager();
+		RenderingManager() = delete;
+
+
+		RenderingManager(SyncBuffer<ImageConfig>& buff);
+		~RenderingManager();
+
+		void startRenderThread();
 
 	private:
 
+
+		// for testing
+
+		void testOutput(int id);
 
 		// helper function
 		void initData();
@@ -30,9 +43,6 @@ namespace SP {
 
 		// Camera
 		//std::unique_ptr<SP::Camera> camera;
-
-		// Rendering Thread
-
 
 		// parameters
 		const int windowWidth = 512;
@@ -45,7 +55,19 @@ namespace SP {
 		const std::string defaultPath = "../Resources/CornellBox";
 		const std::string defaultModelname = "orig.objm";
 
-		std::unique_ptr<SP::Scene> sceneDataPtr;
+
+		// Scene Data
+		std::unique_ptr<Scene> sceneDataPtr;
+
+
+		// output buffer ref
+		SyncBuffer<ImageConfig>& syncBuffer;
+
+		// thread
+		std::unique_ptr<std::thread> renderThread;
+
+		// Path-Tracing Renderer
+		std::unique_ptr<PtRenderer> renderer;
 
 	};
 

@@ -6,6 +6,8 @@
 
 #include "Connection.hpp"
 
+#include "../SyncBuffer.hpp"
+#include "Common.hpp"
 
 namespace SP {
 
@@ -14,7 +16,7 @@ namespace SP {
 	public:
 
 		Server() = delete;
-		Server(boost::asio::io_service& ios, unsigned port);
+		Server(boost::asio::io_service& ios, unsigned port, SyncBuffer<ImageConfig>& syncBuff);
 
 	private:
 
@@ -24,6 +26,7 @@ namespace SP {
 
 		// acceptor
 		boost::asio::ip::tcp::acceptor acc;
+		SyncBuffer<ImageConfig>& syncBufferRef;
 
 
 	};
