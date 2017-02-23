@@ -8,11 +8,39 @@
 
 namespace SP {
 
-	RenderingManager::RenderingManager() {
 
-		// tmp
+	RenderingManager::RenderingManager(SyncBuffer<ImageConfig>& buff) : syncBuffer(buff){
+
+		// allocate renderer
+		renderer = std::make_unique<PtRenderer>(1, 5);
 
 		initData();
+
+	}
+
+	RenderingManager::~RenderingManager() {
+		if (renderThread) {
+			renderThread->join();
+		}
+	}
+
+	void RenderingManager::startRenderThread() {
+
+		// yet to be done
+		
+		std::cerr << "Start Render Thread" << std::endl;
+
+		// testing 
+		renderThread = std::make_unique<std::thread>(std::thread(&RenderingManager::testOutput, this, 0));
+
+	}
+
+
+	// tmp, for testing only
+	void RenderingManager::testOutput(int id) {
+		
+		syncBuffer.insert(std::make_unique<ImageConfig>(11, 10));
+
 	}
 
 	void RenderingManager::initData() {
@@ -29,7 +57,7 @@ namespace SP {
 
 		// Load OBJ scene
 		std::unique_ptr<SP::SceneIO> scene_io(SP::SceneIO::createSceneIO());
-		sceneDataPtr.reset(scene_io->loadScene(filename, basepath));
+		sceneDataPtr = std::unique_ptr<Scene>(scene_io->loadScene(filename, basepath));
 
 		// more here ...
 		
