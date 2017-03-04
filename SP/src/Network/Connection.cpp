@@ -3,12 +3,12 @@
 
 namespace SP {
 
-	Connection::ConnectionPointer Connection::create(boost::asio::io_service & ios) {
-		return ConnectionPointer(new Connection(ios));
+	Connection::ConnectionPointer Connection::createWithBuffer(boost::asio::io_service & ios, SyncBuffer<ImageConfig>& buf) {
+		return ConnectionPointer(new Connection(ios, buf));
 	}
 
-	Connection::Connection(boost::asio::io_service & ios) :
-		streamingSocket(ios), packet(Packet::MessagePointer(new StreamingFormat::StreamingMessage())) {
+	Connection::Connection(boost::asio::io_service & ios, SyncBuffer<ImageConfig>& buf) :
+		streamingSocket(ios), packet(Packet::MessagePointer(new StreamingFormat::StreamingMessage())), bufferRef(buf) {
 	}
 
 	void Connection::start() {

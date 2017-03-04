@@ -16,7 +16,7 @@ namespace SP {
 	void Server::startAccept() {
 
 		std::cerr << "New connection" << std::endl;
-		Connection::ConnectionPointer newConnection = Connection::create(acc.get_io_service());
+		Connection::ConnectionPointer newConnection = Connection::createWithBuffer(acc.get_io_service(), syncBufferRef);
 
 		//acc.accept(newConnection->getSocketRef());
 		acc.async_accept(newConnection->getSocketRef(), std::bind(&Server::handleAccept, this, newConnection, std::placeholders::_1));

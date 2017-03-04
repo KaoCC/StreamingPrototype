@@ -7,6 +7,7 @@
 #include "Packet.hpp"
 
 #include "../ConfigManager.hpp"
+#include "../SyncBuffer.hpp"
 
 namespace SP {
 
@@ -16,7 +17,7 @@ namespace SP {
 		using ConnectionPointer = std::shared_ptr<Connection>;
 
 
-		static ConnectionPointer create(boost::asio::io_service& ios);
+		static ConnectionPointer createWithBuffer(boost::asio::io_service& ios, SyncBuffer<ImageConfig>& buf);
 		
 		// get socket reference
 		boost::asio::ip::tcp::socket& getSocketRef();
@@ -26,7 +27,7 @@ namespace SP {
 
 	private:
 
-		Connection(boost::asio::io_service& io_service);
+		Connection(boost::asio::io_service& io_service, SyncBuffer<ImageConfig>& buf);
 
 
 		void startReadHeader();
@@ -57,6 +58,7 @@ namespace SP {
 
 		// config
 		ConfigManager cfgManager;
+		SyncBuffer<ImageConfig>& bufferRef;
 
 	};
 
