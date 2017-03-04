@@ -38,8 +38,21 @@ namespace SP {
 
 	// tmp, for testing only
 	void RenderingManager::testOutput(int id) {
-		
-		syncBuffer.insert(std::make_unique<ImageConfig>(11, 10));
+
+		// tmp file location
+		const std::string kFilePath{ "../Resources/SceneImages/Crown_rev_2.png" };
+
+		int localCounter = id;
+		while (true) {
+
+			//syncBuffer.insert(std::make_unique<ImageConfig>(localCounter, 10));
+
+
+			syncBuffer.insert(std::make_unique<ImageConfig>(kFilePath));
+
+
+			++localCounter;
+		}
 
 	}
 

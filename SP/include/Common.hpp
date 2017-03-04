@@ -6,6 +6,11 @@
 #include <cstdint>
 #include <vector>
 
+#include <algorithm>
+#include <fstream>	// for reading test images
+#include <iterator>
+
+#include <iostream>
 
 namespace SP {
 
@@ -32,7 +37,7 @@ namespace SP {
 
 	struct CameraConfig {
 
-		CameraConfig(Position p, Direction d): pos(p), dir(d) {
+		CameraConfig(Position p, Direction d) : pos(p), dir(d) {
 		}
 
 		Position pos;
@@ -43,7 +48,7 @@ namespace SP {
 
 	struct ScreenConfig {
 
-		ScreenConfig(uint32_t w, uint32_t h) : width(w), height(h){
+		ScreenConfig(uint32_t w, uint32_t h) : width(w), height(h) {
 
 		}
 
@@ -67,6 +72,28 @@ namespace SP {
 			}
 		}
 
+
+		// for reading testing image only
+		explicit ImageConfig(const std::string& path) {
+
+			std::ifstream inputStream(path, std::ifstream::in | std::ifstream::binary);
+
+			// temp, should fix this
+			if (!inputStream) {
+				throw "Error";
+			}
+
+
+			// check this
+			inputStream.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+
+			try {
+				std::copy(std::istream_iterator<std::uint8_t>(inputStream), std::istream_iterator<std::uint8_t>(), std::back_inserter(imageData));
+			} catch (const std::ios_base::failure &fail) {
+				std::cerr << fail.what() << '\n';
+			}
+		}
+
 		size_t getByteSize() const {
 			return imageData.size() * sizeof(uint8_t);
 		}
@@ -76,7 +103,7 @@ namespace SP {
 			return imageData;
 		}
 
-		const ImageBuffer& getImageData() const{
+		const ImageBuffer& getImageData() const {
 			return imageData;
 		}
 

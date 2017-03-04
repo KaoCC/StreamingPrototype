@@ -8,7 +8,7 @@ namespace SP {
 	}
 
 	Connection::Connection(boost::asio::io_service & ios, SyncBuffer<ImageConfig>& buf) :
-		streamingSocket(ios), packet(Packet::MessagePointer(new StreamingFormat::StreamingMessage())), bufferRef(buf) {
+		streamingSocket(ios), packet(Packet::MessagePointer(new StreamingFormat::StreamingMessage())), cfgManager(buf) {
 	}
 
 	void Connection::start() {
@@ -79,7 +79,7 @@ namespace SP {
 		// KAOCC: Yet to be done !
 
 		// KAOCC: TODO: prevent creating new Messages for optimization
-		Packet::MessagePointer responsePtr(new StreamingFormat::StreamingMessage);
+		Packet::MessagePointer responsePtr{ new StreamingFormat::StreamingMessage };
 
 		switch (msgPtr->type()) {
 		case StreamingFormat::MessageType::MsgInit:
@@ -101,10 +101,10 @@ namespace SP {
 			responsePtr->set_type(StreamingFormat::MessageType::MsgDefaultPos);
 
 			// must be on the heap
-			StreamingFormat::DefaultPos* defPosPtr = new StreamingFormat::DefaultPos;
+			StreamingFormat::DefaultPos* defPosPtr{ new StreamingFormat::DefaultPos };
 
 			// for testing only
-			CameraConfig camCfg = cfgManager.getCamera();
+			CameraConfig camCfg{ cfgManager.getCamera() };
 
 			defPosPtr->set_x(camCfg.pos.x);
 			defPosPtr->set_y(camCfg.pos.y);
@@ -139,7 +139,7 @@ namespace SP {
 			float dx = msgPtr->cameramsg().delta_x();
 			float dy = msgPtr->cameramsg().delta_y();
 			float dz = msgPtr->cameramsg().delta_z();
-			
+
 			float dvx = msgPtr->cameramsg().delta_vx();
 			float dvy = msgPtr->cameramsg().delta_vy();
 			float dvz = msgPtr->cameramsg().delta_vz();
@@ -159,16 +159,18 @@ namespace SP {
 			// reply the images
 			responsePtr->set_type(StreamingFormat::MessageType::MsgImage);
 
-			StreamingFormat::Image* imagePtr = new StreamingFormat::Image;
+			StreamingFormat::Image* imagePtr{ new StreamingFormat::Image };
 
 			// for testing only
 			imagePtr->set_serialnumber(serialNumber);
 			imagePtr->set_status(8051);  // tmp
-			imagePtr->set_bytesize(cfgManager.getImageRef(serialNumber).getByteSize()); // tmp
+
+			ImageConfig imageData{ cfgManager.getImage() };
+			imagePtr->set_bytesize(imageData.getByteSize()); // tmp
 
 			// image data ????
 			// need to check
-			imagePtr->set_imagedata(reinterpret_cast<const char*>(cfgManager.getImageRef(serialNumber).getImageRawData()));
+			imagePtr->set_imagedata(reinterpret_cast<const char*>(imageData.getImageRawData()));
 
 			responsePtr->set_allocated_imagemsg(imagePtr);
 

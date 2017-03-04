@@ -3,7 +3,9 @@
 #include <iostream>
 #include <memory>
 #include <vector>
+#include <chrono>
 #include <thread>
+
 
 //#include "Common.hpp"
 
@@ -65,7 +67,21 @@ int main(int argc, char *argv[]) {
 
 	auto imgPtr = imageOutput.remove();
 
-	std::cerr << "Size: " <<imgPtr->getByteSize() << std::endl;
+	std::cerr << "Size of SyncBuffer:" << imageOutput.size() << '\n';
+	std::cerr << "Size of image: " << imgPtr->getByteSize() << std::endl;
+
+	std::cerr << "Sleep ..." << '\n';
+	std::this_thread::sleep_for(std::chrono::seconds(3));
+
+	std::cerr << "Loop over" << '\n';
+	for (int i = 0; i < 6; ++i) {
+		
+		imgPtr = imageOutput.remove();
+		std::cerr << "Size of SyncBuffer:" << imageOutput.size() << '\n';
+		std::cerr << "Size of image: " << imgPtr->getByteSize() << std::endl;
+	}
+
+
 
 	// tmp
 	int n;

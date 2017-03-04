@@ -87,6 +87,11 @@ namespace SP {
 
 		}
 
+		size_t size() const {
+			std::lock_guard<std::mutex> lock(mu);
+			return buffer.size();
+		}
+
 
 		// prevent copying
 		SyncBuffer(const SyncBuffer&) = delete;
@@ -95,7 +100,7 @@ namespace SP {
 	private:
 
 		// for sync
-		std::mutex mu;
+		mutable std::mutex mu;
 		std::condition_variable cond;
 
 		std::deque<DataPointer> buffer;

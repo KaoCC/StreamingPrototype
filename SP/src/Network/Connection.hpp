@@ -58,7 +58,7 @@ namespace SP {
 
 		// config
 		ConfigManager cfgManager;
-		SyncBuffer<ImageConfig>& bufferRef;
+		//SyncBuffer<ImageConfig>& bufferRef;
 
 	};
 

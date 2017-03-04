@@ -1,13 +1,15 @@
 #include "ConfigManager.hpp"
 
+#include <iostream>
 
 namespace SP {
 
-	ConfigManager::ConfigManager() : cameraCfg(Position(0, 100, 10000), Direction(1234, 5678, 1024)), screenCfg(512, 1024) {
+	ConfigManager::ConfigManager(SyncBuffer<ImageConfig>& buffer) : 
+		cameraCfg(Position(0, 100, 10000), Direction(1234, 5678, 1024)), screenCfg(512, 1024), bufferRef(buffer) {
 
 		// KAOCC: TODO: load images
 
-		loadImages();
+		//loadImages();
 	}
 
 	CameraConfig ConfigManager::getCamera() {
@@ -33,26 +35,40 @@ namespace SP {
 		cameraCfg.pos.z += dz;
 	}
 
-	const ImageConfig & ConfigManager::getImageRef(size_t index) {
-		return images[index];
-	}
+	ImageConfig ConfigManager::getImage() {
 
-	void ConfigManager::loadImages() {
+		bool status = bufferRef.removeWithTimer(imagePtr, kTimeLimit);
 
-		// this is just for testing
-
-		const size_t numOfImages = 10;
-
-		for (size_t i = 0; i < numOfImages; ++i) {
-
-			// for testing only
-			ImageConfig img(16 * i, 512 * 1024);
-
-
-			images.push_back(img);
-
+		// for testing
+		if (status) {
+			std::cerr << "Get image\n";
+		} else {
+			std::cerr << "Failed to get image, use the cached data\n";
 		}
 
+		return *imagePtr;
 	}
+
+	//const ImageConfig & ConfigManager::getImageRef(size_t index) {
+	//	return images[index];
+	//}
+
+	//void ConfigManager::loadImages() {
+
+	//	// this is just for testing
+
+	//	const size_t numOfImages = 10;
+
+	//	for (size_t i = 0; i < numOfImages; ++i) {
+
+	//		// for testing only
+	//		ImageConfig img(16 * i, 512 * 1024);
+
+
+	//		images.push_back(img);
+
+	//	}
+
+	//}
 
 }
