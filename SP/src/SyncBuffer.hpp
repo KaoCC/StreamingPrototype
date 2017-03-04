@@ -6,6 +6,8 @@
 #include <deque>
 #include <memory>
 
+#include <chrono>
+
 namespace SP {
 
 
@@ -34,7 +36,6 @@ namespace SP {
 
 		DataPointer remove() {
 
-
 			DataPointer ptr = nullptr;
 
 			{
@@ -51,6 +52,45 @@ namespace SP {
 		}
 
 
+		bool removeWithTry(DataPointer& ptr) {
+
+			std::lock_guard<std::mutex> lock(mu);
+
+			if (buffer.empty()) {
+				return false;
+			} else {
+				ptr = std::move(buffer.back());
+				buffer.pop_back();
+
+				cond.notify_all(); // check if necessary
+				return true;
+			}
+
+		}
+
+		// temp
+		bool removeWithTimer(DataPointer& ptr, int waitTime) {
+
+			std::unique_lock<std::mutex> lock(mu);
+
+			if (cond.wait_for(lock, std::chrono::seconds(waitTime), [this]() {return buffer.size() > 0; })) {
+
+				ptr = std::move(buffer.back());
+				buffer.pop_back();
+
+				cond.notify_all(); // check if necessary
+
+				return true;
+			} else {
+				return false;
+			}
+
+		}
+
+
+		// prevent copying
+		SyncBuffer(const SyncBuffer&) = delete;
+		SyncBuffer& operator= (const SyncBuffer&) = delete;
 
 	private:
 
