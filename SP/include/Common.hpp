@@ -14,6 +14,8 @@
 
 #include <string>
 
+#include "Encoder.hpp"
+
 namespace SP {
 
 
@@ -114,6 +116,25 @@ namespace SP {
 
 			// Compress here
 
+			Encoder* encoder = CreateEncoder(imageWidth, imageHeight);
+			uint8_t* rawPtr = encoder->getEncoderRawBuffer();
+		
+
+			std::copy(imageData.begin(), imageData.end(), rawPtr);
+
+			uint8_t* outBufPtr;
+			int outSize = 0;
+			encoder->startEncoding(&outBufPtr, &outSize);
+
+			if (outSize > 0) {
+
+				std::cerr << "SUCCESS! " << outSize << '\n';
+
+				//ImageBuffer encodedImageData(outBufPtr, outBufPtr + outSize);
+
+				//tmp
+				imageData = std::move(ImageBuffer(outBufPtr, outBufPtr + outSize));
+			}
 
 		}
 

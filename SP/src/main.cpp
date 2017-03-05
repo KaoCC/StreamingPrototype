@@ -26,30 +26,30 @@ void producer(SP::SyncBuffer<int>& bufferRef, int id) {
 }
 
 
-void testSyncBuffer() {
-	//test
-	std::vector<std::thread> threads;
-	//SP::RenderingManager tmpRendering;
-
-
-	SP::SyncBuffer<int> buf;
-	//SP::SyncBuffer<int>::DataPointer a(new int(10));
-	//buf.insert(std::move(a));
-
-	size_t kTestSize = 10;
-	for (size_t i = 0; i < kTestSize; ++i) {
-		threads.push_back(std::thread(producer, std::ref(buf), i));
-	}
-
-	for (size_t i = 0; i < kTestSize; ++i) {
-		auto ptr = buf.remove();
-		std::cerr << *ptr.get() << std::endl;
-	}
-
-	for (size_t i = 0; i < kTestSize; ++i) {
-		threads[i].join();
-	}
-}
+//void testSyncBuffer() {
+//	//test
+//	std::vector<std::thread> threads;
+//	//SP::RenderingManager tmpRendering;
+//
+//
+//	SP::SyncBuffer<int> buf;
+//	//SP::SyncBuffer<int>::DataPointer a(new int(10));
+//	//buf.insert(std::move(a));
+//
+//	size_t kTestSize = 10;
+//	for (size_t i = 0; i < kTestSize; ++i) {
+//		threads.push_back(std::thread(producer, std::ref(buf), i));
+//	}
+//
+//	for (size_t i = 0; i < kTestSize; ++i) {
+//		auto ptr = buf.remove();
+//		std::cerr << *ptr.get() << std::endl;
+//	}
+//
+//	for (size_t i = 0; i < kTestSize; ++i) {
+//		threads[i].join();
+//	}
+//}
 
 int main(int argc, char *argv[]) {
 

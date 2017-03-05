@@ -54,6 +54,17 @@ workspace "StreamingPrototype"
     filter {}
 
 
+    -- x264
+    includedirs {"./3rdparty/x264/include"}
+
+    filter {"platforms:x64"}
+        libdirs {"./3rdparty/x264/lib/x64"}
+    filter {"platforms:x86"}
+        libdirs {"./3rdparty/x264/lib/x86"}
+    filter {}
+    links {"x264"}
+
+
     -- Radeon Rays
     includedirs {"./3rdparty/RadeonRays/include"}
     libdirs {"./3rdparty/RadeonRays/lib"}
