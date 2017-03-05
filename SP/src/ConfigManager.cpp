@@ -49,6 +49,12 @@ namespace SP {
 		return *imagePtr;
 	}
 
+	ImageConfig ConfigManager::getImageCache() {
+		return *imagePtr;
+	}
+
+	
+
 	//const ImageConfig & ConfigManager::getImageRef(size_t index) {
 	//	return images[index];
 	//}

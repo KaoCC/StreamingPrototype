@@ -29,6 +29,8 @@ namespace SP {
 			newConnection->start();
 		} else {
 			std::cerr << "Error:" << err << std::endl;
+
+			//KAOCC: TODO: change the exception type
 			throw "Error in Async Accept";
 		}
 

@@ -80,18 +80,23 @@ namespace SP {
 
 			// temp, should fix this
 			if (!inputStream) {
-				throw "Error";
+				throw std::runtime_error("Could not open file");;
 			}
 
 
 			// check this
 			inputStream.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 
-			try {
-				std::copy(std::istreambuf_iterator<char>(inputStream), std::istreambuf_iterator<char>(), std::back_inserter(imageData));
-			} catch (const std::ios_base::failure &fail) {
-				std::cerr << fail.what() << '\n';
-			}
+			//try {
+			std::copy(std::istreambuf_iterator<char>(inputStream), std::istreambuf_iterator<char>(), std::back_inserter(imageData));
+			//} catch (const std::ios_base::failure &fail) {
+				//std::cerr << fail.what() << '\n';
+			//}
+
+
+			// Compress here
+
+
 		}
 
 		size_t getByteSize() const {

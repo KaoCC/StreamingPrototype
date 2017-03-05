@@ -27,6 +27,7 @@ namespace SP {
 		//const ImageConfig& getImageRef(size_t index);
 
 		ImageConfig getImage();
+		ImageConfig getImageCache();
 
 
 		// tmp

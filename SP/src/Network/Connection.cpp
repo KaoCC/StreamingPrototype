@@ -170,7 +170,7 @@ namespace SP {
 
 			// image data ????
 			// need to check
-			imagePtr->set_imagedata(reinterpret_cast<const char*>(imageData.getImageRawData()));
+			//imagePtr->set_imagedata(reinterpret_cast<const char*>(imageData.getImageRawData()));
 
 			responsePtr->set_allocated_imagemsg(imagePtr);
 
@@ -210,6 +210,13 @@ namespace SP {
 
 		if (responsePacket.packing(writeBuffer)) {
 			boost::asio::write(streamingSocket, boost::asio::buffer(writeBuffer));
+
+
+			// check if we need to write the image
+			if (msgPtr->type() == StreamingFormat::MessageType::MsgImage) {
+				boost::asio::write(streamingSocket, boost::asio::buffer(cfgManager.getImageCache().getImageData()));
+			}
+
 		} else {
 			// Error here
 			// Throw ???

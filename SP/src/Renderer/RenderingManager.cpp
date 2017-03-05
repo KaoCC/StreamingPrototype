@@ -47,8 +47,11 @@ namespace SP {
 
 			//syncBuffer.insert(std::make_unique<ImageConfig>(localCounter, 10));
 
-
-			syncBuffer.insert(std::make_unique<ImageConfig>(kFilePath));
+			try {
+				syncBuffer.insert(std::make_unique<ImageConfig>(kFilePath));
+			} catch (const std::exception &fail) {
+				std::cerr << fail.what() << '\n';
+			}
 
 
 			++localCounter;
