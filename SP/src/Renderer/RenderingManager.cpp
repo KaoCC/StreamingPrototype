@@ -40,7 +40,7 @@ namespace SP {
 	void RenderingManager::testOutput(int id) {
 
 		// tmp file location
-		const std::string kFilePath{ "../Resources/SceneImages/Crown_rev_2.png" };
+		const std::string kFilePath{ "../Resources/SceneImages/rend.ppm" };
 
 		int localCounter = id;
 		while (true) {

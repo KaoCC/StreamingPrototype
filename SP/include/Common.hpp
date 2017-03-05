@@ -12,6 +12,8 @@
 
 #include <iostream>
 
+#include <string>
+
 namespace SP {
 
 
@@ -86,6 +88,22 @@ namespace SP {
 
 			// check this
 			inputStream.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+
+			// KAOCC: test with ppm image!
+
+			std::string magicNum;
+			size_t imageWidth = 0;
+			size_t imageHeight = 0;
+			int maxColVal;
+
+			std::getline(inputStream, magicNum);
+			inputStream >> imageWidth >> imageHeight >> maxColVal;
+			inputStream.get(); // skip the trailing white space
+
+			std::cerr << "Image: " << magicNum << " " << imageWidth << " " <<imageHeight << std::endl;
+
+
+			// Read RGB buffer
 
 			//try {
 			std::copy(std::istreambuf_iterator<char>(inputStream), std::istreambuf_iterator<char>(), std::back_inserter(imageData));
