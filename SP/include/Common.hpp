@@ -76,7 +76,7 @@ namespace SP {
 		// for reading testing image only
 		explicit ImageConfig(const std::string& path) {
 
-			std::ifstream inputStream(path, std::ifstream::in | std::ifstream::binary);
+			std::ifstream inputStream(path, std::ifstream::binary);
 
 			// temp, should fix this
 			if (!inputStream) {
@@ -88,7 +88,7 @@ namespace SP {
 			inputStream.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 
 			try {
-				std::copy(std::istream_iterator<std::uint8_t>(inputStream), std::istream_iterator<std::uint8_t>(), std::back_inserter(imageData));
+				std::copy(std::istreambuf_iterator<char>(inputStream), std::istreambuf_iterator<char>(), std::back_inserter(imageData));
 			} catch (const std::ios_base::failure &fail) {
 				std::cerr << fail.what() << '\n';
 			}
