@@ -9,7 +9,7 @@
 namespace SP {
 
 
-	RenderingManager::RenderingManager(SyncBuffer<ImageConfig>& buff) : syncBuffer(buff){
+	RenderingManager::RenderingManager(SyncBuffer<ImageConfig>& buff) : syncBuffer(buff), encoder(CreateEncoder(512, 512)){
 
 		// allocate renderer
 		renderer = std::make_unique<PtRenderer>(1, 5);
@@ -22,6 +22,8 @@ namespace SP {
 		if (renderThread) {
 			renderThread->join();
 		}
+
+		delete encoder;
 	}
 
 	void RenderingManager::startRenderThread() {
@@ -49,7 +51,21 @@ namespace SP {
 
 			try {
 
-				syncBuffer.insert(std::make_unique<ImageConfig>(kFilePath));
+				syncBuffer.insert(std::make_unique<ImageConfig>(localCounter, kFilePath, encoder, accImageBuffer));
+
+
+
+				// test
+				std::cerr << "Local Counter " << localCounter << '\n';
+				//if (localCounter == 10) {
+				//	std::ofstream outStream("Hi.txt", std::ifstream::binary);
+
+				//	std::ostream_iterator<char> oi(outStream);
+				//	std::copy(accImageBuffer.begin(), accImageBuffer.end(), oi);
+				//	std::cerr << "Output" << '\n';
+
+				//}
+
 
 			} catch (const std::exception &fail) {
 				std::cerr << fail.what() << '\n';

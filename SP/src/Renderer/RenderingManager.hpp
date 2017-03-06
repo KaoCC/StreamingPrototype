@@ -14,6 +14,8 @@
 #include "Common.hpp"
 #include "PtRenderer.hpp"
 
+#include "../Encoder/Encoder.hpp"
+
 namespace SP {
 
 
@@ -68,6 +70,10 @@ namespace SP {
 
 		// Path-Tracing Renderer
 		std::unique_ptr<PtRenderer> renderer;
+
+		Encoder* encoder;
+		ImageConfig::ImageBuffer accImageBuffer; // test
+
 
 	};
 
