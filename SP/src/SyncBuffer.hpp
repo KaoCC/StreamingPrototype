@@ -43,8 +43,8 @@ namespace SP {
 
 				cond.wait(lock, [this]() {return buffer.size() > 0; });
 
-				ptr = std::move(buffer.back());
-				buffer.pop_back();
+				ptr = std::move(buffer.front());
+				buffer.pop_front();
 			}
 
 			cond.notify_all();
@@ -59,8 +59,8 @@ namespace SP {
 			if (buffer.empty()) {
 				return false;
 			} else {
-				ptr = std::move(buffer.back());
-				buffer.pop_back();
+				ptr = std::move(buffer.front());
+				buffer.pop_front();
 
 				cond.notify_all(); // check if necessary
 				return true;
@@ -75,8 +75,8 @@ namespace SP {
 
 			if (cond.wait_for(lock, std::chrono::seconds(waitTime), [this]() {return buffer.size() > 0; })) {
 
-				ptr = std::move(buffer.back());
-				buffer.pop_back();
+				ptr = std::move(buffer.front());
+				buffer.pop_front();
 
 				cond.notify_all(); // check if necessary
 
