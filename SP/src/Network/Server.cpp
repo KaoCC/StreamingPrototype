@@ -6,12 +6,15 @@
 
 #include <boost/bind.hpp>
 
+
+
 namespace SP {
 
 	Server::Server(boost::asio::io_service & ios, unsigned port, SyncBuffer<ImageConfig>& syncBuff)
 		: acc(ios, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port)), syncBufferRef(syncBuff) {
 		startAccept();
 	}
+
 
 	void Server::startAccept() {
 

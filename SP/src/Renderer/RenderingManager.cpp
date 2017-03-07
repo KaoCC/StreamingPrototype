@@ -9,7 +9,8 @@
 namespace SP {
 
 
-	RenderingManager::RenderingManager(SyncBuffer<ImageConfig>& buff) : syncBuffer(buff), encoder(CreateEncoder(512, 512)){
+	RenderingManager::RenderingManager(SyncBuffer<ImageConfig>& buff) : syncBuffer(buff) {
+		//, encoder(CreateEncoder(512, 512)) {
 
 		// allocate renderer
 		renderer = std::make_unique<PtRenderer>(1, 5);
@@ -23,13 +24,13 @@ namespace SP {
 			renderThread->join();
 		}
 
-		delete encoder;
+		//delete encoder;
 	}
 
 	void RenderingManager::startRenderThread() {
 
 		// yet to be done
-		
+
 		std::cerr << "Start Render Thread" << std::endl;
 
 		// testing 
@@ -42,18 +43,34 @@ namespace SP {
 	void RenderingManager::testOutput(int id) {
 
 		// tmp file location
-		const std::string kFilePath{ "../Resources/SceneImages/rend.ppm" };
+		const std::string pathBase{ "../Resources/SceneImages/" };
+
+
+		//const std::string kFilePath{ pathBase + "crown_" + (char)('0' + index) + ".ppm" };
 
 		int localCounter = id;
+
 		while (true) {
+
+			int index = localCounter;
+
+			if (localCounter < 20) {
+				index = localCounter + 1;
+			} else {
+				index = 21;
+			}
 
 			//syncBuffer.insert(std::make_unique<ImageConfig>(localCounter, 10));
 
+			const std::string kFilePath{ pathBase + "crown_" + std::to_string(index) + ".ppm" };
+			std::cerr << kFilePath << std::endl;
+
 			try {
 
-				syncBuffer.insert(std::make_unique<ImageConfig>(localCounter, kFilePath, encoder, accImageBuffer));
+				//syncBuffer.insert(std::make_unique<ImageConfig>(localCounter, kFilePath, encoder, accImageBuffer));
+				syncBuffer.insert(std::make_unique<ImageConfig>(localCounter, kFilePath));
 
-
+				std::this_thread::sleep_for(std::chrono::seconds(2));
 
 				// test
 				std::cerr << "Local Counter " << localCounter << '\n';
@@ -94,11 +111,11 @@ namespace SP {
 		sceneDataPtr = std::unique_ptr<Scene>(scene_io->loadScene(filename, basepath));
 
 		// more here ...
-		
+
 
 		// for testing
 		std::cerr << "init data pass: " << std::endl;
-		std::cerr << "number of shapes: " << sceneDataPtr->getNumShapes() <<std::endl;
+		std::cerr << "number of shapes: " << sceneDataPtr->getNumShapes() << std::endl;
 		std::cerr << "number of lights: " << sceneDataPtr->getNumLights() << std::endl;
 
 

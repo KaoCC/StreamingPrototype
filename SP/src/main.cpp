@@ -17,13 +17,13 @@
 #include "SyncBuffer.hpp"
 
 
-void producer(SP::SyncBuffer<int>& bufferRef, int id) {
-
-	SP::SyncBuffer<int>::DataPointer a(new int(id));
-	std::this_thread::sleep_for(std::chrono::microseconds(id * 10));
-	bufferRef.insert(std::move(a));
-	//std::this_thread::sleep_for(std::chrono::seconds(id));
-}
+//void producer(SP::SyncBuffer<int>& bufferRef, int id) {
+//
+//	SP::SyncBuffer<int>::DataPointer a(new int(id));
+//	std::this_thread::sleep_for(std::chrono::microseconds(id * 10));
+//	bufferRef.insert(std::move(a));
+//	//std::this_thread::sleep_for(std::chrono::seconds(id));
+//}
 
 
 //void testSyncBuffer() {
@@ -65,21 +65,21 @@ int main(int argc, char *argv[]) {
 
 	renderMan.startRenderThread();
 
-	auto imgPtr = imageOutput.remove();
+	//auto imgPtr = imageOutput.remove();
 
-	std::cerr << "Size of SyncBuffer:" << imageOutput.size() << '\n';
-	std::cerr << "Size of image: " << imgPtr->getByteSize() << std::endl;
+	//std::cerr << "Size of SyncBuffer:" << imageOutput.size() << '\n';
+	//std::cerr << "Size of image: " << imgPtr->getByteSize() << std::endl;
 
-	std::cerr << "Sleep ..." << '\n';
-	std::this_thread::sleep_for(std::chrono::seconds(3));
+	//std::cerr << "Sleep ..." << '\n';
+	//std::this_thread::sleep_for(std::chrono::seconds(3));
 
-	std::cerr << "Loop over" << '\n';
-	for (int i = 0; i < 6; ++i) {
-		
-		imgPtr = imageOutput.remove();
-		std::cerr << "Size of SyncBuffer:" << imageOutput.size() << '\n';
-		std::cerr << "Size of image: " << imgPtr->getByteSize() << std::endl;
-	}
+	//std::cerr << "Loop over" << '\n';
+	//for (int i = 0; i < 6; ++i) {
+	//	
+	//	imgPtr = imageOutput.remove();
+	//	std::cerr << "Size of SyncBuffer:" << imageOutput.size() << '\n';
+	//	std::cerr << "Size of image: " << imgPtr->getByteSize() << std::endl;
+	//}
 
 
 

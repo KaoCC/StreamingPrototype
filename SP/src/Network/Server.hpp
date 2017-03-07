@@ -9,6 +9,7 @@
 #include "../SyncBuffer.hpp"
 #include "Common.hpp"
 
+
 namespace SP {
 
 	class Server {

@@ -73,7 +73,9 @@ namespace SP {
 
 
 		// for reading testing image only
-		ImageConfig(int localId, const std::string& path, Encoder* encoder, ImageBuffer& accBuffer);
+		//ImageConfig(int localId, const std::string& path, Encoder* encoder, ImageBuffer& accBuffer);
+
+		ImageConfig(int localId, const std::string& path);
 
 		size_t getByteSize() const {
 			return imageData.size() * sizeof(uint8_t);

@@ -14,7 +14,8 @@
 namespace SP {
 
 
-	ImageConfig::ImageConfig(int localId, const std::string& path, Encoder* encoder, ImageBuffer& accBuffer) {
+	//ImageConfig::ImageConfig(int localId, const std::string& path, Encoder* encoder, ImageBuffer& accBuffer) {
+	ImageConfig::ImageConfig(int localId, const std::string& path) {
 
 		imageID = localId;
 
@@ -55,32 +56,33 @@ namespace SP {
 		// Compress here
 
 		//Encoder* encoder = CreateEncoder(imageWidth, imageHeight);
-		uint8_t* rawPtr = encoder->getEncoderRawBuffer();
+
+		//uint8_t* rawPtr = encoder->getEncoderRawBuffer();
 
 
-		std::copy(imageData.begin(), imageData.end(), rawPtr);
+		//std::copy(imageData.begin(), imageData.end(), rawPtr);
 
-		uint8_t* outBufPtr;
-		int outSize = 0;
-		encoder->startEncoding(&outBufPtr, &outSize);
-
-
-		if (outSize > 0) {
-
-			std::cerr << "SUCCESS! " << outSize << '\n';
-
-			//ImageBuffer encodedImageData(outBufPtr, outBufPtr + outSize);
-
-			//tmp
-			imageData = std::move(ImageBuffer(outBufPtr, outBufPtr + outSize));
+		//uint8_t* outBufPtr;
+		//int outSize = 0;
+		//encoder->startEncoding(&outBufPtr, &outSize);
 
 
-			// accumulate
-			accBuffer.insert(std::end(accBuffer), std::begin(imageData), std::end(imageData));
+		//if (outSize > 0) {
+
+		//	std::cerr << "SUCCESS! " << outSize << '\n';
+
+		//	//ImageBuffer encodedImageData(outBufPtr, outBufPtr + outSize);
+
+		//	//tmp
+		//	imageData = std::move(ImageBuffer(outBufPtr, outBufPtr + outSize));
+
+
+		//	// accumulate
+		//	accBuffer.insert(std::end(accBuffer), std::begin(imageData), std::end(imageData));
 
 
 
-		}
+		//}
 
 	}
 

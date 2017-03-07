@@ -71,8 +71,8 @@ namespace SP {
 		// Path-Tracing Renderer
 		std::unique_ptr<PtRenderer> renderer;
 
-		Encoder* encoder;
-		ImageConfig::ImageBuffer accImageBuffer; // test
+		//Encoder* encoder;
+		//ImageConfig::ImageBuffer accImageBuffer; // test
 
 
 	};

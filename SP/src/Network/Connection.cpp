@@ -1,5 +1,6 @@
 #include "Connection.hpp"
 
+#include <iostream>
 
 namespace SP {
 
@@ -166,10 +167,41 @@ namespace SP {
 			
 
 			ImageConfig imageData{ cfgManager.getImage() };
-			imagePtr->set_bytesize(imageData.getByteSize()); // tmp
+
+			Encoder* encoder = cfgManager.getEncoder();
+			uint8_t* rawPtr = encoder->getEncoderRawBuffer();
+			ImageConfig::ImageBuffer& imageBufferCache = imageData.getImageData();
 
 
+			std::cerr << "IMG CACHE SZ: " << imageBufferCache.size() << " ID: " << imageData.getID() << '\n';
+
+			std::copy(imageBufferCache.begin(), imageBufferCache.end(), rawPtr);
+
+			uint8_t* outBufPtr;
+			int outSize = 0;
+			encoder->startEncoding(&outBufPtr, &outSize);
+
+			//ImageConfig::ImageBuffer encodedImageData;
+			if (outSize > 0) {
+
+				std::cerr << "SUCCESS! Size: " << outSize << '\n';
+
+				//ImageBuffer encodedImageData(outBufPtr, outBufPtr + outSize);
+
+				//tmp
+				encodedImageData = std::move(ImageConfig::ImageBuffer(outBufPtr, outBufPtr + outSize));
+
+				// accumulate
+				//accBuffer.insert(std::end(accBuffer), std::begin(imageData), std::end(imageData));
+
+			} else {
+				std::cerr << "Failed to Encode ! " << '\n';
+			}
+
+
+			imagePtr->set_bytesize(encodedImageData.size()); // tmp
 			imagePtr->set_status(imageData.getID());  // tmp
+
 
 			// image data ????
 			// need to check
@@ -217,7 +249,9 @@ namespace SP {
 
 			// check if we need to write the image
 			if (msgPtr->type() == StreamingFormat::MessageType::MsgImage) {
-				boost::asio::write(streamingSocket, boost::asio::buffer(cfgManager.getImageCache().getImageData()));
+
+				//boost::asio::write(streamingSocket, boost::asio::buffer(cfgManager.getImageCache().getImageData()));
+				boost::asio::write(streamingSocket, boost::asio::buffer(encodedImageData));
 			}
 
 		} else {

@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "SyncBuffer.hpp"
+#include "Encoder/Encoder.hpp"
 
 namespace SP {
 
@@ -29,6 +30,9 @@ namespace SP {
 		ImageConfig getImage();
 		ImageConfig getImageCache();
 
+		Encoder* getEncoder();
+
+		~ConfigManager();
 
 		// tmp
 		//void loadImages();
@@ -50,6 +54,10 @@ namespace SP {
 		const int kTimeLimit = 1;
 
 		SyncBuffer<ImageConfig>& bufferRef;
+
+
+		Encoder* encoder;
+
 	};
 
 

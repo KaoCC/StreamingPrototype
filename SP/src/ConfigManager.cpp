@@ -2,15 +2,19 @@
 
 #include <iostream>
 
+const int kWidth = 512;
+const int kHeight = 512;
+
 namespace SP {
 
 	ConfigManager::ConfigManager(SyncBuffer<ImageConfig>& buffer) : 
-		cameraCfg(Position(0, 100, 10000), Direction(1234, 5678, 1024)), screenCfg(512, 1024), bufferRef(buffer) {
+		cameraCfg(Position(0, 100, 10000), Direction(1234, 5678, 1024)), screenCfg(512, 1024), bufferRef(buffer), encoder(CreateEncoder(kWidth, kHeight)) {
 
 		// KAOCC: TODO: load images
 
 		//loadImages();
 	}
+
 
 	CameraConfig ConfigManager::getCamera() {
 		return cameraCfg;
@@ -51,6 +55,14 @@ namespace SP {
 
 	ImageConfig ConfigManager::getImageCache() {
 		return *imagePtr;
+	}
+
+	Encoder * ConfigManager::getEncoder() {
+		return encoder;
+	}
+
+	ConfigManager::~ConfigManager() {
+		delete encoder;
 	}
 
 	

@@ -60,6 +60,9 @@ namespace SP {
 		ConfigManager cfgManager;
 		//SyncBuffer<ImageConfig>& bufferRef;
 
+		// tmp
+		ImageConfig::ImageBuffer encodedImageData;
+
 	};
 
 
