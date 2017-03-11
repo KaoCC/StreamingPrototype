@@ -14,7 +14,7 @@ using boost::asio::ip::tcp;
 SP::CameraConfig globalCamera(SP::Position(0, 0, 0), SP::Direction(0, 0, 0));
 
 std::vector<SP::ImageConfig> images;
-const unsigned MAX_IMAGE_COUNT = 10;
+const unsigned MAX_IMAGE_COUNT = 20;
 
 
 // for testing only
@@ -197,11 +197,11 @@ int main(int argc, char* argv[]) {
 				std::cerr << "MsgImage !" << std::endl;
 
 				uint32_t returnedSerialNumber = msg->imagemsg().serialnumber();
-				std::cerr << "returned Serial number:" << returnedSerialNumber << std::endl;
+				std::cerr << "returned Serial number: " << returnedSerialNumber << std::endl;
 
 				// should be "8051"
 				uint32_t statusCode = msg->imagemsg().status();
-				std::cerr << "status code:" << statusCode << std::endl;
+				std::cerr << "status code: >>> " << statusCode << std::endl;
 
 				// resolve byte size
 				uint32_t byteSize = msg->imagemsg().bytesize();
@@ -212,7 +212,10 @@ int main(int argc, char* argv[]) {
 
 				// this one should be avoid
 				images[returnedSerialNumber].getImageData().resize(byteSize);
-				std::copy(msg->imagemsg().imagedata().begin(), msg->imagemsg().imagedata().end(), images[returnedSerialNumber].getImageData().begin());
+
+				boost::asio::read(streamingSocket, boost::asio::buffer(images[returnedSerialNumber].getImageData(), byteSize));
+
+				//std::copy(msg->imagemsg().imagedata().begin(), msg->imagemsg().imagedata().end(), images[returnedSerialNumber].getImageData().begin());
 
 				std::cerr << "Get image !" << std::endl;
 
