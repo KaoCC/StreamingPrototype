@@ -9,7 +9,9 @@ namespace SP {
 	}
 
 	Connection::Connection(boost::asio::io_service & ios, SyncBuffer<ImageConfig>& buf) :
-		streamingSocket(ios), packet(Packet::MessagePointer(new StreamingFormat::StreamingMessage())), cfgManager(buf) {
+		streamingSocket(ios), packet(Packet::MessagePointer(new StreamingFormat::StreamingMessage())), cfgManager(buf)
+		, responsePacket(Packet::MessagePointer(new StreamingFormat::StreamingMessage())) 
+	{
 	}
 
 	void Connection::start() {
@@ -62,6 +64,32 @@ namespace SP {
 			startReadHeader();
 		}
 
+
+	}
+
+
+	// KAOCC: need to change !!
+	void Connection::handleWriteMessage(const boost::system::error_code & error) {
+
+		if (!error) {
+
+			writeBufferQueue.pop_front();
+
+
+			// if not empty ?
+
+			if (!writeBufferQueue.empty()) {
+				boost::asio::async_write(streamingSocket, boost::asio::buffer(writeBufferQueue.front()),
+					std::bind(&Connection::handleWriteMessage, shared_from_this(), std::placeholders::_1));
+			}
+
+
+		} else {
+			std::cerr << "---------------- Write Error: " << error << '\n';
+			boost::system::error_code ignored_ec;
+			//streamingSocket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ignored_ec);
+			//streamingSocket.close();
+		}
 
 	}
 
@@ -166,14 +194,14 @@ namespace SP {
 			imagePtr->set_serialnumber(serialNumber);
 			
 
-			ImageConfig imageData{ cfgManager.getImage() };
+			ImageConfig& imageData{ cfgManager.getImage() };
+			ImageConfig::ImageBuffer& imageBufferCache{ imageData.getImageData() };
+
+			std::cerr << "[IMG CACHE SZ]: " << imageBufferCache.size() << " >>>>>>>>>>>>  ID: " << imageData.getID() << '\n';
+
 
 			Encoder* encoder = cfgManager.getEncoder();
 			uint8_t* rawPtr = encoder->getEncoderRawBuffer();
-			ImageConfig::ImageBuffer& imageBufferCache = imageData.getImageData();
-
-
-			std::cerr << "IMG CACHE SZ: " << imageBufferCache.size() << " ID: " << imageData.getID() << '\n';
 
 			std::copy(imageBufferCache.begin(), imageBufferCache.end(), rawPtr);
 
@@ -195,7 +223,7 @@ namespace SP {
 				//accBuffer.insert(std::end(accBuffer), std::begin(imageData), std::end(imageData));
 
 			} else {
-				std::cerr << "Failed to Encode ! " << '\n';
+				std::cerr << "Failed to Encode !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! " << '\n';
 			}
 
 
@@ -241,24 +269,69 @@ namespace SP {
 	void Connection::writeResponse(Packet::MessagePointer msgPtr) {
 
 		Packet::DataBuffer writeBuffer;
-		Packet responsePacket(msgPtr);
+		//Packet responsePacket(msgPtr);
+
+		//writeBuffer.clear();
+		responsePacket.setMessagePtr(msgPtr);
 
 		if (responsePacket.packing(writeBuffer)) {
-			boost::asio::write(streamingSocket, boost::asio::buffer(writeBuffer));
 
 
 			// check if we need to write the image
 			if (msgPtr->type() == StreamingFormat::MessageType::MsgImage) {
 
 				//boost::asio::write(streamingSocket, boost::asio::buffer(cfgManager.getImageCache().getImageData()));
-				boost::asio::write(streamingSocket, boost::asio::buffer(encodedImageData));
+				/*boost::asio::async_write(streamingSocket, boost::asio::buffer(encodedImageData),
+					std::bind(&Connection::handleWriteImage, shared_from_this(), std::placeholders::_1)); */
+				//boost::asio::write(streamingSocket, boost::asio::buffer(encodedImageData));
+
+				appendImage(writeBuffer);
+
 			}
+
+
+			bool writeInProgress = !writeBufferQueue.empty();  // check for image queue also ?
+			writeBufferQueue.push_back(std::move(writeBuffer));
+
+			if (!writeInProgress) {
+
+
+				/*boost::asio::async_write(streamingSocket, boost::asio::buffer(writeBuffer),
+					std::bind(&Connection::handleWriteMessage, shared_from_this(), std::placeholders::_1)); */
+				//boost::asio::write(streamingSocket, boost::asio::buffer(writeBuffer));
+
+				boost::asio::async_write(streamingSocket, boost::asio::buffer(writeBufferQueue.front()),
+					std::bind(&Connection::handleWriteMessage, shared_from_this(), std::placeholders::_1));
+
+			}
+
+
 
 		} else {
 			// Error here
 			// Throw ???
+
+			std::cerr << "Failed to pack !!! " << std::endl;
 		}
 
+	}
+
+
+	// yet to be done
+	void Connection::appendImage(Packet::DataBuffer & buffer) {
+
+		//size_t currentSize = buffer.size();
+		//size_t newSize = currentSize + encodedImageData.size();
+		//buffer.resize(newSize);
+		// test
+		//std::cerr << "Resize " << buffer.size() << '\n';
+		//std::copy(encodedImageData.begin(), encodedImageData.end(), buffer.end());
+
+
+		buffer.insert(std::end(buffer), std::begin(encodedImageData), std::end(encodedImageData));
+
+		// test
+		//std::cerr << "insert size " << buffer.size() << '\n';
 	}
 
 

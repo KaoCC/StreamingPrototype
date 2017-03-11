@@ -51,7 +51,7 @@ namespace SP {
 		SyncBuffer<ImageConfig>::DataPointer imagePtr{ new ImageConfig };
 
 		// timer linit, wait no longer than this
-		const int kTimeLimit = 1;
+		const int kTimeLimit = 10;
 
 		SyncBuffer<ImageConfig>& bufferRef;
 

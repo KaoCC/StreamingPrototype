@@ -19,7 +19,7 @@ namespace SP {
 
 		EncoderImpl(size_t width, size_t height);
 
-		~EncoderImpl();
+		virtual ~EncoderImpl();
 
 		void startEncoding(uint8_t** encodedBuf, int* encodedSize);
 

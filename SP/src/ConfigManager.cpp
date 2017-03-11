@@ -8,7 +8,7 @@ const int kHeight = 512;
 namespace SP {
 
 	ConfigManager::ConfigManager(SyncBuffer<ImageConfig>& buffer) : 
-		cameraCfg(Position(0, 100, 10000), Direction(1234, 5678, 1024)), screenCfg(512, 1024), bufferRef(buffer), encoder(CreateEncoder(kWidth, kHeight)) {
+		cameraCfg(Position(0, 100, 10000), Direction(1234, 5678, 1024)), screenCfg(kWidth, kHeight), bufferRef(buffer), encoder(CreateEncoder(kWidth, kHeight)) {
 
 		// KAOCC: TODO: load images
 
@@ -41,6 +41,7 @@ namespace SP {
 
 	ImageConfig ConfigManager::getImage() {
 
+		// KAOCC: be careful for the first image ! It may receive the default !
 		bool status = bufferRef.removeWithTimer(imagePtr, kTimeLimit);
 
 		// for testing

@@ -9,6 +9,8 @@
 #include "../ConfigManager.hpp"
 #include "../SyncBuffer.hpp"
 
+#include <deque>
+
 namespace SP {
 
 	class Connection : public std::enable_shared_from_this<Connection> {
@@ -36,12 +38,16 @@ namespace SP {
 		void startReadMessage(size_t msgSize);
 		void handleReadMessage(const boost::system::error_code& error);
 
+		void handleWriteMessage(const boost::system::error_code& error);
 
 		Packet::MessagePointer resolvePacket();
 
 		Packet::MessagePointer createResponse(Packet::MessagePointer msgPtr);
 
 		void writeResponse(Packet::MessagePointer msgPtr);
+
+
+		void appendImage(Packet::DataBuffer& buffer);
 
 
 		// data members 
@@ -51,9 +57,11 @@ namespace SP {
 
 		// buffers
 		Packet::DataBuffer localBuffer;
+		//Packet::DataBuffer writeBuffer;
 
 		// packet structure
 		Packet packet;
+		Packet responsePacket;
 
 
 		// config
@@ -62,6 +70,10 @@ namespace SP {
 
 		// tmp
 		ImageConfig::ImageBuffer encodedImageData;
+
+
+		// tmp buffer for async write
+		std::deque<Packet::DataBuffer> writeBufferQueue;
 
 	};
 

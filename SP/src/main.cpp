@@ -84,8 +84,8 @@ int main(int argc, char *argv[]) {
 
 
 	// tmp
-	int n;
-	std::cin >> n;
+	//int n;
+	//std::cin >> n;
 
 	// KAOCC: create Thread for Rendering / Encoding
 

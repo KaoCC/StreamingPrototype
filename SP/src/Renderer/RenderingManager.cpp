@@ -70,7 +70,7 @@ namespace SP {
 				//syncBuffer.insert(std::make_unique<ImageConfig>(localCounter, kFilePath, encoder, accImageBuffer));
 				syncBuffer.insert(std::make_unique<ImageConfig>(localCounter, kFilePath));
 
-				std::this_thread::sleep_for(std::chrono::seconds(2));
+				std::this_thread::sleep_for(std::chrono::seconds(5));
 
 				// test
 				std::cerr << "Local Counter " << localCounter << '\n';
