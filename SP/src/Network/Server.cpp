@@ -34,7 +34,7 @@ namespace SP {
 			std::cerr << "Error:" << err << std::endl;
 
 			//KAOCC: TODO: change the exception type
-			throw "Error in Async Accept";
+			throw std::runtime_error("Error in Async Accept");
 		}
 
 

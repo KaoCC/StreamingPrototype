@@ -75,14 +75,11 @@ namespace SP {
 
 			writeBufferQueue.pop_front();
 
-
 			// if not empty ?
-
 			if (!writeBufferQueue.empty()) {
 				boost::asio::async_write(streamingSocket, boost::asio::buffer(writeBufferQueue.front()),
 					std::bind(&Connection::handleWriteMessage, shared_from_this(), std::placeholders::_1));
 			}
-
 
 		} else {
 			std::cerr << "---------------- Write Error: " << error << '\n';
@@ -193,11 +190,11 @@ namespace SP {
 			// for testing only
 			imagePtr->set_serialnumber(serialNumber);
 			
-
-			ImageConfig& imageData{ cfgManager.getImage() };
+			// need to optimize for copying !
+			ImageConfig imageData{ cfgManager.getImage() };
 			ImageConfig::ImageBuffer& imageBufferCache{ imageData.getImageData() };
 
-			std::cerr << "[IMG CACHE SZ]: " << imageBufferCache.size() << " >>>>>>>>>>>>  ID: " << imageData.getID() << '\n';
+			//std::cerr << "[IMG CACHE SZ]: " << imageBufferCache.size() << " >>>>>>>>>>>>  ID: " << imageData.getID() << '\n';
 
 
 			Encoder* encoder = cfgManager.getEncoder();

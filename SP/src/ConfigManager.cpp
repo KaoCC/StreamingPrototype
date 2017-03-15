@@ -45,9 +45,7 @@ namespace SP {
 		bool status = bufferRef.removeWithTimer(imagePtr, kTimeLimit);
 
 		// for testing
-		if (status) {
-			std::cerr << "Get image\n";
-		} else {
+		if (!status) {
 			std::cerr << "Failed to get image, use the cached data\n";
 		}
 
