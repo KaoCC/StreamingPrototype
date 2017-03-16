@@ -1,7 +1,7 @@
 
 
 #include "SceneIO.hpp"
-
+#include "ImageIO.hpp"
 
 #include <vector>
 #include <set>
@@ -12,6 +12,8 @@
 
 
 #include "../Shape.hpp"
+
+#include "../Material.hpp"
 
 #include <iostream>
 
@@ -28,7 +30,7 @@ namespace SP {
 		Scene* loadScene(std::string const& filename, std::string const& basepath) const override;
 
 	private:
-
+		Material const* parseMaterial(const ImageIO& imageIO, tinyobj::material_t const& mat, std::string const& basepath, Scene& scene) const;
 	};
 
 
@@ -57,15 +59,20 @@ namespace SP {
 		}
 
 		// Allocate Scene
-		Scene* scene = new Scene();
+		Scene* scene{ new Scene() };
 
 		// Enumerate and translate materials
 		// Keep track of emissive subset
 		std::set<Material const*> emissives;
 		std::vector<Material const*> materials(objMaterials.size());
 
+		auto imageIO{ ImageIO::createImageIO() };
+
 		for (size_t i = 0; i < objMaterials.size(); ++i) {
-			// more here ...
+			// more here .....
+
+			materials[i] = parseMaterial(*imageIO, objMaterials[i], basepath, *scene);
+
 		}
 
 		for (size_t s = 0; s < objShapes.size(); ++s) {
@@ -121,6 +128,44 @@ namespace SP {
 		// HDR ?
 
 		return scene;
+	}
+
+	// Yet to be done
+	Material const * SceneIOImpl::parseMaterial(const ImageIO & imageIO, tinyobj::material_t const & mat, std::string const & basepath, Scene & scene) const {
+
+		RadeonRays::float3 emission(mat.emission[0], mat.emission[1], mat.emission[2]);
+
+		Material* material = nullptr;
+
+		// check for emissive
+		if (emission.sqnorm() > 0) {
+
+			material = new SingleBXDF(SingleBXDF::BXDFType::kEmissive);
+
+			// albedo ?
+			if (!mat.diffuse_texname.empty()) {
+				Texture* texture{ imageIO.loadImage(basepath + "/" + mat.diffuse_texname) };
+
+				//set
+
+
+			} else {
+
+				//set
+
+			}
+
+		}
+
+
+
+		// Disable normal flip
+		material->setTwoSided(true);
+
+		// add to pool
+		scene.attachAutoreleaseObject(material);
+
+		return material;
 	}
 
 

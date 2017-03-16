@@ -88,6 +88,17 @@ namespace SP {
 		return new Texture(std::move(textureData.data()), RadeonRays::int2(spec.width, spec.height), format);;
 	}
 
+	// KAOCC: Yet to be done !
+	void OpenImgIO::saveImage(std::string const & filename, Texture const * texture) const {
+
+	}
+
+
+
+	ImageIO * ImageIO::createImageIO() {
+		return new OpenImgIO();
+	}
+
 }
 
 
