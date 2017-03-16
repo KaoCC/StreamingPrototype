@@ -148,6 +148,7 @@ namespace SP {
 
 				//set
 
+				scene.attachAutoreleaseObject(texture);
 
 			} else {
 
@@ -158,6 +159,8 @@ namespace SP {
 		}
 
 
+		// Set material name
+		material->setName(mat.name);
 
 		// Disable normal flip
 		material->setTwoSided(true);

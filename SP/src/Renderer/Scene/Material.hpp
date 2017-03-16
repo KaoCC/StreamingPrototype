@@ -67,8 +67,13 @@ namespace SP {
 		// check if the material has emmisive parts
 		virtual bool hasEmission() const;
 
-		// set input type ?
-		// Yet to be done
+		// set input value 
+		// If specific data type is not supported throws std::runtime_error
+		void setInputValue(std::string const& name, RadeonRays::float4 const& value);
+		void setInputValue(std::string const& name, Texture const* texture);
+		void setInputValue(std::string const& name, Material const* material);
+
+		InputValue getInputValue(std::string const& name) const;
 
 
 		// two sided ?
