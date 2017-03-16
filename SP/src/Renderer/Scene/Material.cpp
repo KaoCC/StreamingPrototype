@@ -20,11 +20,11 @@ namespace SP {
 		setDirty(true);
 	}
 
-	void Material::registerInput(const std::string & name, const std::string & desc, std::set<InputType>&& suppTypes) {
+	void Material::registerInput(const std::string & nm, const std::string & desc, std::set<InputType>&& suppTypes) {
 
 		Input input = { 
 			{
-				name, desc, std::move(suppTypes)
+				nm, desc, std::move(suppTypes)
 			},
 
 			{	// Note: tmp test for init
@@ -54,7 +54,7 @@ namespace SP {
 
 		}
 
-		inputTable.emplace(std::make_pair(name, input));
+		inputTable.emplace(std::make_pair(nm, input));
 	}
 
 	void Material::clearInputTable() {
@@ -62,6 +62,32 @@ namespace SP {
 	}
 
 
+
+	SingleBXDF::SingleBXDF(BXDFType tp) : type (tp) {
+
+		registerInput("albedo", "Diffuse color", { InputType::kFloat4, InputType::kTexture });
+		registerInput("normal", "Normal map", { InputType::kTexture });
+		registerInput("ior", "Index of refraction", { InputType::kFloat4 });
+		registerInput("fresnel", "Fresnel flag", { InputType::kFloat4 });
+		registerInput("roughness", "Roughness", { InputType::kFloat4, InputType::kTexture });
+
+
+		// set value ?
+		// yet to be done
+	}
+
+	SingleBXDF::BXDFType SingleBXDF::getBXDFType() const {
+		return type;
+	}
+
+	void SingleBXDF::setBXDFType(BXDFType t) {
+		type = t;
+		setDirty(true);
+	}
+
+	bool SingleBXDF::hasEmission() const {
+		return type == BXDFType::kEmissive;
+	}
 
 }
 

@@ -82,7 +82,7 @@ namespace SP {
 
 
 	protected:
-		void registerInput(const std::string& name, const std::string& desc, std::set<InputType>&& suppTypes);
+		void registerInput(const std::string& nm, const std::string& desc, std::set<InputType>&& suppTypes);
 		void clearInputTable();
 
 
