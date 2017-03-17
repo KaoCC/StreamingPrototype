@@ -11,6 +11,46 @@ namespace SP {
 		return false;
 	}
 
+
+	bool Material::setValueParameter(Input & input, const RadeonRays::float4 & value) {
+		bool ret = false;
+
+		if (input.information.supportedTypes.find(InputType::kFloat4) != input.information.supportedTypes.cend()) {
+			ret = true;
+			input.value.type = InputType::kFloat4;
+			input.value.floatValue = value;
+			setDirty(true);
+		}
+
+		return ret;
+	}
+
+	bool Material::setValueParameter(Input & input, Texture const * tex) {
+		bool ret = false;
+
+		if (input.information.supportedTypes.find(InputType::kTexture) != input.information.supportedTypes.cend()) {
+			ret = true;
+			input.value.type = InputType::kTexture;
+			input.value.texValue = tex;
+			setDirty(true);
+		}
+
+		return ret;
+	}
+
+	bool Material::setValueParameter(Input & input, Material const * mat) {
+		bool ret = false;
+
+		if (input.information.supportedTypes.find(InputType::kMaterial) != input.information.supportedTypes.cend()) {
+			ret = true;
+			input.value.type = InputType::kMaterial;
+			input.value.matValue = mat;
+			setDirty(true);
+		}
+
+		return ret;
+	}
+
 	bool Material::isTwoSided() const {
 		return twoSidedFlag;
 	}
@@ -63,6 +103,10 @@ namespace SP {
 
 
 
+
+	//--------------
+
+
 	SingleBXDF::SingleBXDF(BXDFType tp) : type (tp) {
 
 		registerInput("albedo", "Diffuse color", { InputType::kFloat4, InputType::kTexture });
@@ -72,8 +116,11 @@ namespace SP {
 		registerInput("roughness", "Roughness", { InputType::kFloat4, InputType::kTexture });
 
 
-		// set value ?
-		// yet to be done
+		// set value
+		// KAOCC: check the template path
+		setInputValue("albedo", RadeonRays::float4(0.7f, 0.7f, 0.7f, 1.f));
+		setInputValue("normal", static_cast<Texture const*>(nullptr));
+
 	}
 
 	SingleBXDF::BXDFType SingleBXDF::getBXDFType() const {

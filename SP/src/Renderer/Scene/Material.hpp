@@ -69,11 +69,29 @@ namespace SP {
 
 		// set input value 
 		// If specific data type is not supported throws std::runtime_error
-		void setInputValue(std::string const& name, RadeonRays::float4 const& value);
-		void setInputValue(std::string const& name, Texture const* texture);
-		void setInputValue(std::string const& name, Material const* material);
+		template <typename T>
+		void setInputValue(const std::string& name, const T& param) {
 
-		InputValue getInputValue(std::string const& name) const;
+			auto input_iter = inputTable.find(name);
+
+			if (input_iter != inputTable.cend()) {
+				auto& input = input_iter->second;
+
+				if (!setValueParameter(input, param)) {
+					throw std::runtime_error("Input type not supported");
+				}
+
+			} else {
+				throw std::runtime_error("No such input");
+			}
+		}
+
+
+		//void setInputValue(const std::string& name, const RadeonRays::float4& value);
+		//void setInputValue(const std::string& name, Texture const* texture);
+		//void setInputValue(const std::string& name, Material const* material);
+
+		InputValue getInputValue(const std::string& name) const;
 
 
 		// two sided ?
@@ -87,6 +105,10 @@ namespace SP {
 
 
 	private:
+
+		bool setValueParameter(Input& input, const RadeonRays::float4& value);
+		bool setValueParameter(Input& input, Texture const* tex);
+		bool setValueParameter(Input& input, Material const* mat);
 
 		using InputMap = std::map<std::string, Input>;
 

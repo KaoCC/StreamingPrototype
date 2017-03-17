@@ -145,19 +145,51 @@ namespace SP {
 			// albedo ?
 			if (!mat.diffuse_texname.empty()) {
 				Texture* texture{ imageIO.loadImage(basepath + "/" + mat.diffuse_texname) };
-
-				//set
-
+				material->setInputValue("albedo", texture);
 				scene.attachAutoreleaseObject(texture);
 
 			} else {
 
-				//set
-
+				material->setInputValue("albedo", emission);
 			}
+
+		} else {
+
+			auto s = RadeonRays::float3(mat.specular[0], mat.specular[1], mat.specular[2]);
+
+			if ((s.sqnorm() > 0 || !mat.specular_texname.empty())) {
+
+				// Yet to be done !
+
+			} else {
+				// Otherwise create lambert
+				Material* diffuse = new SingleBXDF(SingleBXDF::BXDFType::kLambert);
+
+				// Set albedo
+				if (!mat.diffuse_texname.empty()) {
+					Texture* texture{ imageIO.loadImage(basepath + "/" + mat.diffuse_texname) };
+					diffuse->setInputValue("albedo", texture);
+					scene.attachAutoreleaseObject(texture);
+				} else {
+					diffuse->setInputValue("albedo", RadeonRays::float3(mat.diffuse[0], mat.diffuse[1], mat.diffuse[2]));
+				}
+
+				// Set normal
+				if (!mat.normal_texname.empty()) {
+					Texture* texture{ imageIO.loadImage(basepath + "/" + mat.normal_texname) };
+					diffuse->setInputValue("normal", texture);
+					scene.attachAutoreleaseObject(texture);
+				}
+
+				material = diffuse;
+			}
+
 
 		}
 
+
+		// check if mat is not null ...
+		// may cause error !
 
 		// Set material name
 		material->setName(mat.name);
