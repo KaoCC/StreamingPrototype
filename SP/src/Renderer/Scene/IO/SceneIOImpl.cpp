@@ -69,15 +69,19 @@ namespace SP {
 		auto imageIO{ ImageIO::createImageIO() };
 
 		for (size_t i = 0; i < objMaterials.size(); ++i) {
-			// more here .....
-
+			// parse the materials
 			materials[i] = parseMaterial(*imageIO, objMaterials[i], basepath, *scene);
+
+			// emission stuff !!!
+			if (materials[i]->hasEmission()) {
+				emissives.insert(materials[i]);
+			}
 
 		}
 
 		for (size_t s = 0; s < objShapes.size(); ++s) {
 
-			// KAOCC: temp, we should store unique ptr
+			// KAOCC: design issue: unique_ptr or autorelease ?
 			Mesh* mesh = new Mesh();
 
 			// Set vertex and index data
@@ -113,14 +117,28 @@ namespace SP {
 			size_t idx = objShapes[s].mesh.material_ids[0];
 			mesh->setMaterial(materials[idx]);
 
-
 			// Attach to the scene
 			scene->attachShape(mesh);
 
 			// Keep track of the object
 			scene->attachAutoreleaseObject(mesh);
 
-			// yet to be done
+			// If the mesh has emissive material, add AreaLight for it
+			if (emissives.find(materials[idx]) != emissives.cend()) {
+
+				// Add area light for each polygon (triangle-based) of emissive mesh
+				for (int k = 0; k < mesh->getNumIndices() / 3; ++k) {
+
+					// yet to be done
+
+					//AreaLight* light = new AreaLight(mesh, l);
+
+					//scene->attachLight(light);
+					//scene->attachAutoreleaseObject(light);
+				}
+
+			}
+
 		}
 
 
@@ -160,6 +178,7 @@ namespace SP {
 			if ((s.sqnorm() > 0 || !mat.specular_texname.empty())) {
 
 				// Yet to be done !
+				throw std::runtime_error("MultiBXDF: Yet to be done");
 
 			} else {
 				// Otherwise create lambert
