@@ -12,7 +12,7 @@
 
 
 #include "../Shape.hpp"
-
+#include "../Light.hpp"
 #include "../Material.hpp"
 
 #include <iostream>
@@ -131,10 +131,9 @@ namespace SP {
 
 					// yet to be done
 
-					//AreaLight* light = new AreaLight(mesh, l);
-
-					//scene->attachLight(light);
-					//scene->attachAutoreleaseObject(light);
+					AreaLight* light = new AreaLight(mesh, k);
+					scene->attachLight(light);
+					scene->attachAutoreleaseObject(light);
 				}
 
 			}

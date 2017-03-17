@@ -34,6 +34,19 @@ namespace SP {
 		}
 	}
 
+	void Scene::attachLight(Light const * light) {
+
+		// find the light !
+		LightList::const_iterator citer = std::find(ScenePtr->lights.cbegin(), ScenePtr->lights.cend(), light);
+
+		// insert if not found
+		if (citer == ScenePtr->lights.cend()) {
+			ScenePtr->lights.push_back(light);
+
+			setDirtyFlag(kLights);
+		}
+	}
+
 	void Scene::setDirtyFlag(DirtyFlags flag) const {
 		ScenePtr->dirtyFlags = ScenePtr->dirtyFlags | flag;
 	}

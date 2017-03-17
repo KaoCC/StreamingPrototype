@@ -39,7 +39,7 @@ namespace SP {
 		setDirty(true);
 	}
 
-	AreaLight::AreaLight(Shape const * sh, size_t idx) : shape(sh), primitiveIndex (idx){
+	AreaLight::AreaLight(Shape const * sh, size_t idx) : shape(sh), primitiveIndex (idx) {
 	}
 
 	const Shape * AreaLight::getShape() const {
