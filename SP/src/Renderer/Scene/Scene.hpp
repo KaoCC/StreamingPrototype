@@ -74,7 +74,7 @@ namespace SP {
 
 	private:
 		struct SceneImpl;
-		std::unique_ptr<SceneImpl> ScenePtr;
+		std::unique_ptr<SceneImpl> scenePtr;
 	};
 
 
