@@ -46,8 +46,7 @@ namespace SP {
 		virtual const void * nextItem() override {
 
 			if (hasNext()) {
-				++current;
-				return *current;
+				return *(current++);
 			} else {
 				throw std::runtime_error("Iterator: No more NEXT");
 			}
