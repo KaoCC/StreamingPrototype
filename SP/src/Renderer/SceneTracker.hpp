@@ -22,12 +22,14 @@ namespace SP {
 
 	private:
 
-
+		// Intersection API for RR
 		RadeonRays::IntersectionApi* api;
 
 		// track curent scene
-
 		const Scene* currentScenePtr = nullptr;
+
+		// For RR shape collections
+		std::vector<RadeonRays::Shape*> internalShapes;
 
 	};
 

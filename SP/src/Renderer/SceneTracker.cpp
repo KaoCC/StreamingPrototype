@@ -1,13 +1,20 @@
 #include "SceneTracker.hpp"
 
+#include <iostream>
+
+#include "Scene/Iterator.hpp"
+#include "Scene/Shape.hpp"
 
 namespace SP {
 
 	SceneTracker::SceneTracker(int devidx) {
 
+		std::cerr << "API" << std::endl;
+
 		// init API;
 		api = RadeonRays::IntersectionApi::Create(devidx);
 
+		std::cerr << "Done" << std::endl;
 
 		// ... 
 
@@ -34,7 +41,48 @@ namespace SP {
 			currentScenePtr = &scene;
 
 
+			std::unique_ptr<Iterator> shapeIterator(scene.createShapeIterator());
+
 			// create mesh
+
+			std::cerr << "While" << std::endl;
+
+			int shapeID = 1;
+			while (shapeIterator->hasNext()) {
+
+				// get mesh ?
+
+				const Mesh* mesh = static_cast<const Mesh*>(shapeIterator->nextItem());
+
+				RadeonRays::Shape* shape = api->CreateMesh(
+					reinterpret_cast<const float*>(mesh->getVertices()),			// check this one !!!
+					static_cast<int>(mesh->getNumVertices()), 
+					sizeof(RadeonRays::float3), 
+					reinterpret_cast<const int*>(mesh->getIndices()),
+					0,
+					nullptr,
+					static_cast<int>(mesh->getNumIndices() / 3)
+					);
+
+
+
+				shape->SetId(shapeID);
+				++shapeID;
+
+				internalShapes.push_back(shape);
+			}
+
+			std::cerr << "Num of internal Shapes: " << internalShapes.size() << std::endl;
+
+
+			// TEST !!!!!
+			for (auto& s : internalShapes) {
+				api->AttachShape(s);
+				std::cerr << "Add shape !" << std::endl;
+			}
+
+			api->Commit();
+			std::cerr << "Commit" << std::endl;
 
 		}
 
@@ -44,8 +92,9 @@ namespace SP {
 			// detatch all
 		}
 
-
-		api->Commit();
+		// can cause error !
+		// cannot commit twice ?
+		//api->Commit();
 
 	}
 

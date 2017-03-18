@@ -1,5 +1,7 @@
 #include "Shape.hpp"
 
+#include <iostream>
+
 namespace SP {
 
 	Shape::Shape() : materialPtr(nullptr) {
@@ -13,21 +15,12 @@ namespace SP {
 		return materialPtr;
 	}
 
-	void Mesh::setIndices(IndexType const * ind, std::size_t num_indices) {
+	void Mesh::setIndices(std::uint32_t const * ind, std::size_t num_indices) {
 
 		// Resize internal array and copy data
-		verticeIndices.reset(new std::uint32_t[num_indices]);
-		normalIndices.reset(new std::uint32_t[num_indices]);
-		texcoordIndices.reset(new std::uint32_t[num_indices]);
+		indices.reset(new std::uint32_t[num_indices]);
 
-		//std::copy(ind, ind + num_indices, indices.get());
-
-		for (size_t i = 0; i < num_indices; ++i) {
-			verticeIndices[i] = ind[num_indices].vertexIndex;
-			normalIndices[i] = ind[num_indices].normalIndex;
-			texcoordIndices[i] = ind[num_indices].texcoordIndex;
-		}
-
+		std::copy(ind, ind + num_indices, indices.get());
 
 		numIndices = num_indices;
 		setDirty(true);
@@ -37,24 +30,23 @@ namespace SP {
 		return numIndices;
 	}
 
-	std::uint32_t const * Mesh::getVerticeIndices() const {
-		return verticeIndices.get();
+	std::uint32_t const * Mesh::getIndices() const {
+		return indices.get();
 	}
 
-	void Mesh::setVertices(float const * vert, std::size_t num_vertices) {
+	void Mesh::setVertices(float const * local_vertices, std::size_t num_vertices) {
 
 		// Resize internal array and copy data
 		vertices.reset(new RadeonRays::float3[num_vertices]);
 
 		for (std::size_t i = 0; i < num_vertices; ++i) {
-			vertices[i].x = vert[3 * i];
-			vertices[i].y = vert[3 * i + 1];
-			vertices[i].z = vert[3 * i + 2];
+			vertices[i].x = local_vertices[3 * i];
+			vertices[i].y = local_vertices[3 * i + 1];
+			vertices[i].z = local_vertices[3 * i + 2];
 			vertices[i].w = 1;
 		}
 
 		numVertices = num_vertices;
-
 		setDirty(true);
 	}
 
@@ -85,6 +77,10 @@ namespace SP {
 
 	std::size_t Mesh::getNumNormals() const {
 		return numNormals;
+	}
+
+	RadeonRays::float3 const * Mesh::getNormals() const {
+		return normals.get();
 	}
 
 	void Mesh::setUVs(RadeonRays::float2 const * local_uvs, std::size_t num_uvs) {

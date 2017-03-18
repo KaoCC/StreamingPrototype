@@ -40,33 +40,27 @@ namespace SP {
 	class Mesh : public Shape {
 	public:
 
-		struct IndexType {
-			std::int32_t vertexIndex;
-			std::int32_t normalIndex;
-			std::int32_t texcoordIndex;
-		};
-
 		Mesh() = default;
 
 		// Set and get index array
-		void setIndices(IndexType const* indices, std::size_t num_indices);
+		void setIndices(const std::uint32_t* ind, std::size_t num_indices);
 		std::size_t getNumIndices() const;
-		std::uint32_t const* getVerticeIndices() const;
+		std::uint32_t const* getIndices() const;
 
 		// Set and get vertex array
-		void setVertices(RadeonRays::float3 const* vertices, std::size_t num_vertices);
+		void setVertices(const RadeonRays::float3* local_vertices, std::size_t num_vertices);
 		void setVertices(float const* vertices, std::size_t num_vertices);
 		std::size_t getNumVertices() const;
 		RadeonRays::float3 const* getVertices() const;
 
 		// Set and get normal array
-		void setNormals(RadeonRays::float3 const* normals, std::size_t num_normals);
-		void setNormals(float const* normals, std::size_t num_normals);
+		void setNormals(const RadeonRays::float3* local_normals, std::size_t num_normals);
+		void setNormals(float const* local_normals, std::size_t num_normals);
 		std::size_t getNumNormals() const;
 		RadeonRays::float3 const* getNormals() const;
 
 		// Set and get UV array
-		void setUVs(RadeonRays::float2 const* uvs, std::size_t num_uvs);
+		void setUVs(RadeonRays::float2 const* local_uvs, std::size_t num_uvs);
 		void setUVs(float const* uvs, std::size_t num_uvs);
 		std::size_t getNumUVs() const;
 		RadeonRays::float2 const* getUVs() const;
@@ -80,11 +74,8 @@ namespace SP {
 		std::unique_ptr<RadeonRays::float3[]> vertices;
 		std::unique_ptr<RadeonRays::float3[]> normals;
 		std::unique_ptr<RadeonRays::float2[]> uvs;
-		//std::unique_ptr<IndexType> indices;
+		std::unique_ptr<std::uint32_t[]> indices;
 
-		std::unique_ptr<std::uint32_t[]> verticeIndices;
-		std::unique_ptr<std::uint32_t[]> normalIndices;
-		std::unique_ptr<std::uint32_t[]> texcoordIndices;
 
 		std::size_t numVertices = 0;
 		std::size_t numNormals = 0;
