@@ -62,6 +62,10 @@ namespace SP {
 		return numVertices;
 	}
 
+	RadeonRays::float3 const * Mesh::getVertices() const {
+		return vertices.get();
+	}
+
 	void Mesh::setNormals(float const * norm, std::size_t num_normals) {
 
 		// Resize internal array and copy data
