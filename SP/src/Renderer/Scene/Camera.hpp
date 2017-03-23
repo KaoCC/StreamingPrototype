@@ -24,7 +24,25 @@ namespace SP {
 
 		void setSensorSize(RadeonRays::float2 const& size);
 		RadeonRays::float2 getSensorSize() const;
-		
+
+		void setFocalLength(float length);
+		float getFocalLength() const;
+
+
+
+		void setDepthRange(RadeonRays::float2 const& range);
+		RadeonRays::float2 getDepthRange() const;
+
+
+		RadeonRays::float3 getForwardVector() const;
+		RadeonRays::float3 getRightVector() const;
+		RadeonRays::float3 getUpVector() const;
+		RadeonRays::float3 getPosition() const;
+		float getAspectRatio() const;
+
+
+
+		// trans
 
 		void rotate(float angle);
 
@@ -41,6 +59,10 @@ namespace SP {
 		RadeonRays::float2 dim;
 
 
+		// Near and far Z
+		RadeonRays::float2 zcap;
+
+		float focalLength;
 
 	};
 
