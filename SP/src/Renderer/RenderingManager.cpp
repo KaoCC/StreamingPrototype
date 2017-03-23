@@ -13,10 +13,9 @@ namespace SP {
 		//, encoder(CreateEncoder(512, 512)) {
 
 		// allocate renderer
-		renderer = std::make_unique<PtRenderer>(1, 5);
+		renderer = std::make_unique<PtRenderer>(1, 5);		// idx, num_of_bounce
 
 		initData();
-
 	}
 
 	RenderingManager::~RenderingManager() {
@@ -25,6 +24,10 @@ namespace SP {
 		}
 
 		//delete encoder;
+
+
+		// delete output
+		renderer->deleteOutput(renderOutputData);
 	}
 
 	void RenderingManager::startRenderThread() {
@@ -34,8 +37,9 @@ namespace SP {
 		std::cerr << "Start Render Thread" << std::endl;
 
 		// testing 
-		renderThread = std::make_unique<std::thread>(std::thread(&RenderingManager::testOutput, this, 0));
+		//renderThread = std::make_unique<std::thread>(std::thread(&RenderingManager::testOutput, this, 0));
 
+		renderThread = std::make_unique<std::thread>(std::thread(&RenderingManager::renderingWorker, this));
 	}
 
 
@@ -70,7 +74,7 @@ namespace SP {
 				//syncBuffer.insert(std::make_unique<ImageConfig>(localCounter, kFilePath, encoder, accImageBuffer));
 				syncBuffer.insert(std::make_unique<ImageConfig>(localCounter, kFilePath));
 
-				std::this_thread::sleep_for(std::chrono::seconds(5));
+				std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
 				// test
 				std::cerr << "Local Counter " << localCounter << '\n';
@@ -99,6 +103,12 @@ namespace SP {
 
 		std::cerr << "init data start" << std::endl;
 
+
+		// rand
+		RadeonRays::rand_init();
+
+
+
 		// Load obj file
 
 		std::string basepath = defaultPath;
@@ -119,6 +129,40 @@ namespace SP {
 		std::cerr << "number of lights: " << sceneDataPtr->getNumLights() << std::endl;
 
 
+
+		// KAOCC: TODO: add camera config
+		camera.reset(new PerspectiveCamera(kCameraPos, kCameraAt, kCameraUp));
+		sceneDataPtr->SetCamera(camera.get());
+
+		// Adjust sensor size based on current aspect ratio
+		float aspect = (float)windowWidth / windowHeight;
+		g_camera_sensor_size.y = g_camera_sensor_size.x / aspect;
+
+		camera->setSensorSize(g_camera_sensor_size);
+		camera->setDepthRange(g_camera_zcap);
+		camera->setFocalLength(g_camera_focal_length);
+		camera->setFocusDistance(g_camera_focus_distance);
+		camera->setAperture(g_camera_aperture);
+
+		std::cout << "Camera type: " << (camera->getAperture() > 0.f ? "Physical" : "Pinhole") << "\n";			// This might cause problems
+		std::cout << "Lens focal length: " << camera->getFocalLength() * 1000.f << "mm\n";
+		std::cout << "Lens focus distance: " << camera->getFocusDistance() << "m\n";
+		std::cout << "F-Stop: " << 1.f / (camera->getAperture() * 10.f) << "\n";
+		std::cout << "Sensor size: " << g_camera_sensor_size.x * 1000.f << "x" << g_camera_sensor_size.y * 1000.f << "mm\n";
+
+
+		// Set Output
+		renderOutputData = renderer->createOutput(windowWidth, windowHeight);
+		renderer->setOutput(renderOutputData);
+
 	}
 
+	// helper function for rendering
+	void RenderingManager::renderingWorker() {
+
+		while (true) {
+			renderer->render(*sceneDataPtr);
+		}
+
+	}
 }

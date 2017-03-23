@@ -91,6 +91,11 @@ namespace SP {
 		return new GenericIterator<ShapeList::const_iterator>(scenePtr->shapes.begin(), scenePtr->shapes.end());
 	}
 
+	void Scene::SetCamera(Camera const * cam) {
+		scenePtr->camera = cam;
+		setDirtyFlag(kCamera);
+	}
+
 	Camera const * Scene::getCamera() const {
 		return scenePtr->camera;
 	}
