@@ -7,6 +7,7 @@
 
 #include "SyncBuffer.hpp"
 #include "Encoder/Encoder.hpp"
+#include "LightField.hpp"
 
 namespace SP {
 
@@ -57,6 +58,13 @@ namespace SP {
 
 
 		Encoder* encoder;
+
+
+
+
+		// Light Field TEST !
+		LightField lightField;
+
 
 	};
 
