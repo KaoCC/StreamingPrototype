@@ -3,6 +3,9 @@
 
 #include "Scene/Camera.hpp"
 
+
+#include <iostream>
+
 namespace SP {
 
 
@@ -18,7 +21,7 @@ namespace SP {
 		std::vector<int> host_shadowhits;
 
 		std::vector<RadeonRays::Intersection> host_intersections;
-		std::vector<int> host_hitcount;
+		int host_hitcount;
 
 
 		// RadeonRays stuff
@@ -75,15 +78,75 @@ namespace SP {
 		// ray gen ?
 		generatePrimaryRays(scene);
 
+		// Number of rays 
+		int maxrays = renderOutPtr->getWidth() * renderOutPtr->getHeight();
+
 		for (std::uint32_t pass = 0; pass < numOfBounces; ++pass) {
 
 			//... 
 
+			/*// test
+
+			RadeonRays::Event* rayGenEvent = nullptr;
+			RadeonRays::ray* rawRayPtr = renderData->host_rays[0].data();
+
+			auto api{ sceneTracker.getIntersectionApi() };
+
+			// memory map
+			api->MapBuffer(renderData->rays[0], RadeonRays::kMapRead, 0, maxrays * sizeof(RadeonRays::ray), reinterpret_cast<void**>(&rawRayPtr), &rayGenEvent);
+			rayGenEvent->Wait();
+			api->DeleteEvent(rayGenEvent);
+			rayGenEvent = nullptr;
+
+			std::cerr << "RAY CHECK" << std::endl;
+			for (int i = 0; i < 10; ++i) {
+				std::cerr << rawRayPtr[i].o.x << '\n';
+			}
+
+			api->UnmapBuffer(renderData->rays[0], static_cast<void*>(rawRayPtr), &rayGenEvent);
+			rayGenEvent->Wait();
+			api->DeleteEvent(rayGenEvent);
+
+			// EOF */
+
 			// T and I here
+			//api->QueryIntersection(renderData->rays[pass & 0x1], renderData->hitcount, maxrays, renderData->intersections, nullptr, nullptr);
+
+			api->QueryIntersection(renderData->rays[pass & 0x1], maxrays, renderData->intersections, nullptr, nullptr);
+
+			RadeonRays::Event* mapEvent = nullptr;
+			RadeonRays::Intersection* resultPtr = nullptr;
+
+			api->MapBuffer(renderData->intersections, RadeonRays::kMapRead, 0, maxrays * sizeof(RadeonRays::Intersection), reinterpret_cast<void**>(&resultPtr), &mapEvent);
+			mapEvent->Wait();
+			api->DeleteEvent(mapEvent);
+
+			// copy intersections
+			std::copy(resultPtr, resultPtr + maxrays, renderData->host_intersections.begin());
+
+
+			// tmp
+			int count = 0;
+			std::cerr << "PRINT\n";
+			for (int i = 0; i < maxrays; ++i) {
+				if (renderData->host_intersections[i].shapeid != -1) {
+					++count;
+				}
+			}
+
+			std::cerr << "alive: " << count << '\n';
+
+			mapEvent = nullptr;
+			api->UnmapBuffer(renderData->intersections, static_cast<void*>(resultPtr), &mapEvent);
+			mapEvent->Wait();
+			api->DeleteEvent(mapEvent);
+			
 
 			// rendering here
 		}
 
+		
+		std::cerr << "Frame: " << frameCount << '\n';
 
 		++frameCount;
 	}
@@ -105,14 +168,13 @@ namespace SP {
 	void PtRenderer::generatePrimaryRays(const Scene& scene) {
 
 
-		const size_t imageWidth = renderOutPtr->getWidth();
-		const size_t imageHeight = renderOutPtr->getHeight();
+		const uint32_t imageWidth = renderOutPtr->getWidth();
+		const uint32_t imageHeight = renderOutPtr->getHeight();
 
 		uint32_t rngseed = RadeonRays::rand_uint();
 
-
-		for (size_t y = 0; y < imageHeight; ++y) {
-			for (size_t x = 0; x < imageWidth; ++x) {			// check this !
+		for (uint32_t y = 0; y < imageHeight; ++y) {
+			for (uint32_t x = 0; x < imageWidth; ++x) {			// check this !
 
 				uint32_t seed = x + imageWidth * y * rngseed;
 				Sampler randomSampler;
@@ -136,6 +198,7 @@ namespace SP {
 				const PerspectiveCamera* cameraPtr = static_cast<const PerspectiveCamera*>(scene.getCamera());  // check this 
 				RadeonRays::float2 cSample = hSample * cameraPtr->getSensorSize();
 
+
 				// set ray
 				RadeonRays::ray& currentRay = renderData->host_rays[0][y * imageWidth + x];
 
@@ -149,13 +212,34 @@ namespace SP {
 				currentRay.extra.y = 0xFFFFFFFF;
 				currentRay.padding = currentRay.extra;
 
+
+				//std::cerr << "Ray d x: " << currentRay.d.x << '\n';
+				//std::cerr << "Ray o y: " << currentRay.o.x << '\n';
+
 				// ...
 
 				// path ?
 			}
 		}
 
+		RadeonRays::Event* rayGenEvent = nullptr;
+		RadeonRays::ray* rawRayPtr = renderData->host_rays[0].data();
 
+		auto api{ sceneTracker.getIntersectionApi() };
+
+		// memory map
+		api->MapBuffer(renderData->rays[0], RadeonRays::kMapWrite, 0, imageWidth * imageHeight * sizeof(RadeonRays::ray), reinterpret_cast<void**>(&rawRayPtr), &rayGenEvent);
+		rayGenEvent->Wait();
+		api->DeleteEvent(rayGenEvent);
+		rayGenEvent = nullptr;
+
+		// to RR memory
+		std::copy(renderData->host_rays[0].begin(), renderData->host_rays[0].end(), rawRayPtr);
+
+		api->UnmapBuffer(renderData->rays[0], static_cast<void*>(rawRayPtr), &rayGenEvent);
+		rayGenEvent->Wait();
+		api->DeleteEvent(rayGenEvent);
+		
 
 		//throw std::runtime_error("Gen: Yet to be done");
 	}
@@ -181,8 +265,10 @@ namespace SP {
 		renderData->host_hits.clear();
 		renderData->host_hits.resize(out.getWidth() * out.getHeight());
 
-		renderData->host_hitcount.clear();
-		renderData->host_hitcount.resize(out.getWidth() * out.getHeight());
+		//renderData->host_hitcount.clear();
+		//renderData->host_hitcount.resize(out.getWidth() * out.getHeight());
+
+		renderData->host_hitcount = 0;
 
 		auto api{ sceneTracker.getIntersectionApi() };
 
@@ -196,13 +282,13 @@ namespace SP {
 		api->DeleteBuffer(renderData->hitcount);
 
 		// Create new buffers
-		renderData->rays[0] = api->CreateBuffer(out.getWidth() * out.getHeight(), renderData->host_rays[0].data());
-		renderData->rays[1] = api->CreateBuffer(out.getWidth() * out.getHeight(), renderData->host_rays[1].data());
-		renderData->shadowrays = api->CreateBuffer(out.getWidth() * out.getHeight(), renderData->host_shadowrays.data());
-		renderData->shadowhits = api->CreateBuffer(out.getWidth() * out.getHeight(), renderData->host_shadowhits.data());
-		renderData->intersections = api->CreateBuffer(out.getWidth() * out.getHeight(), renderData->host_intersections.data());
-		renderData->hits = api->CreateBuffer(out.getWidth() * out.getHeight(), renderData->host_hits.data());
-		renderData->hitcount = api->CreateBuffer(out.getWidth() * out.getHeight(), renderData->host_hitcount.data());
+		renderData->rays[0] = api->CreateBuffer(out.getWidth() * out.getHeight()  * sizeof(RadeonRays::ray), renderData->host_rays[0].data());
+		renderData->rays[1] = api->CreateBuffer(out.getWidth() * out.getHeight() * sizeof(RadeonRays::ray), renderData->host_rays[1].data());
+		renderData->shadowrays = api->CreateBuffer(out.getWidth() * out.getHeight() * sizeof(RadeonRays::ray), renderData->host_shadowrays.data());
+		renderData->shadowhits = api->CreateBuffer(out.getWidth() * out.getHeight() * sizeof(int), renderData->host_shadowhits.data());
+		renderData->intersections = api->CreateBuffer(out.getWidth() * out.getHeight() * sizeof(RadeonRays::Intersection), renderData->host_intersections.data());
+		renderData->hits = api->CreateBuffer(out.getWidth() * out.getHeight() * sizeof(int), renderData->host_hits.data());
+		renderData->hitcount = api->CreateBuffer( sizeof(int), &renderData->host_hitcount);
 
 		// ......
 
