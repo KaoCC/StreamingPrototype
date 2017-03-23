@@ -3,11 +3,14 @@
 
 #include "Renderer.hpp"
 #include "SceneTracker.hpp"
+#include "RenderOutput.hpp"
 
 #include <vector>
 #include <memory>
 
 #include "radeon_rays.h"
+
+
 
 namespace SP {
 
@@ -43,9 +46,16 @@ namespace SP {
 	protected:
 
 		// Generate rays
-		void generatePrimaryRays();
+		void generatePrimaryRays(const Scene& scene);
+
+		void resizeWorkingSet(const Output& out);
 
 	private:
+
+		// Output 
+		// KAOCC: use shared pointer ???
+		RenderOutput* renderOutPtr;
+
 
 		SceneTracker sceneTracker;
 

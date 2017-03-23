@@ -16,6 +16,8 @@
 
 #include "../Encoder/Encoder.hpp"
 
+#include "Output.hpp"
+
 namespace SP {
 
 
@@ -36,15 +38,30 @@ namespace SP {
 
 
 		// for testing
-
 		void testOutput(int id);
 
 		// helper function
 		void initData();
 
+		// helper function
+		void renderingWorker();
+
 
 		// Camera
-		//std::unique_ptr<SP::Camera> camera;
+		// KAOCC: support PerspectiveCamera only !
+		std::unique_ptr<SP::PerspectiveCamera> camera;
+
+		// tmp
+		// default camera parameters
+		const RadeonRays::float3 kCameraPos = RadeonRays::float3(0.f, 1.f, 3.f);
+		const RadeonRays::float3 kCameraAt = RadeonRays::float3(0.f, 1.f, 0.f);
+		const RadeonRays::float3 kCameraUp = RadeonRays::float3(0.f, 1.f, 0.f);
+
+		RadeonRays::float2 g_camera_sensor_size = RadeonRays::float2(0.036f, 0.024f);  // default full frame sensor 36x24 mm
+		RadeonRays::float2 g_camera_zcap = RadeonRays::float2(0.0f, 100000.f);
+		float g_camera_focal_length = 0.035f; // 35mm lens
+		float g_camera_focus_distance = 1.f;
+		float g_camera_aperture = 0.f;
 
 		// parameters
 		const int windowWidth = 512;
@@ -56,6 +73,8 @@ namespace SP {
 		// tmp
 		const std::string defaultPath = "../Resources/CornellBox";
 		const std::string defaultModelname = "orig.objm";
+
+
 
 
 		// Scene Data
@@ -74,7 +93,7 @@ namespace SP {
 		//Encoder* encoder;
 		//ImageConfig::ImageBuffer accImageBuffer; // test
 
-
+		Output* renderOutputData;
 	};
 
 
