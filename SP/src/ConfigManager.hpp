@@ -7,6 +7,7 @@
 
 #include "SyncBuffer.hpp"
 #include "Encoder/Encoder.hpp"
+#include "LightField.hpp"
 
 namespace SP {
 
@@ -30,6 +31,15 @@ namespace SP {
 		ImageConfig getImage();
 		ImageConfig getImageCache();
 
+
+
+		// tmp
+		// Light Field
+		ImageConfig::ImageBuffer getSubLightFieldImages(size_t index);
+		ImageConfig::ImageBuffer getAll();
+
+
+		// Encoder
 		Encoder* getEncoder();
 
 		~ConfigManager();
@@ -57,6 +67,13 @@ namespace SP {
 
 
 		Encoder* encoder;
+
+
+
+
+		// Light Field TEST !
+		//LightField lightField;
+
 
 	};
 

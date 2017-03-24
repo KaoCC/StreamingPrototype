@@ -194,6 +194,9 @@ namespace SP {
 			ImageConfig imageData{ cfgManager.getImage() };
 			ImageConfig::ImageBuffer& imageBufferCache{ imageData.getImageData() };
 
+			//ImageConfig::ImageBuffer& imageBufferCache = cfgManager.getSubLightFieldImages(0);
+			//ImageConfig::ImageBuffer imageBufferCache = cfgManager.getAll();
+
 			//std::cerr << "[IMG CACHE SZ]: " << imageBufferCache.size() << " >>>>>>>>>>>>  ID: " << imageData.getID() << '\n';
 
 
