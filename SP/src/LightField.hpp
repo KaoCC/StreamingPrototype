@@ -17,20 +17,22 @@ namespace SP {
 			SubLightField(size_t index);
 
 
-		private:
-
-
 			// test
 			const size_t numOfImgs = 2;
 
 			std::vector<ImageConfig> images;
 
 			// tmp file location
-			const std::string pathBase{ "../Resources/SceneImages/" };
+			const std::string pathBase{ "../Resources/LF/" };
 		};
 
 
 		LightField();
+
+		ImageConfig::ImageBuffer getSubLightFieldImages(size_t index);
+
+		// TEST !
+		ImageConfig::ImageBuffer getAll();
 
 
 	private:
@@ -38,7 +40,7 @@ namespace SP {
 		std::vector<SubLightField> subLFs;
 
 		// test
-		const size_t numOfSubLFs = 4;
+		const size_t numOfSubLFs = 3;
 
 	};
 

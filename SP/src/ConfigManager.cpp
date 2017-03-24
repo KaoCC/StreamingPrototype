@@ -8,7 +8,7 @@ const int kHeight = 512;
 namespace SP {
 
 	ConfigManager::ConfigManager(SyncBuffer<ImageConfig>& buffer) : 
-		cameraCfg(Position(0, 100, 10000), Direction(1234, 5678, 1024)), screenCfg(kWidth, kHeight), bufferRef(buffer), encoder(CreateEncoder(kWidth, kHeight)) {
+		cameraCfg(Position(0, 1, 3), Direction(0, 1, 0)), screenCfg(kWidth, kHeight), bufferRef(buffer), encoder(CreateEncoder(kWidth, kHeight)) {
 
 		// KAOCC: TODO: load images
 
@@ -55,6 +55,15 @@ namespace SP {
 	ImageConfig ConfigManager::getImageCache() {
 		return *imagePtr;
 	}
+
+	//ImageConfig::ImageBuffer ConfigManager::getSubLightFieldImages(size_t index) {
+	//	return lightField.getSubLightFieldImages(index);
+	//}
+
+	//ImageConfig::ImageBuffer ConfigManager::getAll() {
+	//	return lightField.getAll();
+	//}
+
 
 	Encoder * ConfigManager::getEncoder() {
 		return encoder;

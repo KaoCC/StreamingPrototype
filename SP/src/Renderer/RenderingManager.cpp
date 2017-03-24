@@ -37,9 +37,9 @@ namespace SP {
 		std::cerr << "Start Render Thread" << std::endl;
 
 		// testing 
-		//renderThread = std::make_unique<std::thread>(std::thread(&RenderingManager::testOutput, this, 0));
+		renderThread = std::make_unique<std::thread>(std::thread(&RenderingManager::testOutput, this, 0));
 
-		renderThread = std::make_unique<std::thread>(std::thread(&RenderingManager::renderingWorker, this));
+		//renderThread = std::make_unique<std::thread>(std::thread(&RenderingManager::renderingWorker, this));
 	}
 
 
@@ -47,7 +47,7 @@ namespace SP {
 	void RenderingManager::testOutput(int id) {
 
 		// tmp file location
-		const std::string pathBase{ "../Resources/SceneImages/" };
+		const std::string pathBase{ "../Resources/LF/" };
 
 
 		//const std::string kFilePath{ pathBase + "crown_" + (char)('0' + index) + ".ppm" };
@@ -56,22 +56,23 @@ namespace SP {
 
 		while (true) {
 
-			int index = localCounter;
+			int index = localCounter % 6;
 
-			if (localCounter < 20) {
-				index = localCounter + 1;
-			} else {
-				index = 21;
-			}
+			//if (localCounter < 5) {
+			//	index = localCounter + 1;
+			//} else {
+			//	index = 0;
+			//}
 
 			//syncBuffer.insert(std::make_unique<ImageConfig>(localCounter, 10));
 
-			const std::string kFilePath{ pathBase + "crown_" + std::to_string(index) + ".ppm" };
+			const std::string kFilePath{ pathBase + "LF_crown_" + std::to_string(index) + ".ppm" };
 			std::cerr << kFilePath << std::endl;
 
 			try {
 
 				//syncBuffer.insert(std::make_unique<ImageConfig>(localCounter, kFilePath, encoder, accImageBuffer));
+				syncBuffer.insert(std::make_unique<ImageConfig>(localCounter, kFilePath));
 				syncBuffer.insert(std::make_unique<ImageConfig>(localCounter, kFilePath));
 
 				std::this_thread::sleep_for(std::chrono::milliseconds(500));

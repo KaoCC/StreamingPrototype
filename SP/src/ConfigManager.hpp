@@ -31,6 +31,15 @@ namespace SP {
 		ImageConfig getImage();
 		ImageConfig getImageCache();
 
+
+
+		// tmp
+		// Light Field
+		ImageConfig::ImageBuffer getSubLightFieldImages(size_t index);
+		ImageConfig::ImageBuffer getAll();
+
+
+		// Encoder
 		Encoder* getEncoder();
 
 		~ConfigManager();
@@ -63,7 +72,7 @@ namespace SP {
 
 
 		// Light Field TEST !
-		LightField lightField;
+		//LightField lightField;
 
 
 	};
