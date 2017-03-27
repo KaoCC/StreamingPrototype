@@ -9,6 +9,15 @@ namespace SP {
 
 	public:
 
+
+		enum PathFlags {
+			kNone = 0x0,
+			kKilled = 0x1,
+			kScattered = 0x2,
+			kSpecularBounce = 0x4
+		};
+
+
 		bool isAlive();
 		bool isScattered();
 		bool isSpecular();
@@ -18,14 +27,15 @@ namespace SP {
 		void clearScatterFlag();
 
 		// Specular Flag
-		void clearSpecularFlag();
 		void setSpecularFlag();
+		void clearSpecularFlag();
 
 		void restart();
 
 		int getVolumeIdx();
-		int getThroughput();
+		RadeonRays::float3 getThroughput();
 		void multiplyThroughput(RadeonRays::float3 mul);
+
 		void kill();
 
 
