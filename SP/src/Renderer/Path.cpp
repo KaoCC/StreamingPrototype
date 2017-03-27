@@ -8,6 +8,15 @@ namespace SP {
 
 
 
+	void Path::initGen() {
+
+		throughput = RadeonRays::float3(1.f, 1.f, 1.f);
+		volume = 0;
+		flags = 1;
+		active = 0xFF;
+
+	}
+
 	bool Path::isAlive() {
 		return (flags & kKilled) == 0;
 	}

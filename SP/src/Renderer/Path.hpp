@@ -18,6 +18,8 @@ namespace SP {
 		};
 
 
+		void initGen();
+
 		bool isAlive();
 		bool isScattered();
 		bool isSpecular();
@@ -46,7 +48,7 @@ namespace SP {
 		RadeonRays::float4 throughput;
 		int volume;
 		int flags;
-		int extra_0;
+		int active;
 		int extra_1;
 
 	};
