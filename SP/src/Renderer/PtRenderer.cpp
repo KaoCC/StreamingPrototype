@@ -3,10 +3,21 @@
 
 #include "Scene/Camera.hpp"
 
+#include "Path.hpp"
 
 #include <iostream>
+#include <numeric>
 
 namespace SP {
+
+
+	//struct PtRenderer::PathState {
+	//	RadeonRays::float4 throughput;
+	//	int volume;
+	//	int flags;
+	//	int extra_0;
+	//	int extra_1;
+	//};
 
 
 	struct PtRenderer::RenderData {
@@ -17,11 +28,18 @@ namespace SP {
 		std::vector<RadeonRays::ray> host_rays[2];
 		std::vector<int> host_hits;
 
+		std::vector<int> host_pixelIndex[2];
+		std::vector<int> host_compactedIndex;
+		std::vector<int> host_iota;
+
 		std::vector<RadeonRays::ray> host_shadowrays;
 		std::vector<int> host_shadowhits;
 
 		std::vector<RadeonRays::Intersection> host_intersections;
 		int host_hitcount;
+
+
+		std::vector<Path> host_path;
 
 
 		// RadeonRays stuff
@@ -78,8 +96,12 @@ namespace SP {
 		// ray gen ?
 		generatePrimaryRays(scene);
 
+		std::copy(renderData->host_iota.begin(), renderData->host_iota.end(), renderData->host_pixelIndex[0].begin());
+		std::copy(renderData->host_iota.begin(), renderData->host_iota.end(), renderData->host_pixelIndex[1].begin());
+	
 		// Number of rays 
 		int maxrays = renderOutPtr->getWidth() * renderOutPtr->getHeight();
+		renderData->host_hitcount = maxrays;
 
 		for (std::uint32_t pass = 0; pass < numOfBounces; ++pass) {
 
@@ -141,6 +163,13 @@ namespace SP {
 			mapEvent->Wait();
 			api->DeleteEvent(mapEvent);
 			
+
+			// evaluate
+
+
+			filterPathStream(pass);
+
+
 
 			// rendering here
 		}
@@ -219,6 +248,8 @@ namespace SP {
 				// ...
 
 				// path ?
+				Path& path = renderData->host_path[y * imageWidth + x];
+				path.initGen();
 			}
 		}
 
@@ -265,10 +296,28 @@ namespace SP {
 		renderData->host_hits.clear();
 		renderData->host_hits.resize(out.getWidth() * out.getHeight());
 
+		renderData->host_iota.clear();
+		renderData->host_iota.resize(out.getWidth() * out.getHeight());
+		std::iota(renderData->host_iota.begin(), renderData->host_iota.end(), 0);
+
+
+		renderData->host_pixelIndex[0].clear();
+		renderData->host_pixelIndex[0].resize(out.getWidth() * out.getHeight());
+
+		renderData->host_pixelIndex[1].clear();
+		renderData->host_pixelIndex[1].resize(out.getWidth() * out.getHeight());
+
+		renderData->host_compactedIndex.clear();
+		renderData->host_compactedIndex.resize(out.getWidth() * out.getHeight());
+
+
 		//renderData->host_hitcount.clear();
 		//renderData->host_hitcount.resize(out.getWidth() * out.getHeight());
 
 		renderData->host_hitcount = 0;
+
+		renderData->host_path.clear();
+		renderData->host_path.resize(out.getWidth() * out.getHeight());
 
 		auto api{ sceneTracker.getIntersectionApi() };
 
@@ -282,6 +331,7 @@ namespace SP {
 		api->DeleteBuffer(renderData->hitcount);
 
 		// Create new buffers
+		// KaoCC: be careful of the size
 		renderData->rays[0] = api->CreateBuffer(out.getWidth() * out.getHeight()  * sizeof(RadeonRays::ray), renderData->host_rays[0].data());
 		renderData->rays[1] = api->CreateBuffer(out.getWidth() * out.getHeight() * sizeof(RadeonRays::ray), renderData->host_rays[1].data());
 		renderData->shadowrays = api->CreateBuffer(out.getWidth() * out.getHeight() * sizeof(RadeonRays::ray), renderData->host_shadowrays.data());
@@ -292,11 +342,89 @@ namespace SP {
 
 		// ......
 
-
 		//throw std::runtime_error("Yet to be done !");
 
 	}
 
+	void PtRenderer::evaluateVolume(int pass) {
 
+		std::vector<RadeonRays::ray>& rayArrayRef = renderData->host_rays[pass & 0x1];
+		std::vector<int>& pixelIndexArrayRef = renderData->host_pixelIndex[(pass + 1) & 0x1];
+
+		for (size_t i = 0; i < renderData->host_hitcount; ++i) {  // Need to check the size
+
+			int pixelIndex = pixelIndexArrayRef[i];
+
+			// Path ?
+			Path& path = renderData->host_path[pixelIndex];
+
+			if (!path.isAlive()) {
+				continue;
+			}
+
+			int volumIdx = path.getVolumeIdx();
+			if (volumIdx != -1) {
+
+			}
+
+
+
+
+		}
+
+		throw std::runtime_error("Yet to be done !");
+
+	}
+
+
+
+	void PtRenderer::filterPathStream(int pass) {
+
+		std::vector<int>& pixelIndexArrayRef = renderData->host_pixelIndex[(pass + 1) & 0x1];
+
+		for (size_t i = 0; i < renderData->host_hitcount; ++i) {		// check the upper limit
+
+			int pixelIndex = pixelIndexArrayRef[i];
+			Path& path = renderData->host_path[pixelIndex];
+
+			if (path.isAlive()) {
+
+				// TMP !!!! 
+				// We should check the contribution
+				bool kill = false;
+
+				if (!kill) {
+
+					renderData->host_hits[i] = renderData->host_intersections[i].shapeid >= 0 ? 1 : 0;
+
+				} else {
+					path.kill();
+					renderData->host_hits[i] = 0;
+				}
+
+			} else {
+				renderData->host_hits[i] = 0;
+			}
+
+
+		}
+
+
+	}
+
+	void PtRenderer::compactIndex() {
+
+		const size_t  maxSize = renderData->host_hits.size();
+
+		for (size_t i = 0; i < maxSize; ++i) {  // KAOCC: check the upper limit
+
+			//renderData->host_hitcount[] = renderData->host_iota[i];
+
+
+
+		}
+
+
+	}
 
 }

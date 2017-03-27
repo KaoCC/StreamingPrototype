@@ -41,6 +41,7 @@ namespace SP {
 
 
 		struct RenderData;
+		struct PathState;
 
 
 	protected:
@@ -68,6 +69,8 @@ namespace SP {
 		// Shade background
 		void shadeBackground(int pass);
 
+
+		void compactIndex();
 
 
 	private:
