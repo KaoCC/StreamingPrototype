@@ -170,6 +170,9 @@ namespace SP {
 			filterPathStream(pass);
 
 
+			// compact
+
+			restorePixelIndices(pass);
 
 			// rendering here
 		}
@@ -368,8 +371,6 @@ namespace SP {
 			}
 
 
-
-
 		}
 
 		throw std::runtime_error("Yet to be done !");
@@ -377,6 +378,17 @@ namespace SP {
 	}
 
 
+
+	void PtRenderer::restorePixelIndices(int pass) {
+
+		std::vector<int>& previousPixelIndexArrayRef = renderData->host_pixelIndex[(pass + 1) & 0x1];
+		std::vector<int>& newPixelIndexArrayRef = renderData->host_pixelIndex[(pass) & 0x1];
+
+		for (size_t i = 0; i < renderData->host_hitcount; ++i) {		// check upper bound ?
+			newPixelIndexArrayRef[i] = previousPixelIndexArrayRef[renderData->host_compactedIndex[i]];
+		}
+
+	}
 
 	void PtRenderer::filterPathStream(int pass) {
 
