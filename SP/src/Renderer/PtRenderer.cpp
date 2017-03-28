@@ -134,23 +134,27 @@ namespace SP {
 			// T and I here
 			//api->QueryIntersection(renderData->rays[pass & 0x1], renderData->hitcount, maxrays, renderData->intersections, nullptr, nullptr);
 
-			api->QueryIntersection(renderData->rays[pass & 0x1], maxrays, renderData->intersections, nullptr, nullptr);
+
+			// clear hit buffer
+			std::fill(renderData->host_hits.begin(), renderData->host_hits.end(), 0);
+
+			api->QueryIntersection(renderData->rays[pass & 0x1], renderData->host_hitcount, renderData->intersections, nullptr, nullptr);		
 
 			RadeonRays::Event* mapEvent = nullptr;
 			RadeonRays::Intersection* resultPtr = nullptr;
 
-			api->MapBuffer(renderData->intersections, RadeonRays::kMapRead, 0, maxrays * sizeof(RadeonRays::Intersection), reinterpret_cast<void**>(&resultPtr), &mapEvent);
+			api->MapBuffer(renderData->intersections, RadeonRays::kMapRead, 0, renderData->host_hitcount * sizeof(RadeonRays::Intersection), reinterpret_cast<void**>(&resultPtr), &mapEvent);
 			mapEvent->Wait();
 			api->DeleteEvent(mapEvent);
 
 			// copy intersections
-			std::copy(resultPtr, resultPtr + maxrays, renderData->host_intersections.begin());
+			std::copy(resultPtr, resultPtr + renderData->host_hitcount, renderData->host_intersections.begin());
 
 
 			// tmp
 			int count = 0;
-			std::cerr << "PRINT\n";
-			for (int i = 0; i < maxrays; ++i) {
+			std::cerr << "PASS: " << pass << "\n";
+			for (int i = 0; i < renderData->host_hitcount; ++i) {
 				if (renderData->host_intersections[i].shapeid != -1) {
 					++count;
 				}
@@ -167,7 +171,7 @@ namespace SP {
 			// evaluate V		(X)
 
 
-			filterPathStream(pass);		// path info is not used ...
+			filterPathStream(pass);
 
 			compactIndex();
 			std::cerr << "NEW hit count:" << renderData->host_hitcount << '\n';
@@ -183,6 +187,14 @@ namespace SP {
 			// QueryOcclusion
 
 			// GatherLightSamples
+
+
+
+			// tmp
+			if (renderData->host_hitcount == 0) {
+				std::cerr << ">>> BREAK AT PASS: " << pass << "\n";
+				break;
+			}
 
 
 		}
@@ -433,7 +445,7 @@ namespace SP {
 
 	}
 
-	// not used in the current code structure
+
 	void PtRenderer::filterPathStream(int pass) {
 
 		std::vector<int>& pixelIndexArrayRef = renderData->host_pixelIndex[(pass + 1) & 0x1];
@@ -451,7 +463,7 @@ namespace SP {
 
 				if (!kill) {
 
-					renderData->host_hits[i] = renderData->host_intersections[i].shapeid >= 0 ? 1 : 0;
+					renderData->host_hits[i] = (renderData->host_intersections[i].shapeid >= 0) ? 1 : 0;
 
 				} else {
 					path.kill();
@@ -470,12 +482,11 @@ namespace SP {
 
 		const size_t  maxSize = renderData->host_hits.size();
 
-		// scanExclusiveAdd
+		//Exclusive scan add 
 		// ...
 
 		std::vector<int> address(maxSize);
 		scanExclusiveAdd(address);
-
 
 		for (size_t i = 0; i < maxSize; ++i) {  // KAOCC: check the upper limit
 
