@@ -41,6 +41,7 @@ namespace SP {
 
 
 		struct RenderData;
+		struct PathState;
 
 
 	protected:
@@ -49,6 +50,30 @@ namespace SP {
 		void generatePrimaryRays(const Scene& scene);
 
 		void resizeWorkingSet(const Output& out);
+
+
+		// Shade first hit
+		void shadeSurface(int pass);
+		// Evaluate volume
+		void evaluateVolume(int pass);
+		// Handle missing rays
+		void shadeMiss(int pass);
+		// Gather light samples and account for visibility
+		void gatherLightSamples(int pass);
+		// Restore pixel indices after compaction
+		void restorePixelIndices(int pass);
+		// Convert intersection info to compaction predicate
+		void filterPathStream(int pass);
+		// Integrate volume
+		void shadeVolume(int pass);
+		// Shade background
+		void shadeBackground(int pass);
+
+
+		// Helper
+		void compactIndex();
+		void scanExclusiveAdd(std::vector<int>& addr);
+
 
 	private:
 
