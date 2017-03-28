@@ -70,7 +70,9 @@ namespace SP {
 		void shadeBackground(int pass);
 
 
+		// Helper
 		void compactIndex();
+		void scanExclusiveAdd(std::vector<int>& addr);
 
 
 	private:

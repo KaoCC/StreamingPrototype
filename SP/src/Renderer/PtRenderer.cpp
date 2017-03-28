@@ -164,17 +164,27 @@ namespace SP {
 			api->DeleteEvent(mapEvent);
 			
 
-			// evaluate
+			// evaluate V		(X)
 
 
-			filterPathStream(pass);
+			filterPathStream(pass);		// path info is not used ...
 
-
-			// compact
+			compactIndex();
+			std::cerr << "NEW hit count:" << renderData->host_hitcount << '\n';
 
 			restorePixelIndices(pass);
 
-			// rendering here
+			// --- RENDERING ---
+
+			// Shade V		(X)
+
+			// Shade Surface
+
+			// QueryOcclusion
+
+			// GatherLightSamples
+
+
 		}
 
 		
@@ -349,6 +359,8 @@ namespace SP {
 
 	}
 
+
+	// not used ...
 	void PtRenderer::evaluateVolume(int pass) {
 
 		std::vector<RadeonRays::ray>& rayArrayRef = renderData->host_rays[pass & 0x1];
@@ -367,6 +379,37 @@ namespace SP {
 
 			int volumIdx = path.getVolumeIdx();
 			if (volumIdx != -1) {
+
+
+				Sampler rendomSampler;
+				uint32_t rngseed = RadeonRays::rand_uint();			// check this !
+				uint32_t seed = pixelIndex * rngseed;
+				Sampler randomSampler;
+				randomSampler.index = seed;
+				randomSampler.scramble = 0;
+				randomSampler.dimension = 0;
+
+
+				// Try sampling volume for a next scattering event
+				float pdf = 0.f;
+				//float maxdist = Intersection_GetDistance(isects + globalid);
+				//float d = Volume_SampleDistance(&volumes[volidx], &rays[globalid], maxdist, Sampler_Sample1D(&sampler, SAMPLER_ARGS), &pdf);
+
+				// Check if we shall skip the event (it is either outside of a volume or not happened at all)
+				//bool skip = d < 0 || d > maxdist || pdf <= 0.f;
+
+				//if (skip) {
+
+				//	path.clearScatterFlag();
+
+				//} else {
+
+				//	path.setScatterFlag();
+
+				//}
+
+
+
 
 			}
 
@@ -390,6 +433,7 @@ namespace SP {
 
 	}
 
+	// not used in the current code structure
 	void PtRenderer::filterPathStream(int pass) {
 
 		std::vector<int>& pixelIndexArrayRef = renderData->host_pixelIndex[(pass + 1) & 0x1];
@@ -418,9 +462,7 @@ namespace SP {
 				renderData->host_hits[i] = 0;
 			}
 
-
 		}
-
 
 	}
 
@@ -428,14 +470,38 @@ namespace SP {
 
 		const size_t  maxSize = renderData->host_hits.size();
 
+		// scanExclusiveAdd
+		// ...
+
+		std::vector<int> address(maxSize);
+		scanExclusiveAdd(address);
+
+
 		for (size_t i = 0; i < maxSize; ++i) {  // KAOCC: check the upper limit
 
-			//renderData->host_hitcount[] = renderData->host_iota[i];
+			if (renderData->host_hits[i]) {
 
-
+				renderData->host_compactedIndex[address[i]] = renderData->host_iota[i];
+			}
 
 		}
 
+
+		renderData->host_hitcount = address[maxSize - 1] + renderData->host_hits[maxSize - 1];
+	}
+
+	// simple sequential version
+	void PtRenderer::scanExclusiveAdd(std::vector<int>& addr) {
+
+		// KAOCC:
+		// TODO: change to partial_sum ?
+
+		const size_t maxSize = addr.size();
+
+		addr[0] = 0;
+		for (size_t i = 1; i < maxSize; ++i) {
+			addr[i] = renderData->host_hits[i - 1] + addr[i - 1];
+		}
 
 	}
 

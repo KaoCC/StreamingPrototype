@@ -18,7 +18,7 @@ namespace SP {
 	}
 
 	bool Path::isAlive() {
-		return (flags & kKilled) == 0;
+		return ((flags & kKilled) == 0);
 	}
 
 	bool Path::isScattered() {
