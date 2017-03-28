@@ -6,6 +6,8 @@
 //for testing
 #include <iostream>
 
+#include "math/mathutils.h"
+
 namespace SP {
 
 
@@ -37,9 +39,9 @@ namespace SP {
 		std::cerr << "Start Render Thread" << std::endl;
 
 		// testing 
-		renderThread = std::make_unique<std::thread>(std::thread(&RenderingManager::testOutput, this, 0));
+		//renderThread = std::make_unique<std::thread>(std::thread(&RenderingManager::testOutput, this, 0));
 
-		//renderThread = std::make_unique<std::thread>(std::thread(&RenderingManager::renderingWorker, this));
+		renderThread = std::make_unique<std::thread>(std::thread(&RenderingManager::renderingWorker, this));
 	}
 
 
@@ -136,7 +138,7 @@ namespace SP {
 		sceneDataPtr->SetCamera(camera.get());
 
 		// Adjust sensor size based on current aspect ratio
-		float aspect = (float)windowWidth / windowHeight;
+		float aspect = (float)kWindowWidth / kWindowHeight;
 		g_camera_sensor_size.y = g_camera_sensor_size.x / aspect;
 
 		camera->setSensorSize(g_camera_sensor_size);
@@ -153,7 +155,7 @@ namespace SP {
 
 
 		// Set Output
-		renderOutputData = renderer->createOutput(windowWidth, windowHeight);
+		renderOutputData = renderer->createOutput(kWindowWidth, kWindowHeight);
 		renderer->setOutput(renderOutputData);
 
 	}
@@ -161,9 +163,40 @@ namespace SP {
 	// helper function for rendering
 	void RenderingManager::renderingWorker() {
 
+		// test
+		ImageConfig img;
+
 		while (true) {
 			renderer->render(*sceneDataPtr);
+
+			convertOutputToImage(img);
 		}
 
 	}
+
+
+	// testing only
+	void RenderingManager::convertOutputToImage(ImageConfig & img) {
+
+		std::vector<RadeonRays::float3> fdata(kWindowWidth * kWindowHeight);
+		renderOutputData->getData(fdata.data());
+
+		ImageConfig::ImageBuffer& imgBufferRef = img.getImageData();
+
+		imgBufferRef.resize(fdata.size() * 4);
+
+		// tmp gamma
+		float gamma = 2.2f;
+
+		for (size_t i = 0; i < fdata.size(); ++i) {
+			imgBufferRef[4 * i] = (unsigned char)RadeonRays::clamp(RadeonRays::clamp(pow(fdata[i].x / fdata[i].w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255);
+			imgBufferRef[4 * i + 1] = (unsigned char)RadeonRays::clamp(RadeonRays::clamp(pow(fdata[i].y / fdata[i].w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255);
+			imgBufferRef[4 * i + 2] = (unsigned char)RadeonRays::clamp(RadeonRays::clamp(pow(fdata[i].z / fdata[i].w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255);
+			imgBufferRef[4 * i + 3] = 1;
+		}
+
+
+	}
 }
+
+

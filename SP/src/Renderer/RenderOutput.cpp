@@ -5,12 +5,14 @@ namespace SP {
 
 
 	}
-	void RenderOutput::getData(RadeonRays::float3 * data) const {
+	void RenderOutput::getData(RadeonRays::float3 * dt) const {
 
 		//KAOCC: copy or pass pointer ?
 
+		// tmp
+		std::copy(data.begin(), data.end(), dt);
 		
-		throw std::runtime_error("Yet to be done");
+		//throw std::runtime_error("Yet to be done");
 	}
 
 	std::vector<RadeonRays::float3> RenderOutput::copyData() {

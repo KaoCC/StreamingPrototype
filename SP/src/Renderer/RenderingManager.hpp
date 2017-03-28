@@ -47,6 +47,12 @@ namespace SP {
 		void renderingWorker();
 
 
+
+		// Output convert
+		// tmp
+		void convertOutputToImage(ImageConfig& img);
+
+
 		// Camera
 		// KAOCC: support PerspectiveCamera only !
 		std::unique_ptr<SP::PerspectiveCamera> camera;
@@ -64,10 +70,10 @@ namespace SP {
 		float g_camera_aperture = 0.f;
 
 		// parameters
-		const int windowWidth = 512;
-		const int windowHeight = 512;
+		const int kWindowWidth = 512;
+		const int kWindowHeight = 512;
 
-		const int numberOfBounce = 5;
+		const int kNumberOfBounce = 5;
 
 
 		// tmp
