@@ -11,8 +11,8 @@ namespace SP {
 	void Path::initGen() {
 
 		throughput = RadeonRays::float3(1.f, 1.f, 1.f);
-		volume = 0;
-		flags = 1;
+		volume = -1;
+		flags = 0;
 		active = 0xFF;
 
 	}
