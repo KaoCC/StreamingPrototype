@@ -34,6 +34,10 @@ namespace SP {
 
 		ImageConfig::ImageBuffer getSubLightFieldImageWithIndex(size_t subLFIdx, size_t imgIdx);
 
+
+		size_t getTotalSize() const;
+		size_t getSubLightFieldSize(size_t subLFIdx) const;
+
 		// TEST !
 		ImageConfig::ImageBuffer getAll();
 

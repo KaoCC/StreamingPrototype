@@ -65,6 +65,14 @@ namespace SP {
 	//}
 
 
+	size_t ConfigManager::getSubLightFieldSize(size_t subLFIdx) const {
+		return imageLightFieldRef.getSubLightFieldSize(subLFIdx);
+	}
+
+	ImageConfig::ImageBuffer ConfigManager::getSubLightFieldImageWithIndex(size_t subLFIdx, size_t imgIdx) {
+		return imageLightFieldRef.getSubLightFieldImageWithIndex(subLFIdx, imgIdx);
+	}
+
 	Encoder * ConfigManager::getEncoder() {
 		return encoder;
 	}

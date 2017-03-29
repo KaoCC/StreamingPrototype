@@ -190,9 +190,6 @@ namespace SP {
 			// for testing only
 			imagePtr->set_serialnumber(serialNumber);
 			
-			// need to optimize for copying !
-			ImageConfig imageData{ cfgManager.getImage() };
-			ImageConfig::ImageBuffer& imageBufferCache{ imageData.getImageData() };
 
 			//ImageConfig::ImageBuffer& imageBufferCache = cfgManager.getSubLightFieldImages(0);
 			//ImageConfig::ImageBuffer imageBufferCache = cfgManager.getAll();
@@ -203,33 +200,53 @@ namespace SP {
 			Encoder* encoder = cfgManager.getEncoder();
 			uint8_t* rawPtr = encoder->getEncoderRawBuffer();
 
-			std::copy(imageBufferCache.begin(), imageBufferCache.end(), rawPtr);
+			// TMP !!!
+			size_t subLFIndex = 0;	// TODO: mapping function ?
+			size_t subLFSz = cfgManager.getSubLightFieldSize(subLFIndex);
 
-			uint8_t* outBufPtr;
-			int outSize = 0;
-			encoder->startEncoding(&outBufPtr, &outSize);
+			// test
+			encodedImageData.clear();
 
-			//ImageConfig::ImageBuffer encodedImageData;
-			if (outSize > 0) {
+			for (size_t k = 0; k < subLFSz; ++k) {
 
-				std::cerr << "SUCCESS! Size: " << outSize << '\n';
+				// need to optimize for copying !
+				//ImageConfig imageData{ cfgManager.getImage() };
+				//ImageConfig::ImageBuffer& imageBufferCache{ imageData.getImageData() };
 
-				//ImageBuffer encodedImageData(outBufPtr, outBufPtr + outSize);
+				ImageConfig::ImageBuffer imageBufferCache{ cfgManager.getSubLightFieldImageWithIndex(subLFIndex, k) };
 
-				//tmp
-				encodedImageData = std::move(ImageConfig::ImageBuffer(outBufPtr, outBufPtr + outSize));
+				std::copy(imageBufferCache.begin(), imageBufferCache.end(), rawPtr);
 
-				// accumulate
-				//accBuffer.insert(std::end(accBuffer), std::begin(imageData), std::end(imageData));
+				uint8_t* outBufPtr;
+				int outSize = 0;
+				encoder->startEncoding(&outBufPtr, &outSize);
 
-			} else {
-				std::cerr << "Failed to Encode !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! " << '\n';
+				//ImageConfig::ImageBuffer encodedImageData;
+				if (outSize > 0) {
+
+					std::cerr << "SUCCESS! Size: " << outSize << '\n';
+
+					//ImageBuffer encodedImageData(outBufPtr, outBufPtr + outSize);
+
+					//tmp
+					//encodedImageData = std::move(ImageConfig::ImageBuffer(outBufPtr, outBufPtr + outSize));
+
+					encodedImageData.insert(std::end(encodedImageData), outBufPtr, outBufPtr + outSize);
+
+					// accumulate
+					//accBuffer.insert(std::end(accBuffer), std::begin(imageData), std::end(imageData));
+
+				} else {
+					std::cerr << "Failed to Encode !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! " << '\n';
+				}
+
 			}
 
 
 			imagePtr->set_bytesize(encodedImageData.size()); // tmp
-			imagePtr->set_status(imageData.getID());  // tmp
+			//imagePtr->set_status(imageData.getID());  // tmp
 
+			imagePtr->set_status(subLFIndex);	// test
 
 			// image data ????
 			// need to check

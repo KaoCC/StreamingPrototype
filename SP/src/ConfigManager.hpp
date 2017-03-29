@@ -35,9 +35,11 @@ namespace SP {
 
 		// tmp
 		// Light Field
-		ImageConfig::ImageBuffer getSubLightFieldImages(size_t index);
-		ImageConfig::ImageBuffer getAll();
+		//ImageConfig::ImageBuffer getSubLightFieldImages(size_t index);
+		//ImageConfig::ImageBuffer getAll();
 
+		size_t getSubLightFieldSize(size_t subLFIdx) const;
+		ImageConfig::ImageBuffer getSubLightFieldImageWithIndex(size_t subLFIdx, size_t imgIdx);
 
 		// Encoder
 		Encoder* getEncoder();

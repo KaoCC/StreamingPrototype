@@ -55,6 +55,14 @@ namespace SP {
 		return subLFs[subLFIdx].images[imgIdx].getImageData();
 	}
 
+	size_t LightField::getTotalSize() const {
+		return subLFs.size();
+	}
+
+	size_t LightField::getSubLightFieldSize(size_t subLFIdx) const {
+		return subLFs[subLFIdx].images.size();
+	}
+
 	ImageConfig::ImageBuffer LightField::getAll() {
 
 		ImageConfig::ImageBuffer buffer;
