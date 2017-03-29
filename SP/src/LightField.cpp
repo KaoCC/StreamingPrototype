@@ -15,11 +15,20 @@ namespace SP {
 
 	LightField::SubLightField::SubLightField(size_t index) {
 
+		if (numOfImgs > 0) {
+			images.resize(numOfImgs);
+		}
+
+	}
+
+
+	// for testing
+	LightField::SubLightField::SubLightField(size_t index, const std::string & basePath) {
 
 		std::cerr << "LOAD LF\n";
 
 		for (size_t i = 0; i < numOfImgs; ++i) {
-			const std::string kFilePath{ pathBase + "LF_crown_" + std::to_string(2 * index + i) + ".ppm" };
+			const std::string kFilePath{ basePath + "LF_crown_" + std::to_string(2 * index + i) + ".ppm" };
 			images.push_back(ImageConfig(2 * index + i, kFilePath));
 		}
 
@@ -40,6 +49,10 @@ namespace SP {
 		
 
 		return buffer;
+	}
+
+	ImageConfig::ImageBuffer LightField::getSubLightFieldImageWithIndex(size_t subLFIdx, size_t imgIdx) {
+		return subLFs[subLFIdx].images[imgIdx].getImageData();
 	}
 
 	ImageConfig::ImageBuffer LightField::getAll() {
