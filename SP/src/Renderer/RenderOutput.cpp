@@ -15,7 +15,11 @@ namespace SP {
 		//throw std::runtime_error("Yet to be done");
 	}
 
-	std::vector<RadeonRays::float3> RenderOutput::copyData() {
+	std::vector<RadeonRays::float3> RenderOutput::copyData() const {
+		return data;
+	}
+
+	std::vector<RadeonRays::float3>& RenderOutput::getInternalStorage() {
 		return data;
 	}
 

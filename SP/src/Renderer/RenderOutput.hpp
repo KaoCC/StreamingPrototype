@@ -18,7 +18,10 @@ namespace SP {
 		virtual void getData(RadeonRays::float3 * dt) const override;
 
 		// tmp
-		std::vector<RadeonRays::float3> copyData();
+		std::vector<RadeonRays::float3> copyData() const;
+
+		//tmp
+		std::vector<RadeonRays::float3>& getInternalStorage();
 
 	private:
 
