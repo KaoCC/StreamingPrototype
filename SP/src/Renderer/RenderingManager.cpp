@@ -189,9 +189,9 @@ namespace SP {
 		float gamma = 2.2f;
 
 		for (size_t i = 0; i < fdata.size(); ++i) {
-			imgBufferRef[4 * i] = (unsigned char)RadeonRays::clamp(RadeonRays::clamp(pow(fdata[i].x / fdata[i].w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255);
-			imgBufferRef[4 * i + 1] = (unsigned char)RadeonRays::clamp(RadeonRays::clamp(pow(fdata[i].y / fdata[i].w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255);
-			imgBufferRef[4 * i + 2] = (unsigned char)RadeonRays::clamp(RadeonRays::clamp(pow(fdata[i].z / fdata[i].w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255);
+			imgBufferRef[4 * i] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(fdata[i].x / fdata[i].w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
+			imgBufferRef[4 * i + 1] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(fdata[i].y / fdata[i].w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
+			imgBufferRef[4 * i + 2] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(fdata[i].z / fdata[i].w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
 			imgBufferRef[4 * i + 3] = 1;
 		}
 
