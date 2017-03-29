@@ -8,10 +8,12 @@
 
 #include "math/mathutils.h"
 
+#include "../LightField.hpp"
+
 namespace SP {
 
 
-	RenderingManager::RenderingManager(SyncBuffer<ImageConfig>& buff) : syncBuffer(buff) {
+	RenderingManager::RenderingManager(SyncBuffer<ImageConfig>& buff, LightField& lf) : syncBuffer(buff), imageLightField(lf) {
 		//, encoder(CreateEncoder(512, 512)) {
 
 		// allocate renderer

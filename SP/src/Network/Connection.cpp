@@ -4,12 +4,12 @@
 
 namespace SP {
 
-	Connection::ConnectionPointer Connection::createWithBuffer(boost::asio::io_service & ios, SyncBuffer<ImageConfig>& buf) {
-		return ConnectionPointer(new Connection(ios, buf));
+	Connection::ConnectionPointer Connection::createWithBuffer(boost::asio::io_service & ios, SyncBuffer<ImageConfig>& buf, LightField& imgLF) {
+		return ConnectionPointer(new Connection(ios, buf, imgLF));
 	}
 
-	Connection::Connection(boost::asio::io_service & ios, SyncBuffer<ImageConfig>& buf) :
-		streamingSocket(ios), packet(Packet::MessagePointer(new StreamingFormat::StreamingMessage())), cfgManager(buf)
+	Connection::Connection(boost::asio::io_service & ios, SyncBuffer<ImageConfig>& buf, LightField& imgLF) :
+		streamingSocket(ios), packet(Packet::MessagePointer(new StreamingFormat::StreamingMessage())), cfgManager(buf, imgLF)
 		, responsePacket(Packet::MessagePointer(new StreamingFormat::StreamingMessage())) 
 	{
 	}

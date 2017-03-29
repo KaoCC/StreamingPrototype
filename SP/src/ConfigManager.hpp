@@ -15,7 +15,7 @@ namespace SP {
 
 
 	public:
-		ConfigManager(SyncBuffer<ImageConfig>& buffer);
+		ConfigManager(SyncBuffer<ImageConfig>& buffer, LightField& imgLF);
 
 		CameraConfig getCamera();
 
@@ -65,6 +65,7 @@ namespace SP {
 
 		SyncBuffer<ImageConfig>& bufferRef;
 
+		LightField& imageLightFieldRef;
 
 		Encoder* encoder;
 
