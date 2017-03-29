@@ -184,9 +184,12 @@ namespace SP {
 
 			// Shade Surface
 
+			if (pass == 0)
+				shadeMiss(pass);
+
 			// QueryOcclusion
 
-			// GatherLightSamples
+			gatherLightSamples(pass);
 
 
 
@@ -429,6 +432,57 @@ namespace SP {
 		}
 
 		throw std::runtime_error("Yet to be done !");
+
+	}
+
+
+	void PtRenderer::shadeMiss(int pass) {
+
+		std::vector<int>& pixelIndexArrayRef = renderData->host_pixelIndex[(pass + 1) & 0x1];
+
+		const size_t maxSize = renderOutPtr->getWidth() * renderOutPtr->getHeight();		// check the size !!
+		for (size_t i = 0; i < maxSize; ++i) {
+
+			int pixelIndex = pixelIndexArrayRef[i];
+
+
+			if (renderData->host_intersections[i].shapeid < 0) {
+
+				int volumeIndex = renderData->host_path[pixelIndex].getVolumeIdx();
+
+				if (volumeIndex == -1) {
+
+				} else {
+
+				}
+
+				// Yet to be done
+			}
+
+			std::vector<RadeonRays::float3>& outRef = renderOutPtr->getInternalStorage();
+			outRef[pixelIndex].w += 1.f;
+		}
+
+
+	}
+
+	void PtRenderer::gatherLightSamples(int pass) {
+
+
+		std::vector<int>& pixelIndexArrayRef = renderData->host_pixelIndex[(pass + 1) & 0x1];
+
+		for (size_t i = 0; i < renderData->host_hitcount; ++i) {		// check upper bound !
+			int pixelIndex = pixelIndexArrayRef[i];
+
+			RadeonRays::float3 radiance = RadeonRays::float3(0.f, 0.f, 0.f);
+
+			
+			std::vector<RadeonRays::float3>& outRef = renderOutPtr->getInternalStorage();
+			outRef[pixelIndex] += radiance;
+		}
+
+		// yet to be done !
+
 
 	}
 
