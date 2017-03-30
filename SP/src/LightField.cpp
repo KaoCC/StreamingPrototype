@@ -9,7 +9,7 @@ namespace SP {
 		//const std::string kFilePath{ pathBase + "crown_" + std::to_string(index) + ".ppm" };
 
 		for (size_t i = 0; i < numOfSubLFs; ++i) {
-			subLFs.push_back(SubLightField(i));
+			subLFs.push_back(SubLightField(i, this->pathBase));
 		}
 	}
 
@@ -28,7 +28,8 @@ namespace SP {
 		std::cerr << "LOAD LF\n";
 
 		for (size_t i = 0; i < numOfImgs; ++i) {
-			const std::string kFilePath{ basePath + "LF_crown_" + std::to_string(2 * index + i) + ".ppm" };
+			//const std::string kFilePath{ basePath + "LF_crown_" + std::to_string(2 * index + i) + ".ppm" };
+			const std::string kFilePath{ basePath + "LF_crown_" + std::to_string(index) + ".ppm" };
 			images.push_back(ImageConfig(2 * index + i, kFilePath));
 		}
 
