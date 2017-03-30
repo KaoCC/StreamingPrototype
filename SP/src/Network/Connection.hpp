@@ -8,6 +8,7 @@
 
 #include "../ConfigManager.hpp"
 #include "../SyncBuffer.hpp"
+#include "../LightField.hpp"
 
 #include <deque>
 
@@ -19,7 +20,7 @@ namespace SP {
 		using ConnectionPointer = std::shared_ptr<Connection>;
 
 
-		static ConnectionPointer createWithBuffer(boost::asio::io_service& ios, SyncBuffer<ImageConfig>& buf);
+		static ConnectionPointer createWithBuffer(boost::asio::io_service& ios, SyncBuffer<ImageConfig>& buf, LightField& imgLF);
 		
 		// get socket reference
 		boost::asio::ip::tcp::socket& getSocketRef();
@@ -29,7 +30,7 @@ namespace SP {
 
 	private:
 
-		Connection(boost::asio::io_service& io_service, SyncBuffer<ImageConfig>& buf);
+		Connection(boost::asio::io_service& io_service, SyncBuffer<ImageConfig>& buf, LightField& imgLF);
 
 
 		void startReadHeader();
@@ -74,6 +75,11 @@ namespace SP {
 
 		// tmp buffer for async write
 		std::deque<Packet::DataBuffer> writeBufferQueue;
+
+
+		//tmp
+		//cached dx
+		float cachedDeltaX = 0;
 
 	};
 

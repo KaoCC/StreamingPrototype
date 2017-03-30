@@ -16,6 +16,7 @@
 
 #include "SyncBuffer.hpp"
 
+#include "LightField.hpp"
 
 //void producer(SP::SyncBuffer<int>& bufferRef, int id) {
 //
@@ -59,9 +60,10 @@ int main(int argc, char *argv[]) {
 		port = std::stoi(std::string(argv[1]));
 	}
 
+	SP::LightField imgLightField;
 
 	SP::SyncBuffer<SP::ImageConfig> imageOutput;
-	SP::RenderingManager renderMan(imageOutput);
+	SP::RenderingManager renderMan(imageOutput, imgLightField);
 
 	renderMan.startRenderThread();
 
@@ -93,7 +95,7 @@ int main(int argc, char *argv[]) {
 
 	try {
 		boost::asio::io_service ios;
-		SP::Server server(ios, port, imageOutput);
+		SP::Server server(ios, port, imageOutput, imgLightField);
 		ios.run();
 
 		std::cerr << "End Server" << std::endl;

@@ -17,6 +17,8 @@
 #include "../Encoder/Encoder.hpp"
 
 #include "Output.hpp"
+#include "../LightField.hpp"
+
 
 namespace SP {
 
@@ -29,7 +31,7 @@ namespace SP {
 		RenderingManager() = delete;
 
 
-		RenderingManager(SyncBuffer<ImageConfig>& buff);
+		RenderingManager(SyncBuffer<ImageConfig>& buff, LightField& lf);
 		~RenderingManager();
 
 		void startRenderThread();
@@ -89,6 +91,10 @@ namespace SP {
 
 		// output buffer ref
 		SyncBuffer<ImageConfig>& syncBuffer;
+
+
+		// otput Light Field ref
+		LightField& imageLightField;
 
 		// thread
 		std::unique_ptr<std::thread> renderThread;

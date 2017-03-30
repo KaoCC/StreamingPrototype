@@ -4,12 +4,27 @@
 
 namespace SP {
 
-	Connection::ConnectionPointer Connection::createWithBuffer(boost::asio::io_service & ios, SyncBuffer<ImageConfig>& buf) {
-		return ConnectionPointer(new Connection(ios, buf));
+
+	// helper 
+	size_t getIndexTmp(float dx) {
+		dx += 0.5;
+		size_t index = dx * 16;
+
+		if (index > 15) {
+			index = 15;
+		}
+
+		return index;
 	}
 
-	Connection::Connection(boost::asio::io_service & ios, SyncBuffer<ImageConfig>& buf) :
-		streamingSocket(ios), packet(Packet::MessagePointer(new StreamingFormat::StreamingMessage())), cfgManager(buf)
+
+
+	Connection::ConnectionPointer Connection::createWithBuffer(boost::asio::io_service & ios, SyncBuffer<ImageConfig>& buf, LightField& imgLF) {
+		return ConnectionPointer(new Connection(ios, buf, imgLF));
+	}
+
+	Connection::Connection(boost::asio::io_service & ios, SyncBuffer<ImageConfig>& buf, LightField& imgLF) :
+		streamingSocket(ios), packet(Packet::MessagePointer(new StreamingFormat::StreamingMessage())), cfgManager(buf, imgLF)
 		, responsePacket(Packet::MessagePointer(new StreamingFormat::StreamingMessage())) 
 	{
 	}
@@ -170,6 +185,22 @@ namespace SP {
 			float dvy = msgPtr->cameramsg().delta_vy();
 			float dvz = msgPtr->cameramsg().delta_vz();
 
+
+			// TEST !
+			if (writeBufferQueue.size() > 1) {
+				responsePtr = nullptr;
+				break;
+			}
+
+			// test
+			if (cachedDeltaX == dx) {
+				responsePtr = nullptr;
+				break;
+			} else {
+				cachedDeltaX = dx;
+			}
+
+
 			// KAOCC: check if we need locks 
 
 			// position
@@ -177,7 +208,6 @@ namespace SP {
 
 			// direction ?
 			// missing ...
-
 
 			// insert rendering code & encoder here
 
@@ -190,9 +220,6 @@ namespace SP {
 			// for testing only
 			imagePtr->set_serialnumber(serialNumber);
 			
-			// need to optimize for copying !
-			ImageConfig imageData{ cfgManager.getImage() };
-			ImageConfig::ImageBuffer& imageBufferCache{ imageData.getImageData() };
 
 			//ImageConfig::ImageBuffer& imageBufferCache = cfgManager.getSubLightFieldImages(0);
 			//ImageConfig::ImageBuffer imageBufferCache = cfgManager.getAll();
@@ -203,33 +230,53 @@ namespace SP {
 			Encoder* encoder = cfgManager.getEncoder();
 			uint8_t* rawPtr = encoder->getEncoderRawBuffer();
 
-			std::copy(imageBufferCache.begin(), imageBufferCache.end(), rawPtr);
+			// TMP !!!
+			size_t subLFIndex = getIndexTmp(dx);	// TODO: mapping function ?
+			size_t subLFSz = cfgManager.getSubLightFieldSize(subLFIndex);
 
-			uint8_t* outBufPtr;
-			int outSize = 0;
-			encoder->startEncoding(&outBufPtr, &outSize);
+			// test
+			encodedImageData.clear();
 
-			//ImageConfig::ImageBuffer encodedImageData;
-			if (outSize > 0) {
+			for (size_t k = 0; k < subLFSz; ++k) {
 
-				std::cerr << "SUCCESS! Size: " << outSize << '\n';
+				// need to optimize for copying !
+				//ImageConfig imageData{ cfgManager.getImage() };
+				//ImageConfig::ImageBuffer& imageBufferCache{ imageData.getImageData() };
 
-				//ImageBuffer encodedImageData(outBufPtr, outBufPtr + outSize);
+				ImageConfig::ImageBuffer imageBufferCache{ cfgManager.getSubLightFieldImageWithIndex(subLFIndex, k) };
 
-				//tmp
-				encodedImageData = std::move(ImageConfig::ImageBuffer(outBufPtr, outBufPtr + outSize));
+				std::copy(imageBufferCache.begin(), imageBufferCache.end(), rawPtr);
 
-				// accumulate
-				//accBuffer.insert(std::end(accBuffer), std::begin(imageData), std::end(imageData));
+				uint8_t* outBufPtr;
+				int outSize = 0;
+				encoder->startEncoding(&outBufPtr, &outSize);
 
-			} else {
-				std::cerr << "Failed to Encode !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! " << '\n';
+				//ImageConfig::ImageBuffer encodedImageData;
+				if (outSize > 0) {
+
+					//std::cerr << "SUCCESS! Size: " << outSize << " SubLF Index: " << subLFIndex  << " img Index: " << k << " dx: " << dx << '\n';
+
+					//ImageBuffer encodedImageData(outBufPtr, outBufPtr + outSize);
+
+					//tmp
+					//encodedImageData = std::move(ImageConfig::ImageBuffer(outBufPtr, outBufPtr + outSize));
+
+					encodedImageData.insert(std::end(encodedImageData), outBufPtr, outBufPtr + outSize);
+
+					// accumulate
+					//accBuffer.insert(std::end(accBuffer), std::begin(imageData), std::end(imageData));
+
+				} else {
+					std::cerr << "Failed to Encode !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! " << '\n';
+				}
+
 			}
 
-
+			std::cerr << "size" << encodedImageData.size() << std::endl;
 			imagePtr->set_bytesize(encodedImageData.size()); // tmp
-			imagePtr->set_status(imageData.getID());  // tmp
+			//imagePtr->set_status(imageData.getID());  // tmp
 
+			imagePtr->set_status(subLFIndex);	// test
 
 			// image data ????
 			// need to check
@@ -267,6 +314,15 @@ namespace SP {
 	}
 
 	void Connection::writeResponse(Packet::MessagePointer msgPtr) {
+
+
+		// test
+
+		if (msgPtr == nullptr) {
+			std::cerr << "Drop Response" << std::endl;
+			return;
+		}
+
 
 		Packet::DataBuffer writeBuffer;
 		//Packet responsePacket(msgPtr);

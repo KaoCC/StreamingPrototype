@@ -7,8 +7,8 @@ const int kHeight = 512;
 
 namespace SP {
 
-	ConfigManager::ConfigManager(SyncBuffer<ImageConfig>& buffer) : 
-		cameraCfg(Position(0, 1, 3), Direction(0, 1, 0)), screenCfg(kWidth, kHeight), bufferRef(buffer), encoder(CreateEncoder(kWidth, kHeight)) {
+	ConfigManager::ConfigManager(SyncBuffer<ImageConfig>& buffer, LightField& imgLF) : 
+		cameraCfg(Position(0, 1, 3), Direction(0, 0, 1)), screenCfg(kWidth, kHeight), bufferRef(buffer), imageLightFieldRef(imgLF), encoder(CreateEncoder(kWidth, kHeight)) {
 
 		// KAOCC: TODO: load images
 
@@ -64,6 +64,14 @@ namespace SP {
 	//	return lightField.getAll();
 	//}
 
+
+	size_t ConfigManager::getSubLightFieldSize(size_t subLFIdx) const {
+		return imageLightFieldRef.getSubLightFieldSize(subLFIdx);
+	}
+
+	ImageConfig::ImageBuffer ConfigManager::getSubLightFieldImageWithIndex(size_t subLFIdx, size_t imgIdx) {
+		return imageLightFieldRef.getSubLightFieldImageWithIndex(subLFIdx, imgIdx);
+	}
 
 	Encoder * ConfigManager::getEncoder() {
 		return encoder;

@@ -10,8 +10,8 @@
 
 namespace SP {
 
-	Server::Server(boost::asio::io_service & ios, unsigned port, SyncBuffer<ImageConfig>& syncBuff)
-		: acc(ios, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port)), syncBufferRef(syncBuff) {
+	Server::Server(boost::asio::io_service & ios, unsigned port, SyncBuffer<ImageConfig>& syncBuff, LightField& imgLF)
+		: acc(ios, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port)), syncBufferRef(syncBuff), imgLightFieldRef(imgLF){
 		startAccept();
 	}
 
@@ -19,7 +19,7 @@ namespace SP {
 	void Server::startAccept() {
 
 		std::cerr << "New connection" << std::endl;
-		Connection::ConnectionPointer newConnection = Connection::createWithBuffer(acc.get_io_service(), syncBufferRef);
+		Connection::ConnectionPointer newConnection = Connection::createWithBuffer(acc.get_io_service(), syncBufferRef, imgLightFieldRef);
 
 		//acc.accept(newConnection->getSocketRef());
 		acc.async_accept(newConnection->getSocketRef(), std::bind(&Server::handleAccept, this, newConnection, std::placeholders::_1));
