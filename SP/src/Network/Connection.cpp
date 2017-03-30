@@ -4,6 +4,21 @@
 
 namespace SP {
 
+
+	// helper 
+	size_t getIndexTmp(float dx) {
+		dx += 0.5;
+		size_t index = dx * 16;
+
+		if (index > 15) {
+			index = 15;
+		}
+
+		return index;
+	}
+
+
+
 	Connection::ConnectionPointer Connection::createWithBuffer(boost::asio::io_service & ios, SyncBuffer<ImageConfig>& buf, LightField& imgLF) {
 		return ConnectionPointer(new Connection(ios, buf, imgLF));
 	}
@@ -170,6 +185,22 @@ namespace SP {
 			float dvy = msgPtr->cameramsg().delta_vy();
 			float dvz = msgPtr->cameramsg().delta_vz();
 
+
+			// TEST !
+			if (writeBufferQueue.size() > 1) {
+				responsePtr = nullptr;
+				break;
+			}
+
+			// test
+			if (cachedDeltaX == dx) {
+				responsePtr = nullptr;
+				break;
+			} else {
+				cachedDeltaX = dx;
+			}
+
+
 			// KAOCC: check if we need locks 
 
 			// position
@@ -177,7 +208,6 @@ namespace SP {
 
 			// direction ?
 			// missing ...
-
 
 			// insert rendering code & encoder here
 
@@ -201,7 +231,7 @@ namespace SP {
 			uint8_t* rawPtr = encoder->getEncoderRawBuffer();
 
 			// TMP !!!
-			size_t subLFIndex = 0;	// TODO: mapping function ?
+			size_t subLFIndex = getIndexTmp(dx);	// TODO: mapping function ?
 			size_t subLFSz = cfgManager.getSubLightFieldSize(subLFIndex);
 
 			// test
@@ -224,7 +254,7 @@ namespace SP {
 				//ImageConfig::ImageBuffer encodedImageData;
 				if (outSize > 0) {
 
-					std::cerr << "SUCCESS! Size: " << outSize << '\n';
+					//std::cerr << "SUCCESS! Size: " << outSize << " SubLF Index: " << subLFIndex  << " img Index: " << k << " dx: " << dx << '\n';
 
 					//ImageBuffer encodedImageData(outBufPtr, outBufPtr + outSize);
 
@@ -242,7 +272,7 @@ namespace SP {
 
 			}
 
-
+			std::cerr << "size" << encodedImageData.size() << std::endl;
 			imagePtr->set_bytesize(encodedImageData.size()); // tmp
 			//imagePtr->set_status(imageData.getID());  // tmp
 
@@ -284,6 +314,15 @@ namespace SP {
 	}
 
 	void Connection::writeResponse(Packet::MessagePointer msgPtr) {
+
+
+		// test
+
+		if (msgPtr == nullptr) {
+			std::cerr << "Drop Response" << std::endl;
+			return;
+		}
+
 
 		Packet::DataBuffer writeBuffer;
 		//Packet responsePacket(msgPtr);

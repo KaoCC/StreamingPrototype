@@ -76,6 +76,11 @@ namespace SP {
 		// tmp buffer for async write
 		std::deque<Packet::DataBuffer> writeBufferQueue;
 
+
+		//tmp
+		//cached dx
+		float cachedDeltaX = 0;
+
 	};
 
 
