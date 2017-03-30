@@ -21,7 +21,7 @@ namespace SP {
 
 
 			// test
-			const size_t numOfImgs = 2;
+			const size_t numOfImgs = 8;
 
 			std::vector<ImageConfig> images;
 
@@ -47,7 +47,7 @@ namespace SP {
 		std::vector<SubLightField> subLFs;
 
 		// test
-		const size_t numOfSubLFs = 3;
+		const size_t numOfSubLFs = 16;
 
 
 		// tmp file location
