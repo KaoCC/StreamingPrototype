@@ -53,7 +53,7 @@ namespace SP {
 
 		switch (format) {
 
-		case Format::kRGBA32:
+		case Format::kRGBA32: {
 
 			RadeonRays::float4 const* mydataf = reinterpret_cast<RadeonRays::float4 const*>(data.get());		// check this conversion
 
@@ -65,8 +65,9 @@ namespace SP {
 
 			// Filter and return the result
 			return RadeonRays::lerp(RadeonRays::lerp(val00, val01, wx), RadeonRays::lerp(val10, val11, wx), wy);
+		}
 
-		case Format::kRGBA16:
+		case Format::kRGBA16: {
 
 			// NOT CHECK YET !!
 
@@ -94,7 +95,10 @@ namespace SP {
 			return RadeonRays::lerp(RadeonRays::lerp(val00, val01, wx), RadeonRays::lerp(val10, val11, wx), wy);
 
 
-		case Format::kRGBA8:
+		}
+
+
+		case Format::kRGBA8: {
 
 			// tmp !!!
 			struct uchar4 {
@@ -119,6 +123,8 @@ namespace SP {
 
 			// Filter and return the result
 			return RadeonRays::lerp(RadeonRays::lerp(val00, val01, wx), RadeonRays::lerp(val10, val11, wx), wy);
+
+		}
 
 		default:
 
