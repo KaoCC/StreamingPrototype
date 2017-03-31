@@ -414,14 +414,14 @@ namespace SP {
 
 			size_t hitIndex = renderData->host_compactedIndex[i];
 			size_t pixelIndex = pixelIndexArrayRef[i];
-			const RadeonRays::Intersection& currentIntersect = renderData->host_intersections[i];
+			const RadeonRays::Intersection& currentIntersect = renderData->host_intersections[hitIndex];
 
 			Path& currentPath = renderData->host_path[pixelIndex];
 
 			RadeonRays::float3 wi = -RadeonRays::normalize(rayArrayRef[hitIndex].d);
 
 			DifferentialGeometry diffGeo;
-
+			diffGeo.fill(currentIntersect, sceneTracker.getInternalMeshPtrs());
 
 
 
