@@ -2,7 +2,7 @@
 
 #include "Scene/Shape.hpp"
 
-void SP::DifferentialGeometry::fill(const Scene & sceneRef, const RadeonRays::Intersection & isectRef, const std::vector<const Mesh*>& meshPtrs) {
+void SP::DifferentialGeometry::fill(const RadeonRays::Intersection & isectRef, const std::vector<const Mesh*>& meshPtrs) {
 
 	int shapeId = isectRef.shapeid - 1;			//CHECK !
 	int primId = isectRef.primid;								// CHECK !!!

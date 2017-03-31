@@ -19,7 +19,7 @@ namespace SP {
 	public:
 	//	DifferentialGeometry();
 
-		void fill(const Scene& sceneRef, const RadeonRays::Intersection& isectRef, const std::vector<const Mesh*>& meshPtrs);
+		void fill(const RadeonRays::Intersection& isectRef, const std::vector<const Mesh*>& meshPtrs);
 
 	private:
 
