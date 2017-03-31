@@ -4,6 +4,7 @@
 #include "Scene/Camera.hpp"
 
 #include "Path.hpp"
+#include "DifferentialGeometry.hpp"
 
 #include <iostream>
 #include <numeric>
@@ -178,26 +179,53 @@ namespace SP {
 
 			restorePixelIndices(pass);
 
-			// --- RENDERING ---
-
-			// Shade V		(X)
-
-			// Shade Surface
-
-			if (pass == 0)
-				shadeMiss(pass);
-
-			// QueryOcclusion
-
-			gatherLightSamples(pass);
-
-
-
 			// tmp
 			if (renderData->host_hitcount == 0) {
 				std::cerr << ">>> BREAK AT PASS: " << pass << "\n";
 				break;
 			}
+
+			// --- RENDERING ---
+
+			// Shade V		(X)
+
+			// Shade Surface			// the key of rendering !
+			shadeSurface(pass);
+
+			if (pass == 0)
+				shadeMiss(pass);
+
+			// QueryOcclusion
+			// KAOCC: move shadow rays to the GPU ?
+			// Read the shadow hit to host ?
+			// hit count ? max ray ?
+			api->QueryOcclusion(renderData->shadowrays, renderData->host_hitcount, renderData->shadowhits, nullptr, nullptr);
+
+
+			int* shadowResultPtr = nullptr;
+
+			mapEvent = nullptr;
+			api->MapBuffer(renderData->shadowhits, RadeonRays::kMapRead, 0, renderData->host_hitcount * sizeof(int), reinterpret_cast<void**>(&shadowResultPtr), &mapEvent);
+			mapEvent->Wait();
+			api->DeleteEvent(mapEvent);
+
+
+			// copy shadowhits
+			std::copy(shadowResultPtr, shadowResultPtr + renderData->host_hitcount, renderData->host_shadowhits.begin());
+
+
+			mapEvent = nullptr;
+			api->UnmapBuffer(renderData->shadowhits, static_cast<void*>(shadowResultPtr), &mapEvent);
+			mapEvent->Wait();
+			api->DeleteEvent(mapEvent);
+
+
+
+
+			gatherLightSamples(pass);
+
+
+
 
 
 		}
@@ -375,6 +403,35 @@ namespace SP {
 	}
 
 
+	void PtRenderer::shadeSurface(int pass) {
+
+
+		std::vector<RadeonRays::ray>& rayArrayRef = renderData->host_rays[pass & 0x1];
+
+		std::vector<int>& pixelIndexArrayRef = renderData->host_pixelIndex[(pass) & 0x1];
+
+		for (size_t i = 0; i < renderData->host_hitcount; ++i) {
+
+			size_t hitIndex = renderData->host_compactedIndex[i];
+			size_t pixelIndex = pixelIndexArrayRef[i];
+			const RadeonRays::Intersection& currentIntersect = renderData->host_intersections[i];
+
+			Path& currentPath = renderData->host_path[pixelIndex];
+
+			RadeonRays::float3 wi = -RadeonRays::normalize(rayArrayRef[hitIndex].d);
+
+			DifferentialGeometry diffGeo;
+
+
+
+
+		}
+
+
+
+		throw std::runtime_error("surface: yet to be done");
+	}
+
 	// not used ...
 	void PtRenderer::evaluateVolume(int pass) {
 
@@ -446,18 +503,30 @@ namespace SP {
 			int pixelIndex = pixelIndexArrayRef[i];
 
 
+			// this part is not complete yet
+			// texture is not support yet
+			/*  Test Area */
 			if (renderData->host_intersections[i].shapeid < 0) {
 
 				int volumeIndex = renderData->host_path[pixelIndex].getVolumeIdx();
 
+				std::vector<RadeonRays::float3>& outRef = renderOutPtr->getInternalStorage();
+
 				if (volumeIndex == -1) {
 
-				} else {
+					//outRef[pixelIndex] = ;
 
+				} else {
+					// not support currently
+					throw std::runtime_error("Vol not support");
 				}
 
 				// Yet to be done
 			}
+
+			/* EOF */
+
+
 
 			std::vector<RadeonRays::float3>& outRef = renderOutPtr->getInternalStorage();
 			outRef[pixelIndex].w += 1.f;
@@ -469,13 +538,19 @@ namespace SP {
 	void PtRenderer::gatherLightSamples(int pass) {
 
 
-		std::vector<int>& pixelIndexArrayRef = renderData->host_pixelIndex[(pass + 1) & 0x1];
+		std::vector<int>& pixelIndexArrayRef = renderData->host_pixelIndex[(pass) & 0x1];
 
 		for (size_t i = 0; i < renderData->host_hitcount; ++i) {		// check upper bound !
 			int pixelIndex = pixelIndexArrayRef[i];
 
 			RadeonRays::float3 radiance = RadeonRays::float3(0.f, 0.f, 0.f);
 
+			if (renderData->host_shadowhits[i] == -1) {
+				// test
+				//std::cerr << "shadow: " << i << '\n';
+
+				radiance += RadeonRays::float3(100.f, 0.f, 0.f);;// TEST !!!!!!!!
+			}
 			
 			std::vector<RadeonRays::float3>& outRef = renderOutPtr->getInternalStorage();
 			outRef[pixelIndex] += radiance;
