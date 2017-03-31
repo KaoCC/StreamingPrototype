@@ -41,6 +41,8 @@ namespace SP {
 			currentScenePtr = &scene;
 
 
+			internalMeshPtrs.clear();
+
 			std::unique_ptr<Iterator> shapeIterator(scene.createShapeIterator());
 
 			// create mesh
@@ -70,6 +72,9 @@ namespace SP {
 				++shapeID;
 
 				internalShapes.push_back(shape);
+
+				//test
+				internalMeshPtrs.push_back(mesh);
 			}
 
 			std::cerr << "Num of internal Shapes: " << internalShapes.size() << std::endl;
@@ -90,6 +95,7 @@ namespace SP {
 		// test
 		if (currentScenePtr != &scene) {
 			// detatch all
+			std::cerr << "The scene has been changed !" << std::endl;
 		}
 
 		// can cause error !
@@ -98,5 +104,8 @@ namespace SP {
 
 	}
 
+	const std::vector<const Mesh*>& SceneTracker::getInternalMeshPtrs() const{
+		return internalMeshPtrs;
+	}
 
 }
