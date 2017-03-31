@@ -2,10 +2,13 @@
 #define _SP_DIFFERENTIALGEOMETRY_HPP_
 
 
-#include "math/float3.h"
-#include "math/matrix.h"
+//#include "math/float3.h"
+//#include "math/matrix.h"
 
 #include "Scene/Material.hpp"
+#include "Scene/Scene.hpp"
+#include "Scene/Shape.hpp"
+#include "radeon_rays.h"
 
 namespace SP {
 
@@ -13,9 +16,10 @@ namespace SP {
 
 	class DifferentialGeometry {
 
+	public:
+	//	DifferentialGeometry();
 
-
-
+		void fill(const Scene& sceneRef, const RadeonRays::Intersection& isectRef, const std::vector<const Mesh*>& meshPtrs);
 
 	private:
 
