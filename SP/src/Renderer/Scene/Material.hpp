@@ -58,13 +58,14 @@ namespace SP {
 		// Ctor
 		Material();
 
-		virtual ~Material() = default;
+		// force abstract
+		virtual ~Material() = 0;
 
 
 
 		// ...
 
-		// check if the material has emmisive parts
+		// check if the material has emissive parts
 		virtual bool hasEmission() const;
 
 		// set input value 
@@ -116,6 +117,9 @@ namespace SP {
 
 		bool twoSidedFlag;
 	};
+
+	inline Material::~Material() {
+	}
 
 
 
