@@ -21,6 +21,18 @@ namespace SP {
 
 		void fill(const RadeonRays::Intersection& isectRef, const std::vector<const Mesh*>& meshPtrs);
 
+		//get Ref
+		RadeonRays::float3& getPosition();
+		RadeonRays::float3& getNormal();
+		RadeonRays::float3& getNormalGeo();
+		RadeonRays::float3& getUV();
+
+		RadeonRays::float3& getDpDu();
+		RadeonRays::float3& getDpDv();
+
+		float getArea() const;
+		const Material* getMaterialPtr() const;
+
 	private:
 
 		// world position
@@ -30,7 +42,7 @@ namespace SP {
 		RadeonRays::float3 normal;
 
 		// geo normal
-		RadeonRays::float3 ng;
+		RadeonRays::float3 normalGeo;
 
 		// UVs
 		RadeonRays::float3 uv;
@@ -48,7 +60,7 @@ namespace SP {
 		RadeonRays::matrix tangentToWorld;
 
 		// Mat ?
-		const Material* mat;
+		const Material* matPtr = nullptr;
 	};
 
 
