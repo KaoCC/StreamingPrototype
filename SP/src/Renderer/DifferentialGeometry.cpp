@@ -36,12 +36,6 @@ void SP::DifferentialGeometry::fill(const RadeonRays::Intersection & isectRef, c
 	RadeonRays::float3 v1 = verticeArray[i1];							// This is WRONG !!!
 	RadeonRays::float3 v2 = verticeArray[i2];							// This is WRONG !!!
 
-	RadeonRays::matrix matrixI;			// I
-
-	normal = RadeonRays::normalize(RadeonRays::transform_vector((1.f - uv.x - uv.y) * n0 + uv.x * n1 + uv.y * n2, matrixI));  //CHECK THIS !
-	pos = RadeonRays::transform_point((1.f - uv.x - uv.y) * v0 + uv.x * v1 + uv.y * v2, matrixI);
-
-	// uv missing ?
 
 	const RadeonRays::float2* uvArray = meshDataPtr->getUVs();
 
@@ -49,7 +43,14 @@ void SP::DifferentialGeometry::fill(const RadeonRays::Intersection & isectRef, c
 	RadeonRays::float2 uv1 = uvArray[i1];
 	RadeonRays::float2 uv2 = uvArray[i2];
 
+	RadeonRays::matrix matrixI;			// I
+
+	// normal, position, uv, ng
+	normal = RadeonRays::normalize(RadeonRays::transform_vector((1.f - uv.x - uv.y) * n0 + uv.x * n1 + uv.y * n2, matrixI));  //CHECK THIS !
+	pos = RadeonRays::transform_point((1.f - uv.x - uv.y) * v0 + uv.x * v1 + uv.y * v2, matrixI);
+	uv = (1.f - uv.x - uv.y) * uv0 + uv.x * uv1 + uv.y * uv2;
 	ng = RadeonRays::normalize(RadeonRays::cross(v1 - v0, v2 - v0));
+
 
 	if (RadeonRays::dot(ng, normal) < 0) {
 		ng = -ng;
