@@ -62,11 +62,21 @@ namespace SP {
 		virtual ~Material() = 0;
 
 
+		// helper function for BxDF type check
+		static bool isEmissive(const Material* matPtr);
+		static bool isSingular(const Material* matPtr);
+		static bool isBTDF(const Material* matPtr);
 
 		// ...
 
 		// check if the material has emissive parts
 		virtual bool hasEmission() const;
+
+
+
+
+
+
 
 		// set input value 
 		// If specific data type is not supported throws std::runtime_error
@@ -123,12 +133,12 @@ namespace SP {
 
 
 
-	class SingleBXDF : public Material {
+	class SingleBxDF : public Material {
 
 	public:
 
 		// Note: from RR
-		enum class BXDFType {
+		enum class BxDFType {
 			kZero,
 			kLambert,
 			kIdealReflect,
@@ -143,38 +153,38 @@ namespace SP {
 		};
 
 
-		SingleBXDF(BXDFType tp);
+		SingleBxDF(BxDFType tp);
 
-		BXDFType getBXDFType() const;
-		void setBXDFType(BXDFType type);
+		BxDFType getBxDFType() const;
+		void setBxDFType(BxDFType type);
 
 		bool hasEmission() const override;
 
 	private:
-		BXDFType type;
+		BxDFType type;
 
 	};
 
-	class MultiBXDF : public Material {
+	class MultiBxDF : public Material {
 
 	public:
 
 		// NOTE: from RR
-		enum class Type {
+		enum class MultiType {
 			kLayered,
 			kFresnelBlend,
 			kMix
 		};
 
-		MultiBXDF(Type t);
+		MultiBxDF(MultiType t);
 
-		Type getType() const;
-		void setType(Type t);
+		MultiType getType() const;
+		void setType(MultiType t);
 
 		bool hasEmission() const override;
 
 	private:
-		Type type;
+		MultiType type;
 
 	};
 

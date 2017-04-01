@@ -7,9 +7,46 @@ namespace SP {
 	Material::Material() : twoSidedFlag (false){
 	}
 
+
+	bool Material::isEmissive(const Material * matPtr) {
+		return matPtr->hasEmission();
+	}
+
+	bool Material::isSingular(const Material * matPtr) {
+
+		auto sinMatPtr{ dynamic_cast<const SingleBxDF*>(matPtr) };
+
+		if (sinMatPtr) {
+
+			auto type{ sinMatPtr->getBxDFType() };
+			return type == SingleBxDF::BxDFType::kIdealReflect || type == SingleBxDF::BxDFType::kIdealRefract || type == SingleBxDF::BxDFType::kPassthrough;
+
+		} else {		// mixed
+			return false;
+		}
+
+
+	}
+
+	bool Material::isBTDF(const Material * matPtr) {
+		auto sinMatPtr{ dynamic_cast<const SingleBxDF*>(matPtr) };
+
+		if (sinMatPtr) {
+
+			auto type{ sinMatPtr->getBxDFType() };
+			return type == SingleBxDF::BxDFType::kIdealRefract || type == SingleBxDF::BxDFType::kPassthrough || type == SingleBxDF::BxDFType::kTranslucent
+				|| type == SingleBxDF::BxDFType::kMicrofacetRefractionGGX || type == SingleBxDF::BxDFType::kMicrofacetRefractionBeckmann;
+
+		} else {	// mixed
+			return false;
+		}
+	}
+
+
 	bool Material::hasEmission() const {
 		return false;
 	}
+
 
 
 	bool Material::setValueParameter(Input & input, const RadeonRays::float4 & value) {
@@ -107,7 +144,7 @@ namespace SP {
 	//--------------
 
 
-	SingleBXDF::SingleBXDF(BXDFType tp) : type (tp) {
+	SingleBxDF::SingleBxDF(BxDFType tp) : type (tp) {
 
 		registerInput("albedo", "Diffuse color", { InputType::kFloat4, InputType::kTexture });
 		registerInput("normal", "Normal map", { InputType::kTexture });
@@ -123,17 +160,17 @@ namespace SP {
 
 	}
 
-	SingleBXDF::BXDFType SingleBXDF::getBXDFType() const {
+	SingleBxDF::BxDFType SingleBxDF::getBxDFType() const {
 		return type;
 	}
 
-	void SingleBXDF::setBXDFType(BXDFType t) {
+	void SingleBxDF::setBxDFType(BxDFType t) {
 		type = t;
 		setDirty(true);
 	}
 
-	bool SingleBXDF::hasEmission() const {
-		return type == BXDFType::kEmissive;
+	bool SingleBxDF::hasEmission() const {
+		return type == BxDFType::kEmissive;
 	}
 
 }
