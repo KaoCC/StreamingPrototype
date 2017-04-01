@@ -48,7 +48,7 @@ namespace SP {
 		RadeonRays::matrix tangentToWorld;
 
 		// Mat ?
-		Material mat;
+		const Material* mat;
 	};
 
 
