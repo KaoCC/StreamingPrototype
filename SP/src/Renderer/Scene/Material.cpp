@@ -8,39 +8,6 @@ namespace SP {
 	}
 
 
-	bool Material::isEmissive(const Material * matPtr) {
-		return matPtr->hasEmission();
-	}
-
-	bool Material::isSingular(const Material * matPtr) {
-
-		auto sinMatPtr{ dynamic_cast<const SingleBxDF*>(matPtr) };
-
-		if (sinMatPtr) {
-
-			auto type{ sinMatPtr->getBxDFType() };
-			return type == SingleBxDF::BxDFType::kIdealReflect || type == SingleBxDF::BxDFType::kIdealRefract || type == SingleBxDF::BxDFType::kPassthrough;
-
-		} else {		// mixed
-			return false;
-		}
-
-
-	}
-
-	bool Material::isBTDF(const Material * matPtr) {
-		auto sinMatPtr{ dynamic_cast<const SingleBxDF*>(matPtr) };
-
-		if (sinMatPtr) {
-
-			auto type{ sinMatPtr->getBxDFType() };
-			return type == SingleBxDF::BxDFType::kIdealRefract || type == SingleBxDF::BxDFType::kPassthrough || type == SingleBxDF::BxDFType::kTranslucent
-				|| type == SingleBxDF::BxDFType::kMicrofacetRefractionGGX || type == SingleBxDF::BxDFType::kMicrofacetRefractionBeckmann;
-
-		} else {	// mixed
-			return false;
-		}
-	}
 
 
 	bool Material::hasEmission() const {
@@ -167,11 +134,13 @@ namespace SP {
 
 
 		// set value
-		// KAOCC: check the template path
+		// KAOCC: check the template call path
 		setInputValue("albedo", RadeonRays::float4(0.7f, 0.7f, 0.7f, 1.f));
 		setInputValue("normal", static_cast<Texture const*>(nullptr));
 
 	}
+
+
 
 	SingleBxDF::BxDFType SingleBxDF::getBxDFType() const {
 		return type;
