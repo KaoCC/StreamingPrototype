@@ -88,6 +88,19 @@ namespace SP {
 		return ret;
 	}
 
+	Material::InputValue Material::getInputValue(const std::string & name) const {
+
+		auto inputIter = inputTable.find(name);
+
+		if (inputIter != inputTable.cend()) {
+
+			return inputIter->second.value;
+		} else {
+			throw std::runtime_error("Mat: input not found");
+		}
+
+	}
+
 	bool Material::isTwoSided() const {
 		return twoSidedFlag;
 	}

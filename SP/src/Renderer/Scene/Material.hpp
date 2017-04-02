@@ -9,6 +9,8 @@
 #include <set>
 #include <map>
 
+#include "../DifferentialGeometry.hpp"
+
 namespace SP {
 
 
@@ -154,6 +156,13 @@ namespace SP {
 
 
 		SingleBxDF(BxDFType tp);
+
+
+		// helper function 
+		static RadeonRays::float3 sampleBxDF(const DifferentialGeometry& diffGeo, RadeonRays::float3 wi, RadeonRays::float2 sample, RadeonRays::float3& wo, float& pdf);
+
+		static RadeonRays::float3 sampleLambert(const DifferentialGeometry& diffGeo, RadeonRays::float3 wi, RadeonRays::float2 sample, RadeonRays::float3& wo, float& pdf);
+
 
 		BxDFType getBxDFType() const;
 		void setBxDFType(BxDFType type);
