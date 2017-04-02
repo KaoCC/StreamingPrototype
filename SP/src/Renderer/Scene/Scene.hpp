@@ -40,6 +40,10 @@ namespace SP {
 		// Get light iterator
 		Iterator* createLightIterator() const;
 
+		// Helper for light sampling
+		static int sampleLight(const Scene& scene, float sample, float& pdf);
+		
+
 		// Add or remove shapes
 		void attachShape(Shape const* shape);
 		void detachShape(Shape const* shape);

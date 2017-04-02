@@ -7,6 +7,8 @@
 
 // tmp code
 
+#include "math/float2.h"
+
 namespace SP {
 
 	struct Sampler {
@@ -19,6 +21,14 @@ namespace SP {
 	uint32_t WangHash(uint32_t seed);
 	uint32_t UniformSampler_SampleUint(Sampler* sampler);
 	float UniformSampler_Sample1D(Sampler* sampler);
+
+
+
+	RadeonRays::float2 Sampler_Sample2D(Sampler* sampler);
+
+	float Sampler_Sample1D(Sampler* sampler);
+
+
 }
 
 

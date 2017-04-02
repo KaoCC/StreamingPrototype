@@ -29,6 +29,18 @@ namespace SP {
 		return ((float)UniformSampler_SampleUint(sampler)) / 0xffffffffU;
 	}
 
+	RadeonRays::float2 Sampler_Sample2D(Sampler* sampler) {
+		RadeonRays::float2 sample;
+		sample.x = UniformSampler_Sample1D(sampler);
+		sample.y = UniformSampler_Sample1D(sampler);
+		return sample;
+
+	}
+
+	float Sampler_Sample1D(Sampler * sampler) {
+		return UniformSampler_Sample1D(sampler);
+	}
+
 
 	// End of tmp code for sampler
 

@@ -25,8 +25,12 @@ namespace SP {
 
 		// test
 		const std::vector<const Mesh*>& getInternalMeshPtrs() const;
+		// tmp
+		const Scene* getCurrentScenePtr() const;
 
 	private:
+
+		void updateMaterials();
 
 		// Intersection API for RR
 		RadeonRays::IntersectionApi* api;

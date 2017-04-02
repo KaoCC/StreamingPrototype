@@ -108,4 +108,8 @@ namespace SP {
 		return internalMeshPtrs;
 	}
 
+	const Scene * SceneTracker::getCurrentScenePtr() const {
+		return currentScenePtr;
+	}
+
 }
