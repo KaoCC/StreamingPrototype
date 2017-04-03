@@ -48,12 +48,13 @@ namespace SP {
 		RadeonRays::float3 result = 0.f;
 
 		auto* singleBxDFPtr = dynamic_cast<const SingleBxDF*>(diffGeo.getMaterialPtr());
+		RadeonRays::float3 wo_tang;
 
 		if (singleBxDFPtr) {
 
 			switch (singleBxDFPtr->getBxDFType()) {
 			case SingleBxDF::BxDFType::kLambert:
-				result = sampleLambert(diffGeo, wi, sample, wo, pdf);
+				result = sampleLambert(diffGeo, wi, sample, wo_tang, pdf);
 				break;
 			default:		// Error ?
 				pdf = 0.f;
@@ -64,6 +65,9 @@ namespace SP {
 			throw std::runtime_error("Not a single BxDF instance");
 		}
 
+
+		// this is wrong, we need tangent transform !
+		wo = wo_tang;
 
 		return result;
 
