@@ -13,6 +13,8 @@
 #include <iostream>
 #include <numeric>
 
+#include "MathUtility.hpp"
+
 namespace SP {
 
 
@@ -495,6 +497,14 @@ namespace SP {
 
 					if (pass > 0 && !currentPath.isSpecular()) {
 
+						// test code
+						//RadeonRays::float2 extra = (rayArrayRef[hitIndex].extra);
+						//float ld = currentIntersect.uvwt.w;
+						//float denom = extra.y * diffGeo.getArea();
+						//float bxdflightpdf = denom > 0.f ? (ld * ld / denom / 1) : 0.f;
+						//weight = balanceHeuristic(1, extra.x, 1, bxdflightpdf);
+
+						//std::cerr << "WWWWWW: " << weight <<'\n';
 					}
 
 
@@ -566,11 +576,12 @@ namespace SP {
 			if (lightInst != nullptr) {
 
 				RadeonRays::float3 currentLe = lightInst->sample(diffGeo, Sampler_Sample2D(&randomSampler), lightwo, lightPDF);
+				lightWeight = lightInst->isSingular() ? 1.f : 0.f;			// CHECK !
 
 				if (currentLe.sqnorm() > 0 && lightPDF > 0.0f && !BxDFHelper::isSingular(diffGeo.getMaterialPtr())) {
 					wo = lightwo;
 					float n_dot_wo = fabs(dot(diffGeo.getNormal(), normalize(wo)));
-					lightWeight = lightInst->isSingular() ? 1.f : 0.f;			// CHECK !
+
 
 					radiance = currentLe * currentPath.getThroughput() * n_dot_wo * (1 / selectionPDF);		// times ?BxDf Eval ?
 
@@ -599,7 +610,9 @@ namespace SP {
 
 
 			// Apply Russian roulette
-
+			float qq = std::max(std::min(0.5f,
+				// Luminance
+				0.2126f *  currentPath.getThroughput().x + 0.7152f * currentPath.getThroughput().y + 0.0722f * currentPath.getThroughput().z), 0.01f);
 			bool rrApplyFlag = pass > 3;
 			bool rrStopFlag  = 0 && rrApplyFlag;		// value ?		// wrong !
 
@@ -607,7 +620,7 @@ namespace SP {
 			// ...
 
 			if (rrApplyFlag) {
-				//currentPath.multiplyThroughput();
+				currentPath.multiplyThroughput(1 / qq);
 			}
 
 
@@ -619,13 +632,15 @@ namespace SP {
 
 			// handle indirectrays
 			bxdfwo = normalize(bxdfwo);
-			RadeonRays::float3 t = bxdf;		// value ?
+			RadeonRays::float3 t = bxdf * std::abs(RadeonRays::dot(diffGeo.getNormal(), bxdfwo));		// value ?
 
 			//std::cerr << "T: " << t.sqnorm()  << " bxdfPDF: " << bxdfPDF << std::endl;
 
 			if (t.sqnorm() > 0 && bxdfPDF > 0.f && !rrStopFlag) {
 
 				//std::cerr << " >>>>>>>>>>>>>>>>>> NEW VALUE ! " << i <<"\n";
+
+				currentPath.multiplyThroughput(t * (1 / bxdfPDF));
 
 				// Generate indirect ray
 				RadeonRays::float3 indirectRay_orig = diffGeo.getPosition() + 0.001f * diffGeo.getNormal(); // + CRAZY_LOW_DISTANCE * s * diffgeo.n;
