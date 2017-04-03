@@ -84,7 +84,7 @@ namespace SP {
 		RadeonRays::float3 p2 = RadeonRays::transform_point(v2, matrixI);
 
 
-		area = 0.5 * std::sqrt(RadeonRays::cross(p2 - p0, p2 - p1).sqnorm());   // check the value !
+		area = 0.5f * std::sqrt(RadeonRays::cross(p2 - p0, p2 - p1).sqnorm());   // check the value !
 
 	}
 
