@@ -23,9 +23,11 @@ namespace SP {
 
 		//get Ref
 		RadeonRays::float3& getPosition();
+		RadeonRays::float3 getPosition() const;
+
 		RadeonRays::float3& getNormal();
 		RadeonRays::float3& getNormalGeo();
-		RadeonRays::float3& getUV();
+		RadeonRays::float2& getUV();
 
 		RadeonRays::float3& getDpDu();
 		RadeonRays::float3& getDpDv();
@@ -45,7 +47,7 @@ namespace SP {
 		RadeonRays::float3 normalGeo;
 
 		// UVs
-		RadeonRays::float3 uv;
+		RadeonRays::float2 uv;
 
 		
 		// Derivatives
@@ -61,6 +63,9 @@ namespace SP {
 
 		// Mat ?
 		const Material* matPtr = nullptr;
+
+		// tmp workaround
+		float tmpFresnel = 1.0f;
 	};
 
 

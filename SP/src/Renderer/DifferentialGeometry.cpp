@@ -9,9 +9,9 @@ namespace SP {
 		int shapeId = isectRef.shapeid - 1;			//CHECK !
 		int primId = isectRef.primid;								// CHECK !!!
 
-		RadeonRays::float2 uv;
-		uv.x = isectRef.uvwt.x;
-		uv.y = isectRef.uvwt.y;
+		RadeonRays::float2 localUV;						// check this !
+		localUV.x = isectRef.uvwt.x;
+		localUV.y = isectRef.uvwt.y;
 
 
 		// shape (Mesh)
@@ -48,9 +48,9 @@ namespace SP {
 		RadeonRays::matrix matrixI;			// I
 
 		// normal, position, uv, ng
-		normal = RadeonRays::normalize(RadeonRays::transform_vector((1.f - uv.x - uv.y) * n0 + uv.x * n1 + uv.y * n2, matrixI));  //CHECK THIS !
-		pos = RadeonRays::transform_point((1.f - uv.x - uv.y) * v0 + uv.x * v1 + uv.y * v2, matrixI);
-		uv = (1.f - uv.x - uv.y) * uv0 + uv.x * uv1 + uv.y * uv2;
+		normal = RadeonRays::normalize(RadeonRays::transform_vector((1.f - localUV.x - localUV.y) * n0 + localUV.x * n1 + localUV.y * n2, matrixI));  //CHECK THIS !
+		pos = RadeonRays::transform_point((1.f - localUV.x - localUV.y) * v0 + localUV.x * v1 + localUV.y * v2, matrixI);
+		uv = (1.f - localUV.x - localUV.y) * uv0 + localUV.x * uv1 + localUV.y * uv2;
 		normalGeo = RadeonRays::normalize(RadeonRays::cross(v1 - v0, v2 - v0));
 
 
@@ -92,6 +92,10 @@ namespace SP {
 		return pos;
 	}
 
+	RadeonRays::float3 DifferentialGeometry::getPosition() const {
+		return pos;
+	}
+
 	RadeonRays::float3& DifferentialGeometry::getNormal() {
 		return normal;
 	}
@@ -100,7 +104,7 @@ namespace SP {
 		return normalGeo;
 	}
 
-	RadeonRays::float3& DifferentialGeometry::getUV() {
+	RadeonRays::float2& DifferentialGeometry::getUV() {
 		return uv;
 	}
 
