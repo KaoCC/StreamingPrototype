@@ -9,6 +9,8 @@
 
 #include "math/mathutils.h"
 
+#include "Light.hpp"
+
 namespace SP {
 
 	// Data structures for shapes and lights
@@ -73,17 +75,24 @@ namespace SP {
 		return scenePtr->lights.size();
 	}
 
-	int Scene::sampleLight(const Scene& scene, float sample, float & pdf) {
-		size_t numLight = scene.getNumLights();
+	const Light* Scene::getSampleLightPtr(float sample, float & pdf) const {
+		size_t numLight = getNumLights();
 
 		if (numLight == 0) {
-			return -1;
+			return nullptr;
 		} else {
 			int lightIdx = RadeonRays::clamp((sample * numLight), 0, numLight - 1);
 			pdf = 1.f / numLight;
-			return lightIdx;
+			return scenePtr->lights[lightIdx];
 		}
 	}
+
+	//RadeonRays::float3 Scene::sampleLight(size_t lightIndex, const DifferentialGeometry & diffGeo, RadeonRays::float2 sample, RadeonRays::float3 & wo, float & pdf) const {
+	//	const Light* lightInst = scenePtr->lights[lightIndex];
+
+
+	//	return lightInst->sample(diffGeo, sample, wo, pdf);
+	//}
 
 	void Scene::attachShape(Shape const * shape) {
 		// Check if the shape is already in the scene

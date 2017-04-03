@@ -3,6 +3,11 @@
 
 #include <memory>
 
+//#include "../DifferentialGeometry.hpp"
+
+#include "math/float3.h"
+#include "math/float2.h"
+
 namespace SP {
 
 	class Light;
@@ -11,6 +16,8 @@ namespace SP {
 	class Camera;
 	class Iterator;
 	class SceneObject;
+
+	class DifferentialGeometry;
 
 	class Scene {
 
@@ -41,7 +48,10 @@ namespace SP {
 		Iterator* createLightIterator() const;
 
 		// Helper for light sampling
-		static int sampleLight(const Scene& scene, float sample, float& pdf);
+		const Light* getSampleLightPtr(float sample, float& pdf) const;
+
+		// no need anymore !
+		//RadeonRays::float3 sampleLight(size_t lightIndex, const DifferentialGeometry& diffGeo, RadeonRays::float2 sample, RadeonRays::float3& wo, float& pdf) const;
 		
 
 		// Add or remove shapes
