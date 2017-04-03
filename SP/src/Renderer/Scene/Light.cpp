@@ -52,7 +52,7 @@ namespace SP {
 
 	RadeonRays::float3 AreaLight::sample(const DifferentialGeometry & diffGeo, RadeonRays::float2 sample, RadeonRays::float3 & wo, float & pdf) const {
 
-		int primId = getPrimitiveIndex();
+		size_t primId = getPrimitiveIndex();
 		const Mesh* meshDataPtr = dynamic_cast<const Mesh*>(getShape());
 
 		const uint32_t* indexArray = meshDataPtr->getIndices();
