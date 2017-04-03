@@ -55,9 +55,9 @@ namespace SP {
 		return ret;
 	}
 
-	Material::InputValue Material::getInputValue(const std::string & name) const {
+	Material::InputValue Material::getInputValue(const std::string & nm) const {
 
-		auto inputIter = inputTable.find(name);
+		auto inputIter = inputTable.find(nm);
 
 		if (inputIter != inputTable.cend()) {
 
