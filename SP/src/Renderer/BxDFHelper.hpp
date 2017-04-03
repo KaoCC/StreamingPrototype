@@ -27,6 +27,7 @@ namespace SP {
 		static RadeonRays::float3 getEmissiveLe(const DifferentialGeometry& diffGeo);
 
 
+
 		BxDFHelper() = delete;
 		~BxDFHelper() = delete;
 

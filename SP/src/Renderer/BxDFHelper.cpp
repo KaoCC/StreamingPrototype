@@ -1,6 +1,11 @@
 #include "BxDFHelper.hpp"
 
 
+#include "Sampler.hpp"
+
+// test
+#include <iostream>
+
 namespace SP {
 
 	bool BxDFHelper::isEmissive(const Material * matPtr) {
@@ -72,13 +77,17 @@ namespace SP {
 		// TMP ! 
 		const RadeonRays::float3 kd = diffGeo.getMaterialPtr()->getInputValue("albedo").floatValue;
 
-		//		wo = Sample_MapToHemisphere(sample, make_float3(0.f, 1.f, 0.f), 1.f);
+//		std::cerr << "wo.y before: " << wo.y << std::endl;
+//		std::cerr << "Sample: " << sample.x << " " << sample.y << '\n';
 
+		wo = Sample_MapToHemisphere(sample, RadeonRays::float3(0.f, 1.f, 0.f), 1.f);
 
 		//float F = diffGeo.tmpFresnel;		// always 1
 		float F = 1.0f;
 
-		pdf = fabs(wo.y) / PI;
+//		std::cerr << "wo.y: " << wo.y << std::endl;
+
+		pdf = std::abs(wo.y) / PI;
 
 		// check value
 		return F * kd * (1 / PI);
