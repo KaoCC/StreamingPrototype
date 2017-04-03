@@ -8,6 +8,7 @@
 // tmp code
 
 #include "math/float2.h"
+#include "math/float3.h"
 
 namespace SP {
 
@@ -27,6 +28,16 @@ namespace SP {
 	RadeonRays::float2 Sampler_Sample2D(Sampler* sampler);
 
 	float Sampler_Sample1D(Sampler* sampler);
+
+
+	RadeonRays::float3 Sample_MapToHemisphere(
+		// Sample
+		RadeonRays::float2 sample,
+		// Hemisphere normal
+		RadeonRays::float3 n,
+		// Cos power
+		float e
+	);
 
 
 }

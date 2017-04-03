@@ -1,6 +1,8 @@
 
 #include "Sampler.hpp"
 
+#include "MathUtility.hpp"
+#include "math/mathutils.h"
 
 namespace SP {
 
@@ -39,6 +41,27 @@ namespace SP {
 
 	float Sampler_Sample1D(Sampler * sampler) {
 		return UniformSampler_Sample1D(sampler);
+	}
+
+	RadeonRays::float3 Sample_MapToHemisphere(RadeonRays::float2 sample, RadeonRays::float3 n, float e) {
+
+		RadeonRays::float3 u = getOrthogonalVector(n);
+		RadeonRays::float3 v = RadeonRays::cross(u, n);
+		// calibration
+		u = RadeonRays::cross(n, v);
+
+		// Calculate 2D sample
+		float r1 = sample.x;
+		float r2 = sample.y;
+
+		// Transform to spherical coordinates
+		float sinpsi = std::sin(2 * PI * r1);
+		float cospsi = std::cos(2 * PI * r1);
+		float costheta = std::pow(1.f - r2, 1.f / (e + 1.f));
+		float sintheta = std::sqrt(1.f - costheta * costheta);
+
+		return RadeonRays::normalize(u * sintheta * cospsi + v * sintheta * sinpsi + n * costheta);
+
 	}
 
 
