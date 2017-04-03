@@ -42,6 +42,8 @@ namespace SP {
 
 		std::vector<Path> host_path;
 
+		std::vector<RadeonRays::float3> host_lightSamples;
+
 
 		// RadeonRays stuff
 		RadeonRays::Buffer* rays[2] = {nullptr, nullptr};
@@ -375,6 +377,9 @@ namespace SP {
 		renderData->host_path.clear();
 		renderData->host_path.resize(out.getWidth() * out.getHeight());
 
+		renderData->host_lightSamples.clear();
+		renderData->host_lightSamples.resize(out.getWidth() * out.getHeight());
+
 		auto api{ sceneTracker.getIntersectionApi() };
 
 		// Delete buffer connections
@@ -407,8 +412,14 @@ namespace SP {
 
 
 		std::vector<RadeonRays::ray>& rayArrayRef = renderData->host_rays[pass & 0x1];
+		auto& indirectRayArrayRef = renderData->host_rays[(pass + 1) & 0x1];
+		auto& shadowRayArrayRef = renderData->host_shadowrays;
+		auto& lightSamplesArrayRef = renderData->host_lightSamples;
+		std::vector<RadeonRays::float3>& outRef = renderOutPtr->getInternalStorage();
 
 		std::vector<int>& pixelIndexArrayRef = renderData->host_pixelIndex[(pass) & 0x1];
+
+		uint32_t rngseed = RadeonRays::rand_uint();
 
 		for (size_t i = 0; i < renderData->host_hitcount; ++i) {
 
@@ -539,6 +550,8 @@ namespace SP {
 
 
 		std::vector<int>& pixelIndexArrayRef = renderData->host_pixelIndex[(pass) & 0x1];
+		const auto& lightSamplesArrayRef = renderData->host_lightSamples;
+		std::vector<RadeonRays::float3>& outRef = renderOutPtr->getInternalStorage();
 
 		for (size_t i = 0; i < renderData->host_hitcount; ++i) {		// check upper bound !
 			int pixelIndex = pixelIndexArrayRef[i];
@@ -549,10 +562,10 @@ namespace SP {
 				// test
 				//std::cerr << "shadow: " << i << '\n';
 
-				radiance += RadeonRays::float3(100.f, 0.f, 0.f);;// TEST !!!!!!!!
+				radiance += lightSamplesArrayRef[i];// TEST !!!!!!!!
 			}
 			
-			std::vector<RadeonRays::float3>& outRef = renderOutPtr->getInternalStorage();
+
 			outRef[pixelIndex] += radiance;
 		}
 
