@@ -6,8 +6,9 @@
 #include <cstdint>
 #include <vector>
 
+#include <iostream>
 
-
+#include <string>
 
 namespace SP {
 
@@ -101,6 +102,15 @@ namespace SP {
 		int getID() const {
 			return imageID;
 		}
+
+		void setId(int id) {
+			imageID = id;
+		}
+
+
+		// test code
+		void storeToPPM() const;
+
 
 		// ...
 

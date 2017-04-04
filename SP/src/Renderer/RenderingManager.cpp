@@ -17,21 +17,32 @@ namespace SP {
 		//, encoder(CreateEncoder(512, 512)) {
 
 		// allocate renderer
-		renderer = std::make_unique<PtRenderer>(1, 5);		// idx, num_of_bounce
+
+		renderFarm.resize(kNumOfCamera); // tmp
+		for (size_t i = 0; i < renderFarm.size(); ++i) {
+			renderFarm[i] = std::make_unique<PtRenderer>(1, 5);		// idx, num_of_bounce
+		}
+
+		renderThreads.resize(renderFarm.size());
 
 		initData();
 	}
 
 	RenderingManager::~RenderingManager() {
-		if (renderThread) {
-			renderThread->join();
+
+		for (auto& renderer : renderThreads) {
+			if (renderer) {
+				renderer->join();
+			}
 		}
 
 		//delete encoder;
 
 
 		// delete output
-		renderer->deleteOutput(renderOutputData);
+		for (size_t i = 0; i < renderFarm.size(); ++i) {
+			renderFarm[i]->deleteOutput(renderOutputData[i]);
+		}
 	}
 
 	void RenderingManager::startRenderThread() {
@@ -43,7 +54,9 @@ namespace SP {
 		// testing 
 		//renderThread = std::make_unique<std::thread>(std::thread(&RenderingManager::testOutput, this, 0));
 
-		renderThread = std::make_unique<std::thread>(std::thread(&RenderingManager::renderingWorker, this));
+		for (size_t i = 0; i < renderFarm.size(); ++i) {
+			renderThreads[i] = std::make_unique<std::thread>(std::thread(&RenderingManager::renderingWorker, this, i));
+		}
 	}
 
 
@@ -163,33 +176,58 @@ namespace SP {
 
 
 		// Set Output
-		renderOutputData = renderer->createOutput(kWindowWidth, kWindowHeight);
-		renderer->setOutput(renderOutputData);
+		renderOutputData.resize(renderFarm.size());
+		for (size_t i = 0; i < renderFarm.size(); ++i) {
+			renderOutputData[i] = renderFarm[i]->createOutput(kWindowWidth, kWindowHeight);
+			renderFarm[i]->setOutput(renderOutputData[i]);
+		}
 
 	}
 
 	// helper function for rendering
-	void RenderingManager::renderingWorker() {
+	void RenderingManager::renderingWorker(size_t configIdx) {
 
 		// test
 		ImageConfig img;
 
-		while (true) {
-			renderer->render(*sceneDataPtr);
+		int counter = 0;
+		bool flag = false;
 
-			convertOutputToImage(img);
+		while (true) {
+
+
+			renderFarm[configIdx]->render(*sceneDataPtr, configIdx);
+
+			++counter;
+
+			if (counter == 10) {
+				flag = true;
+			}
+
+			if (flag) {
+
+				std::cerr << "----------------- Convert and store ! \n";
+
+
+				img.setId(configIdx);
+				convertOutputToImage(img, configIdx);
+				img.storeToPPM();
+
+				flag = false;
+			}
+
 		}
 
 	}
 
 
 	// testing only
-	void RenderingManager::convertOutputToImage(ImageConfig & img) {
+	void RenderingManager::convertOutputToImage(ImageConfig & img, size_t outputIdx) {
 
 		const size_t kStride = 3;
 
 		std::vector<RadeonRays::float3> fdata(kWindowWidth * kWindowHeight);
-		renderOutputData->getData(fdata.data());
+		renderOutputData[outputIdx]->getData(fdata.data());
 
 		ImageConfig::ImageBuffer& imgBufferRef = img.getImageData();
 
