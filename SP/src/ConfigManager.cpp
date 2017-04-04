@@ -56,15 +56,6 @@ namespace SP {
 		return *imagePtr;
 	}
 
-	//ImageConfig::ImageBuffer ConfigManager::getSubLightFieldImages(size_t index) {
-	//	return lightField.getSubLightFieldImages(index);
-	//}
-
-	//ImageConfig::ImageBuffer ConfigManager::getAll() {
-	//	return lightField.getAll();
-	//}
-
-
 	size_t ConfigManager::getSubLightFieldSize(size_t subLFIdx) const {
 		return imageLightFieldRef.getSubLightFieldSize(subLFIdx);
 	}
@@ -82,27 +73,5 @@ namespace SP {
 	}
 
 	
-
-	//const ImageConfig & ConfigManager::getImageRef(size_t index) {
-	//	return images[index];
-	//}
-
-	//void ConfigManager::loadImages() {
-
-	//	// this is just for testing
-
-	//	const size_t numOfImages = 10;
-
-	//	for (size_t i = 0; i < numOfImages; ++i) {
-
-	//		// for testing only
-	//		ImageConfig img(16 * i, 512 * 1024);
-
-
-	//		images.push_back(img);
-
-	//	}
-
-	//}
 
 }

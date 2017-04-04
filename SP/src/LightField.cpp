@@ -95,9 +95,6 @@ namespace SP {
 
 		}
 
-	
-
-
 		return buffer;
 	}
 

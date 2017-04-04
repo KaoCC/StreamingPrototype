@@ -114,36 +114,6 @@ namespace SP {
 
 		for (std::uint32_t pass = 0; pass < numOfBounces; ++pass) {
 
-			//... 
-
-			/*// test
-
-			RadeonRays::Event* rayGenEvent = nullptr;
-			RadeonRays::ray* rawRayPtr = renderData->host_rays[0].data();
-
-			auto api{ sceneTracker.getIntersectionApi() };
-
-			// memory map
-			api->MapBuffer(renderData->rays[0], RadeonRays::kMapRead, 0, maxrays * sizeof(RadeonRays::ray), reinterpret_cast<void**>(&rawRayPtr), &rayGenEvent);
-			rayGenEvent->Wait();
-			api->DeleteEvent(rayGenEvent);
-			rayGenEvent = nullptr;
-
-			std::cerr << "RAY CHECK" << std::endl;
-			for (int i = 0; i < 10; ++i) {
-				std::cerr << rawRayPtr[i].o.x << '\n';
-			}
-
-			api->UnmapBuffer(renderData->rays[0], static_cast<void*>(rawRayPtr), &rayGenEvent);
-			rayGenEvent->Wait();
-			api->DeleteEvent(rayGenEvent);
-
-			// EOF */
-
-			// T and I here
-			//api->QueryIntersection(renderData->rays[pass & 0x1], renderData->hitcount, maxrays, renderData->intersections, nullptr, nullptr);
-
-
 			// clear hit buffer
 			std::fill(renderData->host_hits.begin(), renderData->host_hits.end(), 0);
 
@@ -389,10 +359,6 @@ namespace SP {
 
 		renderData->host_compactedIndex.clear();
 		renderData->host_compactedIndex.resize(out.getWidth() * out.getHeight());
-
-
-		//renderData->host_hitcount.clear();
-		//renderData->host_hitcount.resize(out.getWidth() * out.getHeight());
 
 		renderData->host_hitcount = 0;
 
