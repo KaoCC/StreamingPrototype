@@ -29,4 +29,41 @@ namespace SP {
 
 	}
 
+	float balanceHeuristic(int nf, float fpdf, int ng, float gpdf) {
+		float f = nf * fpdf;
+		float g = ng * gpdf;
+		return (f) / (f + g);
+	}
+
+	RadeonRays::matrix matrix_from_rows3(RadeonRays::float3 c0, RadeonRays::float3 c1, RadeonRays::float3 c2) {
+
+		RadeonRays::matrix m;
+		m.m00 = c0.x; m.m01 = c0.y; m.m02 = c0.z; m.m03 = 0.f;
+
+		m.m10 = c1.x; m.m11 = c1.y; m.m12 = c1.z; m.m13 = 0.f;
+
+		m.m20 = c2.x; m.m21 = c2.y; m.m22 = c2.z; m.m23 = 0.f;
+
+		m.m30 = 0.f; m.m31 = 0.f; m.m32 = 0.f; m.m33 = 1.f;
+
+		return m;
+
+	}
+
+	RadeonRays::matrix matrix_from_cols3(RadeonRays::float3 c0, RadeonRays::float3 c1, RadeonRays::float3 c2) {
+		RadeonRays::matrix m;
+
+		m.m00 = c0.x; m.m01 = c1.x; m.m02 = c2.x; m.m03 = 0.f;
+
+		m.m10 = c0.y; m.m11 = c1.y; m.m12 = c2.y; m.m13 = 0.f;
+
+		m.m20 = c0.z; m.m21 = c1.z; m.m22 = c2.z; m.m23 = 0.f;
+
+		m.m30 = 0.f; m.m31 = 0.f; m.m32 = 0.f; m.m33 = 1.f;
+
+
+
+		return m;
+	}
+
 }

@@ -48,13 +48,15 @@ namespace SP {
 		RadeonRays::float3 result = 0.f;
 
 		auto* singleBxDFPtr = dynamic_cast<const SingleBxDF*>(diffGeo.getMaterialPtr());
+
+		RadeonRays::float3 wi_tang = diffGeo.getWorldToTangentMatrix() * wi;
 		RadeonRays::float3 wo_tang;
 
 		if (singleBxDFPtr) {
 
 			switch (singleBxDFPtr->getBxDFType()) {
 			case SingleBxDF::BxDFType::kLambert:
-				result = sampleLambert(diffGeo, wi, sample, wo_tang, pdf);
+				result = sampleLambert(diffGeo, wi_tang, sample, wo_tang, pdf);
 				break;
 			default:		// Error ?
 				pdf = 0.f;
@@ -67,7 +69,7 @@ namespace SP {
 
 
 		// this is wrong, we need tangent transform !
-		wo = wo_tang;
+		wo = diffGeo.getTangentToWorldMatrix() * wo_tang;
 
 		return result;
 

@@ -21,6 +21,8 @@ namespace SP {
 
 		void fill(const RadeonRays::Intersection& isectRef, const std::vector<const Mesh*>& meshPtrs);
 
+		void calculateTangentTransform();
+
 		//get Ref
 		RadeonRays::float3& getPosition();
 		RadeonRays::float3 getPosition() const;
@@ -34,6 +36,10 @@ namespace SP {
 
 		float getArea() const;
 		const Material* getMaterialPtr() const;
+
+
+		const RadeonRays::matrix& getWorldToTangentMatrix() const;
+		const RadeonRays::matrix& getTangentToWorldMatrix() const;
 
 	private:
 

@@ -4,6 +4,9 @@
 
 #include "MathUtility.hpp"
 
+#include "math/matrix.h"
+#include "math/mathutils.h"
+
 namespace SP {
 
 	void DifferentialGeometry::fill(const RadeonRays::Intersection & isectRef, const std::vector<const Mesh*>& meshPtrs) {
@@ -90,6 +93,24 @@ namespace SP {
 
 	}
 
+	void DifferentialGeometry::calculateTangentTransform() {
+
+		worldToTangent = matrix_from_rows3(dpdu, normal, dpdv);
+
+		// check this value !
+		tangentToWorld = worldToTangent.transpose();
+
+		worldToTangent.m03 = -RadeonRays::dot(dpdu, pos);
+		worldToTangent.m13 = -RadeonRays::dot(normal, pos);
+		worldToTangent.m23 = -RadeonRays::dot(dpdv, pos);
+
+
+		tangentToWorld.m03 = pos.x;
+		tangentToWorld.m13 = pos.y;
+		tangentToWorld.m23 = pos.z;
+
+	}
+
 	RadeonRays::float3& DifferentialGeometry::getPosition() {
 		return pos;
 	}
@@ -124,6 +145,14 @@ namespace SP {
 
 	const Material * DifferentialGeometry::getMaterialPtr() const {
 		return matPtr;
+	}
+
+	const RadeonRays::matrix & DifferentialGeometry::getWorldToTangentMatrix() const {
+		return worldToTangent;
+	}
+
+	const RadeonRays::matrix & DifferentialGeometry::getTangentToWorldMatrix() const {
+		return tangentToWorld;
 	}
 
 

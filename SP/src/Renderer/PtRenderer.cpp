@@ -546,6 +546,7 @@ namespace SP {
 
 
 			// >>>>>>>>>>>>> DiffGeo Tangert Trans?
+			diffGeo.calculateTangentTransform();
 
 			// PDFs 
 			float lightPDF = 0.f;
