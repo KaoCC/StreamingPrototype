@@ -193,31 +193,28 @@ namespace SP {
 		ImageConfig img;
 
 		int counter = 0;
-		bool flag = false;
 
 		while (true) {
 
 
 			renderFarm[configIdx]->render(*sceneDataPtr, configIdx);
 
-			++counter;
 
 			// test code
-			if (counter == 20) {
-				flag = true;
-			}
-
-			if (flag) {
+			if (counter % 30 == 0) {
 
 				std::cerr << "----------------- Convert and store ! \n";
 
 
 				img.setId(configIdx);
 				convertOutputToImage(img, configIdx);
-				img.storeToPPM();
+				img.storeToPPM(counter);
 
-				flag = false;
+				// test
+				imageLightField.setSubLightFieldImageWithIndex(configIdx, 0, img);
 			}
+
+			++counter;
 
 		}
 

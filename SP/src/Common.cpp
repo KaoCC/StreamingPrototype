@@ -86,9 +86,9 @@ namespace SP {
 
 	}
 
-	void ImageConfig::storeToPPM() const {
+	void ImageConfig::storeToPPM(size_t serialNumber) const {
 
-		const std::string fileName = "test" + std::to_string(imageID) + ".ppm";
+		const std::string fileName = "test" + std::to_string(imageID) + "-" + std::to_string(serialNumber) +".ppm";
 
 		FILE* file = fopen(fileName.c_str(), "wb");
 		if (!file) {
