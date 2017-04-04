@@ -2,6 +2,8 @@
 
 #include "Scene/Shape.hpp"
 
+#include "MathUtility.hpp"
+
 namespace SP {
 
 	void DifferentialGeometry::fill(const RadeonRays::Intersection & isectRef, const std::vector<const Mesh*>& meshPtrs) {
@@ -62,18 +64,18 @@ namespace SP {
 		matPtr = meshDataPtr->getMaterial();
 
 
-		float du1 = uv0.x - uv2.x;
-		float du2 = uv1.x - uv2.x;
-		float dv1 = uv0.y - uv2.y;
-		float dv2 = uv1.y - uv2.y;
+		//float du1 = uv0.x - uv2.x;
+		//float du2 = uv1.x - uv2.x;
+		//float dv1 = uv0.y - uv2.y;
+		//float dv2 = uv1.y - uv2.y;
 
-		RadeonRays::float3 dp1 = v0 - v2;
-		RadeonRays::float3 dp2 = v1 - v2;
+		//RadeonRays::float3 dp1 = v0 - v2;
+		//RadeonRays::float3 dp2 = v1 - v2;
 
 		//float determin = du1 * dv2 - dv1 * du2;
 
 		// dpdu ???
-		// missing !!
+		dpdu = RadeonRays::normalize(getOrthogonalVector(normal));
 
 		// dpdv
 		dpdv = RadeonRays::normalize(RadeonRays::cross(normal, dpdu));
