@@ -583,7 +583,7 @@ namespace SP {
 					float n_dot_wo = fabs(dot(diffGeo.getNormal(), normalize(wo)));
 
 
-					radiance = currentLe * currentPath.getThroughput() * n_dot_wo * (1 / selectionPDF);		// times ?BxDf Eval ?
+					radiance = currentLe * currentPath.getThroughput() * n_dot_wo * (1 / lightPDF) * (1 / selectionPDF);		// times ?BxDf Eval ?
 
 					//std::cerr << "Radiance : " << radiance.x << " " << radiance.y << " " << radiance.z << "\n";
 				}
