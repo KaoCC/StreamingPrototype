@@ -57,7 +57,7 @@ namespace SP {
 
 		// Camera
 		// KAOCC: support PerspectiveCamera only !
-		std::unique_ptr<SP::PerspectiveCamera> camera;
+		//std::unique_ptr<SP::PerspectiveCamera> camera;
 
 		// tmp
 		// default camera parameters
@@ -77,6 +77,8 @@ namespace SP {
 
 		const int kNumberOfBounce = 5;
 
+		// A set: one camera, one render, one output, one thread
+		const size_t kNumOfCamera = 4;
 
 		// tmp
 		const std::string defaultPath = "../Resources/CornellBox";

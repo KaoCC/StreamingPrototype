@@ -134,26 +134,32 @@ namespace SP {
 		std::cerr << "number of lights: " << sceneDataPtr->getNumLights() << std::endl;
 
 
+		for (size_t i = 0; i < kNumOfCamera; ++i) {
 
-		// KAOCC: TODO: add camera config
-		camera.reset(new PerspectiveCamera(kCameraPos, kCameraAt, kCameraUp));
-		sceneDataPtr->SetCamera(camera.get());
+			// KAOCC: TODO: add camera config
+			auto* cameraPtr = new PerspectiveCamera(kCameraPos, kCameraAt, kCameraUp);
+			sceneDataPtr->attachCamera(cameraPtr);
 
-		// Adjust sensor size based on current aspect ratio
-		float aspect = (float)kWindowWidth / kWindowHeight;
-		g_camera_sensor_size.y = g_camera_sensor_size.x / aspect;
+			// Adjust sensor size based on current aspect ratio
+			float aspect = (float)kWindowWidth / kWindowHeight;
+			g_camera_sensor_size.y = g_camera_sensor_size.x / aspect;
 
-		camera->setSensorSize(g_camera_sensor_size);
-		camera->setDepthRange(g_camera_zcap);
-		camera->setFocalLength(g_camera_focal_length);
-		camera->setFocusDistance(g_camera_focus_distance);
-		camera->setAperture(g_camera_aperture);
+			cameraPtr->setSensorSize(g_camera_sensor_size);
+			cameraPtr->setDepthRange(g_camera_zcap);
+			cameraPtr->setFocalLength(g_camera_focal_length);
+			cameraPtr->setFocusDistance(g_camera_focus_distance);
+			cameraPtr->setAperture(g_camera_aperture);
 
-		std::cout << "Camera type: " << (camera->getAperture() > 0.f ? "Physical" : "Pinhole") << "\n";			// This might cause problems
-		std::cout << "Lens focal length: " << camera->getFocalLength() * 1000.f << "mm\n";
-		std::cout << "Lens focus distance: " << camera->getFocusDistance() << "m\n";
-		std::cout << "F-Stop: " << 1.f / (camera->getAperture() * 10.f) << "\n";
-		std::cout << "Sensor size: " << g_camera_sensor_size.x * 1000.f << "x" << g_camera_sensor_size.y * 1000.f << "mm\n";
+			std::cout << "Camera type: " << (cameraPtr->getAperture() > 0.f ? "Physical" : "Pinhole") << "\n";			// This might cause problems
+			std::cout << "Lens focal length: " << cameraPtr->getFocalLength() * 1000.f << "mm\n";
+			std::cout << "Lens focus distance: " << cameraPtr->getFocusDistance() << "m\n";
+			std::cout << "F-Stop: " << 1.f / (cameraPtr->getAperture() * 10.f) << "\n";
+			std::cout << "Sensor size: " << g_camera_sensor_size.x * 1000.f << "x" << g_camera_sensor_size.y * 1000.f << "mm\n";
+
+			// test !
+			sceneDataPtr->attachAutoreleaseObject(cameraPtr);
+
+		}
 
 
 		// Set Output
@@ -180,21 +186,23 @@ namespace SP {
 	// testing only
 	void RenderingManager::convertOutputToImage(ImageConfig & img) {
 
+		const size_t kStride = 3;
+
 		std::vector<RadeonRays::float3> fdata(kWindowWidth * kWindowHeight);
 		renderOutputData->getData(fdata.data());
 
 		ImageConfig::ImageBuffer& imgBufferRef = img.getImageData();
 
-		imgBufferRef.resize(fdata.size() * 4);
+		imgBufferRef.resize(fdata.size() * kStride);
 
 		// tmp gamma
 		float gamma = 2.2f;
 
 		for (size_t i = 0; i < fdata.size(); ++i) {
-			imgBufferRef[4 * i] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(fdata[i].x / fdata[i].w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
-			imgBufferRef[4 * i + 1] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(fdata[i].y / fdata[i].w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
-			imgBufferRef[4 * i + 2] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(fdata[i].z / fdata[i].w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
-			imgBufferRef[4 * i + 3] = 1;
+			imgBufferRef[kStride * i] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(fdata[i].x / fdata[i].w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
+			imgBufferRef[kStride * i + 1] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(fdata[i].y / fdata[i].w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
+			imgBufferRef[kStride * i + 2] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(fdata[i].z / fdata[i].w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
+			//imgBufferRef[kStride * i + 3] = 1;
 		}
 
 

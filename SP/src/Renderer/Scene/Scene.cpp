@@ -18,11 +18,15 @@ namespace SP {
 	using LightList = std::vector<Light const*>;
 	using AutoreleasePool = std::set<SceneObject const*>;
 
+	// support multiple camera
+	using CameraList = std::vector<Camera const*>;
+
 	struct Scene::SceneImpl {
 		ShapeList shapes;
 		LightList lights;
 
-		Camera const* camera;
+		//Camera const* camera;
+		CameraList cameras;
 
 		DirtyFlags dirtyFlags;
 		AutoreleasePool autoreleasePool;
@@ -30,7 +34,7 @@ namespace SP {
 
 	Scene::Scene() : scenePtr(new SceneImpl) {
 
-		scenePtr->camera = nullptr;
+		//scenePtr->camera = nullptr;
 		clearDirtyFlags();
 	}
 
@@ -114,13 +118,25 @@ namespace SP {
 		return new GenericIterator<ShapeList::const_iterator>(scenePtr->shapes.begin(), scenePtr->shapes.end());
 	}
 
-	void Scene::SetCamera(Camera const * cam) {
-		scenePtr->camera = cam;
+	void Scene::attachCamera(Camera const * cam) {
+		//scenePtr->camera = cam;
+
+		scenePtr->cameras.push_back(cam);
+
 		setDirtyFlag(kCamera);
 	}
 
-	Camera const * Scene::getCamera() const {
-		return scenePtr->camera;
+	Camera const * Scene::getCamera(size_t camIdx) const {
+
+		if (camIdx < scenePtr->cameras.size()) {
+
+			return scenePtr->cameras[camIdx];
+
+		} else {
+			throw std::runtime_error("Camera: array index out of bound");
+		}
+
+		//return scenePtr->camera;
 	}
 
 }

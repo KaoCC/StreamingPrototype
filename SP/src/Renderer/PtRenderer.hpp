@@ -34,7 +34,7 @@ namespace SP {
 
 		virtual void preprocess(Scene const & scene) override;
 
-		virtual void render(Scene const & scene) override;
+		virtual void render(Scene const & scene, size_t configIdx) override;
 
 		virtual void setOutput(Output * output) override;
 
@@ -47,7 +47,7 @@ namespace SP {
 	protected:
 
 		// Generate rays
-		void generatePrimaryRays(const Scene& scene);
+		void generatePrimaryRays(const Scene& scene, size_t camIdx);
 
 		void resizeWorkingSet(const Output& out);
 
