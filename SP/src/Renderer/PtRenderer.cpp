@@ -185,7 +185,7 @@ namespace SP {
 			filterPathStream(pass);
 
 			compactIndex();
-			std::cerr << "NEW hit count:" << renderData->host_hitcount << '\n';
+			//std::cerr << "NEW hit count:" << renderData->host_hitcount << '\n';
 
 			restorePixelIndices(pass);
 
@@ -255,7 +255,7 @@ namespace SP {
 		}
 
 		
-		std::cerr << "Frame: " << frameCount << '\n';
+		//std::cerr << "Frame: " << frameCount << '\n';
 
 		++frameCount;
 	}

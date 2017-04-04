@@ -150,7 +150,7 @@ namespace SP {
 		for (size_t i = 0; i < kNumOfCamera; ++i) {
 
 			// KAOCC: TODO: add camera config
-			auto* cameraPtr = new PerspectiveCamera(kCameraPos, kCameraAt, kCameraUp);
+			auto* cameraPtr = new PerspectiveCamera(kCameraPos + RadeonRays::float3(0.1 * i, 0, 0), kCameraAt + RadeonRays::float3(0.1 * i, 0, 0), kCameraUp);
 			sceneDataPtr->attachCamera(cameraPtr);
 
 			// Adjust sensor size based on current aspect ratio
@@ -187,6 +187,8 @@ namespace SP {
 	// helper function for rendering
 	void RenderingManager::renderingWorker(size_t configIdx) {
 
+		std::cerr << "Worker " << configIdx << " starts !\n";
+
 		// test
 		ImageConfig img;
 
@@ -200,7 +202,8 @@ namespace SP {
 
 			++counter;
 
-			if (counter == 10) {
+			// test code
+			if (counter == 20) {
 				flag = true;
 			}
 
