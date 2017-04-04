@@ -1,14 +1,32 @@
 #include "Connection.hpp"
 
+#include <iostream>
 
 namespace SP {
 
-	Connection::ConnectionPointer Connection::create(boost::asio::io_service & ios) {
-		return ConnectionPointer(new Connection(ios));
+
+	// helper 
+	size_t getIndexTmp(float dx) {
+		dx += 0.5;
+		size_t index = dx * 16;
+
+		if (index > 15) {
+			index = 15;
+		}
+
+		return index;
 	}
 
-	Connection::Connection(boost::asio::io_service & ios) :
-		streamingSocket(ios), packet(Packet::MessagePointer(new StreamingFormat::StreamingMessage())) {
+
+
+	Connection::ConnectionPointer Connection::createWithBuffer(boost::asio::io_service & ios, SyncBuffer<ImageConfig>& buf, LightField& imgLF) {
+		return ConnectionPointer(new Connection(ios, buf, imgLF));
+	}
+
+	Connection::Connection(boost::asio::io_service & ios, SyncBuffer<ImageConfig>& buf, LightField& imgLF) :
+		streamingSocket(ios), packet(Packet::MessagePointer(new StreamingFormat::StreamingMessage())), cfgManager(buf, imgLF)
+		, responsePacket(Packet::MessagePointer(new StreamingFormat::StreamingMessage())) 
+	{
 	}
 
 	void Connection::start() {
@@ -64,6 +82,29 @@ namespace SP {
 
 	}
 
+
+	// KAOCC: need to change !!
+	void Connection::handleWriteMessage(const boost::system::error_code & error) {
+
+		if (!error) {
+
+			writeBufferQueue.pop_front();
+
+			// if not empty ?
+			if (!writeBufferQueue.empty()) {
+				boost::asio::async_write(streamingSocket, boost::asio::buffer(writeBufferQueue.front()),
+					std::bind(&Connection::handleWriteMessage, shared_from_this(), std::placeholders::_1));
+			}
+
+		} else {
+			std::cerr << "---------------- Write Error: " << error << '\n';
+			boost::system::error_code ignored_ec;
+			//streamingSocket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ignored_ec);
+			//streamingSocket.close();
+		}
+
+	}
+
 	Packet::MessagePointer Connection::resolvePacket() {
 
 		if (packet.unpacking(localBuffer)) {
@@ -79,7 +120,7 @@ namespace SP {
 		// KAOCC: Yet to be done !
 
 		// KAOCC: TODO: prevent creating new Messages for optimization
-		Packet::MessagePointer responsePtr(new StreamingFormat::StreamingMessage);
+		Packet::MessagePointer responsePtr{ new StreamingFormat::StreamingMessage };
 
 		switch (msgPtr->type()) {
 		case StreamingFormat::MessageType::MsgInit:
@@ -101,10 +142,10 @@ namespace SP {
 			responsePtr->set_type(StreamingFormat::MessageType::MsgDefaultPos);
 
 			// must be on the heap
-			StreamingFormat::DefaultPos* defPosPtr = new StreamingFormat::DefaultPos;
+			StreamingFormat::DefaultPos* defPosPtr{ new StreamingFormat::DefaultPos };
 
 			// for testing only
-			CameraConfig camCfg = cfgManager.getCamera();
+			CameraConfig camCfg{ cfgManager.getCamera() };
 
 			defPosPtr->set_x(camCfg.pos.x);
 			defPosPtr->set_y(camCfg.pos.y);
@@ -139,10 +180,26 @@ namespace SP {
 			float dx = msgPtr->cameramsg().delta_x();
 			float dy = msgPtr->cameramsg().delta_y();
 			float dz = msgPtr->cameramsg().delta_z();
-			
+
 			float dvx = msgPtr->cameramsg().delta_vx();
 			float dvy = msgPtr->cameramsg().delta_vy();
 			float dvz = msgPtr->cameramsg().delta_vz();
+
+
+			// TEST !
+			if (writeBufferQueue.size() > 2) {
+				responsePtr = nullptr;
+				break;
+			}
+
+			// test
+			if (cachedDeltaX == dx) {
+				responsePtr = nullptr;
+				break;
+			} else {
+				cachedDeltaX = dx;
+			}
+
 
 			// KAOCC: check if we need locks 
 
@@ -152,23 +209,78 @@ namespace SP {
 			// direction ?
 			// missing ...
 
-
 			// insert rendering code & encoder here
 
 
 			// reply the images
 			responsePtr->set_type(StreamingFormat::MessageType::MsgImage);
 
-			StreamingFormat::Image* imagePtr = new StreamingFormat::Image;
+			StreamingFormat::Image* imagePtr{ new StreamingFormat::Image };
 
 			// for testing only
 			imagePtr->set_serialnumber(serialNumber);
-			imagePtr->set_status(8051);  // tmp
-			imagePtr->set_bytesize(cfgManager.getImageRef(serialNumber).getByteSize()); // tmp
+			
+
+			//ImageConfig::ImageBuffer& imageBufferCache = cfgManager.getSubLightFieldImages(0);
+			//ImageConfig::ImageBuffer imageBufferCache = cfgManager.getAll();
+
+			//std::cerr << "[IMG CACHE SZ]: " << imageBufferCache.size() << " >>>>>>>>>>>>  ID: " << imageData.getID() << '\n';
+
+
+			Encoder* encoder = cfgManager.getEncoder();
+			uint8_t* rawPtr = encoder->getEncoderRawBuffer();
+
+			// TMP !!!
+			size_t subLFIndex = getIndexTmp(dx);	// TODO: mapping function ?
+			size_t subLFSz = cfgManager.getSubLightFieldSize(subLFIndex);
+
+			// test
+			encodedImageData.clear();
+
+			for (size_t k = 0; k < subLFSz; ++k) {
+
+				// need to optimize for copying !
+				//ImageConfig imageData{ cfgManager.getImage() };
+				//ImageConfig::ImageBuffer& imageBufferCache{ imageData.getImageData() };
+
+				ImageConfig::ImageBuffer imageBufferCache{ cfgManager.getSubLightFieldImageWithIndex(subLFIndex, k) };
+
+				std::copy(imageBufferCache.begin(), imageBufferCache.end(), rawPtr);
+
+				uint8_t* outBufPtr;
+				int outSize = 0;
+				encoder->startEncoding(&outBufPtr, &outSize);
+
+				//ImageConfig::ImageBuffer encodedImageData;
+				if (outSize > 0) {
+
+					//std::cerr << "SUCCESS! Size: " << outSize << " SubLF Index: " << subLFIndex  << " img Index: " << k << " dx: " << dx << '\n';
+
+					//ImageBuffer encodedImageData(outBufPtr, outBufPtr + outSize);
+
+					//tmp
+					//encodedImageData = std::move(ImageConfig::ImageBuffer(outBufPtr, outBufPtr + outSize));
+
+					encodedImageData.insert(std::end(encodedImageData), outBufPtr, outBufPtr + outSize);
+
+					// accumulate
+					//accBuffer.insert(std::end(accBuffer), std::begin(imageData), std::end(imageData));
+
+				} else {
+					std::cerr << "Failed to Encode !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! " << '\n';
+				}
+
+			}
+
+			std::cerr << "size" << encodedImageData.size() << std::endl;
+			imagePtr->set_bytesize(encodedImageData.size()); // tmp
+			//imagePtr->set_status(imageData.getID());  // tmp
+
+			imagePtr->set_status(subLFIndex);	// test
 
 			// image data ????
 			// need to check
-			imagePtr->set_imagedata(reinterpret_cast<const char*>(cfgManager.getImageRef(serialNumber).getImageRawData()));
+			//imagePtr->set_imagedata(reinterpret_cast<const char*>(imageData.getImageRawData()));
 
 			responsePtr->set_allocated_imagemsg(imagePtr);
 
@@ -203,16 +315,79 @@ namespace SP {
 
 	void Connection::writeResponse(Packet::MessagePointer msgPtr) {
 
+
+		// test
+
+		if (msgPtr == nullptr) {
+			std::cerr << "Drop Response" << std::endl;
+			return;
+		}
+
+
 		Packet::DataBuffer writeBuffer;
-		Packet responsePacket(msgPtr);
+		//Packet responsePacket(msgPtr);
+
+		//writeBuffer.clear();
+		responsePacket.setMessagePtr(msgPtr);
 
 		if (responsePacket.packing(writeBuffer)) {
-			boost::asio::write(streamingSocket, boost::asio::buffer(writeBuffer));
+
+
+			// check if we need to write the image
+			if (msgPtr->type() == StreamingFormat::MessageType::MsgImage) {
+
+				//boost::asio::write(streamingSocket, boost::asio::buffer(cfgManager.getImageCache().getImageData()));
+				/*boost::asio::async_write(streamingSocket, boost::asio::buffer(encodedImageData),
+					std::bind(&Connection::handleWriteImage, shared_from_this(), std::placeholders::_1)); */
+				//boost::asio::write(streamingSocket, boost::asio::buffer(encodedImageData));
+
+				appendImage(writeBuffer);
+
+			}
+
+
+			bool writeInProgress = !writeBufferQueue.empty();  // check for image queue also ?
+			writeBufferQueue.push_back(std::move(writeBuffer));
+
+			if (!writeInProgress) {
+
+
+				/*boost::asio::async_write(streamingSocket, boost::asio::buffer(writeBuffer),
+					std::bind(&Connection::handleWriteMessage, shared_from_this(), std::placeholders::_1)); */
+				//boost::asio::write(streamingSocket, boost::asio::buffer(writeBuffer));
+
+				boost::asio::async_write(streamingSocket, boost::asio::buffer(writeBufferQueue.front()),
+					std::bind(&Connection::handleWriteMessage, shared_from_this(), std::placeholders::_1));
+
+			}
+
+
+
 		} else {
 			// Error here
 			// Throw ???
+
+			std::cerr << "Failed to pack !!! " << std::endl;
 		}
 
+	}
+
+
+	// yet to be done
+	void Connection::appendImage(Packet::DataBuffer & buffer) {
+
+		//size_t currentSize = buffer.size();
+		//size_t newSize = currentSize + encodedImageData.size();
+		//buffer.resize(newSize);
+		// test
+		//std::cerr << "Resize " << buffer.size() << '\n';
+		//std::copy(encodedImageData.begin(), encodedImageData.end(), buffer.end());
+
+
+		buffer.insert(std::end(buffer), std::begin(encodedImageData), std::end(encodedImageData));
+
+		// test
+		//std::cerr << "insert size " << buffer.size() << '\n';
 	}
 
 

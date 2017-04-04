@@ -6,16 +6,20 @@
 
 #include <boost/bind.hpp>
 
+
+
 namespace SP {
 
-	Server::Server(boost::asio::io_service & ios, unsigned port) : acc(ios, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port)) {
+	Server::Server(boost::asio::io_service & ios, unsigned port, SyncBuffer<ImageConfig>& syncBuff, LightField& imgLF)
+		: acc(ios, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port)), syncBufferRef(syncBuff), imgLightFieldRef(imgLF){
 		startAccept();
 	}
+
 
 	void Server::startAccept() {
 
 		std::cerr << "New connection" << std::endl;
-		Connection::ConnectionPointer newConnection = Connection::create(acc.get_io_service());
+		Connection::ConnectionPointer newConnection = Connection::createWithBuffer(acc.get_io_service(), syncBufferRef, imgLightFieldRef);
 
 		//acc.accept(newConnection->getSocketRef());
 		acc.async_accept(newConnection->getSocketRef(), std::bind(&Server::handleAccept, this, newConnection, std::placeholders::_1));
@@ -28,7 +32,9 @@ namespace SP {
 			newConnection->start();
 		} else {
 			std::cerr << "Error:" << err << std::endl;
-			throw "Error in Async Accept";
+
+			//KAOCC: TODO: change the exception type
+			throw std::runtime_error("Error in Async Accept");
 		}
 
 

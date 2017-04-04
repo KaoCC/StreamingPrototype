@@ -14,7 +14,7 @@ using boost::asio::ip::tcp;
 SP::CameraConfig globalCamera(SP::Position(0, 0, 0), SP::Direction(0, 0, 0));
 
 std::vector<SP::ImageConfig> images;
-const unsigned MAX_IMAGE_COUNT = 10;
+const unsigned MAX_IMAGE_COUNT = 20;
 
 
 // for testing only
@@ -26,13 +26,13 @@ const float delta_vx = 5;
 const float delta_vy = 10;
 const float delta_vz = -20;
 
-
+static float shift = 0;
 
 // simple helper
 void configCameraDelta(uint32_t serialNumber, SP::Packet::MessagePointer& requestPtr, SP::Packet& requestPacket) {
 
 
-	globalCamera.pos.x += delta_x;
+	globalCamera.pos.x += delta_x + shift;
 	globalCamera.pos.y += delta_y;
 	globalCamera.pos.z += delta_z;
 
@@ -45,13 +45,16 @@ void configCameraDelta(uint32_t serialNumber, SP::Packet::MessagePointer& reques
 
 	cameraDelta->set_serialnumber(serialNumber);
 
-	cameraDelta->set_delta_x(delta_x);
+	cameraDelta->set_delta_x(globalCamera.pos.x);
 	cameraDelta->set_delta_y(delta_y);
 	cameraDelta->set_delta_z(delta_z);
 
 	cameraDelta->set_delta_vx(delta_x);
 	cameraDelta->set_delta_vy(delta_y);
 	cameraDelta->set_delta_vz(delta_z);
+
+	// test
+	shift += 0.1f;
 
 	// write camera info (delta) to the server
 	requestPtr->Clear();
@@ -197,11 +200,11 @@ int main(int argc, char* argv[]) {
 				std::cerr << "MsgImage !" << std::endl;
 
 				uint32_t returnedSerialNumber = msg->imagemsg().serialnumber();
-				std::cerr << "returned Serial number:" << returnedSerialNumber << std::endl;
+				std::cerr << "returned Serial number: " << returnedSerialNumber << std::endl;
 
 				// should be "8051"
 				uint32_t statusCode = msg->imagemsg().status();
-				std::cerr << "status code:" << statusCode << std::endl;
+				std::cerr << "status code: >>> " << statusCode << std::endl;
 
 				// resolve byte size
 				uint32_t byteSize = msg->imagemsg().bytesize();
@@ -212,7 +215,10 @@ int main(int argc, char* argv[]) {
 
 				// this one should be avoid
 				images[returnedSerialNumber].getImageData().resize(byteSize);
-				std::copy(msg->imagemsg().imagedata().begin(), msg->imagemsg().imagedata().end(), images[returnedSerialNumber].getImageData().begin());
+
+				boost::asio::read(streamingSocket, boost::asio::buffer(images[returnedSerialNumber].getImageData(), byteSize));
+
+				//std::copy(msg->imagemsg().imagedata().begin(), msg->imagemsg().imagedata().end(), images[returnedSerialNumber].getImageData().begin());
 
 				std::cerr << "Get image !" << std::endl;
 

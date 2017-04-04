@@ -20,7 +20,7 @@ namespace SP {
 		void setDirty(bool dirty) const;
 
 		// Set & get name
-		void setName(std::string const& name);
+		void setName(std::string const& nm);
 		std::string getName() const;
 
 		SceneObject(SceneObject const&) = delete;
@@ -44,8 +44,8 @@ namespace SP {
 		dirtyFlag = dirty;
 	}
 
-	inline void SceneObject::setName(std::string const & name) {
-		this->name = name;
+	inline void SceneObject::setName(std::string const & nm) {
+		name = nm;
 	}
 
 	inline std::string SceneObject::getName() const {

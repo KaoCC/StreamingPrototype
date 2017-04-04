@@ -54,7 +54,7 @@ namespace SP {
 
 		\param scene Scene to render
 		*/
-		virtual void render(Scene const& scene) = 0;
+		virtual void render(Scene const& scene, size_t configIdx) = 0;
 
 		/**
 		\brief Set the output for rendering.

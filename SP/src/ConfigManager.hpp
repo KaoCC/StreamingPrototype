@@ -5,13 +5,17 @@
 
 #include <vector>
 
+#include "SyncBuffer.hpp"
+#include "Encoder/Encoder.hpp"
+#include "LightField.hpp"
+
 namespace SP {
 
 	class ConfigManager {
 
 
 	public:
-		ConfigManager();
+		ConfigManager(SyncBuffer<ImageConfig>& buffer, LightField& imgLF);
 
 		CameraConfig getCamera();
 
@@ -22,20 +26,47 @@ namespace SP {
 
 		void setPositionDelta(float dx, float dy, float dz);
 
-		const ImageConfig& getImageRef(size_t index);
+		//const ImageConfig& getImageRef(size_t index);
 
+		ImageConfig getImage();
+		ImageConfig getImageCache();
+
+
+
+		// Light Field
+		size_t getSubLightFieldSize(size_t subLFIdx) const;
+		ImageConfig::ImageBuffer getSubLightFieldImageWithIndex(size_t subLFIdx, size_t imgIdx);
+
+		// Encoder
+		Encoder* getEncoder();
+
+		~ConfigManager();
 
 		// tmp
-		void loadImages();
+		//void loadImages();
 
 	private:
 
 		uint32_t moduleID = 0;
-		
+
 		CameraConfig cameraCfg;
 		ScreenConfig screenCfg;
 
-		std::vector<ImageConfig> images;
+		// could be used as a cache, but we disable it right now
+		//std::vector<ImageConfig> images;
+
+		// cache for current image
+		SyncBuffer<ImageConfig>::DataPointer imagePtr{ new ImageConfig };
+
+		// timer linit, wait no longer than this
+		const int kTimeLimit = 10;
+
+		SyncBuffer<ImageConfig>& bufferRef;
+
+		LightField& imageLightFieldRef;
+
+		Encoder* encoder;
+
 
 	};
 

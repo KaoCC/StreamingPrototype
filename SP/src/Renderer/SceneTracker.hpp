@@ -5,6 +5,8 @@
 
 #include "Scene/Scene.hpp"
 
+#include "Scene/Shape.hpp"
+
 namespace SP {
 
 	class SceneTracker {
@@ -20,14 +22,30 @@ namespace SP {
 
 		void compileSceneTest(const Scene& scene);
 
+
+		// test
+		const std::vector<const Mesh*>& getInternalMeshPtrs() const;
+		// tmp
+		const Scene* getCurrentScenePtr() const;
+
 	private:
 
+		void updateMaterials();
 
+		// Intersection API for RR
 		RadeonRays::IntersectionApi* api;
 
 		// track curent scene
-
 		const Scene* currentScenePtr = nullptr;
+
+		// For RR shape collections
+		std::vector<RadeonRays::Shape*> internalShapes;
+
+
+		// tmp
+		// For Back Tracking Mesh (Shape) Data
+		std::vector<const Mesh*> internalMeshPtrs;
+
 
 	};
 

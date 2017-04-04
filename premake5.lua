@@ -21,7 +21,7 @@ workspace "StreamingPrototype"
 
 
     filter { "configurations:Debug" }
-        flags { "Symbols" }
+        symbols "On"
 
     filter { "configurations:Release" }
         -- Release should be optimized
@@ -52,6 +52,17 @@ workspace "StreamingPrototype"
     filter {"configurations:Debug"}
         links {"libprotobufd"}
     filter {}
+
+
+    -- x264
+    includedirs {"./3rdparty/x264/include"}
+
+    filter {"platforms:x64"}
+        libdirs {"./3rdparty/x264/lib/x64"}
+    filter {"platforms:x86"}
+        libdirs {"./3rdparty/x264/lib/x86"}
+    filter {}
+    links {"x264"}
 
 
     -- Radeon Rays

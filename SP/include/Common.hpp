@@ -6,9 +6,14 @@
 #include <cstdint>
 #include <vector>
 
+#include <iostream>
+
+#include <string>
 
 namespace SP {
 
+
+	class Encoder;
 
 	struct Position {
 
@@ -32,7 +37,7 @@ namespace SP {
 
 	struct CameraConfig {
 
-		CameraConfig(Position p, Direction d): pos(p), dir(d) {
+		CameraConfig(Position p, Direction d) : pos(p), dir(d) {
 		}
 
 		Position pos;
@@ -43,7 +48,7 @@ namespace SP {
 
 	struct ScreenConfig {
 
-		ScreenConfig(uint32_t w, uint32_t h) : width(w), height(h){
+		ScreenConfig(uint32_t w, uint32_t h) : width(w), height(h) {
 
 		}
 
@@ -67,6 +72,12 @@ namespace SP {
 			}
 		}
 
+
+		// for reading testing image only
+		//ImageConfig(int localId, const std::string& path, Encoder* encoder, ImageBuffer& accBuffer);
+
+		ImageConfig(int localId, const std::string& path);
+
 		size_t getByteSize() const {
 			return imageData.size() * sizeof(uint8_t);
 		}
@@ -76,7 +87,7 @@ namespace SP {
 			return imageData;
 		}
 
-		const ImageBuffer& getImageData() const{
+		const ImageBuffer& getImageData() const {
 			return imageData;
 		}
 
@@ -88,10 +99,26 @@ namespace SP {
 			return imageData.data();
 		}
 
+		int getID() const {
+			return imageID;
+		}
+
+		void setId(int id) {
+			imageID = id;
+		}
+
+
+		// test code
+		void storeToPPM(size_t serialNumber) const;
+
+
 		// ...
 
 	private:
 
+
+		// test
+		int imageID;
 		ImageBuffer imageData;
 	};
 

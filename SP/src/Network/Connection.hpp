@@ -7,6 +7,10 @@
 #include "Packet.hpp"
 
 #include "../ConfigManager.hpp"
+#include "../SyncBuffer.hpp"
+#include "../LightField.hpp"
+
+#include <deque>
 
 namespace SP {
 
@@ -16,7 +20,7 @@ namespace SP {
 		using ConnectionPointer = std::shared_ptr<Connection>;
 
 
-		static ConnectionPointer create(boost::asio::io_service& ios);
+		static ConnectionPointer createWithBuffer(boost::asio::io_service& ios, SyncBuffer<ImageConfig>& buf, LightField& imgLF);
 		
 		// get socket reference
 		boost::asio::ip::tcp::socket& getSocketRef();
@@ -26,7 +30,7 @@ namespace SP {
 
 	private:
 
-		Connection(boost::asio::io_service& io_service);
+		Connection(boost::asio::io_service& io_service, SyncBuffer<ImageConfig>& buf, LightField& imgLF);
 
 
 		void startReadHeader();
@@ -35,12 +39,16 @@ namespace SP {
 		void startReadMessage(size_t msgSize);
 		void handleReadMessage(const boost::system::error_code& error);
 
+		void handleWriteMessage(const boost::system::error_code& error);
 
 		Packet::MessagePointer resolvePacket();
 
 		Packet::MessagePointer createResponse(Packet::MessagePointer msgPtr);
 
 		void writeResponse(Packet::MessagePointer msgPtr);
+
+
+		void appendImage(Packet::DataBuffer& buffer);
 
 
 		// data members 
@@ -50,13 +58,28 @@ namespace SP {
 
 		// buffers
 		Packet::DataBuffer localBuffer;
+		//Packet::DataBuffer writeBuffer;
 
 		// packet structure
 		Packet packet;
+		Packet responsePacket;
 
 
 		// config
 		ConfigManager cfgManager;
+		//SyncBuffer<ImageConfig>& bufferRef;
+
+		// tmp
+		ImageConfig::ImageBuffer encodedImageData;
+
+
+		// tmp buffer for async write
+		std::deque<Packet::DataBuffer> writeBufferQueue;
+
+
+		//tmp
+		//cached dx
+		float cachedDeltaX = 0;
 
 	};
 

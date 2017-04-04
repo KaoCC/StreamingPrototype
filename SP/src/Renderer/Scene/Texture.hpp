@@ -5,6 +5,8 @@
 
 #include "SceneObject.hpp"
 
+#include "math/float3.h"
+
 #include <memory>
 
 namespace SP {
@@ -25,6 +27,10 @@ namespace SP {
 		Texture(const std::uint8_t* ptr, RadeonRays::int2 size, Format format);
 		virtual ~Texture() = default;
 
+
+		RadeonRays::float3 sampleEnvMap(RadeonRays::float3 d);
+
+		RadeonRays::float4 sample2D(RadeonRays::float2 uv);
 
 		// Disallow copying
 		Texture(Texture const&) = delete;

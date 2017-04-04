@@ -3,11 +3,14 @@
 
 #include "Renderer.hpp"
 #include "SceneTracker.hpp"
+#include "RenderOutput.hpp"
 
 #include <vector>
 #include <memory>
 
 #include "radeon_rays.h"
+
+
 
 namespace SP {
 
@@ -31,21 +34,53 @@ namespace SP {
 
 		virtual void preprocess(Scene const & scene) override;
 
-		virtual void render(Scene const & scene) override;
+		virtual void render(Scene const & scene, size_t configIdx) override;
 
 		virtual void setOutput(Output * output) override;
 
 
 
 		struct RenderData;
+		struct PathState;
 
 
 	protected:
 
 		// Generate rays
-		void generatePrimaryRays();
+		void generatePrimaryRays(const Scene& scene, size_t camIdx);
+
+		void resizeWorkingSet(const Output& out);
+
+
+		// Shade first hit
+		void shadeSurface(int pass);
+		// Evaluate volume
+		void evaluateVolume(int pass);
+		// Handle missing rays
+		void shadeMiss(int pass);
+		// Gather light samples and account for visibility
+		void gatherLightSamples(int pass);
+		// Restore pixel indices after compaction
+		void restorePixelIndices(int pass);
+		// Convert intersection info to compaction predicate
+		void filterPathStream(int pass);
+		// Integrate volume
+		void shadeVolume(int pass);
+		// Shade background
+		void shadeBackground(int pass);
+
+
+		// Helper
+		void compactIndex();
+		void scanExclusiveAdd(std::vector<int>& addr);
+
 
 	private:
+
+		// Output 
+		// KAOCC: use shared pointer ???
+		RenderOutput* renderOutPtr  = nullptr;
+
 
 		SceneTracker sceneTracker;
 

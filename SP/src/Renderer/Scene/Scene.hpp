@@ -3,6 +3,11 @@
 
 #include <memory>
 
+//#include "../DifferentialGeometry.hpp"
+
+#include "math/float3.h"
+#include "math/float2.h"
+
 namespace SP {
 
 	class Light;
@@ -11,6 +16,8 @@ namespace SP {
 	class Camera;
 	class Iterator;
 	class SceneObject;
+
+	class DifferentialGeometry;
 
 	class Scene {
 
@@ -40,6 +47,13 @@ namespace SP {
 		// Get light iterator
 		Iterator* createLightIterator() const;
 
+		// Helper for light sampling
+		const Light* getSampleLightPtr(float sample, float& pdf) const;
+
+		// no need anymore !
+		//RadeonRays::float3 sampleLight(size_t lightIndex, const DifferentialGeometry& diffGeo, RadeonRays::float2 sample, RadeonRays::float3& wo, float& pdf) const;
+		
+
 		// Add or remove shapes
 		void attachShape(Shape const* shape);
 		void detachShape(Shape const* shape);
@@ -50,8 +64,8 @@ namespace SP {
 		Iterator* createShapeIterator() const;
 
 		// Set and get camera
-		void SetCamera(Camera const* camera);
-		Camera const* getCamera() const;
+		void attachCamera(Camera const* camera);
+		Camera const* getCamera(size_t camIdx) const;
 
 		// Get state change since last clear
 		DirtyFlags getDirtyFlags() const;
@@ -74,7 +88,7 @@ namespace SP {
 
 	private:
 		struct SceneImpl;
-		std::unique_ptr<SceneImpl> ScenePtr;
+		std::unique_ptr<SceneImpl> scenePtr;
 	};
 
 
