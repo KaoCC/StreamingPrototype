@@ -21,7 +21,7 @@ namespace SP {
 
 
 			// test
-			const size_t numOfImgs = 8;
+			const size_t numOfImgs = 1;
 
 			std::vector<ImageConfig> images;
 
@@ -33,6 +33,9 @@ namespace SP {
 		ImageConfig::ImageBuffer getSubLightFieldImages(size_t subLFIdx);
 
 		ImageConfig::ImageBuffer getSubLightFieldImageWithIndex(size_t subLFIdx, size_t imgIdx);
+
+		//setter
+		void setSubLightFieldImageWithIndex(size_t subLFIdx, size_t imgIdx, const ImageConfig& imgConf);
 
 
 		size_t getTotalSize() const;

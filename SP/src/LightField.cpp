@@ -9,7 +9,8 @@ namespace SP {
 		//const std::string kFilePath{ pathBase + "crown_" + std::to_string(index) + ".ppm" };
 
 		for (size_t i = 0; i < numOfSubLFs; ++i) {
-			subLFs.push_back(SubLightField(i, this->pathBase));
+			//subLFs.push_back(SubLightField(i, this->pathBase));
+			subLFs.push_back(SubLightField(i));
 		}
 	}
 
@@ -56,6 +57,17 @@ namespace SP {
 		return subLFs[subLFIdx].images[imgIdx].getImageData();
 	}
 
+	void LightField::setSubLightFieldImageWithIndex(size_t subLFIdx, size_t imgIdx, const ImageConfig & imgConf) {
+
+		// KAOCC: WE NEED LOCK !
+
+
+		subLFs[subLFIdx].images[imgIdx] = std::move(imgConf);
+
+		std::cerr << "Write to sub LF: " << subLFIdx << " " << imgIdx << "\n";
+
+	}
+
 	size_t LightField::getTotalSize() const {
 		return subLFs.size();
 	}
@@ -64,6 +76,7 @@ namespace SP {
 		return subLFs[subLFIdx].images.size();
 	}
 
+	// test only
 	ImageConfig::ImageBuffer LightField::getAll() {
 
 		ImageConfig::ImageBuffer buffer;

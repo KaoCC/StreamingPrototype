@@ -187,7 +187,7 @@ namespace SP {
 
 
 			// TEST !
-			if (writeBufferQueue.size() > 1) {
+			if (writeBufferQueue.size() > 2) {
 				responsePtr = nullptr;
 				break;
 			}
