@@ -692,7 +692,7 @@ namespace SP {
 		mappingEvent = nullptr;
 
 		// to RR memory
-		std::copy(indirectRayArrayRef.begin(), indirectRayArrayRef.end(), rawShadowrayPtr);
+		std::copy(shadowRayArrayRef.begin(), shadowRayArrayRef.end(), rawShadowrayPtr);
 
 		api->UnmapBuffer(renderData->shadowrays, static_cast<void*>(rawShadowrayPtr), &mappingEvent);
 		mappingEvent->Wait();
