@@ -154,7 +154,7 @@ namespace SP {
 		// check for emissive
 		if (emission.sqnorm() > 0) {
 
-			material = new SingleBXDF(SingleBXDF::BXDFType::kEmissive);
+			material = new SingleBxDF(SingleBxDF::BxDFType::kEmissive);
 
 			// albedo ?
 			if (!mat.diffuse_texname.empty()) {
@@ -178,7 +178,7 @@ namespace SP {
 
 			} else {
 				// Otherwise create lambert
-				Material* diffuse = new SingleBXDF(SingleBXDF::BXDFType::kLambert);
+				Material* diffuse = new SingleBxDF(SingleBxDF::BxDFType::kLambert);
 
 				// Set albedo
 				if (!mat.diffuse_texname.empty()) {

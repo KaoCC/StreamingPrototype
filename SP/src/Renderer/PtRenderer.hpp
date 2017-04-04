@@ -79,7 +79,7 @@ namespace SP {
 
 		// Output 
 		// KAOCC: use shared pointer ???
-		RenderOutput* renderOutPtr;
+		RenderOutput* renderOutPtr  = nullptr;
 
 
 		SceneTracker sceneTracker;

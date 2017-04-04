@@ -113,4 +113,8 @@ namespace SP {
 		return numUVs;
 	}
 
+	RadeonRays::float2 const * Mesh::getUVs() const {
+		return uvs.get();
+	}
+
 }

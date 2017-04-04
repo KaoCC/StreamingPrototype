@@ -7,9 +7,13 @@ namespace SP {
 	Material::Material() : twoSidedFlag (false){
 	}
 
+
+
+
 	bool Material::hasEmission() const {
 		return false;
 	}
+
 
 
 	bool Material::setValueParameter(Input & input, const RadeonRays::float4 & value) {
@@ -49,6 +53,19 @@ namespace SP {
 		}
 
 		return ret;
+	}
+
+	Material::InputValue Material::getInputValue(const std::string & nm) const {
+
+		auto inputIter = inputTable.find(nm);
+
+		if (inputIter != inputTable.cend()) {
+
+			return inputIter->second.value;
+		} else {
+			throw std::runtime_error("Mat: input not found");
+		}
+
 	}
 
 	bool Material::isTwoSided() const {
@@ -107,7 +124,7 @@ namespace SP {
 	//--------------
 
 
-	SingleBXDF::SingleBXDF(BXDFType tp) : type (tp) {
+	SingleBxDF::SingleBxDF(BxDFType tp) : type (tp) {
 
 		registerInput("albedo", "Diffuse color", { InputType::kFloat4, InputType::kTexture });
 		registerInput("normal", "Normal map", { InputType::kTexture });
@@ -117,23 +134,25 @@ namespace SP {
 
 
 		// set value
-		// KAOCC: check the template path
+		// KAOCC: check the template call path
 		setInputValue("albedo", RadeonRays::float4(0.7f, 0.7f, 0.7f, 1.f));
 		setInputValue("normal", static_cast<Texture const*>(nullptr));
 
 	}
 
-	SingleBXDF::BXDFType SingleBXDF::getBXDFType() const {
+
+
+	SingleBxDF::BxDFType SingleBxDF::getBxDFType() const {
 		return type;
 	}
 
-	void SingleBXDF::setBXDFType(BXDFType t) {
+	void SingleBxDF::setBxDFType(BxDFType t) {
 		type = t;
 		setDirty(true);
 	}
 
-	bool SingleBXDF::hasEmission() const {
-		return type == BXDFType::kEmissive;
+	bool SingleBxDF::hasEmission() const {
+		return type == BxDFType::kEmissive;
 	}
 
 }
