@@ -26,13 +26,13 @@ const float delta_vx = 5;
 const float delta_vy = 10;
 const float delta_vz = -20;
 
-
+static float shift = 0;
 
 // simple helper
 void configCameraDelta(uint32_t serialNumber, SP::Packet::MessagePointer& requestPtr, SP::Packet& requestPacket) {
 
 
-	globalCamera.pos.x += delta_x;
+	globalCamera.pos.x += delta_x + shift;
 	globalCamera.pos.y += delta_y;
 	globalCamera.pos.z += delta_z;
 
@@ -45,13 +45,16 @@ void configCameraDelta(uint32_t serialNumber, SP::Packet::MessagePointer& reques
 
 	cameraDelta->set_serialnumber(serialNumber);
 
-	cameraDelta->set_delta_x(delta_x);
+	cameraDelta->set_delta_x(globalCamera.pos.x);
 	cameraDelta->set_delta_y(delta_y);
 	cameraDelta->set_delta_z(delta_z);
 
 	cameraDelta->set_delta_vx(delta_x);
 	cameraDelta->set_delta_vy(delta_y);
 	cameraDelta->set_delta_vz(delta_z);
+
+	// test
+	shift += 0.1f;
 
 	// write camera info (delta) to the server
 	requestPtr->Clear();
