@@ -86,6 +86,29 @@ namespace SP {
 
 	}
 
+	void ImageConfig::storeToPPM() const {
+
+		const std::string fileName = "test" + std::to_string(imageID) + ".ppm";
+
+		FILE* file = fopen(fileName.c_str(), "wb");
+		if (!file) {
+			//throw std::runtime_error("cannot open file " + fileName.str());
+
+			std::cerr << "Error !\n";
+		}
+
+		// tmp
+		fprintf(file, "P6\n%i %i\n255\n", 512, 512);
+
+		for (size_t i = 0; i < imageData.size(); ++i) {
+			fputc(imageData[i], file);
+		}
+
+		fclose(file);
+
+
+	}
+
 
 }
 

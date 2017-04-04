@@ -64,8 +64,8 @@ namespace SP {
 		Iterator* createShapeIterator() const;
 
 		// Set and get camera
-		void SetCamera(Camera const* camera);
-		Camera const* getCamera() const;
+		void attachCamera(Camera const* camera);
+		Camera const* getCamera(size_t camIdx) const;
 
 		// Get state change since last clear
 		DirtyFlags getDirtyFlags() const;

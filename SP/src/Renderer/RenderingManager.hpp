@@ -46,18 +46,18 @@ namespace SP {
 		void initData();
 
 		// helper function
-		void renderingWorker();
+		void renderingWorker(size_t configIdx);
 
 
 
 		// Output convert
 		// tmp
-		void convertOutputToImage(ImageConfig& img);
+		void convertOutputToImage(ImageConfig& img, size_t outputIdx);
 
 
 		// Camera
 		// KAOCC: support PerspectiveCamera only !
-		std::unique_ptr<SP::PerspectiveCamera> camera;
+		//std::unique_ptr<SP::PerspectiveCamera> camera;
 
 		// tmp
 		// default camera parameters
@@ -77,6 +77,8 @@ namespace SP {
 
 		const int kNumberOfBounce = 5;
 
+		// A set: one camera, one render, one output, one thread
+		const size_t kNumOfCamera = 16;
 
 		// tmp
 		const std::string defaultPath = "../Resources/CornellBox";
@@ -97,15 +99,15 @@ namespace SP {
 		LightField& imageLightField;
 
 		// thread
-		std::unique_ptr<std::thread> renderThread;
+		std::vector<std::unique_ptr<std::thread>> renderThreads;
 
 		// Path-Tracing Renderer
-		std::unique_ptr<PtRenderer> renderer;
+		std::vector<std::unique_ptr<PtRenderer>> renderFarm;
 
 		//Encoder* encoder;
 		//ImageConfig::ImageBuffer accImageBuffer; // test
 
-		Output* renderOutputData;
+		std::vector<Output*> renderOutputData;
 	};
 
 

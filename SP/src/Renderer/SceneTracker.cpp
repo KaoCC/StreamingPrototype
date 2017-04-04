@@ -47,7 +47,7 @@ namespace SP {
 
 			// create mesh
 
-			std::cerr << "While" << std::endl;
+			//std::cerr << "While" << std::endl;
 
 			int shapeID = 1;
 			while (shapeIterator->hasNext()) {

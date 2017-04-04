@@ -17,21 +17,32 @@ namespace SP {
 		//, encoder(CreateEncoder(512, 512)) {
 
 		// allocate renderer
-		renderer = std::make_unique<PtRenderer>(1, 5);		// idx, num_of_bounce
+
+		renderFarm.resize(kNumOfCamera); // tmp
+		for (size_t i = 0; i < renderFarm.size(); ++i) {
+			renderFarm[i] = std::make_unique<PtRenderer>(1, 5);		// idx, num_of_bounce
+		}
+
+		renderThreads.resize(renderFarm.size());
 
 		initData();
 	}
 
 	RenderingManager::~RenderingManager() {
-		if (renderThread) {
-			renderThread->join();
+
+		for (auto& renderer : renderThreads) {
+			if (renderer) {
+				renderer->join();
+			}
 		}
 
 		//delete encoder;
 
 
 		// delete output
-		renderer->deleteOutput(renderOutputData);
+		for (size_t i = 0; i < renderFarm.size(); ++i) {
+			renderFarm[i]->deleteOutput(renderOutputData[i]);
+		}
 	}
 
 	void RenderingManager::startRenderThread() {
@@ -43,7 +54,9 @@ namespace SP {
 		// testing 
 		//renderThread = std::make_unique<std::thread>(std::thread(&RenderingManager::testOutput, this, 0));
 
-		renderThread = std::make_unique<std::thread>(std::thread(&RenderingManager::renderingWorker, this));
+		for (size_t i = 0; i < renderFarm.size(); ++i) {
+			renderThreads[i] = std::make_unique<std::thread>(std::thread(&RenderingManager::renderingWorker, this, i));
+		}
 	}
 
 
@@ -134,67 +147,103 @@ namespace SP {
 		std::cerr << "number of lights: " << sceneDataPtr->getNumLights() << std::endl;
 
 
+		for (size_t i = 0; i < kNumOfCamera; ++i) {
 
-		// KAOCC: TODO: add camera config
-		camera.reset(new PerspectiveCamera(kCameraPos, kCameraAt, kCameraUp));
-		sceneDataPtr->SetCamera(camera.get());
+			// KAOCC: TODO: add camera config
+			auto* cameraPtr = new PerspectiveCamera(kCameraPos + RadeonRays::float3(0.1 * i, 0, 0), kCameraAt + RadeonRays::float3(0.1 * i, 0, 0), kCameraUp);
+			sceneDataPtr->attachCamera(cameraPtr);
 
-		// Adjust sensor size based on current aspect ratio
-		float aspect = (float)kWindowWidth / kWindowHeight;
-		g_camera_sensor_size.y = g_camera_sensor_size.x / aspect;
+			// Adjust sensor size based on current aspect ratio
+			float aspect = (float)kWindowWidth / kWindowHeight;
+			g_camera_sensor_size.y = g_camera_sensor_size.x / aspect;
 
-		camera->setSensorSize(g_camera_sensor_size);
-		camera->setDepthRange(g_camera_zcap);
-		camera->setFocalLength(g_camera_focal_length);
-		camera->setFocusDistance(g_camera_focus_distance);
-		camera->setAperture(g_camera_aperture);
+			cameraPtr->setSensorSize(g_camera_sensor_size);
+			cameraPtr->setDepthRange(g_camera_zcap);
+			cameraPtr->setFocalLength(g_camera_focal_length);
+			cameraPtr->setFocusDistance(g_camera_focus_distance);
+			cameraPtr->setAperture(g_camera_aperture);
 
-		std::cout << "Camera type: " << (camera->getAperture() > 0.f ? "Physical" : "Pinhole") << "\n";			// This might cause problems
-		std::cout << "Lens focal length: " << camera->getFocalLength() * 1000.f << "mm\n";
-		std::cout << "Lens focus distance: " << camera->getFocusDistance() << "m\n";
-		std::cout << "F-Stop: " << 1.f / (camera->getAperture() * 10.f) << "\n";
-		std::cout << "Sensor size: " << g_camera_sensor_size.x * 1000.f << "x" << g_camera_sensor_size.y * 1000.f << "mm\n";
+			std::cout << "Camera type: " << (cameraPtr->getAperture() > 0.f ? "Physical" : "Pinhole") << "\n";			// This might cause problems
+			std::cout << "Lens focal length: " << cameraPtr->getFocalLength() * 1000.f << "mm\n";
+			std::cout << "Lens focus distance: " << cameraPtr->getFocusDistance() << "m\n";
+			std::cout << "F-Stop: " << 1.f / (cameraPtr->getAperture() * 10.f) << "\n";
+			std::cout << "Sensor size: " << g_camera_sensor_size.x * 1000.f << "x" << g_camera_sensor_size.y * 1000.f << "mm\n";
+
+			// test !
+			sceneDataPtr->attachAutoreleaseObject(cameraPtr);
+
+		}
 
 
 		// Set Output
-		renderOutputData = renderer->createOutput(kWindowWidth, kWindowHeight);
-		renderer->setOutput(renderOutputData);
+		renderOutputData.resize(renderFarm.size());
+		for (size_t i = 0; i < renderFarm.size(); ++i) {
+			renderOutputData[i] = renderFarm[i]->createOutput(kWindowWidth, kWindowHeight);
+			renderFarm[i]->setOutput(renderOutputData[i]);
+		}
 
 	}
 
 	// helper function for rendering
-	void RenderingManager::renderingWorker() {
+	void RenderingManager::renderingWorker(size_t configIdx) {
+
+		std::cerr << "Worker " << configIdx << " starts !\n";
 
 		// test
 		ImageConfig img;
 
-		while (true) {
-			renderer->render(*sceneDataPtr);
+		int counter = 0;
+		bool flag = false;
 
-			convertOutputToImage(img);
+		while (true) {
+
+
+			renderFarm[configIdx]->render(*sceneDataPtr, configIdx);
+
+			++counter;
+
+			// test code
+			if (counter == 20) {
+				flag = true;
+			}
+
+			if (flag) {
+
+				std::cerr << "----------------- Convert and store ! \n";
+
+
+				img.setId(configIdx);
+				convertOutputToImage(img, configIdx);
+				img.storeToPPM();
+
+				flag = false;
+			}
+
 		}
 
 	}
 
 
 	// testing only
-	void RenderingManager::convertOutputToImage(ImageConfig & img) {
+	void RenderingManager::convertOutputToImage(ImageConfig & img, size_t outputIdx) {
+
+		const size_t kStride = 3;
 
 		std::vector<RadeonRays::float3> fdata(kWindowWidth * kWindowHeight);
-		renderOutputData->getData(fdata.data());
+		renderOutputData[outputIdx]->getData(fdata.data());
 
 		ImageConfig::ImageBuffer& imgBufferRef = img.getImageData();
 
-		imgBufferRef.resize(fdata.size() * 4);
+		imgBufferRef.resize(fdata.size() * kStride);
 
 		// tmp gamma
 		float gamma = 2.2f;
 
 		for (size_t i = 0; i < fdata.size(); ++i) {
-			imgBufferRef[4 * i] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(fdata[i].x / fdata[i].w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
-			imgBufferRef[4 * i + 1] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(fdata[i].y / fdata[i].w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
-			imgBufferRef[4 * i + 2] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(fdata[i].z / fdata[i].w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
-			imgBufferRef[4 * i + 3] = 1;
+			imgBufferRef[kStride * i] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(fdata[i].x / fdata[i].w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
+			imgBufferRef[kStride * i + 1] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(fdata[i].y / fdata[i].w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
+			imgBufferRef[kStride * i + 2] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(fdata[i].z / fdata[i].w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
+			//imgBufferRef[kStride * i + 3] = 1;
 		}
 
 

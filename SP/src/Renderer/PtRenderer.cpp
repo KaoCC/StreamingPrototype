@@ -97,13 +97,13 @@ namespace SP {
 	}
 
 	// this is the entry point of the main path tracing algorithm
-	void PtRenderer::render(Scene const & scene) {
+	void PtRenderer::render(Scene const & scene, size_t configIdx) {
 
 		auto api = sceneTracker.getIntersectionApi();
 		sceneTracker.compileSceneTest(scene);
 
 		// ray gen ?
-		generatePrimaryRays(scene);
+		generatePrimaryRays(scene, configIdx);
 
 		std::copy(renderData->host_iota.begin(), renderData->host_iota.end(), renderData->host_pixelIndex[0].begin());
 		std::copy(renderData->host_iota.begin(), renderData->host_iota.end(), renderData->host_pixelIndex[1].begin());
@@ -185,7 +185,7 @@ namespace SP {
 			filterPathStream(pass);
 
 			compactIndex();
-			std::cerr << "NEW hit count:" << renderData->host_hitcount << '\n';
+			//std::cerr << "NEW hit count:" << renderData->host_hitcount << '\n';
 
 			restorePixelIndices(pass);
 
@@ -255,7 +255,7 @@ namespace SP {
 		}
 
 		
-		std::cerr << "Frame: " << frameCount << '\n';
+		//std::cerr << "Frame: " << frameCount << '\n';
 
 		++frameCount;
 	}
@@ -274,7 +274,7 @@ namespace SP {
 
 
 
-	void PtRenderer::generatePrimaryRays(const Scene& scene) {
+	void PtRenderer::generatePrimaryRays(const Scene& scene, size_t camIdx) {
 
 
 		const uint32_t imageWidth = renderOutPtr->getWidth();
@@ -304,7 +304,7 @@ namespace SP {
 				RadeonRays::float2 hSample = imageSample - RadeonRays::float2(0.5f, 0.5f);
 
 				// Transform into [-dim/2, dim/2]		
-				const PerspectiveCamera* cameraPtr = static_cast<const PerspectiveCamera*>(scene.getCamera());  // check this 
+				const PerspectiveCamera* cameraPtr = static_cast<const PerspectiveCamera*>(scene.getCamera(camIdx));  // check this 
 				RadeonRays::float2 cSample = hSample * cameraPtr->getSensorSize();
 
 
