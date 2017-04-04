@@ -161,17 +161,17 @@ namespace SP {
 
 
 			// tmp
-			int count = 0;
-			std::cerr << "PASS: " << pass << "\n";
-			for (int i = 0; i < renderData->host_hitcount; ++i) {
-				if (renderData->host_intersections[i].shapeid != -1) {
-					++count;
+			//int count = 0;
+			//std::cerr << "PASS: " << pass << "\n";
+			//for (int i = 0; i < renderData->host_hitcount; ++i) {
+			//	if (renderData->host_intersections[i].shapeid != -1) {
+			//		++count;
 
-					//std::cerr << ">>>>>>>>>>>>>>>>>>> shape: " << renderData->host_intersections[i].shapeid <<" Pri: " << renderData->host_intersections[i].primid << '\n';
-				}
-			}
+			//		//std::cerr << ">>>>>>>>>>>>>>>>>>> shape: " << renderData->host_intersections[i].shapeid <<" Pri: " << renderData->host_intersections[i].primid << '\n';
+			//	}
+			//}
 
-			std::cerr << "alive: " << count << '\n';
+			//std::cerr << "alive: " << count << '\n';
 
 			mapEvent = nullptr;
 			api->UnmapBuffer(renderData->intersections, static_cast<void*>(resultPtr), &mapEvent);
@@ -234,17 +234,17 @@ namespace SP {
 			api->DeleteEvent(mapEvent);
 
 
-			// test
-			int shadowCount = 0;
-			for (int i = 0; i < renderData->host_hitcount; ++i) {
-				if (renderData->host_shadowhits[i] != -1) {
-					++shadowCount;
+			//// test
+			//int shadowCount = 0;
+			//for (int i = 0; i < renderData->host_hitcount; ++i) {
+			//	if (renderData->host_shadowhits[i] != -1) {
+			//		++shadowCount;
 
-					//std::cerr << ">>>>>>>>>>>>>>>>>>> shape: " << renderData->host_intersections[i].shapeid <<" Pri: " << renderData->host_intersections[i].primid << '\n';
-				}
-			}
+			//		//std::cerr << ">>>>>>>>>>>>>>>>>>> shape: " << renderData->host_intersections[i].shapeid <<" Pri: " << renderData->host_intersections[i].primid << '\n';
+			//	}
+			//}
 
-			std::cerr << "Shadow: " << shadowCount << '\n';
+			//std::cerr << "Shadow: " << shadowCount << '\n';
 
 			gatherLightSamples(pass);
 
@@ -452,8 +452,12 @@ namespace SP {
 
 			Path& currentPath = renderData->host_path[pixelIndex];
 
+			if (currentPath.isScattered()) {
+				continue;
+			}
+
 			// Incoming direction
-			RadeonRays::float3 wi = -RadeonRays::normalize(rayArrayRef[hitIndex].d);
+			const RadeonRays::float3& wi = -RadeonRays::normalize(rayArrayRef[hitIndex].d);
 
 			// init sampler (random)
 			// TODO: change this to a function
@@ -560,17 +564,17 @@ namespace SP {
 			RadeonRays::float3 bxdfwo;
 			RadeonRays::float3 wo;
 
-			// Radiance
-			RadeonRays::float3 radiance = 0.f;
-
 			// Weight 
 			float bxdfWeight = 1.f;
 			float lightWeight = 1.f;
 
 			// sample BxDf
-			RadeonRays::float3 bxdf = BxDFHelper::sampleBxDF(diffGeo, wi, Sampler_Sample2D(&randomSampler), bxdfwo, bxdfPDF);		// value ?
+			RadeonRays::float3 bxdf = BxDFHelper::sample(diffGeo, wi, Sampler_Sample2D(&randomSampler), bxdfwo, bxdfPDF);		// value ?
 
 			const auto currentScenePtr = sceneTracker.getCurrentScenePtr();
+
+			// Radiance
+			RadeonRays::float3 radiance = 0.f;
 
 			// light ?
 			const Light* lightInst = currentScenePtr->getSampleLightPtr(Sampler_Sample1D(&randomSampler) ,selectionPDF);		// check the light index !
@@ -581,10 +585,11 @@ namespace SP {
 
 				if (currentLe.sqnorm() > 0 && lightPDF > 0.0f && !BxDFHelper::isSingular(diffGeo.getMaterialPtr())) {
 					wo = lightwo;
-					float n_dot_wo = fabs(dot(diffGeo.getNormal(), normalize(wo)));
+					float n_dot_wo = std::abs(dot(diffGeo.getNormal(), normalize(wo)));
 
 
-					radiance = currentLe * currentPath.getThroughput() * n_dot_wo * (1 / lightPDF) * (1 / selectionPDF);		// times ?BxDf Eval ?
+					// times light weight ?
+					radiance = currentLe * BxDFHelper::evaluate(diffGeo, wi, RadeonRays::normalize(wo)) *  currentPath.getThroughput() * n_dot_wo * (1 / lightPDF) * (1 / selectionPDF);
 
 					//std::cerr << "Radiance : " << radiance.x << " " << radiance.y << " " << radiance.z << "\n";
 				}
@@ -594,10 +599,10 @@ namespace SP {
 
 			// radiance ?
 			if (radiance.sqnorm() > 0.f) {
-				// generate shadow rays 
+				// Generate shadow rays 
 
-				RadeonRays::float3 shadowRay_orig = diffGeo.getPosition(); // +CRAZY_LOW_DISTANCE * s * diffGeo.getNormal();
-				RadeonRays::float3 shadowRay_dir = RadeonRays::normalize(wo);
+				const RadeonRays::float3& shadowRay_orig = diffGeo.getPosition() + 0.001f * diffGeo.getNormal(); // +LOW_DISTANCE * s * diffGeo.getNormal();
+				const RadeonRays::float3& shadowRay_dir = RadeonRays::normalize(wo);
 
 				shadowRayArrayRef[i] = RadeonRays::ray(shadowRay_orig, shadowRay_dir);
 
@@ -617,7 +622,7 @@ namespace SP {
 			bool rrApplyFlag = pass > 3;
 			bool rrStopFlag  = 0 && rrApplyFlag;		// value ?		// wrong !
 
-
+			//Sampler_Sample1D(&randomSampler) > qq
 			// ...
 
 			if (rrApplyFlag) {
@@ -628,7 +633,6 @@ namespace SP {
 			if (BxDFHelper::isSingular(diffGeo.getMaterialPtr())) {
 				currentPath.setSpecularFlag();
 			}
-
 
 
 			// handle indirectrays
@@ -644,8 +648,8 @@ namespace SP {
 				currentPath.multiplyThroughput(t * (1 / bxdfPDF));
 
 				// Generate indirect ray
-				RadeonRays::float3 indirectRay_orig = diffGeo.getPosition() + 0.001f * diffGeo.getNormal(); // + CRAZY_LOW_DISTANCE * s * diffgeo.n;
-				RadeonRays::float3 indirectRay_dir = bxdfwo;
+				const RadeonRays::float3& indirectRay_orig = diffGeo.getPosition() + 0.001f * diffGeo.getNormal(); // + LOW_DISTANCE * s * diffgeo.n;
+				const RadeonRays::float3& indirectRay_dir = bxdfwo;
 
 				indirectRayArrayRef[i] = RadeonRays::ray(indirectRay_orig, indirectRay_dir);
 

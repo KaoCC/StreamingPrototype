@@ -43,7 +43,7 @@ namespace SP {
 	}
 
 
-	RadeonRays::float3 BxDFHelper::sampleBxDF(const DifferentialGeometry & diffGeo, RadeonRays::float3 wi, RadeonRays::float2 sample, RadeonRays::float3 & wo, float & pdf) {
+	RadeonRays::float3 BxDFHelper::sample(const DifferentialGeometry & diffGeo, RadeonRays::float3 wi, RadeonRays::float2 sample, RadeonRays::float3 & wo, float & pdf) {
 
 		RadeonRays::float3 result = 0.f;
 
@@ -68,7 +68,6 @@ namespace SP {
 		}
 
 
-		// this is wrong, we need tangent transform !
 		wo = diffGeo.getTangentToWorldMatrix() * wo_tang;
 
 		return result;
@@ -104,9 +103,45 @@ namespace SP {
 		//const RadeonRays::float3 kd = Texture_GetValue3f(dg->mat.kx.xyz, dg->uv, TEXTURE_ARGS_IDX(dg->mat.kxmapidx));
 
 		// TMP ! 
+		return diffGeo.getMaterialPtr()->getInputValue("albedo").floatValue;
+	}
+
+	RadeonRays::float3 BxDFHelper::evaluate(const DifferentialGeometry & diffGeo, const RadeonRays::float3 & wi, const RadeonRays::float3 & wo) {
+
+		RadeonRays::float3 result = 0.f;
+
+		auto* singleBxDFPtr = dynamic_cast<const SingleBxDF*>(diffGeo.getMaterialPtr());
+
+		RadeonRays::float3 wi_tang = diffGeo.getWorldToTangentMatrix() * wi;
+		RadeonRays::float3 wo_tang = diffGeo.getWorldToTangentMatrix() * wo;
+
+		if (singleBxDFPtr) {
+
+			switch (singleBxDFPtr->getBxDFType()) {
+			case SingleBxDF::BxDFType::kLambert:
+				result = evaluateLambert(diffGeo, wi_tang, wo_tang);
+				break;
+			default:		// Error ?
+				//pdf = 0.f;
+				break;
+			}
+
+		}
+
+		return result;
+	}
+
+	RadeonRays::float3 BxDFHelper::evaluateLambert(const DifferentialGeometry & diffGeo, const RadeonRays::float3 & wi, const RadeonRays::float3 & wo) {
+
+		// tangent sapce
+
+		// tmp !
 		const RadeonRays::float3 kd = diffGeo.getMaterialPtr()->getInputValue("albedo").floatValue;
 
-		return kd;
+		//float F = dg->mat.fresnel;
+		float F = 1.0;	// tmp
+
+		return F * kd * (1 / PI);
 
 	}
 

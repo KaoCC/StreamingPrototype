@@ -19,14 +19,18 @@ namespace SP {
 
 
 		// helper function 
-		static RadeonRays::float3 sampleBxDF(const DifferentialGeometry& diffGeo, RadeonRays::float3 wi, RadeonRays::float2 sample, RadeonRays::float3& wo, float& pdf);
+		static RadeonRays::float3 sample(const DifferentialGeometry& diffGeo, RadeonRays::float3 wi, RadeonRays::float2 sample, RadeonRays::float3& wo, float& pdf);
 
 		static RadeonRays::float3 sampleLambert(const DifferentialGeometry& diffGeo, RadeonRays::float3 wi, RadeonRays::float2 sample, RadeonRays::float3& wo, float& pdf);
 
 		// emissive
 		static RadeonRays::float3 getEmissiveLe(const DifferentialGeometry& diffGeo);
 
+		static RadeonRays::float3 evaluate(const DifferentialGeometry& diffGeo, const RadeonRays::float3& wi,  const RadeonRays::float3& wo);
+		static RadeonRays::float3 evaluateLambert(const DifferentialGeometry& diffGeo, const RadeonRays::float3& wi, const RadeonRays::float3& wo);
 
+		// PDF !
+		static float getPDF(const DifferentialGeometry& diffGeo, const RadeonRays::float3& wi, const RadeonRays::float3& wo);
 
 		BxDFHelper() = delete;
 		~BxDFHelper() = delete;

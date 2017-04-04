@@ -32,16 +32,16 @@ namespace SP {
 
 		const RadeonRays::float3* normalArray = meshDataPtr->getNormals();
 
-		RadeonRays::float3 n0 = normalArray[i0];							// This is WRONG !!!
-		RadeonRays::float3 n1 = normalArray[i1];							// This is WRONG !!!
-		RadeonRays::float3 n2 = normalArray[i2];							// This is WRONG !!!
+		RadeonRays::float3 n0 = normalArray[i0];
+		RadeonRays::float3 n1 = normalArray[i1];
+		RadeonRays::float3 n2 = normalArray[i2];
 
 
 		const RadeonRays::float3* verticeArray = meshDataPtr->getVertices();
 
-		RadeonRays::float3 v0 = verticeArray[i0];							// This is WRONG !!!
-		RadeonRays::float3 v1 = verticeArray[i1];							// This is WRONG !!!
-		RadeonRays::float3 v2 = verticeArray[i2];							// This is WRONG !!!
+		RadeonRays::float3 v0 = verticeArray[i0];
+		RadeonRays::float3 v1 = verticeArray[i1];
+		RadeonRays::float3 v2 = verticeArray[i2];
 
 
 		const RadeonRays::float2* uvArray = meshDataPtr->getUVs();
@@ -52,7 +52,7 @@ namespace SP {
 
 		RadeonRays::matrix matrixI;			// I
 
-		// normal, position, uv, ng
+		// normal, position, uv, ng (barycentric)
 		normal = RadeonRays::normalize(RadeonRays::transform_vector((1.f - localUV.x - localUV.y) * n0 + localUV.x * n1 + localUV.y * n2, matrixI));  //CHECK THIS !
 		pos = RadeonRays::transform_point((1.f - localUV.x - localUV.y) * v0 + localUV.x * v1 + localUV.y * v2, matrixI);
 		uv = (1.f - localUV.x - localUV.y) * uv0 + localUV.x * uv1 + localUV.y * uv2;
