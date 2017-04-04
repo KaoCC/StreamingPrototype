@@ -21,7 +21,7 @@ workspace "StreamingPrototype"
 
 
     filter { "configurations:Debug" }
-        flags { "Symbols" }
+        symbols "On"
 
     filter { "configurations:Release" }
         -- Release should be optimized

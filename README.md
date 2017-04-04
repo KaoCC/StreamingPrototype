@@ -1,5 +1,5 @@
 # StreamingPrototype
-Streaming Prototype
+Streaming Prototype is a demo version of the Cloud-Based Rendering Engine that creates photorealistic images for seamless viewing and editing.
 
 ## System requirements and Dependencies
 
@@ -9,13 +9,17 @@ Streaming Prototype
 - [Radeon Rays](https://github.com/GPUOpen-LibrariesAndSDKs/RadeonRays_SDK)
 - [Heterogeneous Queue](https://github.com/KaoCC/HeterogeneousQueue)
 
+The following compilers are supported:
+
+- Visual Studio 2015 or 2017
+
 ## Build
 
 ### Windows
 
-- Create Visual Studio 2015 Solution
+- Create Visual Studio 2017 Solution
 
-`./Tool/premake/win/premake5.exe vs2015`
+`./Tool/premake/win/premake5.exe vs2017`
 
 
 - (Optional) Create C++ classes from Google Protocol Buffer to modify the message format
