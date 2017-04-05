@@ -187,18 +187,18 @@ namespace SP {
 
 
 			// TEST !
-			if (writeBufferQueue.size() > 2) {
+			if (writeBufferQueue.size() > 5) {
 				responsePtr = nullptr;
 				break;
 			}
 
 			// test
-			if (cachedDeltaX == dx) {
-				responsePtr = nullptr;
-				break;
-			} else {
-				cachedDeltaX = dx;
-			}
+			//if (cachedDeltaX == dx) {
+			//	responsePtr = nullptr;
+			//	break;
+			//} else {
+			//	cachedDeltaX = dx;
+			//}
 
 
 			// KAOCC: check if we need locks 
@@ -233,6 +233,13 @@ namespace SP {
 			// TMP !!!
 			size_t subLFIndex = getIndexTmp(dx);	// TODO: mapping function ?
 			size_t subLFSz = cfgManager.getSubLightFieldSize(subLFIndex);
+
+
+			if (!cfgManager.getSubLightFieldRefreshState(subLFIndex)) {
+				std::cerr << "No need to send\n";
+				responsePtr = nullptr;
+				break;
+			}
 
 			// test
 			encodedImageData.clear();
@@ -271,6 +278,11 @@ namespace SP {
 				}
 
 			}
+
+
+			// mark read
+			std::cerr << "mark read\n";
+			cfgManager.setSubLightFieldRefreshState(subLFIndex, false);
 
 			std::cerr << "size" << encodedImageData.size() << std::endl;
 			imagePtr->set_bytesize(encodedImageData.size()); // tmp

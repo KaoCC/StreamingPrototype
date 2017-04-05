@@ -21,9 +21,11 @@ namespace SP {
 
 
 			// test
-			const size_t numOfImgs = 1;
+			const size_t numOfImgs = 2;
 
 			std::vector<ImageConfig> images;
+
+			bool refreshFlag = false;
 
 		};
 
@@ -38,6 +40,11 @@ namespace SP {
 		void setSubLightFieldImageWithIndex(size_t subLFIdx, size_t imgIdx, const ImageConfig& imgConf);
 
 
+		// refresh
+		bool getSubLightFieldRefreshState(size_t subLFIdx) const;
+		void setSubLightFieldRefreshState(size_t subLFIdx, bool state);
+
+
 		size_t getTotalSize() const;
 		size_t getSubLightFieldSize(size_t subLFIdx) const;
 
@@ -49,12 +56,14 @@ namespace SP {
 
 		std::vector<SubLightField> subLFs;
 
+
 		// test
 		const size_t numOfSubLFs = 16;
 
 
 		// tmp file location
 		const std::string pathBase{ "../Resources/LF/" };
+
 
 	};
 
