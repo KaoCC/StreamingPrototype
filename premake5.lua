@@ -61,7 +61,7 @@ workspace "StreamingPrototype"
 	    filter {}
     elseif (os.is("linux")) then
 	    -- filter {"configurations:Release"}
-	    	links{"protobuf"}
+	    	
 
 
 
@@ -69,10 +69,11 @@ workspace "StreamingPrototype"
 
 
 
-		buildoptions{"`pkg-config --cflags --libs protobuf`"} --{ , "-D_GLIBCXX_USE_CXX11_ABI=0"}
+		buildoptions{"`pkg-config --cflags protobuf`"} --  "-D_GLIBCXX_USE_CXX11_ABI=0"}
 
+		linkoptions{"`pkg-config --libs protobuf`"}
 
-
+		links{"protobuf"}
 
 
 	--filter{"configurations:Debug"}
@@ -122,6 +123,10 @@ workspace "StreamingPrototype"
         links {"OpenImageIOD"}
     filter {}
     elseif (os.is("linux")) then
+
+	    includedirs{"./3rdparty/oiio/dist/linux64/include"}
+	    libdirs {"./3rdparty/oiio/dist/linux64/lib"}
+
 	    links{"OpenImageIO", "pthread", "boost_system"}
     end
 
