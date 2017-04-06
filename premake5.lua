@@ -3,6 +3,10 @@ if os.is("windows") then
     defines{ "WIN32" }
 end
 
+if os.is("linux") then
+	flags {"C++14"}
+end
+
 workspace "StreamingPrototype"
 
     location "Generated"
@@ -44,17 +48,42 @@ workspace "StreamingPrototype"
     -- dofile ("./FindProtobuf.lua")
 
     -- Google Protocol Buffer
+
+	 if (os.is("windows")) then
+
     includedirs {"./3rdparty/protobuf/include"}
     libdirs {"./3rdparty/protobuf/lib"}
 
-    filter {"configurations:Release" }
-        links {"libprotobuf"}
-    filter {"configurations:Debug"}
-        links {"libprotobufd"}
-    filter {}
+   	    filter {"configurations:Release" }
+	    	links {"libprotobuf"}
+	    filter {"configurations:Debug"}
+	    	links {"libprotobufd"}
+	    filter {}
+    elseif (os.is("linux")) then
+	    -- filter {"configurations:Release"}
+	    	links{"protobuf"}
+
+
+
+
+
+
+
+		buildoptions{"`pkg-config --cflags --libs protobuf`"} --{ , "-D_GLIBCXX_USE_CXX11_ABI=0"}
+
+
+
+
+
+	--filter{"configurations:Debug"}
+		--links{"protobufd"}
+	--filter{}
+    end
 
 
     -- x264
+
+    if (os.is("windows")) then
     includedirs {"./3rdparty/x264/include"}
 
     filter {"platforms:x64"}
@@ -63,6 +92,9 @@ workspace "StreamingPrototype"
         libdirs {"./3rdparty/x264/lib/x86"}
     filter {}
     links {"x264"}
+    elseif(os.is("linux")) then
+	    links("x264")
+    end
 
 
     -- Radeon Rays
@@ -76,6 +108,11 @@ workspace "StreamingPrototype"
     filter {}
 
     --OIIO
+    --
+    
+
+    if (os.is("windows")) then
+
     includedirs {"./3rdparty/oiio/include"}
     libdirs {"./3rdparty/oiio/lib/%{cfg.platform}"}
 
@@ -84,6 +121,9 @@ workspace "StreamingPrototype"
     filter {"configurations:Debug"}
         links {"OpenImageIOD"}
     filter {}
+    elseif (os.is("linux")) then
+	    links{"OpenImageIO", "pthread", "boost_system"}
+    end
 
     
     project "SP"
