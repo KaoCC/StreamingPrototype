@@ -64,6 +64,14 @@ namespace SP {
 		return imageLightFieldRef.getSubLightFieldImageWithIndex(subLFIdx, imgIdx);
 	}
 
+	bool ConfigManager::getSubLightFieldRefreshState(std::size_t subLFIdx) const {
+		return imageLightFieldRef.getSubLightFieldRefreshState(subLFIdx);
+	}
+
+	void ConfigManager::setSubLightFieldRefreshState(std::size_t subLFIdx, bool state) {
+		imageLightFieldRef.setSubLightFieldRefreshState(subLFIdx, state);
+	}
+
 	Encoder * ConfigManager::getEncoder() {
 		return encoder;
 	}

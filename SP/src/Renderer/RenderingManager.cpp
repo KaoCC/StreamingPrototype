@@ -201,17 +201,20 @@ namespace SP {
 
 
 			// test code
-			if (counter % 30 == 0) {
+			if (counter % 2 == 0) {
 
-				std::cerr << "----------------- Convert and store ! \n";
+				//std::cerr << "----------------- Convert and store ! \n";
 
 
 				img.setId(configIdx);
 				convertOutputToImage(img, configIdx);
-				img.storeToPPM(counter);
+				//img.storeToPPM(counter);
 
 				// test
 				imageLightField.setSubLightFieldImageWithIndex(configIdx, 0, img);
+				imageLightField.setSubLightFieldImageWithIndex(configIdx, 1, img);
+				// refresh
+				imageLightField.setSubLightFieldRefreshState(configIdx, true);
 			}
 
 			++counter;

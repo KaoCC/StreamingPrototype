@@ -225,7 +225,7 @@ namespace SP {
 		}
 
 		
-		//std::cerr << "Frame: " << frameCount << '\n';
+		std::cerr << "Frame: " << frameCount << '\n';
 
 		++frameCount;
 	}

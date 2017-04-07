@@ -37,6 +37,9 @@ namespace SP {
 		size_t getSubLightFieldSize(size_t subLFIdx) const;
 		ImageConfig::ImageBuffer getSubLightFieldImageWithIndex(size_t subLFIdx, size_t imgIdx);
 
+		bool getSubLightFieldRefreshState(std::size_t subLFIdx) const;
+		void setSubLightFieldRefreshState(std::size_t subLFIdx, bool state);
+
 		// Encoder
 		Encoder* getEncoder();
 

@@ -61,11 +61,17 @@ namespace SP {
 
 		// KAOCC: WE NEED LOCK !
 
+		subLFs[subLFIdx].images[imgIdx] = (imgConf);
 
-		subLFs[subLFIdx].images[imgIdx] = std::move(imgConf);
+		//std::cerr << "Write to sub LF: " << subLFIdx << " " << imgIdx << "\n";
+	}
 
-		std::cerr << "Write to sub LF: " << subLFIdx << " " << imgIdx << "\n";
+	bool LightField::getSubLightFieldRefreshState(size_t subLFIdx) const {
+		return subLFs[subLFIdx].refreshFlag;
+	}
 
+	void LightField::setSubLightFieldRefreshState(size_t subLFIdx, bool state) {
+		subLFs[subLFIdx].refreshFlag = state;
 	}
 
 	size_t LightField::getTotalSize() const {
