@@ -372,6 +372,18 @@ class Camera : public ::google::protobuf::Message /* @@protoc_insertion_point(cl
 
   // accessors -------------------------------------------------------
 
+  // repeated uint32 drop_index = 9;
+  int drop_index_size() const;
+  void clear_drop_index();
+  static const int kDropIndexFieldNumber = 9;
+  ::google::protobuf::uint32 drop_index(int index) const;
+  void set_drop_index(int index, ::google::protobuf::uint32 value);
+  void add_drop_index(::google::protobuf::uint32 value);
+  const ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >&
+      drop_index() const;
+  ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >*
+      mutable_drop_index();
+
   // uint32 serialNumber = 2;
   void clear_serialnumber();
   static const int kSerialNumberFieldNumber = 2;
@@ -418,6 +430,8 @@ class Camera : public ::google::protobuf::Message /* @@protoc_insertion_point(cl
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::RepeatedField< ::google::protobuf::uint32 > drop_index_;
+  mutable int _drop_index_cached_byte_size_;
   ::google::protobuf::uint32 serialnumber_;
   float delta_x_;
   float delta_y_;
@@ -987,6 +1001,36 @@ inline void Camera::set_delta_vz(float value) {
   
   delta_vz_ = value;
   // @@protoc_insertion_point(field_set:StreamingFormat.Camera.delta_vz)
+}
+
+// repeated uint32 drop_index = 9;
+inline int Camera::drop_index_size() const {
+  return drop_index_.size();
+}
+inline void Camera::clear_drop_index() {
+  drop_index_.Clear();
+}
+inline ::google::protobuf::uint32 Camera::drop_index(int index) const {
+  // @@protoc_insertion_point(field_get:StreamingFormat.Camera.drop_index)
+  return drop_index_.Get(index);
+}
+inline void Camera::set_drop_index(int index, ::google::protobuf::uint32 value) {
+  drop_index_.Set(index, value);
+  // @@protoc_insertion_point(field_set:StreamingFormat.Camera.drop_index)
+}
+inline void Camera::add_drop_index(::google::protobuf::uint32 value) {
+  drop_index_.Add(value);
+  // @@protoc_insertion_point(field_add:StreamingFormat.Camera.drop_index)
+}
+inline const ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >&
+Camera::drop_index() const {
+  // @@protoc_insertion_point(field_list:StreamingFormat.Camera.drop_index)
+  return drop_index_;
+}
+inline ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >*
+Camera::mutable_drop_index() {
+  // @@protoc_insertion_point(field_mutable_list:StreamingFormat.Camera.drop_index)
+  return &drop_index_;
 }
 
 // -------------------------------------------------------------------
