@@ -8,10 +8,14 @@ Streaming Prototype is a demo version of the Cloud-Based Rendering Engine that c
 - [x264](http://www.videolan.org/developers/x264.html)
 - [Radeon Rays](https://github.com/GPUOpen-LibrariesAndSDKs/RadeonRays_SDK)
 - [Heterogeneous Queue](https://github.com/KaoCC/HeterogeneousQueue)
+- [OpenImageIO](https://sites.google.com/site/openimageio/home)
+
 
 The following compilers are supported:
 
 - Visual Studio 2015 or 2017
+
+- GCC 5.4
 
 ## Build
 
@@ -25,5 +29,16 @@ The following compilers are supported:
 - (Optional) Create C++ classes from Google Protocol Buffer to modify the message format
 
 `./Tool/protoc/win32/bin/protoc.exe -I="./SP/src/" --cpp_out="./Protocol" ./Protocol/message.proto`
+
+
+### Linux
+
+- Create the Makefile
+
+`./Tool/premake/linux64/premake gmake`
+
+- Build it !
+
+`make config=release_x64`
 
 

@@ -64,6 +64,7 @@ namespace SP {
 	};
 
 
+	PtRenderer::~PtRenderer() = default;
 
 
 	PtRenderer::PtRenderer(int devidx, int num_bounces) : renderData(new RenderData), numOfBounces(num_bounces), sceneTracker(devidx) {

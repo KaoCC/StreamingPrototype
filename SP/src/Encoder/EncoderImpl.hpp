@@ -3,6 +3,7 @@
 #define _SP_ENCODERIMPL_HPP_
 
 #include <cstdint>
+#include <cstddef>
 #include "x264.h"
 
 #include "Encoder.hpp"
@@ -17,7 +18,7 @@ namespace SP {
 
 		// public APIs
 
-		EncoderImpl(size_t width, size_t height);
+		EncoderImpl(std::size_t width, std::size_t height);
 
 		virtual ~EncoderImpl();
 
@@ -35,7 +36,7 @@ namespace SP {
 
 			if (encoder_h264_encoder) {
 				x264_encoder_close(encoder_h264_encoder);
-				encoder_h264_encoder = NULL;
+				encoder_h264_encoder = nullptr;
 			}
 			if (encoder_pic_valid) {
 				x264_picture_clean(&encoder_pic);
@@ -111,11 +112,10 @@ namespace SP {
 				*p_encoded_buf = encoder_nal->p_payload;
 			} else {
 				*p_encoded_size = 0;
-				*p_encoded_buf = NULL;
+				*p_encoded_buf = nullptr;
 			}
 			return 0;
 		}
-
 
 
 
@@ -132,7 +132,7 @@ namespace SP {
 		x264_nal_t *encoder_nal;
 		int encoder_i_nal;
 
-		x264_t* encoder_h264_encoder = NULL;
+		x264_t* encoder_h264_encoder = nullptr;
 
 	};
 
