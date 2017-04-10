@@ -101,6 +101,7 @@ const ::google::protobuf::uint32 TableStruct::offsets[] = {
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(StreamingMessage, cameramsg_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(StreamingMessage, imagemsg_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(StreamingMessage, endingmsg_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(StreamingMessage, controlmsg_),
 };
 
 static const ::google::protobuf::internal::MigrationSchema schemas[] = {
@@ -184,6 +185,8 @@ void TableStruct::InitDefaultsImpl() {
       ::StreamingFormat::Image::internal_default_instance());
   _StreamingMessage_default_instance_.get_mutable()->endingmsg_ = const_cast< ::StreamingFormat::Ending*>(
       ::StreamingFormat::Ending::internal_default_instance());
+  _StreamingMessage_default_instance_.get_mutable()->controlmsg_ = const_cast< ::StreamingFormat::Control*>(
+      ::StreamingFormat::Control::internal_default_instance());
 }
 
 void InitDefaults() {
@@ -204,7 +207,7 @@ void AddDescriptorsImpl() {
       "l\022\022\n\ndrop_index\030\001 \003(\r\022\022\n\nsave_frame\030\002 \001("
       "\r\022\024\n\014change_scene\030\003 \001(\r\"R\n\005Image\022\024\n\014seri"
       "alNumber\030\002 \001(\r\022\016\n\006status\030\003 \001(\r\022\020\n\010byteSi"
-      "ze\030\004 \001(\r\022\021\n\timageData\030\005 \001(\014\"\010\n\006Ending\"\234\002"
+      "ze\030\004 \001(\r\022\021\n\timageData\030\005 \001(\014\"\010\n\006Ending\"\312\002"
       "\n\020StreamingMessage\022*\n\004type\030\001 \001(\0162\034.Strea"
       "mingFormat.MessageType\022&\n\007initMsg\030\002 \001(\0132"
       "\025.StreamingFormat.Init\0222\n\rdefaultPosMsg\030"
@@ -212,13 +215,14 @@ void AddDescriptorsImpl() {
       "meraMsg\030\004 \001(\0132\027.StreamingFormat.Camera\022("
       "\n\010imageMsg\030\005 \001(\0132\026.StreamingFormat.Image"
       "\022*\n\tendingMsg\030\006 \001(\0132\027.StreamingFormat.En"
-      "ding*m\n\013MessageType\022\013\n\007MsgInit\020\000\022\021\n\rMsgD"
-      "efaultPos\020\001\022\021\n\rMsgCameraInfo\020\002\022\014\n\010MsgIma"
-      "ge\020\003\022\r\n\tMsgEnding\020\004\022\016\n\nMsgControl\020\005b\006pro"
-      "to3"
+      "ding\022,\n\ncontrolMsg\030\007 \001(\0132\030.StreamingForm"
+      "at.Control*m\n\013MessageType\022\013\n\007MsgInit\020\000\022\021"
+      "\n\rMsgDefaultPos\020\001\022\021\n\rMsgCameraInfo\020\002\022\014\n\010"
+      "MsgImage\020\003\022\r\n\tMsgEnding\020\004\022\016\n\nMsgControl\020"
+      "\005b\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 883);
+      descriptor, 929);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "message.proto", &protobuf_RegisterTypes);
   ::google::protobuf::internal::OnShutdown(&TableStruct::Shutdown);
@@ -2524,6 +2528,7 @@ const int StreamingMessage::kDefaultPosMsgFieldNumber;
 const int StreamingMessage::kCameraMsgFieldNumber;
 const int StreamingMessage::kImageMsgFieldNumber;
 const int StreamingMessage::kEndingMsgFieldNumber;
+const int StreamingMessage::kControlMsgFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 StreamingMessage::StreamingMessage()
@@ -2564,6 +2569,11 @@ StreamingMessage::StreamingMessage(const StreamingMessage& from)
   } else {
     endingmsg_ = NULL;
   }
+  if (from.has_controlmsg()) {
+    controlmsg_ = new ::StreamingFormat::Control(*from.controlmsg_);
+  } else {
+    controlmsg_ = NULL;
+  }
   type_ = from.type_;
   // @@protoc_insertion_point(copy_constructor:StreamingFormat.StreamingMessage)
 }
@@ -2594,6 +2604,9 @@ void StreamingMessage::SharedDtor() {
   }
   if (this != internal_default_instance()) {
     delete endingmsg_;
+  }
+  if (this != internal_default_instance()) {
+    delete controlmsg_;
   }
 }
 
@@ -2642,6 +2655,10 @@ void StreamingMessage::Clear() {
     delete endingmsg_;
   }
   endingmsg_ = NULL;
+  if (GetArenaNoVirtual() == NULL && controlmsg_ != NULL) {
+    delete controlmsg_;
+  }
+  controlmsg_ = NULL;
   type_ = 0;
 }
 
@@ -2724,6 +2741,17 @@ bool StreamingMessage::MergePartialFromCodedStream(
         break;
       }
 
+      // .StreamingFormat.Control controlMsg = 7;
+      case 7: {
+        if (tag == 58u) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_controlmsg()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
       default: {
       handle_unusual:
         if (tag == 0 ||
@@ -2784,6 +2812,12 @@ void StreamingMessage::SerializeWithCachedSizes(
       6, *this->endingmsg_, output);
   }
 
+  // .StreamingFormat.Control controlMsg = 7;
+  if (this->has_controlmsg()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      7, *this->controlmsg_, output);
+  }
+
   // @@protoc_insertion_point(serialize_end:StreamingFormat.StreamingMessage)
 }
 
@@ -2832,6 +2866,13 @@ void StreamingMessage::SerializeWithCachedSizes(
         6, *this->endingmsg_, false, target);
   }
 
+  // .StreamingFormat.Control controlMsg = 7;
+  if (this->has_controlmsg()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageNoVirtualToArray(
+        7, *this->controlmsg_, false, target);
+  }
+
   // @@protoc_insertion_point(serialize_to_array_end:StreamingFormat.StreamingMessage)
   return target;
 }
@@ -2873,6 +2914,13 @@ size_t StreamingMessage::ByteSizeLong() const {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
         *this->endingmsg_);
+  }
+
+  // .StreamingFormat.Control controlMsg = 7;
+  if (this->has_controlmsg()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->controlmsg_);
   }
 
   // .StreamingFormat.MessageType type = 1;
@@ -2922,6 +2970,9 @@ void StreamingMessage::MergeFrom(const StreamingMessage& from) {
   if (from.has_endingmsg()) {
     mutable_endingmsg()->::StreamingFormat::Ending::MergeFrom(from.endingmsg());
   }
+  if (from.has_controlmsg()) {
+    mutable_controlmsg()->::StreamingFormat::Control::MergeFrom(from.controlmsg());
+  }
   if (from.type() != 0) {
     set_type(from.type());
   }
@@ -2955,6 +3006,7 @@ void StreamingMessage::InternalSwap(StreamingMessage* other) {
   std::swap(cameramsg_, other->cameramsg_);
   std::swap(imagemsg_, other->imagemsg_);
   std::swap(endingmsg_, other->endingmsg_);
+  std::swap(controlmsg_, other->controlmsg_);
   std::swap(type_, other->type_);
   std::swap(_cached_size_, other->_cached_size_);
 }
@@ -3174,6 +3226,45 @@ void StreamingMessage::set_allocated_endingmsg(::StreamingFormat::Ending* ending
     
   }
   // @@protoc_insertion_point(field_set_allocated:StreamingFormat.StreamingMessage.endingMsg)
+}
+
+// .StreamingFormat.Control controlMsg = 7;
+bool StreamingMessage::has_controlmsg() const {
+  return this != internal_default_instance() && controlmsg_ != NULL;
+}
+void StreamingMessage::clear_controlmsg() {
+  if (GetArenaNoVirtual() == NULL && controlmsg_ != NULL) delete controlmsg_;
+  controlmsg_ = NULL;
+}
+const ::StreamingFormat::Control& StreamingMessage::controlmsg() const {
+  // @@protoc_insertion_point(field_get:StreamingFormat.StreamingMessage.controlMsg)
+  return controlmsg_ != NULL ? *controlmsg_
+                         : *::StreamingFormat::Control::internal_default_instance();
+}
+::StreamingFormat::Control* StreamingMessage::mutable_controlmsg() {
+  
+  if (controlmsg_ == NULL) {
+    controlmsg_ = new ::StreamingFormat::Control;
+  }
+  // @@protoc_insertion_point(field_mutable:StreamingFormat.StreamingMessage.controlMsg)
+  return controlmsg_;
+}
+::StreamingFormat::Control* StreamingMessage::release_controlmsg() {
+  // @@protoc_insertion_point(field_release:StreamingFormat.StreamingMessage.controlMsg)
+  
+  ::StreamingFormat::Control* temp = controlmsg_;
+  controlmsg_ = NULL;
+  return temp;
+}
+void StreamingMessage::set_allocated_controlmsg(::StreamingFormat::Control* controlmsg) {
+  delete controlmsg_;
+  controlmsg_ = controlmsg;
+  if (controlmsg) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:StreamingFormat.StreamingMessage.controlMsg)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS

@@ -66,10 +66,10 @@ message Ending {
 message StreamingMessage {
 
   MessageType type = 1;
-
   Init initMsg = 2;
   DefaultPos defaultPosMsg = 3;
   Camera cameraMsg = 4;
   Image imageMsg = 5;
   Ending endingMsg = 6;
+  Control controlMsg = 7;
 }

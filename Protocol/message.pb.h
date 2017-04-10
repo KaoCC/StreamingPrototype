@@ -838,6 +838,15 @@ class StreamingMessage : public ::google::protobuf::Message /* @@protoc_insertio
   ::StreamingFormat::Ending* release_endingmsg();
   void set_allocated_endingmsg(::StreamingFormat::Ending* endingmsg);
 
+  // .StreamingFormat.Control controlMsg = 7;
+  bool has_controlmsg() const;
+  void clear_controlmsg();
+  static const int kControlMsgFieldNumber = 7;
+  const ::StreamingFormat::Control& controlmsg() const;
+  ::StreamingFormat::Control* mutable_controlmsg();
+  ::StreamingFormat::Control* release_controlmsg();
+  void set_allocated_controlmsg(::StreamingFormat::Control* controlmsg);
+
   // .StreamingFormat.MessageType type = 1;
   void clear_type();
   static const int kTypeFieldNumber = 1;
@@ -853,6 +862,7 @@ class StreamingMessage : public ::google::protobuf::Message /* @@protoc_insertio
   ::StreamingFormat::Camera* cameramsg_;
   ::StreamingFormat::Image* imagemsg_;
   ::StreamingFormat::Ending* endingmsg_;
+  ::StreamingFormat::Control* controlmsg_;
   int type_;
   mutable int _cached_size_;
   friend struct  protobuf_message_2eproto::TableStruct;
@@ -1472,6 +1482,45 @@ inline void StreamingMessage::set_allocated_endingmsg(::StreamingFormat::Ending*
     
   }
   // @@protoc_insertion_point(field_set_allocated:StreamingFormat.StreamingMessage.endingMsg)
+}
+
+// .StreamingFormat.Control controlMsg = 7;
+inline bool StreamingMessage::has_controlmsg() const {
+  return this != internal_default_instance() && controlmsg_ != NULL;
+}
+inline void StreamingMessage::clear_controlmsg() {
+  if (GetArenaNoVirtual() == NULL && controlmsg_ != NULL) delete controlmsg_;
+  controlmsg_ = NULL;
+}
+inline const ::StreamingFormat::Control& StreamingMessage::controlmsg() const {
+  // @@protoc_insertion_point(field_get:StreamingFormat.StreamingMessage.controlMsg)
+  return controlmsg_ != NULL ? *controlmsg_
+                         : *::StreamingFormat::Control::internal_default_instance();
+}
+inline ::StreamingFormat::Control* StreamingMessage::mutable_controlmsg() {
+  
+  if (controlmsg_ == NULL) {
+    controlmsg_ = new ::StreamingFormat::Control;
+  }
+  // @@protoc_insertion_point(field_mutable:StreamingFormat.StreamingMessage.controlMsg)
+  return controlmsg_;
+}
+inline ::StreamingFormat::Control* StreamingMessage::release_controlmsg() {
+  // @@protoc_insertion_point(field_release:StreamingFormat.StreamingMessage.controlMsg)
+  
+  ::StreamingFormat::Control* temp = controlmsg_;
+  controlmsg_ = NULL;
+  return temp;
+}
+inline void StreamingMessage::set_allocated_controlmsg(::StreamingFormat::Control* controlmsg) {
+  delete controlmsg_;
+  controlmsg_ = controlmsg;
+  if (controlmsg) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:StreamingFormat.StreamingMessage.controlMsg)
 }
 
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
