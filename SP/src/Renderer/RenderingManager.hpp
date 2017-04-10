@@ -85,7 +85,7 @@ namespace SP {
 		const std::string defaultModelname = "orig.objm";
 
 		//tmp
-		const float kStep = 0.025;
+		const float kStep = 0.025f;
 
 
 		// Scene Data
