@@ -21,27 +21,27 @@ namespace SP {
 	}
 
 	/// Return random unsigned
-	uint32_t UniformSampler_SampleUint(Sampler* sampler) {
-		sampler->index = WangHash(1664525U * sampler->index + 1013904223U);
-		return sampler->index;
-	}
+	//uint32_t UniformSampler_SampleUint(Sampler* sampler) {
+	//	sampler->index = WangHash(1664525U * sampler->index + 1013904223U);
+	//	return sampler->index;
+	//}
 
-	/// Return random float
-	float UniformSampler_Sample1D(Sampler* sampler) {
-		return ((float)UniformSampler_SampleUint(sampler)) / 0xffffffffU;
-	}
+	///// Return random float
+	//float UniformSampler_Sample1D(Sampler* sampler) {
+	//	return ((float)UniformSampler_SampleUint(sampler)) / 0xffffffffU;
+	//}
 
-	RadeonRays::float2 Sampler_Sample2D(Sampler* sampler) {
-		RadeonRays::float2 sample;
-		sample.x = UniformSampler_Sample1D(sampler);
-		sample.y = UniformSampler_Sample1D(sampler);
-		return sample;
+	//RadeonRays::float2 Sampler_Sample2D(Sampler* sampler) {
+	//	RadeonRays::float2 sample;
+	//	sample.x = UniformSampler_Sample1D(sampler);
+	//	sample.y = UniformSampler_Sample1D(sampler);
+	//	return sample;
 
-	}
+	//}
 
-	float Sampler_Sample1D(Sampler * sampler) {
-		return UniformSampler_Sample1D(sampler);
-	}
+	//float Sampler_Sample1D(Sampler * sampler) {
+	//	return UniformSampler_Sample1D(sampler);
+	//}
 
 	RadeonRays::float3 Sample_MapToHemisphere(RadeonRays::float2 sample, RadeonRays::float3 n, float e) {
 
@@ -65,7 +65,7 @@ namespace SP {
 	}
 
 
-	// End of tmp code for sampler
+
 
 }
 
