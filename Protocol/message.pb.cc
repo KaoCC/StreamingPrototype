@@ -24,6 +24,8 @@ class DefaultPosDefaultTypeInternal : public ::google::protobuf::internal::Expli
 } _DefaultPos_default_instance_;
 class CameraDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<Camera> {
 } _Camera_default_instance_;
+class ControlDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<Control> {
+} _Control_default_instance_;
 class ImageDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<Image> {
 } _Image_default_instance_;
 class EndingDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<Ending> {
@@ -36,7 +38,7 @@ namespace protobuf_message_2eproto {
 
 namespace {
 
-::google::protobuf::Metadata file_level_metadata[6];
+::google::protobuf::Metadata file_level_metadata[7];
 const ::google::protobuf::EnumDescriptor* file_level_enum_descriptors[1];
 
 }  // namespace
@@ -70,7 +72,13 @@ const ::google::protobuf::uint32 TableStruct::offsets[] = {
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Camera, delta_vx_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Camera, delta_vy_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Camera, delta_vz_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Camera, drop_index_),
+  ~0u,  // no _has_bits_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Control, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Control, drop_index_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Control, save_frame_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Control, change_scene_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Image, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -93,21 +101,24 @@ const ::google::protobuf::uint32 TableStruct::offsets[] = {
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(StreamingMessage, cameramsg_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(StreamingMessage, imagemsg_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(StreamingMessage, endingmsg_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(StreamingMessage, controlmsg_),
 };
 
 static const ::google::protobuf::internal::MigrationSchema schemas[] = {
   { 0, -1, sizeof(Init)},
   { 7, -1, sizeof(DefaultPos)},
   { 17, -1, sizeof(Camera)},
-  { 29, -1, sizeof(Image)},
-  { 37, -1, sizeof(Ending)},
-  { 41, -1, sizeof(StreamingMessage)},
+  { 28, -1, sizeof(Control)},
+  { 35, -1, sizeof(Image)},
+  { 43, -1, sizeof(Ending)},
+  { 47, -1, sizeof(StreamingMessage)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
   reinterpret_cast<const ::google::protobuf::Message*>(&_Init_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_DefaultPos_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_Camera_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&_Control_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_Image_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_Ending_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_StreamingMessage_default_instance_),
@@ -131,7 +142,7 @@ void protobuf_AssignDescriptorsOnce() {
 void protobuf_RegisterTypes(const ::std::string&) GOOGLE_ATTRIBUTE_COLD;
 void protobuf_RegisterTypes(const ::std::string&) {
   protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 6);
+  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 7);
 }
 
 }  // namespace
@@ -143,12 +154,14 @@ void TableStruct::Shutdown() {
   delete file_level_metadata[1].reflection;
   _Camera_default_instance_.Shutdown();
   delete file_level_metadata[2].reflection;
-  _Image_default_instance_.Shutdown();
+  _Control_default_instance_.Shutdown();
   delete file_level_metadata[3].reflection;
-  _Ending_default_instance_.Shutdown();
+  _Image_default_instance_.Shutdown();
   delete file_level_metadata[4].reflection;
-  _StreamingMessage_default_instance_.Shutdown();
+  _Ending_default_instance_.Shutdown();
   delete file_level_metadata[5].reflection;
+  _StreamingMessage_default_instance_.Shutdown();
+  delete file_level_metadata[6].reflection;
 }
 
 void TableStruct::InitDefaultsImpl() {
@@ -158,6 +171,7 @@ void TableStruct::InitDefaultsImpl() {
   _Init_default_instance_.DefaultConstruct();
   _DefaultPos_default_instance_.DefaultConstruct();
   _Camera_default_instance_.DefaultConstruct();
+  _Control_default_instance_.DefaultConstruct();
   _Image_default_instance_.DefaultConstruct();
   _Ending_default_instance_.DefaultConstruct();
   _StreamingMessage_default_instance_.DefaultConstruct();
@@ -171,6 +185,8 @@ void TableStruct::InitDefaultsImpl() {
       ::StreamingFormat::Image::internal_default_instance());
   _StreamingMessage_default_instance_.get_mutable()->endingmsg_ = const_cast< ::StreamingFormat::Ending*>(
       ::StreamingFormat::Ending::internal_default_instance());
+  _StreamingMessage_default_instance_.get_mutable()->controlmsg_ = const_cast< ::StreamingFormat::Control*>(
+      ::StreamingFormat::Control::internal_default_instance());
 }
 
 void InitDefaults() {
@@ -184,26 +200,29 @@ void AddDescriptorsImpl() {
       "\022\r\n\005width\030\002 \001(\r\022\016\n\006height\030\003 \001(\r\022\020\n\010modul"
       "eID\030\004 \001(\r\"Q\n\nDefaultPos\022\t\n\001x\030\002 \001(\002\022\t\n\001y\030"
       "\003 \001(\002\022\t\n\001z\030\004 \001(\002\022\n\n\002vx\030\005 \001(\002\022\n\n\002vy\030\006 \001(\002"
-      "\022\n\n\002vz\030\007 \001(\002\"\233\001\n\006Camera\022\024\n\014serialNumber\030"
+      "\022\n\n\002vz\030\007 \001(\002\"\207\001\n\006Camera\022\024\n\014serialNumber\030"
       "\002 \001(\r\022\017\n\007delta_x\030\003 \001(\002\022\017\n\007delta_y\030\004 \001(\002\022"
       "\017\n\007delta_z\030\005 \001(\002\022\020\n\010delta_vx\030\006 \001(\002\022\020\n\010de"
-      "lta_vy\030\007 \001(\002\022\020\n\010delta_vz\030\010 \001(\002\022\022\n\ndrop_i"
-      "ndex\030\t \003(\r\"R\n\005Image\022\024\n\014serialNumber\030\002 \001("
-      "\r\022\016\n\006status\030\003 \001(\r\022\020\n\010byteSize\030\004 \001(\r\022\021\n\ti"
-      "mageData\030\005 \001(\014\"\010\n\006Ending\"\234\002\n\020StreamingMe"
-      "ssage\022*\n\004type\030\001 \001(\0162\034.StreamingFormat.Me"
-      "ssageType\022&\n\007initMsg\030\002 \001(\0132\025.StreamingFo"
-      "rmat.Init\0222\n\rdefaultPosMsg\030\003 \001(\0132\033.Strea"
-      "mingFormat.DefaultPos\022*\n\tcameraMsg\030\004 \001(\013"
-      "2\027.StreamingFormat.Camera\022(\n\010imageMsg\030\005 "
-      "\001(\0132\026.StreamingFormat.Image\022*\n\tendingMsg"
-      "\030\006 \001(\0132\027.StreamingFormat.Ending*]\n\013Messa"
-      "geType\022\013\n\007MsgInit\020\000\022\021\n\rMsgDefaultPos\020\001\022\021"
-      "\n\rMsgCameraInfo\020\002\022\014\n\010MsgImage\020\003\022\r\n\tMsgEn"
-      "ding\020\004b\006proto3"
+      "lta_vy\030\007 \001(\002\022\020\n\010delta_vz\030\010 \001(\002\"G\n\007Contro"
+      "l\022\022\n\ndrop_index\030\001 \003(\r\022\022\n\nsave_frame\030\002 \001("
+      "\r\022\024\n\014change_scene\030\003 \001(\r\"R\n\005Image\022\024\n\014seri"
+      "alNumber\030\002 \001(\r\022\016\n\006status\030\003 \001(\r\022\020\n\010byteSi"
+      "ze\030\004 \001(\r\022\021\n\timageData\030\005 \001(\014\"\010\n\006Ending\"\312\002"
+      "\n\020StreamingMessage\022*\n\004type\030\001 \001(\0162\034.Strea"
+      "mingFormat.MessageType\022&\n\007initMsg\030\002 \001(\0132"
+      "\025.StreamingFormat.Init\0222\n\rdefaultPosMsg\030"
+      "\003 \001(\0132\033.StreamingFormat.DefaultPos\022*\n\tca"
+      "meraMsg\030\004 \001(\0132\027.StreamingFormat.Camera\022("
+      "\n\010imageMsg\030\005 \001(\0132\026.StreamingFormat.Image"
+      "\022*\n\tendingMsg\030\006 \001(\0132\027.StreamingFormat.En"
+      "ding\022,\n\ncontrolMsg\030\007 \001(\0132\030.StreamingForm"
+      "at.Control*m\n\013MessageType\022\013\n\007MsgInit\020\000\022\021"
+      "\n\rMsgDefaultPos\020\001\022\021\n\rMsgCameraInfo\020\002\022\014\n\010"
+      "MsgImage\020\003\022\r\n\tMsgEnding\020\004\022\016\n\nMsgControl\020"
+      "\005b\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 814);
+      descriptor, 929);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "message.proto", &protobuf_RegisterTypes);
   ::google::protobuf::internal::OnShutdown(&TableStruct::Shutdown);
@@ -233,6 +252,7 @@ bool MessageType_IsValid(int value) {
     case 2:
     case 3:
     case 4:
+    case 5:
       return true;
     default:
       return false;
@@ -1039,7 +1059,6 @@ const int Camera::kDeltaZFieldNumber;
 const int Camera::kDeltaVxFieldNumber;
 const int Camera::kDeltaVyFieldNumber;
 const int Camera::kDeltaVzFieldNumber;
-const int Camera::kDropIndexFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 Camera::Camera()
@@ -1053,7 +1072,6 @@ Camera::Camera()
 Camera::Camera(const Camera& from)
   : ::google::protobuf::Message(),
       _internal_metadata_(NULL),
-      drop_index_(from.drop_index_),
       _cached_size_(0) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::memcpy(&serialnumber_, &from.serialnumber_,
@@ -1101,7 +1119,6 @@ Camera* Camera::New(::google::protobuf::Arena* arena) const {
 
 void Camera::Clear() {
 // @@protoc_insertion_point(message_clear_start:StreamingFormat.Camera)
-  drop_index_.Clear();
   ::memset(&serialnumber_, 0, reinterpret_cast<char*>(&delta_vz_) -
     reinterpret_cast<char*>(&serialnumber_) + sizeof(delta_vz_));
 }
@@ -1207,22 +1224,6 @@ bool Camera::MergePartialFromCodedStream(
         break;
       }
 
-      // repeated uint32 drop_index = 9;
-      case 9: {
-        if (tag == 74u) {
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitive<
-                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
-                 input, this->mutable_drop_index())));
-        } else if (tag == 72u) {
-          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitiveNoInline<
-                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
-                 1, 74u, input, this->mutable_drop_index())));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
       default: {
       handle_unusual:
         if (tag == 0 ||
@@ -1282,16 +1283,6 @@ void Camera::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteFloat(8, this->delta_vz(), output);
   }
 
-  // repeated uint32 drop_index = 9;
-  if (this->drop_index_size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteTag(9, ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED, output);
-    output->WriteVarint32(_drop_index_cached_byte_size_);
-  }
-  for (int i = 0; i < this->drop_index_size(); i++) {
-    ::google::protobuf::internal::WireFormatLite::WriteUInt32NoTag(
-      this->drop_index(i), output);
-  }
-
   // @@protoc_insertion_point(serialize_end:StreamingFormat.Camera)
 }
 
@@ -1334,20 +1325,6 @@ void Camera::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(8, this->delta_vz(), target);
   }
 
-  // repeated uint32 drop_index = 9;
-  if (this->drop_index_size() > 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteTagToArray(
-      9,
-      ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED,
-      target);
-    target = ::google::protobuf::io::CodedOutputStream::WriteVarint32ToArray(
-      _drop_index_cached_byte_size_, target);
-  }
-  for (int i = 0; i < this->drop_index_size(); i++) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteUInt32NoTagToArray(this->drop_index(i), target);
-  }
-
   // @@protoc_insertion_point(serialize_to_array_end:StreamingFormat.Camera)
   return target;
 }
@@ -1355,21 +1332,6 @@ void Camera::SerializeWithCachedSizes(
 size_t Camera::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:StreamingFormat.Camera)
   size_t total_size = 0;
-
-  // repeated uint32 drop_index = 9;
-  {
-    size_t data_size = ::google::protobuf::internal::WireFormatLite::
-      UInt32Size(this->drop_index_);
-    if (data_size > 0) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(data_size);
-    }
-    int cached_size = ::google::protobuf::internal::ToCachedSize(data_size);
-    GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-    _drop_index_cached_byte_size_ = cached_size;
-    GOOGLE_SAFE_CONCURRENT_WRITES_END();
-    total_size += data_size;
-  }
 
   // uint32 serialNumber = 2;
   if (this->serialnumber() != 0) {
@@ -1434,7 +1396,6 @@ void Camera::MergeFrom(const Camera& from) {
 // @@protoc_insertion_point(class_specific_merge_from_start:StreamingFormat.Camera)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
-  drop_index_.MergeFrom(from.drop_index_);
   if (from.serialnumber() != 0) {
     set_serialnumber(from.serialnumber());
   }
@@ -1481,7 +1442,6 @@ void Camera::Swap(Camera* other) {
   InternalSwap(other);
 }
 void Camera::InternalSwap(Camera* other) {
-  drop_index_.UnsafeArenaSwap(&other->drop_index_);
   std::swap(serialnumber_, other->serialnumber_);
   std::swap(delta_x_, other->delta_x_);
   std::swap(delta_y_, other->delta_y_);
@@ -1598,34 +1558,372 @@ void Camera::set_delta_vz(float value) {
   // @@protoc_insertion_point(field_set:StreamingFormat.Camera.delta_vz)
 }
 
-// repeated uint32 drop_index = 9;
-int Camera::drop_index_size() const {
+#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
+
+// ===================================================================
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int Control::kDropIndexFieldNumber;
+const int Control::kSaveFrameFieldNumber;
+const int Control::kChangeSceneFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+Control::Control()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
+    protobuf_message_2eproto::InitDefaults();
+  }
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:StreamingFormat.Control)
+}
+Control::Control(const Control& from)
+  : ::google::protobuf::Message(),
+      _internal_metadata_(NULL),
+      drop_index_(from.drop_index_),
+      _cached_size_(0) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::memcpy(&save_frame_, &from.save_frame_,
+    reinterpret_cast<char*>(&change_scene_) -
+    reinterpret_cast<char*>(&save_frame_) + sizeof(change_scene_));
+  // @@protoc_insertion_point(copy_constructor:StreamingFormat.Control)
+}
+
+void Control::SharedCtor() {
+  ::memset(&save_frame_, 0, reinterpret_cast<char*>(&change_scene_) -
+    reinterpret_cast<char*>(&save_frame_) + sizeof(change_scene_));
+  _cached_size_ = 0;
+}
+
+Control::~Control() {
+  // @@protoc_insertion_point(destructor:StreamingFormat.Control)
+  SharedDtor();
+}
+
+void Control::SharedDtor() {
+}
+
+void Control::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* Control::descriptor() {
+  protobuf_message_2eproto::protobuf_AssignDescriptorsOnce();
+  return protobuf_message_2eproto::file_level_metadata[3].descriptor;
+}
+
+const Control& Control::default_instance() {
+  protobuf_message_2eproto::InitDefaults();
+  return *internal_default_instance();
+}
+
+Control* Control::New(::google::protobuf::Arena* arena) const {
+  Control* n = new Control;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void Control::Clear() {
+// @@protoc_insertion_point(message_clear_start:StreamingFormat.Control)
+  drop_index_.Clear();
+  ::memset(&save_frame_, 0, reinterpret_cast<char*>(&change_scene_) -
+    reinterpret_cast<char*>(&save_frame_) + sizeof(change_scene_));
+}
+
+bool Control::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:StreamingFormat.Control)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // repeated uint32 drop_index = 1;
+      case 1: {
+        if (tag == 10u) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, this->mutable_drop_index())));
+        } else if (tag == 8u) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitiveNoInline<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 1, 10u, input, this->mutable_drop_index())));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // uint32 save_frame = 2;
+      case 2: {
+        if (tag == 16u) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &save_frame_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // uint32 change_scene = 3;
+      case 3: {
+        if (tag == 24u) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &change_scene_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:StreamingFormat.Control)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:StreamingFormat.Control)
+  return false;
+#undef DO_
+}
+
+void Control::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:StreamingFormat.Control)
+  // repeated uint32 drop_index = 1;
+  if (this->drop_index_size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteTag(1, ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED, output);
+    output->WriteVarint32(_drop_index_cached_byte_size_);
+  }
+  for (int i = 0; i < this->drop_index_size(); i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32NoTag(
+      this->drop_index(i), output);
+  }
+
+  // uint32 save_frame = 2;
+  if (this->save_frame() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(2, this->save_frame(), output);
+  }
+
+  // uint32 change_scene = 3;
+  if (this->change_scene() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(3, this->change_scene(), output);
+  }
+
+  // @@protoc_insertion_point(serialize_end:StreamingFormat.Control)
+}
+
+::google::protobuf::uint8* Control::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
+  (void)deterministic;  // Unused
+  // @@protoc_insertion_point(serialize_to_array_start:StreamingFormat.Control)
+  // repeated uint32 drop_index = 1;
+  if (this->drop_index_size() > 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteTagToArray(
+      1,
+      ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED,
+      target);
+    target = ::google::protobuf::io::CodedOutputStream::WriteVarint32ToArray(
+      _drop_index_cached_byte_size_, target);
+  }
+  for (int i = 0; i < this->drop_index_size(); i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteUInt32NoTagToArray(this->drop_index(i), target);
+  }
+
+  // uint32 save_frame = 2;
+  if (this->save_frame() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(2, this->save_frame(), target);
+  }
+
+  // uint32 change_scene = 3;
+  if (this->change_scene() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(3, this->change_scene(), target);
+  }
+
+  // @@protoc_insertion_point(serialize_to_array_end:StreamingFormat.Control)
+  return target;
+}
+
+size_t Control::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:StreamingFormat.Control)
+  size_t total_size = 0;
+
+  // repeated uint32 drop_index = 1;
+  {
+    size_t data_size = ::google::protobuf::internal::WireFormatLite::
+      UInt32Size(this->drop_index_);
+    if (data_size > 0) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int32Size(data_size);
+    }
+    int cached_size = ::google::protobuf::internal::ToCachedSize(data_size);
+    GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+    _drop_index_cached_byte_size_ = cached_size;
+    GOOGLE_SAFE_CONCURRENT_WRITES_END();
+    total_size += data_size;
+  }
+
+  // uint32 save_frame = 2;
+  if (this->save_frame() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::UInt32Size(
+        this->save_frame());
+  }
+
+  // uint32 change_scene = 3;
+  if (this->change_scene() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::UInt32Size(
+        this->change_scene());
+  }
+
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = cached_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void Control::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:StreamingFormat.Control)
+  GOOGLE_DCHECK_NE(&from, this);
+  const Control* source =
+      ::google::protobuf::internal::DynamicCastToGenerated<const Control>(
+          &from);
+  if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:StreamingFormat.Control)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:StreamingFormat.Control)
+    MergeFrom(*source);
+  }
+}
+
+void Control::MergeFrom(const Control& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:StreamingFormat.Control)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  drop_index_.MergeFrom(from.drop_index_);
+  if (from.save_frame() != 0) {
+    set_save_frame(from.save_frame());
+  }
+  if (from.change_scene() != 0) {
+    set_change_scene(from.change_scene());
+  }
+}
+
+void Control::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:StreamingFormat.Control)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void Control::CopyFrom(const Control& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:StreamingFormat.Control)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool Control::IsInitialized() const {
+  return true;
+}
+
+void Control::Swap(Control* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void Control::InternalSwap(Control* other) {
+  drop_index_.UnsafeArenaSwap(&other->drop_index_);
+  std::swap(save_frame_, other->save_frame_);
+  std::swap(change_scene_, other->change_scene_);
+  std::swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata Control::GetMetadata() const {
+  protobuf_message_2eproto::protobuf_AssignDescriptorsOnce();
+  return protobuf_message_2eproto::file_level_metadata[3];
+}
+
+#if PROTOBUF_INLINE_NOT_IN_HEADERS
+// Control
+
+// repeated uint32 drop_index = 1;
+int Control::drop_index_size() const {
   return drop_index_.size();
 }
-void Camera::clear_drop_index() {
+void Control::clear_drop_index() {
   drop_index_.Clear();
 }
-::google::protobuf::uint32 Camera::drop_index(int index) const {
-  // @@protoc_insertion_point(field_get:StreamingFormat.Camera.drop_index)
+::google::protobuf::uint32 Control::drop_index(int index) const {
+  // @@protoc_insertion_point(field_get:StreamingFormat.Control.drop_index)
   return drop_index_.Get(index);
 }
-void Camera::set_drop_index(int index, ::google::protobuf::uint32 value) {
+void Control::set_drop_index(int index, ::google::protobuf::uint32 value) {
   drop_index_.Set(index, value);
-  // @@protoc_insertion_point(field_set:StreamingFormat.Camera.drop_index)
+  // @@protoc_insertion_point(field_set:StreamingFormat.Control.drop_index)
 }
-void Camera::add_drop_index(::google::protobuf::uint32 value) {
+void Control::add_drop_index(::google::protobuf::uint32 value) {
   drop_index_.Add(value);
-  // @@protoc_insertion_point(field_add:StreamingFormat.Camera.drop_index)
+  // @@protoc_insertion_point(field_add:StreamingFormat.Control.drop_index)
 }
 const ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >&
-Camera::drop_index() const {
-  // @@protoc_insertion_point(field_list:StreamingFormat.Camera.drop_index)
+Control::drop_index() const {
+  // @@protoc_insertion_point(field_list:StreamingFormat.Control.drop_index)
   return drop_index_;
 }
 ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >*
-Camera::mutable_drop_index() {
-  // @@protoc_insertion_point(field_mutable_list:StreamingFormat.Camera.drop_index)
+Control::mutable_drop_index() {
+  // @@protoc_insertion_point(field_mutable_list:StreamingFormat.Control.drop_index)
   return &drop_index_;
+}
+
+// uint32 save_frame = 2;
+void Control::clear_save_frame() {
+  save_frame_ = 0u;
+}
+::google::protobuf::uint32 Control::save_frame() const {
+  // @@protoc_insertion_point(field_get:StreamingFormat.Control.save_frame)
+  return save_frame_;
+}
+void Control::set_save_frame(::google::protobuf::uint32 value) {
+  
+  save_frame_ = value;
+  // @@protoc_insertion_point(field_set:StreamingFormat.Control.save_frame)
+}
+
+// uint32 change_scene = 3;
+void Control::clear_change_scene() {
+  change_scene_ = 0u;
+}
+::google::protobuf::uint32 Control::change_scene() const {
+  // @@protoc_insertion_point(field_get:StreamingFormat.Control.change_scene)
+  return change_scene_;
+}
+void Control::set_change_scene(::google::protobuf::uint32 value) {
+  
+  change_scene_ = value;
+  // @@protoc_insertion_point(field_set:StreamingFormat.Control.change_scene)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -1685,7 +1983,7 @@ void Image::SetCachedSize(int size) const {
 }
 const ::google::protobuf::Descriptor* Image::descriptor() {
   protobuf_message_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_message_2eproto::file_level_metadata[3].descriptor;
+  return protobuf_message_2eproto::file_level_metadata[4].descriptor;
 }
 
 const Image& Image::default_instance() {
@@ -1951,7 +2249,7 @@ void Image::InternalSwap(Image* other) {
 
 ::google::protobuf::Metadata Image::GetMetadata() const {
   protobuf_message_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_message_2eproto::file_level_metadata[3];
+  return protobuf_message_2eproto::file_level_metadata[4];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -2093,7 +2391,7 @@ void Ending::SetCachedSize(int size) const {
 }
 const ::google::protobuf::Descriptor* Ending::descriptor() {
   protobuf_message_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_message_2eproto::file_level_metadata[4].descriptor;
+  return protobuf_message_2eproto::file_level_metadata[5].descriptor;
 }
 
 const Ending& Ending::default_instance() {
@@ -2213,7 +2511,7 @@ void Ending::InternalSwap(Ending* other) {
 
 ::google::protobuf::Metadata Ending::GetMetadata() const {
   protobuf_message_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_message_2eproto::file_level_metadata[4];
+  return protobuf_message_2eproto::file_level_metadata[5];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -2230,6 +2528,7 @@ const int StreamingMessage::kDefaultPosMsgFieldNumber;
 const int StreamingMessage::kCameraMsgFieldNumber;
 const int StreamingMessage::kImageMsgFieldNumber;
 const int StreamingMessage::kEndingMsgFieldNumber;
+const int StreamingMessage::kControlMsgFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 StreamingMessage::StreamingMessage()
@@ -2270,6 +2569,11 @@ StreamingMessage::StreamingMessage(const StreamingMessage& from)
   } else {
     endingmsg_ = NULL;
   }
+  if (from.has_controlmsg()) {
+    controlmsg_ = new ::StreamingFormat::Control(*from.controlmsg_);
+  } else {
+    controlmsg_ = NULL;
+  }
   type_ = from.type_;
   // @@protoc_insertion_point(copy_constructor:StreamingFormat.StreamingMessage)
 }
@@ -2301,6 +2605,9 @@ void StreamingMessage::SharedDtor() {
   if (this != internal_default_instance()) {
     delete endingmsg_;
   }
+  if (this != internal_default_instance()) {
+    delete controlmsg_;
+  }
 }
 
 void StreamingMessage::SetCachedSize(int size) const {
@@ -2310,7 +2617,7 @@ void StreamingMessage::SetCachedSize(int size) const {
 }
 const ::google::protobuf::Descriptor* StreamingMessage::descriptor() {
   protobuf_message_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_message_2eproto::file_level_metadata[5].descriptor;
+  return protobuf_message_2eproto::file_level_metadata[6].descriptor;
 }
 
 const StreamingMessage& StreamingMessage::default_instance() {
@@ -2348,6 +2655,10 @@ void StreamingMessage::Clear() {
     delete endingmsg_;
   }
   endingmsg_ = NULL;
+  if (GetArenaNoVirtual() == NULL && controlmsg_ != NULL) {
+    delete controlmsg_;
+  }
+  controlmsg_ = NULL;
   type_ = 0;
 }
 
@@ -2430,6 +2741,17 @@ bool StreamingMessage::MergePartialFromCodedStream(
         break;
       }
 
+      // .StreamingFormat.Control controlMsg = 7;
+      case 7: {
+        if (tag == 58u) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_controlmsg()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
       default: {
       handle_unusual:
         if (tag == 0 ||
@@ -2490,6 +2812,12 @@ void StreamingMessage::SerializeWithCachedSizes(
       6, *this->endingmsg_, output);
   }
 
+  // .StreamingFormat.Control controlMsg = 7;
+  if (this->has_controlmsg()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      7, *this->controlmsg_, output);
+  }
+
   // @@protoc_insertion_point(serialize_end:StreamingFormat.StreamingMessage)
 }
 
@@ -2538,6 +2866,13 @@ void StreamingMessage::SerializeWithCachedSizes(
         6, *this->endingmsg_, false, target);
   }
 
+  // .StreamingFormat.Control controlMsg = 7;
+  if (this->has_controlmsg()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageNoVirtualToArray(
+        7, *this->controlmsg_, false, target);
+  }
+
   // @@protoc_insertion_point(serialize_to_array_end:StreamingFormat.StreamingMessage)
   return target;
 }
@@ -2579,6 +2914,13 @@ size_t StreamingMessage::ByteSizeLong() const {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
         *this->endingmsg_);
+  }
+
+  // .StreamingFormat.Control controlMsg = 7;
+  if (this->has_controlmsg()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->controlmsg_);
   }
 
   // .StreamingFormat.MessageType type = 1;
@@ -2628,6 +2970,9 @@ void StreamingMessage::MergeFrom(const StreamingMessage& from) {
   if (from.has_endingmsg()) {
     mutable_endingmsg()->::StreamingFormat::Ending::MergeFrom(from.endingmsg());
   }
+  if (from.has_controlmsg()) {
+    mutable_controlmsg()->::StreamingFormat::Control::MergeFrom(from.controlmsg());
+  }
   if (from.type() != 0) {
     set_type(from.type());
   }
@@ -2661,13 +3006,14 @@ void StreamingMessage::InternalSwap(StreamingMessage* other) {
   std::swap(cameramsg_, other->cameramsg_);
   std::swap(imagemsg_, other->imagemsg_);
   std::swap(endingmsg_, other->endingmsg_);
+  std::swap(controlmsg_, other->controlmsg_);
   std::swap(type_, other->type_);
   std::swap(_cached_size_, other->_cached_size_);
 }
 
 ::google::protobuf::Metadata StreamingMessage::GetMetadata() const {
   protobuf_message_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_message_2eproto::file_level_metadata[5];
+  return protobuf_message_2eproto::file_level_metadata[6];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -2880,6 +3226,45 @@ void StreamingMessage::set_allocated_endingmsg(::StreamingFormat::Ending* ending
     
   }
   // @@protoc_insertion_point(field_set_allocated:StreamingFormat.StreamingMessage.endingMsg)
+}
+
+// .StreamingFormat.Control controlMsg = 7;
+bool StreamingMessage::has_controlmsg() const {
+  return this != internal_default_instance() && controlmsg_ != NULL;
+}
+void StreamingMessage::clear_controlmsg() {
+  if (GetArenaNoVirtual() == NULL && controlmsg_ != NULL) delete controlmsg_;
+  controlmsg_ = NULL;
+}
+const ::StreamingFormat::Control& StreamingMessage::controlmsg() const {
+  // @@protoc_insertion_point(field_get:StreamingFormat.StreamingMessage.controlMsg)
+  return controlmsg_ != NULL ? *controlmsg_
+                         : *::StreamingFormat::Control::internal_default_instance();
+}
+::StreamingFormat::Control* StreamingMessage::mutable_controlmsg() {
+  
+  if (controlmsg_ == NULL) {
+    controlmsg_ = new ::StreamingFormat::Control;
+  }
+  // @@protoc_insertion_point(field_mutable:StreamingFormat.StreamingMessage.controlMsg)
+  return controlmsg_;
+}
+::StreamingFormat::Control* StreamingMessage::release_controlmsg() {
+  // @@protoc_insertion_point(field_release:StreamingFormat.StreamingMessage.controlMsg)
+  
+  ::StreamingFormat::Control* temp = controlmsg_;
+  controlmsg_ = NULL;
+  return temp;
+}
+void StreamingMessage::set_allocated_controlmsg(::StreamingFormat::Control* controlmsg) {
+  delete controlmsg_;
+  controlmsg_ = controlmsg;
+  if (controlmsg) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:StreamingFormat.StreamingMessage.controlMsg)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS

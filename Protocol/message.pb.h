@@ -34,6 +34,9 @@ namespace StreamingFormat {
 class Camera;
 class CameraDefaultTypeInternal;
 extern CameraDefaultTypeInternal _Camera_default_instance_;
+class Control;
+class ControlDefaultTypeInternal;
+extern ControlDefaultTypeInternal _Control_default_instance_;
 class DefaultPos;
 class DefaultPosDefaultTypeInternal;
 extern DefaultPosDefaultTypeInternal _DefaultPos_default_instance_;
@@ -70,12 +73,13 @@ enum MessageType {
   MsgCameraInfo = 2,
   MsgImage = 3,
   MsgEnding = 4,
+  MsgControl = 5,
   MessageType_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
   MessageType_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
 };
 bool MessageType_IsValid(int value);
 const MessageType MessageType_MIN = MsgInit;
-const MessageType MessageType_MAX = MsgEnding;
+const MessageType MessageType_MAX = MsgControl;
 const int MessageType_ARRAYSIZE = MessageType_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* MessageType_descriptor();
@@ -372,18 +376,6 @@ class Camera : public ::google::protobuf::Message /* @@protoc_insertion_point(cl
 
   // accessors -------------------------------------------------------
 
-  // repeated uint32 drop_index = 9;
-  int drop_index_size() const;
-  void clear_drop_index();
-  static const int kDropIndexFieldNumber = 9;
-  ::google::protobuf::uint32 drop_index(int index) const;
-  void set_drop_index(int index, ::google::protobuf::uint32 value);
-  void add_drop_index(::google::protobuf::uint32 value);
-  const ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >&
-      drop_index() const;
-  ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >*
-      mutable_drop_index();
-
   // uint32 serialNumber = 2;
   void clear_serialnumber();
   static const int kSerialNumberFieldNumber = 2;
@@ -430,8 +422,6 @@ class Camera : public ::google::protobuf::Message /* @@protoc_insertion_point(cl
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  ::google::protobuf::RepeatedField< ::google::protobuf::uint32 > drop_index_;
-  mutable int _drop_index_cached_byte_size_;
   ::google::protobuf::uint32 serialnumber_;
   float delta_x_;
   float delta_y_;
@@ -439,6 +429,110 @@ class Camera : public ::google::protobuf::Message /* @@protoc_insertion_point(cl
   float delta_vx_;
   float delta_vy_;
   float delta_vz_;
+  mutable int _cached_size_;
+  friend struct  protobuf_message_2eproto::TableStruct;
+};
+// -------------------------------------------------------------------
+
+class Control : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:StreamingFormat.Control) */ {
+ public:
+  Control();
+  virtual ~Control();
+
+  Control(const Control& from);
+
+  inline Control& operator=(const Control& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const Control& default_instance();
+
+  static inline const Control* internal_default_instance() {
+    return reinterpret_cast<const Control*>(
+               &_Control_default_instance_);
+  }
+
+  void Swap(Control* other);
+
+  // implements Message ----------------------------------------------
+
+  inline Control* New() const PROTOBUF_FINAL { return New(NULL); }
+
+  Control* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
+  void CopyFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void MergeFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void CopyFrom(const Control& from);
+  void MergeFrom(const Control& from);
+  void Clear() PROTOBUF_FINAL;
+  bool IsInitialized() const PROTOBUF_FINAL;
+
+  size_t ByteSizeLong() const PROTOBUF_FINAL;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) PROTOBUF_FINAL;
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const PROTOBUF_FINAL;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* target) const PROTOBUF_FINAL;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output)
+      const PROTOBUF_FINAL {
+    return InternalSerializeWithCachedSizesToArray(
+        ::google::protobuf::io::CodedOutputStream::IsDefaultSerializationDeterministic(), output);
+  }
+  int GetCachedSize() const PROTOBUF_FINAL { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const PROTOBUF_FINAL;
+  void InternalSwap(Control* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return NULL;
+  }
+  inline void* MaybeArenaPtr() const {
+    return NULL;
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const PROTOBUF_FINAL;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // repeated uint32 drop_index = 1;
+  int drop_index_size() const;
+  void clear_drop_index();
+  static const int kDropIndexFieldNumber = 1;
+  ::google::protobuf::uint32 drop_index(int index) const;
+  void set_drop_index(int index, ::google::protobuf::uint32 value);
+  void add_drop_index(::google::protobuf::uint32 value);
+  const ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >&
+      drop_index() const;
+  ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >*
+      mutable_drop_index();
+
+  // uint32 save_frame = 2;
+  void clear_save_frame();
+  static const int kSaveFrameFieldNumber = 2;
+  ::google::protobuf::uint32 save_frame() const;
+  void set_save_frame(::google::protobuf::uint32 value);
+
+  // uint32 change_scene = 3;
+  void clear_change_scene();
+  static const int kChangeSceneFieldNumber = 3;
+  ::google::protobuf::uint32 change_scene() const;
+  void set_change_scene(::google::protobuf::uint32 value);
+
+  // @@protoc_insertion_point(class_scope:StreamingFormat.Control)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::RepeatedField< ::google::protobuf::uint32 > drop_index_;
+  mutable int _drop_index_cached_byte_size_;
+  ::google::protobuf::uint32 save_frame_;
+  ::google::protobuf::uint32 change_scene_;
   mutable int _cached_size_;
   friend struct  protobuf_message_2eproto::TableStruct;
 };
@@ -744,6 +838,15 @@ class StreamingMessage : public ::google::protobuf::Message /* @@protoc_insertio
   ::StreamingFormat::Ending* release_endingmsg();
   void set_allocated_endingmsg(::StreamingFormat::Ending* endingmsg);
 
+  // .StreamingFormat.Control controlMsg = 7;
+  bool has_controlmsg() const;
+  void clear_controlmsg();
+  static const int kControlMsgFieldNumber = 7;
+  const ::StreamingFormat::Control& controlmsg() const;
+  ::StreamingFormat::Control* mutable_controlmsg();
+  ::StreamingFormat::Control* release_controlmsg();
+  void set_allocated_controlmsg(::StreamingFormat::Control* controlmsg);
+
   // .StreamingFormat.MessageType type = 1;
   void clear_type();
   static const int kTypeFieldNumber = 1;
@@ -759,6 +862,7 @@ class StreamingMessage : public ::google::protobuf::Message /* @@protoc_insertio
   ::StreamingFormat::Camera* cameramsg_;
   ::StreamingFormat::Image* imagemsg_;
   ::StreamingFormat::Ending* endingmsg_;
+  ::StreamingFormat::Control* controlmsg_;
   int type_;
   mutable int _cached_size_;
   friend struct  protobuf_message_2eproto::TableStruct;
@@ -1003,34 +1107,66 @@ inline void Camera::set_delta_vz(float value) {
   // @@protoc_insertion_point(field_set:StreamingFormat.Camera.delta_vz)
 }
 
-// repeated uint32 drop_index = 9;
-inline int Camera::drop_index_size() const {
+// -------------------------------------------------------------------
+
+// Control
+
+// repeated uint32 drop_index = 1;
+inline int Control::drop_index_size() const {
   return drop_index_.size();
 }
-inline void Camera::clear_drop_index() {
+inline void Control::clear_drop_index() {
   drop_index_.Clear();
 }
-inline ::google::protobuf::uint32 Camera::drop_index(int index) const {
-  // @@protoc_insertion_point(field_get:StreamingFormat.Camera.drop_index)
+inline ::google::protobuf::uint32 Control::drop_index(int index) const {
+  // @@protoc_insertion_point(field_get:StreamingFormat.Control.drop_index)
   return drop_index_.Get(index);
 }
-inline void Camera::set_drop_index(int index, ::google::protobuf::uint32 value) {
+inline void Control::set_drop_index(int index, ::google::protobuf::uint32 value) {
   drop_index_.Set(index, value);
-  // @@protoc_insertion_point(field_set:StreamingFormat.Camera.drop_index)
+  // @@protoc_insertion_point(field_set:StreamingFormat.Control.drop_index)
 }
-inline void Camera::add_drop_index(::google::protobuf::uint32 value) {
+inline void Control::add_drop_index(::google::protobuf::uint32 value) {
   drop_index_.Add(value);
-  // @@protoc_insertion_point(field_add:StreamingFormat.Camera.drop_index)
+  // @@protoc_insertion_point(field_add:StreamingFormat.Control.drop_index)
 }
 inline const ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >&
-Camera::drop_index() const {
-  // @@protoc_insertion_point(field_list:StreamingFormat.Camera.drop_index)
+Control::drop_index() const {
+  // @@protoc_insertion_point(field_list:StreamingFormat.Control.drop_index)
   return drop_index_;
 }
 inline ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >*
-Camera::mutable_drop_index() {
-  // @@protoc_insertion_point(field_mutable_list:StreamingFormat.Camera.drop_index)
+Control::mutable_drop_index() {
+  // @@protoc_insertion_point(field_mutable_list:StreamingFormat.Control.drop_index)
   return &drop_index_;
+}
+
+// uint32 save_frame = 2;
+inline void Control::clear_save_frame() {
+  save_frame_ = 0u;
+}
+inline ::google::protobuf::uint32 Control::save_frame() const {
+  // @@protoc_insertion_point(field_get:StreamingFormat.Control.save_frame)
+  return save_frame_;
+}
+inline void Control::set_save_frame(::google::protobuf::uint32 value) {
+  
+  save_frame_ = value;
+  // @@protoc_insertion_point(field_set:StreamingFormat.Control.save_frame)
+}
+
+// uint32 change_scene = 3;
+inline void Control::clear_change_scene() {
+  change_scene_ = 0u;
+}
+inline ::google::protobuf::uint32 Control::change_scene() const {
+  // @@protoc_insertion_point(field_get:StreamingFormat.Control.change_scene)
+  return change_scene_;
+}
+inline void Control::set_change_scene(::google::protobuf::uint32 value) {
+  
+  change_scene_ = value;
+  // @@protoc_insertion_point(field_set:StreamingFormat.Control.change_scene)
 }
 
 // -------------------------------------------------------------------
@@ -1348,7 +1484,48 @@ inline void StreamingMessage::set_allocated_endingmsg(::StreamingFormat::Ending*
   // @@protoc_insertion_point(field_set_allocated:StreamingFormat.StreamingMessage.endingMsg)
 }
 
+// .StreamingFormat.Control controlMsg = 7;
+inline bool StreamingMessage::has_controlmsg() const {
+  return this != internal_default_instance() && controlmsg_ != NULL;
+}
+inline void StreamingMessage::clear_controlmsg() {
+  if (GetArenaNoVirtual() == NULL && controlmsg_ != NULL) delete controlmsg_;
+  controlmsg_ = NULL;
+}
+inline const ::StreamingFormat::Control& StreamingMessage::controlmsg() const {
+  // @@protoc_insertion_point(field_get:StreamingFormat.StreamingMessage.controlMsg)
+  return controlmsg_ != NULL ? *controlmsg_
+                         : *::StreamingFormat::Control::internal_default_instance();
+}
+inline ::StreamingFormat::Control* StreamingMessage::mutable_controlmsg() {
+  
+  if (controlmsg_ == NULL) {
+    controlmsg_ = new ::StreamingFormat::Control;
+  }
+  // @@protoc_insertion_point(field_mutable:StreamingFormat.StreamingMessage.controlMsg)
+  return controlmsg_;
+}
+inline ::StreamingFormat::Control* StreamingMessage::release_controlmsg() {
+  // @@protoc_insertion_point(field_release:StreamingFormat.StreamingMessage.controlMsg)
+  
+  ::StreamingFormat::Control* temp = controlmsg_;
+  controlmsg_ = NULL;
+  return temp;
+}
+inline void StreamingMessage::set_allocated_controlmsg(::StreamingFormat::Control* controlmsg) {
+  delete controlmsg_;
+  controlmsg_ = controlmsg;
+  if (controlmsg) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:StreamingFormat.StreamingMessage.controlMsg)
+}
+
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

@@ -9,6 +9,7 @@ enum MessageType {
   MsgCameraInfo = 2;
   MsgImage = 3;
   MsgEnding = 4;
+  MsgControl = 5;
 }
 
 
@@ -32,7 +33,6 @@ message DefaultPos {
 }
 
 message Camera {
-
   uint32 serialNumber = 2;
   float delta_x = 3;
   float delta_y = 4;
@@ -40,7 +40,12 @@ message Camera {
   float delta_vx = 6;
   float delta_vy = 7;
   float delta_vz = 8;
-  repeated uint32 drop_index = 9;
+}
+
+message Control {
+  repeated uint32 drop_index = 1;
+  uint32 save_frame = 2;  
+  uint32 change_scene = 3;
 }
 
 
@@ -61,10 +66,10 @@ message Ending {
 message StreamingMessage {
 
   MessageType type = 1;
-
   Init initMsg = 2;
   DefaultPos defaultPosMsg = 3;
   Camera cameraMsg = 4;
   Image imageMsg = 5;
   Ending endingMsg = 6;
+  Control controlMsg = 7;
 }

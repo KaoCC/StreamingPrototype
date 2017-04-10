@@ -44,6 +44,9 @@ namespace SP {
 		struct PathState;
 
 
+		~PtRenderer();
+
+
 	protected:
 
 		// Generate rays

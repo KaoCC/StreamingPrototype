@@ -15,6 +15,9 @@
 
 #include "MathUtility.hpp"
 
+#include "RandomSampler.hpp"
+#include "CorrelatedMultiJitterSampler.hpp"
+
 namespace SP {
 
 
@@ -64,6 +67,7 @@ namespace SP {
 	};
 
 
+	PtRenderer::~PtRenderer() = default;
 
 
 	PtRenderer::PtRenderer(int devidx, int num_bounces) : renderData(new RenderData), numOfBounces(num_bounces), sceneTracker(devidx) {
@@ -250,21 +254,31 @@ namespace SP {
 		const uint32_t imageWidth = renderOutPtr->getWidth();
 		const uint32_t imageHeight = renderOutPtr->getHeight();
 
-		uint32_t rngseed = RadeonRays::rand_uint();
+		//uint32_t rngseed = RadeonRays::rand_uint();
 
 		for (uint32_t y = 0; y < imageHeight; ++y) {
 			for (uint32_t x = 0; x < imageWidth; ++x) {			// check this !
 
-				uint32_t seed = x + imageWidth * y * rngseed;
-				Sampler randomSampler;
-				randomSampler.index = seed;
-				randomSampler.scramble = 0;
-				randomSampler.dimension = 0;
 
 
-				RadeonRays::float2 sampleBase;
-				sampleBase.x = UniformSampler_Sample1D(&randomSampler);
-				sampleBase.y = UniformSampler_Sample1D(&randomSampler);
+				//Sampler randomSampler;
+				//randomSampler.index = seed;
+				//randomSampler.scramble = 0;
+				//randomSampler.dimension = 0;
+
+
+				//uint32_t seed = x + imageWidth * y * rngseed;
+				//std::unique_ptr<Sampler> sampler = RandomSampler::create(seed);
+
+				unsigned rnd = RadeonRays::rand_uint();		// test !
+				unsigned scramble = rnd * 0x1fe3434f * ((frameCount + 133 * rnd) / (CorrelatedMultiJitterSampler::kDim * CorrelatedMultiJitterSampler::kDim));
+
+				std::unique_ptr<Sampler> sampler = CorrelatedMultiJitterSampler::create(frameCount % (CorrelatedMultiJitterSampler::kDim  * CorrelatedMultiJitterSampler::kDim), 0, scramble);
+
+
+				RadeonRays::float2 sampleBase = sampler->sample2D();
+				//sampleBase.x = UniformSampler_Sample1D(&randomSampler);
+				//sampleBase.y = UniformSampler_Sample1D(&randomSampler);
 
 				RadeonRays::float2 imageSample;
 				imageSample.x = (float)x / imageWidth + sampleBase.x / imageWidth;
@@ -428,10 +442,16 @@ namespace SP {
 			// init sampler (random)
 			// TODO: change this to a function
 			uint32_t seed = pixelIndex * rngseed;
-			Sampler randomSampler;
-			randomSampler.index = seed;
-			randomSampler.scramble = 0;
-			randomSampler.dimension = 0;
+			//Sampler randomSampler;
+			//randomSampler.index = seed;
+			//randomSampler.scramble = 0;
+			//randomSampler.dimension = 0;
+
+			unsigned rnd = RadeonRays::rand_uint();
+			unsigned scramble = rnd * 0x1fe3434f * ((frameCount + 331 * rnd) / (CorrelatedMultiJitterSampler::kDim * CorrelatedMultiJitterSampler::kDim));
+			std::unique_ptr<Sampler> sampler = CorrelatedMultiJitterSampler::create(frameCount % (CorrelatedMultiJitterSampler::kDim  * CorrelatedMultiJitterSampler::kDim), 4 + numOfBounces * 300, scramble);
+
+			//std::unique_ptr<Sampler> sampler = RandomSampler::create(seed);
 
 			DifferentialGeometry diffGeo;
 			diffGeo.fill(currentIntersect, sceneTracker.getInternalMeshPtrs());
@@ -535,7 +555,7 @@ namespace SP {
 			float lightWeight = 1.f;
 
 			// sample BxDf
-			RadeonRays::float3 bxdf = BxDFHelper::sample(diffGeo, wi, Sampler_Sample2D(&randomSampler), bxdfwo, bxdfPDF);		// value ?
+			RadeonRays::float3 bxdf = BxDFHelper::sample(diffGeo, wi, sampler->sample2D(), bxdfwo, bxdfPDF);		// value ?
 
 			const auto currentScenePtr = sceneTracker.getCurrentScenePtr();
 
@@ -543,10 +563,10 @@ namespace SP {
 			RadeonRays::float3 radiance = 0.f;
 
 			// light ?
-			const Light* lightInst = currentScenePtr->getSampleLightPtr(Sampler_Sample1D(&randomSampler) ,selectionPDF);		// check the light index !
+			const Light* lightInst = currentScenePtr->getSampleLightPtr(sampler->sample1D() ,selectionPDF);		// check the light index !
 			if (lightInst != nullptr) {
 
-				RadeonRays::float3 currentLe = lightInst->sample(diffGeo, Sampler_Sample2D(&randomSampler), lightwo, lightPDF);
+				RadeonRays::float3 currentLe = lightInst->sample(diffGeo, sampler->sample2D(), lightwo, lightPDF);
 				lightWeight = lightInst->isSingular() ? 1.f : 0.f;			// CHECK !
 
 				if (currentLe.sqnorm() > 0 && lightPDF > 0.0f && !BxDFHelper::isSingular(diffGeo.getMaterialPtr())) {
@@ -695,13 +715,14 @@ namespace SP {
 			if (volumIdx != -1) {
 
 
-				Sampler rendomSampler;
+				//Sampler rendomSampler;
 				uint32_t rngseed = RadeonRays::rand_uint();			// check this !
 				uint32_t seed = pixelIndex * rngseed;
-				Sampler randomSampler;
-				randomSampler.index = seed;
-				randomSampler.scramble = 0;
-				randomSampler.dimension = 0;
+				//Sampler randomSampler;
+				//randomSampler.index = seed;
+				//randomSampler.scramble = 0;
+				//randomSampler.dimension = 0;
+
 
 
 				// Try sampling volume for a next scattering event
