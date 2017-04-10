@@ -194,6 +194,7 @@ namespace SP {
 		ImageConfig img;
 
 		size_t counter = 0;
+		const size_t mod = 1;
 
 		while (true) {
 
@@ -204,11 +205,10 @@ namespace SP {
 
 			if (configIdx == 0) {
 				std::cerr << "Update time: " << std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1).count() << std::endl ;
-
 			}
 
 			// test code
-			if (counter % 2 == 0) {
+			if (counter % mod == 0) {
 
 				//std::cerr << "----------------- Convert and store ! \n";
 
