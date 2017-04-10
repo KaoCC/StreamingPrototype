@@ -173,7 +173,7 @@ namespace SP {
 
 
 			// TEST !
-			if (writeBufferQueue.size() > 5) {
+			if (writeBufferQueue.size() > 3) {
 				responsePtr = nullptr;
 				break;
 			}
@@ -225,6 +225,8 @@ namespace SP {
 				std::cerr << "No need to send\n";
 				responsePtr = nullptr;
 				break;
+			} else {
+				std::cerr << "Get new: " << subLFIndex << "\n";
 			}
 
 			// test

@@ -5,6 +5,7 @@
 
 //for testing
 #include <iostream>
+#include <chrono>
 
 #include "math/mathutils.h"
 
@@ -192,13 +193,19 @@ namespace SP {
 		// test
 		ImageConfig img;
 
-		int counter = 0;
+		size_t counter = 0;
 
 		while (true) {
 
-
+			auto t1 = std::chrono::high_resolution_clock::now();
 			renderFarm[configIdx]->render(*sceneDataPtr, configIdx);
+			auto t2 = std::chrono::high_resolution_clock::now();
 
+
+			if (configIdx == 0) {
+				std::cerr << "Update time: " << std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1).count() << std::endl ;
+
+			}
 
 			// test code
 			if (counter % 2 == 0) {
