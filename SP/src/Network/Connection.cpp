@@ -5,20 +5,6 @@
 namespace SP {
 
 
-	// helper 
-	size_t getIndexTmp(float dx) {
-		dx += 0.5;
-		size_t index = dx * 16;
-
-		if (index > 15) {
-			index = 15;
-		}
-
-		return index;
-	}
-
-
-
 	Connection::ConnectionPointer Connection::createWithBuffer(boost::asio::io_service & ios, SyncBuffer<ImageConfig>& buf, LightField& imgLF) {
 		return ConnectionPointer(new Connection(ios, buf, imgLF));
 	}
@@ -231,7 +217,7 @@ namespace SP {
 			uint8_t* rawPtr = encoder->getEncoderRawBuffer();
 
 			// TMP !!!
-			size_t subLFIndex = getIndexTmp(dx);	// TODO: mapping function ?
+			size_t subLFIndex = cfgManager.getIndexOfSubLightField(dx);	
 			size_t subLFSz = cfgManager.getSubLightFieldSize(subLFIndex);
 
 
@@ -281,10 +267,10 @@ namespace SP {
 
 
 			// mark read
-			std::cerr << "mark read\n";
+			//std::cerr << "mark read\n";
 			cfgManager.setSubLightFieldRefreshState(subLFIndex, false);
 
-			std::cerr << "size" << encodedImageData.size() << std::endl;
+			//std::cerr << "size" << encodedImageData.size() << std::endl;
 			imagePtr->set_bytesize(encodedImageData.size()); // tmp
 			//imagePtr->set_status(imageData.getID());  // tmp
 
@@ -331,7 +317,7 @@ namespace SP {
 		// test
 
 		if (msgPtr == nullptr) {
-			std::cerr << "Drop Response" << std::endl;
+			//std::cerr << "Drop Response" << std::endl;
 			return;
 		}
 
