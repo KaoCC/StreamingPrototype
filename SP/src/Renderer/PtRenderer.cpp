@@ -16,6 +16,7 @@
 #include "MathUtility.hpp"
 
 #include "RandomSampler.hpp"
+#include "CorrelatedMultiJitterSampler.hpp"
 
 namespace SP {
 
@@ -228,7 +229,7 @@ namespace SP {
 		}
 
 		
-		std::cerr << "Frame: " << frameCount << '\n';
+		//std::cerr << "Frame: " << frameCount << '\n';
 
 		++frameCount;
 	}
@@ -253,19 +254,27 @@ namespace SP {
 		const uint32_t imageWidth = renderOutPtr->getWidth();
 		const uint32_t imageHeight = renderOutPtr->getHeight();
 
-		uint32_t rngseed = RadeonRays::rand_uint();
+		//uint32_t rngseed = RadeonRays::rand_uint();
 
 		for (uint32_t y = 0; y < imageHeight; ++y) {
 			for (uint32_t x = 0; x < imageWidth; ++x) {			// check this !
 
-				uint32_t seed = x + imageWidth * y * rngseed;
+
+
 				//Sampler randomSampler;
 				//randomSampler.index = seed;
 				//randomSampler.scramble = 0;
 				//randomSampler.dimension = 0;
 
 
-				std::unique_ptr<Sampler> sampler = RandomSampler::create(seed);
+				//uint32_t seed = x + imageWidth * y * rngseed;
+				//std::unique_ptr<Sampler> sampler = RandomSampler::create(seed);
+
+				unsigned rnd = RadeonRays::rand_uint();		// test !
+				unsigned scramble = rnd * 0x1fe3434f * ((frameCount + 133 * rnd) / (CorrelatedMultiJitterSampler::kDim * CorrelatedMultiJitterSampler::kDim));
+
+				std::unique_ptr<Sampler> sampler = CorrelatedMultiJitterSampler::create(frameCount % (CorrelatedMultiJitterSampler::kDim  * CorrelatedMultiJitterSampler::kDim), 0, scramble);
+
 
 				RadeonRays::float2 sampleBase = sampler->sample2D();
 				//sampleBase.x = UniformSampler_Sample1D(&randomSampler);
@@ -438,7 +447,11 @@ namespace SP {
 			//randomSampler.scramble = 0;
 			//randomSampler.dimension = 0;
 
-			std::unique_ptr<Sampler> sampler = RandomSampler::create(seed);
+			unsigned rnd = RadeonRays::rand_uint();
+			unsigned scramble = rnd * 0x1fe3434f * ((frameCount + 331 * rnd) / (CorrelatedMultiJitterSampler::kDim * CorrelatedMultiJitterSampler::kDim));
+			std::unique_ptr<Sampler> sampler = CorrelatedMultiJitterSampler::create(frameCount % (CorrelatedMultiJitterSampler::kDim  * CorrelatedMultiJitterSampler::kDim), 4 + numOfBounces * 300, scramble);
+
+			//std::unique_ptr<Sampler> sampler = RandomSampler::create(seed);
 
 			DifferentialGeometry diffGeo;
 			diffGeo.fill(currentIntersect, sceneTracker.getInternalMeshPtrs());
