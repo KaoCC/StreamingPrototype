@@ -22,8 +22,7 @@ namespace SP {
 		return result;
 	}
 
-	RandomSampler::RandomSampler(std::uint32_t seed) {
-		mSeed = seed;
+	RandomSampler::RandomSampler(std::uint32_t seed) : mSeed(seed) {
 	}
 
 }
