@@ -32,6 +32,9 @@ namespace SP {
 		ImageConfig getImageCache();
 
 
+		// LF indexing
+		size_t getIndexOfSubLightField(float dx) const;
+
 
 		// Light Field
 		size_t getSubLightFieldSize(size_t subLFIdx) const;

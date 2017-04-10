@@ -58,7 +58,7 @@ namespace SP {
 
 
 		// test
-		const size_t numOfSubLFs = 16;
+		const size_t numOfSubLFs = 8;
 
 
 		// tmp file location

@@ -56,6 +56,20 @@ namespace SP {
 		return *imagePtr;
 	}
 
+	size_t ConfigManager::getIndexOfSubLightField(float dx) const {
+
+		dx += 0.5;
+
+		size_t totalSz = imageLightFieldRef.getTotalSize();
+		size_t index = dx * totalSz;
+
+		if (index >= totalSz) {
+			index = totalSz - 1;
+		}
+
+		return index;
+	}
+
 	size_t ConfigManager::getSubLightFieldSize(size_t subLFIdx) const {
 		return imageLightFieldRef.getSubLightFieldSize(subLFIdx);
 	}

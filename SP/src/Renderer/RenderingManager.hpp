@@ -78,13 +78,14 @@ namespace SP {
 		const int kNumberOfBounce = 5;
 
 		// A set: one camera, one render, one output, one thread
-		const size_t kNumOfCamera = 16;
+		const size_t kNumOfCamera = 8;
 
 		// tmp
 		const std::string defaultPath = "../Resources/CornellBox";
 		const std::string defaultModelname = "orig.objm";
 
-
+		//tmp
+		const float kStep = 0.025;
 
 
 		// Scene Data
