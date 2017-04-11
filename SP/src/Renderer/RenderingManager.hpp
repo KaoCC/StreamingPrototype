@@ -62,9 +62,9 @@ namespace SP {
 
 		// tmp
 		// default camera parameters
-		const RadeonRays::float3 kCameraPos = RadeonRays::float3(0.f, 1.f, 3.f);
-		const RadeonRays::float3 kCameraAt = RadeonRays::float3(0.f, 1.f, 0.f);
-		const RadeonRays::float3 kCameraUp = RadeonRays::float3(0.f, 1.f, 0.f);
+		//const RadeonRays::float3 kCameraPos = RadeonRays::float3(0.f, 1.f, 3.f);
+		//const RadeonRays::float3 kCameraAt = RadeonRays::float3(0.f, 1.f, 0.f);
+		//const RadeonRays::float3 kCameraUp = RadeonRays::float3(0.f, 1.f, 0.f);
 
 		RadeonRays::float2 g_camera_sensor_size = RadeonRays::float2(0.036f, 0.024f);  // default full frame sensor 36x24 mm
 		RadeonRays::float2 g_camera_zcap = RadeonRays::float2(0.0f, 100000.f);

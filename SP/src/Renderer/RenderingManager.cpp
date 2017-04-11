@@ -152,6 +152,8 @@ namespace SP {
 		std::cerr << "number of lights: " << sceneDataPtr->getNumLights() << std::endl;
 
 
+		const auto& camDefault{ mConfigRef.getCameraConfig() };
+
 		//for (size_t i = 0; i < kNumOfCamera; ++i) {
 
 		for (size_t i = 0; i < mConfigRef.getNumberOfSubLFs(); ++i) {
@@ -159,7 +161,7 @@ namespace SP {
 			for (size_t j = 0; j < mConfigRef.getNumberOfSubLFImages(); ++j) {
 
 				// KAOCC: TODO: add camera config
-				auto* cameraPtr = new PerspectiveCamera(kCameraPos + RadeonRays::float3(kStep * i, kStep * j, -1), kCameraAt + RadeonRays::float3(kStep * i, kStep * j, -1), kCameraUp);
+				auto* cameraPtr = new PerspectiveCamera(camDefault.mCameraPos + RadeonRays::float3(kStep * i, kStep * j, 0), camDefault.mCameraAt + RadeonRays::float3(kStep * i, kStep * j, 0), camDefault.mCameraUp);
 				sceneDataPtr->attachCamera(cameraPtr);
 
 				// Adjust sensor size based on current aspect ratio

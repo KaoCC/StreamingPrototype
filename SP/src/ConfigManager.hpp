@@ -9,6 +9,8 @@
 #include "Encoder/Encoder.hpp"
 #include "LightField.hpp"
 
+#include "math/float3.h"
+
 namespace SP {
 
 	class ConfigManager {
@@ -62,6 +64,8 @@ namespace SP {
 		// Camera
 		std::size_t getNumberOfCameras() const;
 
+		CameraConfig getCameraConfig() const;
+
 		// tmp
 		//void loadImages();
 
@@ -85,7 +89,7 @@ namespace SP {
 
 		LightField mImageLightField;
 
-
+		CameraConfig mCamera;
 
 
 		// Defaults !
@@ -103,6 +107,10 @@ namespace SP {
 		static const size_t kNumOfCamera = kNumOfLFs * kNumOfSubLFImgs;
 
 
+		// LF camera default pos
+		static const RadeonRays::float3 kCameraPos; // = RadeonRays::float3(0.f, 1.f, 3.f);
+		static const RadeonRays::float3 kCameraAt; // = RadeonRays::float3(0.f, 1.f, 0.f);
+		static const RadeonRays::float3 kCameraUp; //= RadeonRays::float3(0.f, 1.f, 0.f);
 
 	};
 

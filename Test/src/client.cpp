@@ -11,7 +11,7 @@
 using boost::asio::ip::tcp;
 
 
-SP::CameraConfig globalCamera(SP::Position(0, 0, 0), SP::Direction(0, 0, 0));
+SP::CameraConfig globalCamera({ 0, 0, 0 }, { 0, 0, 0 }, {0, 0, 0});
 
 std::vector<SP::ImageConfig> images;
 const unsigned MAX_IMAGE_COUNT = 20;
@@ -32,20 +32,20 @@ static float shift = 0;
 void configCameraDelta(uint32_t serialNumber, SP::Packet::MessagePointer& requestPtr, SP::Packet& requestPacket) {
 
 
-	globalCamera.pos.x += delta_x + shift;
-	globalCamera.pos.y += delta_y;
-	globalCamera.pos.z += delta_z;
+	globalCamera.mCameraPos.x += delta_x + shift;
+	globalCamera.mCameraPos.y += delta_y;
+	globalCamera.mCameraPos.z += delta_z;
 
-	globalCamera.dir.vx += delta_vx;
-	globalCamera.dir.vy += delta_vy;
-	globalCamera.dir.vz += delta_vz;
+	globalCamera.mCameraAt.x += delta_vx;
+	globalCamera.mCameraAt.y += delta_vy;
+	globalCamera.mCameraAt.z += delta_vz;
 
 	// set the camera delta
 	StreamingFormat::Camera* cameraDelta = new StreamingFormat::Camera;
 
 	cameraDelta->set_serialnumber(serialNumber);
 
-	cameraDelta->set_delta_x(globalCamera.pos.x);
+	cameraDelta->set_delta_x(globalCamera.mCameraPos.x);
 	cameraDelta->set_delta_y(delta_y);
 	cameraDelta->set_delta_z(delta_z);
 
@@ -178,17 +178,17 @@ int main(int argc, char* argv[]) {
 
 				std::cerr << "MsgDefaultPos !" << std::endl;
 
-				globalCamera.pos.x = msg->defaultposmsg().x();
-				globalCamera.pos.y = msg->defaultposmsg().y();
-				globalCamera.pos.z = msg->defaultposmsg().z();
+				globalCamera.mCameraPos.x = msg->defaultposmsg().x();
+				globalCamera.mCameraPos.y = msg->defaultposmsg().y();
+				globalCamera.mCameraPos.z = msg->defaultposmsg().z();
 
-				std::cerr << "x, y, z: " << globalCamera.pos.x << " " <<globalCamera.pos.y << " " <<globalCamera.pos.z << std::endl;
+				std::cerr << "x, y, z: " << globalCamera.mCameraPos.x << " " <<globalCamera.mCameraPos.y << " " <<globalCamera.mCameraPos.z << std::endl;
 
-				globalCamera.dir.vx = msg->defaultposmsg().vx();
-				globalCamera.dir.vy = msg->defaultposmsg().vy();
-				globalCamera.dir.vz = msg->defaultposmsg().vz();
+				globalCamera.mCameraAt.x = msg->defaultposmsg().vx();
+				globalCamera.mCameraAt.y = msg->defaultposmsg().vy();
+				globalCamera.mCameraAt.z = msg->defaultposmsg().vz();
 
-				std::cerr << "vx, vy, vz: " << globalCamera.dir.vx << " " << globalCamera.dir.vy << " " << globalCamera.dir.vz << std::endl;
+				std::cerr << "vx, vy, vz: " << globalCamera.mCameraAt.x << " " << globalCamera.mCameraAt.y << " " << globalCamera.mCameraAt.z << std::endl;
 
 				configCameraDelta(serialNumber, requestPtr, requestPacket);
 
