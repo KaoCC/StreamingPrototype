@@ -55,8 +55,16 @@ namespace SP {
 		// testing 
 		//renderThread = std::make_unique<std::thread>(std::thread(&RenderingManager::testOutput, this, 0));
 
-		for (size_t i = 0; i < renderFarm.size(); ++i) {
-			renderThreads[i] = std::make_unique<std::thread>(std::thread(&RenderingManager::renderingWorker, this, i));
+		//for (size_t i = 0; i < renderFarm.size(); ++i) {
+		//	renderThreads[i] = std::make_unique<std::thread>(std::thread(&RenderingManager::renderingWorker, this, i));
+		//}
+
+
+		for (size_t i = 0; i < kNumSubLF; ++i) {
+			for (size_t j = 0; j < kNumSubImage; ++j) {
+				renderThreads.push_back(std::make_unique<std::thread>(std::thread(&RenderingManager::renderingWorker, this, i, j)));
+			}
+
 		}
 	}
 
@@ -148,32 +156,39 @@ namespace SP {
 		std::cerr << "number of lights: " << sceneDataPtr->getNumLights() << std::endl;
 
 
-		for (size_t i = 0; i < kNumOfCamera; ++i) {
+		//for (size_t i = 0; i < kNumOfCamera; ++i) {
 
-			// KAOCC: TODO: add camera config
-			auto* cameraPtr = new PerspectiveCamera(kCameraPos + RadeonRays::float3(kStep * i, 0, 0), kCameraAt + RadeonRays::float3(kStep * i, 0, 0), kCameraUp);
-			sceneDataPtr->attachCamera(cameraPtr);
+		for (size_t i = 0; i < kNumSubLF; ++i) {
 
-			// Adjust sensor size based on current aspect ratio
-			float aspect = (float)kWindowWidth / kWindowHeight;
-			g_camera_sensor_size.y = g_camera_sensor_size.x / aspect;
+			for (size_t j = 0; j < kNumSubImage; ++j) {
 
-			cameraPtr->setSensorSize(g_camera_sensor_size);
-			cameraPtr->setDepthRange(g_camera_zcap);
-			cameraPtr->setFocalLength(g_camera_focal_length);
-			cameraPtr->setFocusDistance(g_camera_focus_distance);
-			cameraPtr->setAperture(g_camera_aperture);
+				// KAOCC: TODO: add camera config
+				auto* cameraPtr = new PerspectiveCamera(kCameraPos + RadeonRays::float3(kStep * i, kStep * j, 0), kCameraAt + RadeonRays::float3(kStep * i, kStep * j, 0), kCameraUp);
+				sceneDataPtr->attachCamera(cameraPtr);
 
-			std::cout << "Camera type: " << (cameraPtr->getAperture() > 0.f ? "Physical" : "Pinhole") << "\n";			// This might cause problems
-			std::cout << "Lens focal length: " << cameraPtr->getFocalLength() * 1000.f << "mm\n";
-			std::cout << "Lens focus distance: " << cameraPtr->getFocusDistance() << "m\n";
-			std::cout << "F-Stop: " << 1.f / (cameraPtr->getAperture() * 10.f) << "\n";
-			std::cout << "Sensor size: " << g_camera_sensor_size.x * 1000.f << "x" << g_camera_sensor_size.y * 1000.f << "mm\n";
+				// Adjust sensor size based on current aspect ratio
+				float aspect = (float)kWindowWidth / kWindowHeight;
+				g_camera_sensor_size.y = g_camera_sensor_size.x / aspect;
 
-			// test !
-			sceneDataPtr->attachAutoreleaseObject(cameraPtr);
+				cameraPtr->setSensorSize(g_camera_sensor_size);
+				cameraPtr->setDepthRange(g_camera_zcap);
+				cameraPtr->setFocalLength(g_camera_focal_length);
+				cameraPtr->setFocusDistance(g_camera_focus_distance);
+				cameraPtr->setAperture(g_camera_aperture);
+
+				std::cout << "Camera type: " << (cameraPtr->getAperture() > 0.f ? "Physical" : "Pinhole") << "\n";			// This might cause problems
+				std::cout << "Lens focal length: " << cameraPtr->getFocalLength() * 1000.f << "mm\n";
+				std::cout << "Lens focus distance: " << cameraPtr->getFocusDistance() << "m\n";
+				std::cout << "F-Stop: " << 1.f / (cameraPtr->getAperture() * 10.f) << "\n";
+				std::cout << "Sensor size: " << g_camera_sensor_size.x * 1000.f << "x" << g_camera_sensor_size.y * 1000.f << "mm\n";
+
+				// test !
+				sceneDataPtr->attachAutoreleaseObject(cameraPtr);
+			}
 
 		}
+
+		//}
 
 
 		// Set Output
@@ -186,12 +201,15 @@ namespace SP {
 	}
 
 	// helper function for rendering
-	void RenderingManager::renderingWorker(size_t configIdx) {
+	void RenderingManager::renderingWorker(size_t subLFIdx, size_t subImgIdx) {
 
-		std::cerr << "Worker " << configIdx << " starts !\n";
+		std::cerr << "Worker " << subLFIdx << ' '  << subImgIdx << " starts !\n";
 
 		// test
 		ImageConfig img;
+
+
+		size_t farmIdx = kNumSubLF * subLFIdx + subImgIdx;
 
 		size_t counter = 0;
 		const size_t mod = 1;
@@ -199,11 +217,11 @@ namespace SP {
 		while (true) {
 
 			auto t1 = std::chrono::high_resolution_clock::now();
-			renderFarm[configIdx]->render(*sceneDataPtr, configIdx);
+			renderFarm[farmIdx]->render(*sceneDataPtr, farmIdx);
 			auto t2 = std::chrono::high_resolution_clock::now();
 
 
-			if (configIdx == 0) {
+			if (farmIdx == 0) {
 				std::cerr << "Update time: " << std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1).count() << std::endl ;
 			}
 
@@ -213,15 +231,18 @@ namespace SP {
 				//std::cerr << "----------------- Convert and store ! \n";
 
 
-				img.setId(configIdx);
-				convertOutputToImage(img, configIdx);
+				img.setId(farmIdx);
+				convertOutputToImage(img, farmIdx);
 				//img.storeToPPM(counter);
 
 				// test
-				imageLightField.setSubLightFieldImageWithIndex(configIdx, 0, img);
-				imageLightField.setSubLightFieldImageWithIndex(configIdx, 1, img);
+				imageLightField.setSubLightFieldImageWithIndex(subLFIdx, subImgIdx, img);
+				//imageLightField.setSubLightFieldImageWithIndex(configIdx, 1, img);
+				//imageLightField.setSubLightFieldImageWithIndex(configIdx, 2, img);
+				//imageLightField.setSubLightFieldImageWithIndex(configIdx, 3, img);
+
 				// refresh
-				imageLightField.setSubLightFieldRefreshState(configIdx, true);
+				imageLightField.setSubLightFieldRefreshState(subLFIdx, true);
 			}
 
 			++counter;

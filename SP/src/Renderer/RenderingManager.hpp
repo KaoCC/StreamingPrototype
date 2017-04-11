@@ -46,7 +46,7 @@ namespace SP {
 		void initData();
 
 		// helper function
-		void renderingWorker(size_t configIdx);
+		void renderingWorker(size_t subLFIdx, size_t subImgIdx);
 
 
 
@@ -77,8 +77,12 @@ namespace SP {
 
 		const int kNumberOfBounce = 5;
 
+		static const size_t kNumSubLF = 4;
+		static const size_t kNumSubImage = 4;
+
 		// A set: one camera, one render, one output, one thread
-		const size_t kNumOfCamera = 8;
+		static const size_t kNumOfCamera = kNumSubLF * kNumSubImage;
+
 
 		// tmp
 		const std::string defaultPath = "../Resources/CornellBox";
