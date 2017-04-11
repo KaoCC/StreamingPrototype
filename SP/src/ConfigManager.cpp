@@ -103,17 +103,11 @@ namespace SP {
 		return kHeight;
 	}
 
-	//Encoder * ConfigManager::getEncoder() {
-	//	return encoder;
-	//}
 
 	std::size_t ConfigManager::getNumberOfCameras() const {
 		return kNumOfCamera;
 	}
 
-	ConfigManager::~ConfigManager() {
-		//delete encoder;
-	}
 
 	
 

@@ -30,8 +30,8 @@ namespace SP {
 
 		//const ImageConfig& getImageRef(size_t index);
 
-		ImageConfig getImage();
-		ImageConfig getImageCache();
+		//ImageConfig getImage();
+		//ImageConfig getImageCache();
 
 
 		// LF indexing
@@ -61,8 +61,6 @@ namespace SP {
 
 		// Camera
 		std::size_t getNumberOfCameras() const;
-
-		~ConfigManager();
 
 		// tmp
 		//void loadImages();

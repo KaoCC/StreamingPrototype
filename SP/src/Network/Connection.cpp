@@ -133,13 +133,14 @@ namespace SP {
 			// for testing only
 			//CameraConfig camCfg{ mCfgManagerRef.getCamera() };
 
+			// do not change !!!
 			defPosPtr->set_x(0);
-			defPosPtr->set_y(0);
-			defPosPtr->set_z(0);
+			defPosPtr->set_y(1);
+			defPosPtr->set_z(3);
 
 			defPosPtr->set_vx(0);
 			defPosPtr->set_vy(0);
-			defPosPtr->set_vz(0);
+			defPosPtr->set_vz(1);
 
 			responsePtr->set_allocated_defaultposmsg(defPosPtr);
 

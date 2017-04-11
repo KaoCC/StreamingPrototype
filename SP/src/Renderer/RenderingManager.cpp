@@ -159,7 +159,7 @@ namespace SP {
 			for (size_t j = 0; j < mConfigRef.getNumberOfSubLFImages(); ++j) {
 
 				// KAOCC: TODO: add camera config
-				auto* cameraPtr = new PerspectiveCamera(kCameraPos + RadeonRays::float3(kStep * i, kStep * j, 0), kCameraAt + RadeonRays::float3(kStep * i, kStep * j, 0), kCameraUp);
+				auto* cameraPtr = new PerspectiveCamera(kCameraPos + RadeonRays::float3(kStep * i, kStep * j, -1), kCameraAt + RadeonRays::float3(kStep * i, kStep * j, -1), kCameraUp);
 				sceneDataPtr->attachCamera(cameraPtr);
 
 				// Adjust sensor size based on current aspect ratio
