@@ -1,6 +1,7 @@
 #include "EncoderImpl.hpp"
 
 
+
 namespace SP {
 
 	EncoderImpl::EncoderImpl(size_t width, size_t height) {
@@ -20,8 +21,8 @@ namespace SP {
 	}
 
 
-	Encoder* CreateEncoder(int width, int height) {
-		return new EncoderImpl(width, height);
+	std::unique_ptr<Encoder> CreateEncoder(std::size_t width, std::size_t height) {
+		return std::make_unique<EncoderImpl>(width, height);
 	}
 
 }

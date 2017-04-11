@@ -1,6 +1,8 @@
 #ifndef _SP_ENCODER_HPP_
 #define _SP_ENCODER_HPP_
 
+#include <memory>
+
 namespace SP {
 
 	class Encoder {
@@ -11,7 +13,7 @@ namespace SP {
 
 	};
 
-	Encoder* CreateEncoder(int width, int height);
+	std::unique_ptr<Encoder> CreateEncoder(std::size_t width, std::size_t height);
 
 }
 

@@ -5,13 +5,13 @@
 namespace SP {
 
 
-	Connection::ConnectionPointer Connection::createWithBuffer(boost::asio::io_service & ios, SyncBuffer<ImageConfig>& buf, LightField& imgLF) {
-		return ConnectionPointer(new Connection(ios, buf, imgLF));
+	Connection::ConnectionPointer Connection::create(boost::asio::io_service & ios, ConfigManager& configRef) {
+		return ConnectionPointer(new Connection(ios, configRef));
 	}
 
-	Connection::Connection(boost::asio::io_service & ios, SyncBuffer<ImageConfig>& buf, LightField& imgLF) :
-		streamingSocket(ios), packet(Packet::MessagePointer(new StreamingFormat::StreamingMessage())), cfgManager(buf, imgLF)
-		, responsePacket(Packet::MessagePointer(new StreamingFormat::StreamingMessage())) 
+	Connection::Connection(boost::asio::io_service & ios, ConfigManager& configRef) :
+		streamingSocket(ios), packet(Packet::MessagePointer(new StreamingFormat::StreamingMessage())), mCfgManagerRef(configRef), 
+		responsePacket(Packet::MessagePointer(new StreamingFormat::StreamingMessage())) , mEncoder(CreateEncoder(configRef.getScreenWidth(), configRef.getScreenHeight()))
 	{
 	}
 
@@ -83,7 +83,7 @@ namespace SP {
 			}
 
 		} else {
-			std::cerr << "---------------- Write Error: " << error << '\n';
+			std::cerr << "[ Write Error ] Error Code: " << error << std::endl;
 			boost::system::error_code ignored_ec;
 			//streamingSocket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ignored_ec);
 			//streamingSocket.close();
@@ -116,8 +116,8 @@ namespace SP {
 
 			// KAOCC: do we need a lock ?
 			// KAOCC: currently we have one cfg per connection
-			cfgManager.setScreen(msgPtr->initmsg().width(), msgPtr->initmsg().height());
-			cfgManager.setModuleID(msgPtr->initmsg().moduleid());
+//			mCfgManagerRef.setScreen(msgPtr->initmsg().width(), msgPtr->initmsg().height());
+			mCfgManagerRef.setModuleID(msgPtr->initmsg().moduleid());
 
 
 			// more from here
@@ -131,15 +131,15 @@ namespace SP {
 			StreamingFormat::DefaultPos* defPosPtr{ new StreamingFormat::DefaultPos };
 
 			// for testing only
-			CameraConfig camCfg{ cfgManager.getCamera() };
+			//CameraConfig camCfg{ mCfgManagerRef.getCamera() };
 
-			defPosPtr->set_x(camCfg.pos.x);
-			defPosPtr->set_y(camCfg.pos.y);
-			defPosPtr->set_z(camCfg.pos.z);
+			defPosPtr->set_x(0);
+			defPosPtr->set_y(0);
+			defPosPtr->set_z(0);
 
-			defPosPtr->set_vx(camCfg.dir.vx);
-			defPosPtr->set_vy(camCfg.dir.vy);
-			defPosPtr->set_vz(camCfg.dir.vz);
+			defPosPtr->set_vx(0);
+			defPosPtr->set_vy(0);
+			defPosPtr->set_vz(0);
 
 			responsePtr->set_allocated_defaultposmsg(defPosPtr);
 
@@ -190,7 +190,7 @@ namespace SP {
 			// KAOCC: check if we need locks 
 
 			// position
-			cfgManager.setPositionDelta(dx, dy, dz);
+			//mCfgManagerRef.setPositionDelta(dx, dy, dz);
 
 			// direction ?
 			// missing ...
@@ -213,15 +213,14 @@ namespace SP {
 			//std::cerr << "[IMG CACHE SZ]: " << imageBufferCache.size() << " >>>>>>>>>>>>  ID: " << imageData.getID() << '\n';
 
 
-			Encoder* encoder = cfgManager.getEncoder();
-			uint8_t* rawPtr = encoder->getEncoderRawBuffer();
+			uint8_t* rawPtr = mEncoder->getEncoderRawBuffer();
 
 			// TMP !!!
-			size_t subLFIndex = cfgManager.getIndexOfSubLightField(dx);	
-			size_t subLFSz = cfgManager.getSubLightFieldSize(subLFIndex);
+			size_t subLFIndex = mCfgManagerRef.getIndexOfSubLightField(dx);
+			size_t subLFSz = mCfgManagerRef.getNumberOfSubLFImages();
 
 
-			if (!cfgManager.getSubLightFieldRefreshState(subLFIndex)) {
+			if (!mCfgManagerRef.getSubLightFieldRefreshState(subLFIndex)) {
 				std::cerr << "No need to send\n";
 				responsePtr = nullptr;
 				break;
@@ -238,13 +237,13 @@ namespace SP {
 				//ImageConfig imageData{ cfgManager.getImage() };
 				//ImageConfig::ImageBuffer& imageBufferCache{ imageData.getImageData() };
 
-				ImageConfig::ImageBuffer imageBufferCache{ cfgManager.getSubLightFieldImageWithIndex(subLFIndex, k) };
+				ImageConfig::ImageBuffer imageBufferCache{ mCfgManagerRef.getSubLightFieldImageWithIndex(subLFIndex, k) };
 
 				std::copy(imageBufferCache.begin(), imageBufferCache.end(), rawPtr);
 
 				uint8_t* outBufPtr;
 				int outSize = 0;
-				encoder->startEncoding(&outBufPtr, &outSize);
+				mEncoder->startEncoding(&outBufPtr, &outSize);
 
 				//ImageConfig::ImageBuffer encodedImageData;
 				if (outSize > 0) {
@@ -270,7 +269,7 @@ namespace SP {
 
 			// mark read
 			//std::cerr << "mark read\n";
-			cfgManager.setSubLightFieldRefreshState(subLFIndex, false);
+			mCfgManagerRef.setSubLightFieldRefreshState(subLFIndex, false);
 
 			//std::cerr << "size" << encodedImageData.size() << std::endl;
 			imagePtr->set_bytesize(encodedImageData.size()); // tmp
@@ -389,6 +388,7 @@ namespace SP {
 		// test
 		//std::cerr << "insert size " << buffer.size() << '\n';
 	}
+
 
 
 	boost::asio::ip::tcp::socket & Connection::getSocketRef() {

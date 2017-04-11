@@ -20,17 +20,16 @@ namespace SP {
 		using ConnectionPointer = std::shared_ptr<Connection>;
 
 
-		static ConnectionPointer createWithBuffer(boost::asio::io_service& ios, SyncBuffer<ImageConfig>& buf, LightField& imgLF);
+		static ConnectionPointer create(boost::asio::io_service& ios, ConfigManager& configRef);
 		
 		// get socket reference
 		boost::asio::ip::tcp::socket& getSocketRef();
 
 		void start();
 
-
 	private:
 
-		Connection(boost::asio::io_service& io_service, SyncBuffer<ImageConfig>& buf, LightField& imgLF);
+		Connection(boost::asio::io_service& io_service, ConfigManager& configRef);
 
 
 		void startReadHeader();
@@ -51,6 +50,7 @@ namespace SP {
 		void appendImage(Packet::DataBuffer& buffer);
 
 
+
 		// data members 
 
 		// socket
@@ -66,7 +66,8 @@ namespace SP {
 
 
 		// config
-		ConfigManager cfgManager;
+		ConfigManager& mCfgManagerRef;
+
 		//SyncBuffer<ImageConfig>& bufferRef;
 
 		// tmp
@@ -77,9 +78,8 @@ namespace SP {
 		std::deque<Packet::DataBuffer> writeBufferQueue;
 
 
-		//tmp
-		//cached dx
-		float cachedDeltaX = 0;
+		// Encoder
+		std::unique_ptr<Encoder> mEncoder;
 
 	};
 

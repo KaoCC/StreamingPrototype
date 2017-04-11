@@ -14,12 +14,11 @@
 namespace SP {
 
 
-	RenderingManager::RenderingManager(SyncBuffer<ImageConfig>& buff, LightField& lf) : syncBuffer(buff), imageLightField(lf) {
-		//, encoder(CreateEncoder(512, 512)) {
+	RenderingManager::RenderingManager(ConfigManager& cfgRef) : mConfigRef (cfgRef){
 
 		// allocate renderer
 
-		renderFarm.resize(kNumOfCamera); // tmp
+		renderFarm.resize(cfgRef.getNumberOfCameras());
 		for (size_t i = 0; i < renderFarm.size(); ++i) {
 			renderFarm[i] = std::make_unique<PtRenderer>(1, 5);		// idx, num_of_bounce
 		}
@@ -60,8 +59,8 @@ namespace SP {
 		//}
 
 
-		for (size_t i = 0; i < kNumSubLF; ++i) {
-			for (size_t j = 0; j < kNumSubImage; ++j) {
+		for (size_t i = 0; i < mConfigRef.getNumberOfSubLFs(); ++i) {
+			for (size_t j = 0; j < mConfigRef.getNumberOfSubLFImages(); ++j) {
 				renderThreads.push_back(std::make_unique<std::thread>(std::thread(&RenderingManager::renderingWorker, this, i, j)));
 			}
 
@@ -70,60 +69,57 @@ namespace SP {
 
 
 	// tmp, for testing only
-	void RenderingManager::testOutput(int id) {
+	//void RenderingManager::testOutput(int id) {
 
-		// tmp file location
-		const std::string pathBase{ "../Resources/LF/" };
+	//	// tmp file location
+	//	const std::string pathBase{ "../Resources/LF/" };
 
+	//	//const std::string kFilePath{ pathBase + "crown_" + (char)('0' + index) + ".ppm" };
 
-		//const std::string kFilePath{ pathBase + "crown_" + (char)('0' + index) + ".ppm" };
+	//	int localCounter = id;
+	//	while (true) {
 
-		int localCounter = id;
+	//		int index = localCounter % 6;
 
-		while (true) {
+	//		//if (localCounter < 5) {
+	//		//	index = localCounter + 1;
+	//		//} else {
+	//		//	index = 0;
+	//		//}
 
-			int index = localCounter % 6;
+	//		//syncBuffer.insert(std::make_unique<ImageConfig>(localCounter, 10));
 
-			//if (localCounter < 5) {
-			//	index = localCounter + 1;
-			//} else {
-			//	index = 0;
-			//}
+	//		const std::string kFilePath{ pathBase + "LF_crown_" + std::to_string(index) + ".ppm" };
+	//		std::cerr << kFilePath << std::endl;
 
-			//syncBuffer.insert(std::make_unique<ImageConfig>(localCounter, 10));
+	//		try {
 
-			const std::string kFilePath{ pathBase + "LF_crown_" + std::to_string(index) + ".ppm" };
-			std::cerr << kFilePath << std::endl;
+	//			//syncBuffer.insert(std::make_unique<ImageConfig>(localCounter, kFilePath, encoder, accImageBuffer));
+	//			syncBuffer.insert(std::make_unique<ImageConfig>(localCounter, kFilePath));
+	//			syncBuffer.insert(std::make_unique<ImageConfig>(localCounter, kFilePath));
 
-			try {
+	//			std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
-				//syncBuffer.insert(std::make_unique<ImageConfig>(localCounter, kFilePath, encoder, accImageBuffer));
-				syncBuffer.insert(std::make_unique<ImageConfig>(localCounter, kFilePath));
-				syncBuffer.insert(std::make_unique<ImageConfig>(localCounter, kFilePath));
+	//			// test
+	//			std::cerr << "Local Counter " << localCounter << '\n';
+	//			//if (localCounter == 10) {
+	//			//	std::ofstream outStream("Hi.txt", std::ifstream::binary);
 
-				std::this_thread::sleep_for(std::chrono::milliseconds(500));
+	//			//	std::ostream_iterator<char> oi(outStream);
+	//			//	std::copy(accImageBuffer.begin(), accImageBuffer.end(), oi);
+	//			//	std::cerr << "Output" << '\n';
 
-				// test
-				std::cerr << "Local Counter " << localCounter << '\n';
-				//if (localCounter == 10) {
-				//	std::ofstream outStream("Hi.txt", std::ifstream::binary);
+	//			//}
 
-				//	std::ostream_iterator<char> oi(outStream);
-				//	std::copy(accImageBuffer.begin(), accImageBuffer.end(), oi);
-				//	std::cerr << "Output" << '\n';
-
-				//}
-
-
-			} catch (const std::exception &fail) {
-				std::cerr << fail.what() << '\n';
-			}
+	//		} catch (const std::exception &fail) {
+	//			std::cerr << fail.what() << '\n';
+	//		}
 
 
-			++localCounter;
-		}
+	//		++localCounter;
+	//	}
 
-	}
+	//}
 
 	void RenderingManager::initData() {
 
@@ -158,16 +154,16 @@ namespace SP {
 
 		//for (size_t i = 0; i < kNumOfCamera; ++i) {
 
-		for (size_t i = 0; i < kNumSubLF; ++i) {
+		for (size_t i = 0; i < mConfigRef.getNumberOfSubLFs(); ++i) {
 
-			for (size_t j = 0; j < kNumSubImage; ++j) {
+			for (size_t j = 0; j < mConfigRef.getNumberOfSubLFImages(); ++j) {
 
 				// KAOCC: TODO: add camera config
 				auto* cameraPtr = new PerspectiveCamera(kCameraPos + RadeonRays::float3(kStep * i, kStep * j, 0), kCameraAt + RadeonRays::float3(kStep * i, kStep * j, 0), kCameraUp);
 				sceneDataPtr->attachCamera(cameraPtr);
 
 				// Adjust sensor size based on current aspect ratio
-				float aspect = (float)kWindowWidth / kWindowHeight;
+				float aspect = (float)mConfigRef.getScreenWidth() / mConfigRef.getScreenHeight();
 				g_camera_sensor_size.y = g_camera_sensor_size.x / aspect;
 
 				cameraPtr->setSensorSize(g_camera_sensor_size);
@@ -194,7 +190,7 @@ namespace SP {
 		// Set Output
 		renderOutputData.resize(renderFarm.size());
 		for (size_t i = 0; i < renderFarm.size(); ++i) {
-			renderOutputData[i] = renderFarm[i]->createOutput(kWindowWidth, kWindowHeight);
+			renderOutputData[i] = renderFarm[i]->createOutput(mConfigRef.getScreenWidth(), mConfigRef.getScreenHeight());
 			renderFarm[i]->setOutput(renderOutputData[i]);
 		}
 
@@ -209,7 +205,7 @@ namespace SP {
 		ImageConfig img;
 
 
-		size_t farmIdx = kNumSubLF * subLFIdx + subImgIdx;
+		size_t farmIdx = mConfigRef.getNumberOfSubLFs() * subLFIdx + subImgIdx;
 
 		size_t counter = 0;
 		const size_t mod = 1;
@@ -231,18 +227,17 @@ namespace SP {
 				//std::cerr << "----------------- Convert and store ! \n";
 
 
+				auto& fieldRef = mConfigRef.getLightField();
+
 				img.setId(farmIdx);
 				convertOutputToImage(img, farmIdx);
 				//img.storeToPPM(counter);
 
-				// test
-				imageLightField.setSubLightFieldImageWithIndex(subLFIdx, subImgIdx, img);
-				//imageLightField.setSubLightFieldImageWithIndex(configIdx, 1, img);
-				//imageLightField.setSubLightFieldImageWithIndex(configIdx, 2, img);
-				//imageLightField.setSubLightFieldImageWithIndex(configIdx, 3, img);
+				fieldRef.setSubLightFieldImageWithIndex(subLFIdx, subImgIdx, img);
+
 
 				// refresh
-				imageLightField.setSubLightFieldRefreshState(subLFIdx, true);
+				fieldRef.setSubLightFieldRefreshState(subLFIdx, true);
 			}
 
 			++counter;
@@ -257,7 +252,7 @@ namespace SP {
 
 		const size_t kStride = 3;
 
-		std::vector<RadeonRays::float3> fdata(kWindowWidth * kWindowHeight);
+		std::vector<RadeonRays::float3> fdata(mConfigRef.getScreenWidth() * mConfigRef.getScreenHeight());
 		renderOutputData[outputIdx]->getData(fdata.data());
 
 		ImageConfig::ImageBuffer& imgBufferRef = img.getImageData();

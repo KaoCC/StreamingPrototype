@@ -17,8 +17,8 @@
 #include "../Encoder/Encoder.hpp"
 
 #include "Output.hpp"
-#include "../LightField.hpp"
 
+#include "../ConfigManager.hpp"
 
 namespace SP {
 
@@ -31,7 +31,8 @@ namespace SP {
 		RenderingManager() = delete;
 
 
-		RenderingManager(SyncBuffer<ImageConfig>& buff, LightField& lf);
+		RenderingManager(ConfigManager& cfgRef);
+
 		~RenderingManager();
 
 		void startRenderThread();
@@ -71,17 +72,8 @@ namespace SP {
 		float g_camera_focus_distance = 1.f;
 		float g_camera_aperture = 0.f;
 
-		// parameters
-		const int kWindowWidth = 512;
-		const int kWindowHeight = 512;
 
 		const int kNumberOfBounce = 5;
-
-		static const size_t kNumSubLF = 4;
-		static const size_t kNumSubImage = 4;
-
-		// A set: one camera, one render, one output, one thread
-		static const size_t kNumOfCamera = kNumSubLF * kNumSubImage;
 
 
 		// tmp
@@ -96,12 +88,9 @@ namespace SP {
 		std::unique_ptr<Scene> sceneDataPtr;
 
 
-		// output buffer ref
-		SyncBuffer<ImageConfig>& syncBuffer;
+		// configs
+		ConfigManager& mConfigRef;
 
-
-		// otput Light Field ref
-		LightField& imageLightField;
 
 		// thread
 		std::vector<std::unique_ptr<std::thread>> renderThreads;
