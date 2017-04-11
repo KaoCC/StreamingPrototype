@@ -14,29 +14,26 @@ namespace SP {
 		class SubLightField {
 
 		public:
-			SubLightField(size_t index);
+			SubLightField(size_t index, std::size_t numOfSubLFImgs);
 
 			// test
-			SubLightField(size_t index, const std::string& basePath);
+			//SubLightField(size_t index, const std::string& basePath);
 
-
-			// test
-			const size_t numOfImgs = 2;
+			const size_t mNumOfImgs;
 
 			std::vector<ImageConfig> images;
-
 			bool refreshFlag = false;
-
 		};
 
 
-		LightField();
+		//number of Sub LFs, number of images
+		LightField(std::size_t numOfSubLFs, std::size_t numOfSubLFImgs);
 
 		ImageConfig::ImageBuffer getSubLightFieldImages(size_t subLFIdx);
 
 		ImageConfig::ImageBuffer getSubLightFieldImageWithIndex(size_t subLFIdx, size_t imgIdx);
 
-		//setter
+		//set
 		void setSubLightFieldImageWithIndex(size_t subLFIdx, size_t imgIdx, const ImageConfig& imgConf);
 
 
@@ -45,8 +42,8 @@ namespace SP {
 		void setSubLightFieldRefreshState(size_t subLFIdx, bool state);
 
 
-		size_t getTotalSize() const;
-		size_t getSubLightFieldSize(size_t subLFIdx) const;
+		std::size_t getTotalSize() const;
+		std::size_t getSubLightFieldSize() const;
 
 		// TEST !
 		ImageConfig::ImageBuffer getAll();
@@ -56,13 +53,8 @@ namespace SP {
 
 		std::vector<SubLightField> subLFs;
 
-
-		// test
-		const size_t numOfSubLFs = 8;
-
-
-		// tmp file location
-		const std::string pathBase{ "../Resources/LF/" };
+		const std::size_t mNumOfSubLFs;
+		const std::size_t mNumOfSubLFImgs;
 
 
 	};

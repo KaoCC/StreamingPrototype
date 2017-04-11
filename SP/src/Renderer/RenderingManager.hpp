@@ -17,8 +17,8 @@
 #include "../Encoder/Encoder.hpp"
 
 #include "Output.hpp"
-#include "../LightField.hpp"
 
+#include "../ConfigManager.hpp"
 
 namespace SP {
 
@@ -31,7 +31,8 @@ namespace SP {
 		RenderingManager() = delete;
 
 
-		RenderingManager(SyncBuffer<ImageConfig>& buff, LightField& lf);
+		RenderingManager(ConfigManager& cfgRef);
+
 		~RenderingManager();
 
 		void startRenderThread();
@@ -46,7 +47,7 @@ namespace SP {
 		void initData();
 
 		// helper function
-		void renderingWorker(size_t configIdx);
+		void renderingWorker(size_t subLFIdx, size_t subImgIdx);
 
 
 
@@ -61,9 +62,9 @@ namespace SP {
 
 		// tmp
 		// default camera parameters
-		const RadeonRays::float3 kCameraPos = RadeonRays::float3(0.f, 1.f, 3.f);
-		const RadeonRays::float3 kCameraAt = RadeonRays::float3(0.f, 1.f, 0.f);
-		const RadeonRays::float3 kCameraUp = RadeonRays::float3(0.f, 1.f, 0.f);
+		//const RadeonRays::float3 kCameraPos = RadeonRays::float3(0.f, 1.f, 3.f);
+		//const RadeonRays::float3 kCameraAt = RadeonRays::float3(0.f, 1.f, 0.f);
+		//const RadeonRays::float3 kCameraUp = RadeonRays::float3(0.f, 1.f, 0.f);
 
 		RadeonRays::float2 g_camera_sensor_size = RadeonRays::float2(0.036f, 0.024f);  // default full frame sensor 36x24 mm
 		RadeonRays::float2 g_camera_zcap = RadeonRays::float2(0.0f, 100000.f);
@@ -71,14 +72,9 @@ namespace SP {
 		float g_camera_focus_distance = 1.f;
 		float g_camera_aperture = 0.f;
 
-		// parameters
-		const int kWindowWidth = 512;
-		const int kWindowHeight = 512;
 
 		const int kNumberOfBounce = 5;
 
-		// A set: one camera, one render, one output, one thread
-		const size_t kNumOfCamera = 8;
 
 		// tmp
 		const std::string defaultPath = "../Resources/CornellBox";
@@ -92,12 +88,9 @@ namespace SP {
 		std::unique_ptr<Scene> sceneDataPtr;
 
 
-		// output buffer ref
-		SyncBuffer<ImageConfig>& syncBuffer;
+		// configs
+		ConfigManager& mConfigRef;
 
-
-		// otput Light Field ref
-		LightField& imageLightField;
 
 		// thread
 		std::vector<std::unique_ptr<std::thread>> renderThreads;
