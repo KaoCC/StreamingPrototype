@@ -49,7 +49,7 @@ namespace SP {
 
 		auto* singleBxDFPtr = dynamic_cast<const SingleBxDF*>(diffGeo.getMaterialPtr());
 
-		RadeonRays::float3 wi_tang = diffGeo.getWorldToTangentMatrix() * wi;
+		const RadeonRays::float3& wi_tang = diffGeo.getWorldToTangentMatrix() * wi;
 		RadeonRays::float3 wo_tang;
 
 		if (singleBxDFPtr) {
@@ -80,7 +80,7 @@ namespace SP {
 		//const RadeonRays::float3 kd = Texture_GetValue3f(dg->mat.kx.xyz, dg->uv, TEXTURE_ARGS_IDX(dg->mat.kxmapidx));
 
 		// TMP ! 
-		const RadeonRays::float3 kd = diffGeo.getMaterialPtr()->getInputValue("albedo").floatValue;
+		const RadeonRays::float3& kd = diffGeo.getMaterialPtr()->getInputValue("albedo").floatValue;
 
 //		std::cerr << "wo.y before: " << wo.y << std::endl;
 //		std::cerr << "Sample: " << sample.x << " " << sample.y << '\n';
@@ -112,7 +112,7 @@ namespace SP {
 
 		auto* singleBxDFPtr = dynamic_cast<const SingleBxDF*>(diffGeo.getMaterialPtr());
 
-		RadeonRays::float3 wi_tang = diffGeo.getWorldToTangentMatrix() * wi;
+		const RadeonRays::float3& wi_tang = diffGeo.getWorldToTangentMatrix() * wi;
 		RadeonRays::float3 wo_tang = diffGeo.getWorldToTangentMatrix() * wo;
 
 		if (singleBxDFPtr) {
@@ -136,7 +136,7 @@ namespace SP {
 		// tangent sapce
 
 		// tmp !
-		const RadeonRays::float3 kd = diffGeo.getMaterialPtr()->getInputValue("albedo").floatValue;
+		const RadeonRays::float3& kd = diffGeo.getMaterialPtr()->getInputValue("albedo").floatValue;
 
 		//float F = dg->mat.fresnel;
 		float F = 1.0;	// tmp
