@@ -57,29 +57,29 @@ namespace SP {
 
 		const uint32_t* indexArray = meshDataPtr->getIndices();
 
-		uint32_t i0 = indexArray[3 * primId];								// CHECK ?
-		uint32_t i1 = indexArray[3 * primId + 1];
-		uint32_t i2 = indexArray[3 * primId + 2];
+		const uint32_t& i0 = indexArray[3 * primId];								// CHECK ?
+		const uint32_t& i1 = indexArray[3 * primId + 1];
+		const uint32_t& i2 = indexArray[3 * primId + 2];
 
 		const RadeonRays::float3* normalArray = meshDataPtr->getNormals();
 
-		RadeonRays::float3 n0 = normalArray[i0];
-		RadeonRays::float3 n1 = normalArray[i1];
-		RadeonRays::float3 n2 = normalArray[i2];
+		const RadeonRays::float3& n0 = normalArray[i0];
+		const RadeonRays::float3& n1 = normalArray[i1];
+		const RadeonRays::float3& n2 = normalArray[i2];
 
 
 		const RadeonRays::float3* verticeArray = meshDataPtr->getVertices();
 
-		RadeonRays::float3 v0 = verticeArray[i0];
-		RadeonRays::float3 v1 = verticeArray[i1];
-		RadeonRays::float3 v2 = verticeArray[i2];
+		const RadeonRays::float3& v0 = verticeArray[i0];
+		const RadeonRays::float3& v1 = verticeArray[i1];
+		const RadeonRays::float3& v2 = verticeArray[i2];
 
 
 		const RadeonRays::float2* uvArray = meshDataPtr->getUVs();
 
-		RadeonRays::float2 uv0 = uvArray[i0];
-		RadeonRays::float2 uv1 = uvArray[i1];
-		RadeonRays::float2 uv2 = uvArray[i2];
+		const RadeonRays::float2& uv0 = uvArray[i0];
+		const RadeonRays::float2& uv1 = uvArray[i1];
+		const RadeonRays::float2& uv2 = uvArray[i2];
 
 
 		// Generate sample on triangle
@@ -91,9 +91,9 @@ namespace SP {
 		localUV.y = std::sqrt(r0) * r1;
 
 		// Calculate barycentric position and normal
-		RadeonRays::float3 n = RadeonRays::normalize((1.f - localUV.x - localUV.y) * n0 + localUV.x * n1 + localUV.y * n2);
-		RadeonRays::float3 p = (1.f - localUV.x - localUV.y) * v0 + localUV.x * v1 + localUV.y * v2;
-		RadeonRays::float2 tx = (1.f - localUV.x - localUV.y) * uv0 + localUV.x * uv1 + localUV.y * uv2;
+		const RadeonRays::float3& n = RadeonRays::normalize((1.f - localUV.x - localUV.y) * n0 + localUV.x * n1 + localUV.y * n2);
+		const RadeonRays::float3& p = (1.f - localUV.x - localUV.y) * v0 + localUV.x * v1 + localUV.y * v2;
+		const RadeonRays::float2& tx = (1.f - localUV.x - localUV.y) * uv0 + localUV.x * uv1 + localUV.y * uv2;
 
 		wo = p - diffGeo.getPosition();
 		pdf = 1.f / std::sqrt(((RadeonRays::cross(v2 - v0, v2 - v1)) * 0.5f).sqnorm());
@@ -103,9 +103,9 @@ namespace SP {
 
 		// Texture_GetValue3f(mat.kx.xyz, tx, TEXTURE_ARGS_IDX(mat.kxmapidx));
 		// KAOCC: texture is not supported yet ...
-		const RadeonRays::float3 ke = matPtr->getInputValue("albedo").floatValue;
+		const RadeonRays::float3& ke = matPtr->getInputValue("albedo").floatValue;
 
-		RadeonRays::float3 v = -RadeonRays::normalize(wo);
+		const RadeonRays::float3& v = -RadeonRays::normalize(wo);
 
 		float n_dot_v = dot(n, v);
 
