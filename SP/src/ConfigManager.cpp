@@ -13,8 +13,8 @@ namespace SP {
 	ConfigManager::ConfigManager() : mImageLightField(kNumOfLFs, kNumOfSubLFImgs), mCamera(kCameraPos, kCameraAt, kCameraUp) {
 
 		mChangeSceneFlags.resize(kNumOfLFs * kNumOfSubLFImgs);
-		for (auto& flag : mChangeSceneFlags) {
-			flag = false;
+		for (size_t i = 0; i < mChangeSceneFlags.size(); ++i) {
+			mChangeSceneFlags[i] = false;
 		}
 
 	}
@@ -96,8 +96,8 @@ namespace SP {
 	}
 
 	void ConfigManager::setAllSceneChangedFlag(bool flag) {
-		for (auto& sceneFlag : mChangeSceneFlags) {
-			sceneFlag = flag;
+		for (size_t i = 0; i < mChangeSceneFlags.size(); ++i) {
+			mChangeSceneFlags[i] = flag;
 		}
 	}
 
