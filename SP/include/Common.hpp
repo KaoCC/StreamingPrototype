@@ -15,7 +15,7 @@
 namespace SP {
 
 
-	class Encoder;
+	//class Encoder;
 
 	//struct Position {
 
@@ -62,7 +62,7 @@ namespace SP {
 
 	class ImageConfig {
 	public:
-		using ImageBuffer = std::vector<uint8_t>;
+		using ImageBuffer = std::vector<std::uint8_t>;
 		using RadianceMap = std::vector<RadeonRays::float3>;
 
 		ImageConfig() = default;

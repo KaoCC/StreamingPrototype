@@ -320,7 +320,7 @@ namespace SP {
 
 			const auto& saveFlag = msgPtr->controlmsg().save_frame();
 			if (saveFlag) {  // != 0
-				std::cerr << "Save to PPM\n";
+				std::cerr << "Save Images !\n";
 				mCfgManagerRef.saveAll();
 			}
 
