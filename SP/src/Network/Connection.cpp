@@ -303,6 +303,31 @@ namespace SP {
 
 			break;
 
+		case StreamingFormat::MessageType::MsgControl:
+		{
+			// test
+			std::cerr << "control msg\n";
+
+			const auto& changeFlag = msgPtr->controlmsg().change_scene();
+			if (changeFlag) {		// != 0
+				// tmp
+				std::cerr << "clear Scene\n";
+				mCfgManagerRef.clearAll();
+			}
+
+
+			const auto& saveFlag = msgPtr->controlmsg().save_frame();
+			if (saveFlag) {  // != 0
+				std::cerr << "Save to PPM\n";
+				mCfgManagerRef.saveAll();
+			}
+
+
+
+			responsePtr = nullptr;
+			break;
+		}
+
 		default:
 			// error ?
 			// Throw ?

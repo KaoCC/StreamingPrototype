@@ -88,7 +88,11 @@ namespace SP {
 
 	void ImageConfig::storeToPPM(size_t serialNumber) const {
 
-		const std::string fileName = "test" + std::to_string(imageID) + "-" + std::to_string(serialNumber) +".ppm";
+		if (serialNumber == -1) {
+			serialNumber = this->imageID;
+		}
+
+		const std::string fileName = "image" + std::to_string(imageID) + "-" + std::to_string(serialNumber) +".ppm";
 
 		FILE* file = fopen(fileName.c_str(), "wb");
 		if (!file) {
@@ -107,6 +111,14 @@ namespace SP {
 		fclose(file);
 
 
+	}
+
+	void ImageConfig::reset() {
+
+		// reset all data to 0
+		for (auto& data : imageData) {
+			data = 0;
+		}
 	}
 
 

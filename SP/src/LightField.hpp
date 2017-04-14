@@ -48,6 +48,11 @@ namespace SP {
 		// TEST !
 		ImageConfig::ImageBuffer getAll();
 
+		// TEST
+		void clearAll();
+
+		// TEST
+		void saveAll() const;
 
 	private:
 

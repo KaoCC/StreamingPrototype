@@ -114,6 +114,9 @@ namespace SP {
 		// test code
 		void storeToPPM(size_t serialNumber) const;
 
+		// test code
+		void reset();
+
 
 		// ...
 
