@@ -312,6 +312,8 @@ namespace SP {
 			if (changeFlag) {		// != 0
 				// tmp
 				std::cerr << "clear Scene\n";
+
+				mCfgManagerRef.setAllSceneChangedFlag(true);
 				mCfgManagerRef.clearAll();
 			}
 

@@ -94,7 +94,16 @@ namespace SP {
 	}
 
 	void PtRenderer::clear(RadeonRays::float3 const & val, Output & output) const {
-		throw std::runtime_error("Yet to be done");
+		//throw std::runtime_error("Yet to be done");
+
+		RenderOutput& rendOutRef = dynamic_cast<RenderOutput&>(output); 		// test it !
+
+		auto& storedData = rendOutRef.getInternalStorage();
+
+		for (auto& data : storedData) {
+			data = val;
+		}
+
 	}
 
 	void PtRenderer::preprocess(Scene const & scene) {

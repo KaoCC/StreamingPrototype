@@ -207,7 +207,7 @@ namespace SP {
 		ImageConfig img;
 
 
-		size_t farmIdx = mConfigRef.getNumberOfSubLFs() * subLFIdx + subImgIdx;
+		size_t farmIdx = mConfigRef.getNumberOfSubLFImages() * subLFIdx + subImgIdx;
 
 		size_t counter = 0;
 		const size_t mod = 1;
@@ -221,6 +221,11 @@ namespace SP {
 
 			if (farmIdx == 0) {
 				std::cerr << "Update time: " << std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1).count() << std::endl ;
+			}
+
+			if (mConfigRef.isSceneChanged(farmIdx)) {
+				renderFarm[farmIdx]->clear(0.f, *(renderOutputData[farmIdx]));
+				mConfigRef.setSceneChangedFlag(farmIdx, false);
 			}
 
 			// test code
