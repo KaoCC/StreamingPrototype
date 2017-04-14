@@ -11,16 +11,61 @@
 
 #include "../LightField.hpp"
 
+#include <cstdio>
+
 namespace SP {
 
 
 	RenderingManager::RenderingManager(ConfigManager& cfgRef) : mConfigRef (cfgRef){
 
-		// allocate renderer
 
+		// Get device / backend info
+
+		int cpuIdx = -1;
+		int gpuIdx = -1;
+		int embreeIdx = -1;
+
+		// Always use Embree
+		RadeonRays::IntersectionApi::SetPlatform(RadeonRays::DeviceInfo::kAny);
+
+		for (auto idx = 0U; idx < RadeonRays::IntersectionApi::GetDeviceCount(); ++idx) {
+			RadeonRays::DeviceInfo devinfo;
+			RadeonRays::IntersectionApi::GetDeviceInfo(idx, devinfo);
+
+			// KAOCC: device platform is bugged?
+			std::printf( "DeviceInfo: [%s] [%s] [%i] [%x]\n", devinfo.name, devinfo.vendor, devinfo.type, devinfo.platform );
+
+			if ( devinfo.type == RadeonRays::DeviceInfo::kCpu && cpuIdx == -1) {
+				cpuIdx = idx;
+			}
+
+			if (devinfo.type == RadeonRays::DeviceInfo::kGpu && gpuIdx == -1) {
+				gpuIdx = idx;
+			}
+
+			if (devinfo.platform == RadeonRays::DeviceInfo::kEmbree && devinfo.type == RadeonRays::DeviceInfo::kCpu && embreeIdx == -1) {
+				embreeIdx = idx;
+			}
+		}
+
+
+		int nativeIdx = -1;
+
+		// select order:  GPU > Embree > CPU
+		if (gpuIdx != -1) {
+			nativeIdx = gpuIdx;
+		} else if (embreeIdx != -1) {
+			nativeIdx = embreeIdx;
+		} else if (cpuIdx != -1) {
+			nativeIdx = cpuIdx;
+		}
+
+		std::cerr << "Selected Device ID: " << nativeIdx << std::endl;
+
+		// allocate renderer
 		renderFarm.resize(cfgRef.getNumberOfCameras());
 		for (size_t i = 0; i < renderFarm.size(); ++i) {
-			renderFarm[i] = std::make_unique<PtRenderer>(1, 5);		// idx, num_of_bounce
+			renderFarm[i] = std::make_unique<PtRenderer>(nativeIdx, 5);		// idx, num_of_bounce
 		}
 
 		renderThreads.resize(renderFarm.size());

@@ -18,7 +18,7 @@ namespace SP {
 
 		// ... 
 
-		api->SetOption("acc.type", "fatbvh");
+		api->SetOption("acc.type", "qbvh");
 		api->SetOption("bvh.builder", "sah");
 	}
 
