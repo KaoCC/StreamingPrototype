@@ -94,7 +94,16 @@ namespace SP {
 	}
 
 	void PtRenderer::clear(RadeonRays::float3 const & val, Output & output) const {
-		throw std::runtime_error("Yet to be done");
+		//throw std::runtime_error("Yet to be done");
+
+		RenderOutput& rendOutRef = dynamic_cast<RenderOutput&>(output); 		// test it !
+
+		auto& storedData = rendOutRef.getInternalStorage();
+
+		for (auto& data : storedData) {
+			data = val;
+		}
+
 	}
 
 	void PtRenderer::preprocess(Scene const & scene) {
@@ -301,9 +310,11 @@ namespace SP {
 				currentRay.o.w = cameraPtr->getDepthRange().y - cameraPtr->getDepthRange().x;
 				currentRay.d.w = sampleBase.x;		// check
 
-				currentRay.extra.x = 0xFFFFFFFF;
-				currentRay.extra.y = 0xFFFFFFFF;
-				currentRay.padding = currentRay.extra;
+
+				//currentRay.SetMask(0xFFFFFFFFF);
+				//currentRay.extra.x = 0xFFFFFFFF;
+				//currentRay.extra.y = 0xFFFFFFFF;
+				//currentRay.padding = currentRay.extra;
 
 
 				//std::cerr << "Ray d x: " << currentRay.d.x << '\n';

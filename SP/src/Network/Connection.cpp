@@ -312,13 +312,15 @@ namespace SP {
 			if (changeFlag) {		// != 0
 				// tmp
 				std::cerr << "clear Scene\n";
+
+				mCfgManagerRef.setAllSceneChangedFlag(true);
 				mCfgManagerRef.clearAll();
 			}
 
 
 			const auto& saveFlag = msgPtr->controlmsg().save_frame();
 			if (saveFlag) {  // != 0
-				std::cerr << "Save to PPM\n";
+				std::cerr << "Save Images !\n";
 				mCfgManagerRef.saveAll();
 			}
 

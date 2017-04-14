@@ -47,6 +47,11 @@ namespace SP {
 		void clearAll();
 		void saveAll();
 
+		// Render change Scene flag (control)
+		bool isSceneChanged(size_t index) const;
+		void setSceneChangedFlag(size_t index, bool flag);
+		void setAllSceneChangedFlag(bool flag);		// tmp
+
 		// tmp
 		bool getSubLightFieldRefreshState(std::size_t subLFIdx) const;
 		void setSubLightFieldRefreshState(std::size_t subLFIdx, bool state);
@@ -114,6 +119,11 @@ namespace SP {
 		static const RadeonRays::float3 kCameraPos; // = RadeonRays::float3(0.f, 1.f, 3.f);
 		static const RadeonRays::float3 kCameraAt; // = RadeonRays::float3(0.f, 1.f, 0.f);
 		static const RadeonRays::float3 kCameraUp; //= RadeonRays::float3(0.f, 1.f, 0.f);
+
+
+
+		// renderer change scene flag
+		std::vector<bool> mChangeSceneFlags;
 
 	};
 

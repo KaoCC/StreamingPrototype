@@ -15,7 +15,7 @@
 namespace SP {
 
 
-	class Encoder;
+	//class Encoder;
 
 	//struct Position {
 
@@ -62,13 +62,15 @@ namespace SP {
 
 	class ImageConfig {
 	public:
-		using ImageBuffer = std::vector<uint8_t>;
+		using ImageBuffer = std::vector<std::uint8_t>;
+		using RadianceMap = std::vector<RadeonRays::float3>;
 
 		ImageConfig() = default;
 
 		// for testing only
 		ImageConfig(uint8_t init, size_t size) {
 			imageData.resize(size);
+			radiance.resize(size);
 
 			for (size_t i = 0; i < size; ++i) {
 				imageData[i] = init;
@@ -94,6 +96,12 @@ namespace SP {
 			return imageData;
 		}
 
+
+		// radiance 	
+		RadianceMap& getRadianceMap() {
+			return radiance;
+		}
+
 		const uint8_t* getImageRawData() const {
 			return imageData.data();
 		}
@@ -115,6 +123,9 @@ namespace SP {
 		void storeToPPM(size_t serialNumber) const;
 
 		// test code
+		void storeToHDR(size_t serialNumber) const;
+
+		// test code
 		void reset();
 
 
@@ -126,6 +137,10 @@ namespace SP {
 		// test
 		int imageID;
 		ImageBuffer imageData;
+
+		// Renderer result cache
+		RadianceMap radiance;
+
 	};
 
 

@@ -12,6 +12,10 @@ namespace SP {
 
 	ConfigManager::ConfigManager() : mImageLightField(kNumOfLFs, kNumOfSubLFImgs), mCamera(kCameraPos, kCameraAt, kCameraUp) {
 
+		mChangeSceneFlags.resize(kNumOfLFs * kNumOfSubLFImgs);
+		for (size_t i = 0; i < mChangeSceneFlags.size(); ++i) {
+			mChangeSceneFlags[i] = false;
+		}
 
 	}
 
@@ -81,6 +85,20 @@ namespace SP {
 
 	void ConfigManager::saveAll() {
 		mImageLightField.saveAll();
+	}
+
+	bool ConfigManager::isSceneChanged(size_t index) const {
+		return mChangeSceneFlags[index];
+	}
+
+	void ConfigManager::setSceneChangedFlag(size_t index, bool flag) {
+		mChangeSceneFlags[index] = flag;
+	}
+
+	void ConfigManager::setAllSceneChangedFlag(bool flag) {
+		for (size_t i = 0; i < mChangeSceneFlags.size(); ++i) {
+			mChangeSceneFlags[i] = flag;
+		}
 	}
 
 	bool ConfigManager::getSubLightFieldRefreshState(std::size_t subLFIdx) const {

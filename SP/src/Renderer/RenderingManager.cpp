@@ -207,7 +207,7 @@ namespace SP {
 		ImageConfig img;
 
 
-		size_t farmIdx = mConfigRef.getNumberOfSubLFs() * subLFIdx + subImgIdx;
+		size_t farmIdx = mConfigRef.getNumberOfSubLFImages() * subLFIdx + subImgIdx;
 
 		size_t counter = 0;
 		const size_t mod = 1;
@@ -223,6 +223,11 @@ namespace SP {
 				std::cerr << "Update time: " << std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1).count() << std::endl ;
 			}
 
+			if (mConfigRef.isSceneChanged(farmIdx)) {
+				renderFarm[farmIdx]->clear(0.f, *(renderOutputData[farmIdx]));
+				mConfigRef.setSceneChangedFlag(farmIdx, false);
+			}
+
 			// test code
 			if (counter % mod == 0) {
 
@@ -233,7 +238,10 @@ namespace SP {
 
 				img.setId(farmIdx);
 				convertOutputToImage(img, farmIdx);
-				//img.storeToPPM(counter);
+
+				auto& rMap = img.getRadianceMap();
+				rMap.resize(mConfigRef.getScreenWidth() * mConfigRef.getScreenHeight());
+				renderOutputData[farmIdx]->getData(rMap.data());
 
 				fieldRef.setSubLightFieldImageWithIndex(subLFIdx, subImgIdx, img);
 

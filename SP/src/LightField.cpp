@@ -120,6 +120,7 @@ namespace SP {
 		for (const auto& subLF : subLFs) {
 			for (const auto& img : subLF.images) {
 				img.storeToPPM(-1);
+				img.storeToHDR(-1);
 			}
 		}
 
