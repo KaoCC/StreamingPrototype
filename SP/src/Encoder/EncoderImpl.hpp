@@ -26,6 +26,7 @@ namespace SP {
 
 		std::uint8_t* getEncoderRawBuffer();
 
+                void enableLossless(bool enable);
 
 
 	private:
@@ -60,8 +61,10 @@ namespace SP {
 			param.b_vfr_input = 0;
 			param.b_repeat_headers = 1;
 			param.b_annexb = 1;
-			param.rc.i_qp_constant = 0;
-			param.rc.i_rc_method = X264_RC_CQP;
+			if(losslessEnabled){
+                                param.rc.i_qp_constant = 0;
+                                param.rc.i_rc_method = X264_RC_CQP;
+                        }
 			// alloc picture
 			if (x264_picture_alloc(&encoder_pic, param.i_csp, param.i_width, param.i_height) < 0) {
 				//printf("Fail to allocate picture buffer\n");
@@ -133,6 +136,8 @@ namespace SP {
 		int encoder_i_nal;
 
 		x264_t* encoder_h264_encoder = nullptr;
+
+		bool losslessEnabled;
 
 	};
 
