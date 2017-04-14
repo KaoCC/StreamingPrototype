@@ -81,7 +81,7 @@ namespace SP {
 
 
 			// TEST !!!!!
-			for (auto& s : internalShapes) {
+			for (const auto& s : internalShapes) {
 				api->AttachShape(s);
 				std::cerr << "Add shape !" << std::endl;
 			}

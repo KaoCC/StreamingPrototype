@@ -310,9 +310,11 @@ namespace SP {
 				currentRay.o.w = cameraPtr->getDepthRange().y - cameraPtr->getDepthRange().x;
 				currentRay.d.w = sampleBase.x;		// check
 
-				currentRay.extra.x = 0xFFFFFFFF;
-				currentRay.extra.y = 0xFFFFFFFF;
-				currentRay.padding = currentRay.extra;
+
+				//currentRay.SetMask(0xFFFFFFFFF);
+				//currentRay.extra.x = 0xFFFFFFFF;
+				//currentRay.extra.y = 0xFFFFFFFF;
+				//currentRay.padding = currentRay.extra;
 
 
 				//std::cerr << "Ray d x: " << currentRay.d.x << '\n';
