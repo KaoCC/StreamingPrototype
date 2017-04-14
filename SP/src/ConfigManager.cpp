@@ -75,6 +75,14 @@ namespace SP {
 		return mImageLightField.getSubLightFieldImageWithIndex(subLFIdx, imgIdx);
 	}
 
+	void ConfigManager::clearAll() {
+		mImageLightField.clearAll();
+	}
+
+	void ConfigManager::saveAll() {
+		mImageLightField.saveAll();
+	}
+
 	bool ConfigManager::getSubLightFieldRefreshState(std::size_t subLFIdx) const {
 		return mImageLightField.getSubLightFieldRefreshState(subLFIdx);
 	}

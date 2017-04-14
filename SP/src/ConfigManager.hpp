@@ -43,6 +43,9 @@ namespace SP {
 		// Light Field
 		ImageConfig::ImageBuffer getSubLightFieldImageWithIndex(size_t subLFIdx, size_t imgIdx);
 
+		// LF control
+		void clearAll();
+		void saveAll();
 
 		// tmp
 		bool getSubLightFieldRefreshState(std::size_t subLFIdx) const;

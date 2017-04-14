@@ -104,6 +104,27 @@ namespace SP {
 		return buffer;
 	}
 
+	void LightField::clearAll() {
+
+		for (auto& subLF : subLFs) {
+			for (auto& img : subLF.images) {
+				img.reset();
+			}
+
+		}
+
+	}
+
+	void LightField::saveAll() const {
+
+		for (const auto& subLF : subLFs) {
+			for (const auto& img : subLF.images) {
+				img.storeToPPM(-1);
+			}
+		}
+
+	}
+
 
 	// test
 
