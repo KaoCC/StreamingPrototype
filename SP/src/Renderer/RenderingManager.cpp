@@ -238,7 +238,10 @@ namespace SP {
 
 				img.setId(farmIdx);
 				convertOutputToImage(img, farmIdx);
-				//img.storeToPPM(counter);
+
+				auto& rMap = img.getRadianceMap();
+				rMap.resize(mConfigRef.getScreenWidth() * mConfigRef.getScreenHeight());
+				renderOutputData[farmIdx]->getData(rMap.data());
 
 				fieldRef.setSubLightFieldImageWithIndex(subLFIdx, subImgIdx, img);
 
