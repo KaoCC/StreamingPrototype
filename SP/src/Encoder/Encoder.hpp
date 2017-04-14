@@ -10,6 +10,7 @@ namespace SP {
 		virtual ~Encoder() = default;
 		virtual  void startEncoding(uint8_t** encodedBuf, int* encodedSize) = 0;
 		virtual std::uint8_t* getEncoderRawBuffer() = 0;
+		virtual void enableLossless(bool enable) = 0;
 
 	};
 

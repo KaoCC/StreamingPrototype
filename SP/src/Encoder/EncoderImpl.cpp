@@ -4,7 +4,7 @@
 
 namespace SP {
 
-	EncoderImpl::EncoderImpl(size_t width, size_t height) {
+	EncoderImpl::EncoderImpl(size_t width, size_t height):losslessEnabled(false) {
 		encoder_init(width, height);
 	}
 
@@ -20,9 +20,13 @@ namespace SP {
 		return encoder_get_raw_data_buf();
 	}
 
+	void EncoderImpl::enableLossless(bool enable){
+	        losslessEnabled = enable;
+        }
 
 	std::unique_ptr<Encoder> CreateEncoder(std::size_t width, std::size_t height) {
 		return std::make_unique<EncoderImpl>(width, height);
 	}
+
 
 }
