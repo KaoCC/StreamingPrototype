@@ -1,5 +1,5 @@
 # StreamingPrototype
-Streaming Prototype is a demo version of the Cloud-Based Rendering Engine that creates photorealistic images for seamless viewing and editing.
+Streaming Prototype is a demo version of the Cloud-Based Rendering Engine that creates photo-realistic images for seamless viewing and editing.
 
 ## System requirements and Dependencies
 
@@ -10,6 +10,7 @@ Streaming Prototype is a demo version of the Cloud-Based Rendering Engine that c
 - [Heterogeneous Queue](https://github.com/KaoCC/HeterogeneousQueue)
 - [OpenImageIO](https://sites.google.com/site/openimageio/home)
 
+Note: The RadeonRays framework may require [Embree](https://embree.github.io/) or [OpenCL](https://software.intel.com/en-us/intel-opencl) in order to support the corresponding backends.
 
 The following compilers are supported:
 
@@ -28,7 +29,7 @@ The following compilers are supported:
 
 - (Optional) Create C++ classes from Google Protocol Buffer to modify the message format
 
-`./Tool/protoc/win32/bin/protoc.exe -I="./SP/src/" --cpp_out="./Protocol" ./Protocol/message.proto`
+`./Tool/protoc/win32/bin/protoc.exe -I="./Protocol" --cpp_out="./Protocol" ./Protocol/message.proto`
 
 
 ### Linux
