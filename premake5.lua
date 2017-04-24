@@ -102,11 +102,25 @@ workspace "StreamingPrototype"
     includedirs {"./3rdparty/RadeonRays/include"}
     libdirs {"./3rdparty/RadeonRays/lib"}
 
+	name="RadeonRays"
+	
     filter {"platforms:x64"}
-        links {"RadeonRays64"}
+        -- links {"RadeonRays64"}
+
+	name = name .. "64"
     filter {"platforms:x86"}
-        links {"RadeonRays"}
+        -- links {"RadeonRays"}
     filter {}
+
+
+	filter {"configurations:Debug"}
+		name = name .. "D"
+	filter {"configurations:Release"}
+	filter{}
+
+	print (name)
+	links{name}
+
 
     --OIIO
     --
