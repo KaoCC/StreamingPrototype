@@ -60,11 +60,15 @@ namespace SP {
 	//	return *imagePtr;
 	//}
 
+
+
+
+
 	size_t ConfigManager::getIndexOfSubLightField(float dx) const {
 
 		dx += 0.5;
 
-		std::size_t totalSz = mImageLightField.getTotalSize();
+		const std::size_t totalSz = mImageLightField.getTotalSize();
 		std::size_t index = dx * totalSz;
 
 		if (index >= totalSz) {
@@ -72,6 +76,45 @@ namespace SP {
 		}
 
 		return index;
+	}
+
+	std::vector<std::size_t> ConfigManager::getIndexArrayOfSubLightField(float dx) const {
+
+		std::vector<std::size_t> indexArray;
+
+		dx += 0.5;
+		const std::size_t totalSz = mImageLightField.getTotalSize();
+		std::size_t index = dx * totalSz;
+
+		//indexArray.push_back(index);
+
+		std::size_t indexR = 0;
+		std::size_t indexL = 0;
+
+		if (index >= totalSz - 1) {
+			index = totalSz - 1;
+			indexL = index - 1;
+
+			indexArray.push_back(indexL);
+			indexArray.push_back(index);
+
+		} else if (index <= 0) {
+			index = 0;
+			indexR = index + 1;
+
+			indexArray.push_back(index);
+			indexArray.push_back(indexR);
+
+		} else {
+			indexL = index - 1;
+			indexR = index + 1;
+
+			indexArray.push_back(indexL);
+			indexArray.push_back(index);
+			indexArray.push_back(indexR);
+		}
+
+		return indexArray;
 	}
 
 
@@ -140,6 +183,10 @@ namespace SP {
 
 	CameraConfig ConfigManager::getCameraConfig() const {
 		return mCamera;
+	}
+
+	std::size_t ConfigManager::getWriteBufferSize() const {
+		return kWriteBufferSize;
 	}
 
 

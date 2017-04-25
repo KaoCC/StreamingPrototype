@@ -39,6 +39,8 @@ namespace SP {
 		// LF indexing
 		std::size_t getIndexOfSubLightField(float dx) const;
 
+		// LF multi index
+		std::vector<std::size_t> getIndexArrayOfSubLightField(float dx) const;
 
 		// Light Field
 		ImageConfig::ImageBuffer getSubLightFieldImageWithIndex(size_t subLFIdx, size_t imgIdx);
@@ -76,6 +78,10 @@ namespace SP {
 
 		// tmp
 		//void loadImages();
+
+
+		// Writebuffer Size
+		std::size_t getWriteBufferSize() const;
 
 	private:
 
@@ -121,6 +127,8 @@ namespace SP {
 		static const RadeonRays::float3 kCameraUp; //= RadeonRays::float3(0.f, 1.f, 0.f);
 
 
+		// default write buffer size
+		static const std::size_t kWriteBufferSize = 3;
 
 		// renderer change scene flag
 		std::vector<bool> mChangeSceneFlags;

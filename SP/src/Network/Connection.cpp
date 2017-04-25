@@ -2,6 +2,9 @@
 
 #include <iostream>
 
+#include <thread>
+#include <chrono>
+
 namespace SP {
 
 
@@ -59,7 +62,11 @@ namespace SP {
 			// KAOCC: throw exception here if null ?
 			Packet::MessagePointer msgPtr = resolvePacket();
 
-			writeResponse(createResponse(msgPtr));
+			auto responseVector = createResponse(msgPtr);
+
+			for (const auto& response : responseVector) {
+				writeResponse(response);
+			}
 
 			// repeat
 			startReadHeader();
@@ -101,12 +108,13 @@ namespace SP {
 
 	}
 
-	Packet::MessagePointer Connection::createResponse(Packet::MessagePointer msgPtr) {
+	std::vector<Packet::MessagePointer> Connection::createResponse(Packet::MessagePointer msgPtr) {
 
-		// KAOCC: Yet to be done !
+		
+		std::vector<Packet::MessagePointer> responseVector;
 
 		// KAOCC: TODO: prevent creating new Messages for optimization
-		Packet::MessagePointer responsePtr{ new StreamingFormat::StreamingMessage };
+		//Packet::MessagePointer responsePtr{ new StreamingFormat::StreamingMessage };
 
 		switch (msgPtr->type()) {
 		case StreamingFormat::MessageType::MsgInit:
@@ -123,6 +131,7 @@ namespace SP {
 			// more from here
 			//...
 
+			Packet::MessagePointer responsePtr{ new StreamingFormat::StreamingMessage };
 
 			// reply the default positions
 			responsePtr->set_type(StreamingFormat::MessageType::MsgDefaultPos);
@@ -143,6 +152,8 @@ namespace SP {
 			defPosPtr->set_vz(1);
 
 			responsePtr->set_allocated_defaultposmsg(defPosPtr);
+
+			responseVector.push_back(responsePtr);
 
 			break;
 
@@ -174,8 +185,8 @@ namespace SP {
 
 
 			// TEST !
-			if (writeBufferQueue.size() > 3) {
-				responsePtr = nullptr;
+			if (writeBufferQueue.size() > mCfgManagerRef.getWriteBufferSize()) {
+				//responsePtr = nullptr;
 				break;
 			}
 
@@ -199,109 +210,119 @@ namespace SP {
 			// insert rendering code & encoder here
 
 
-			// reply the images
-			responsePtr->set_type(StreamingFormat::MessageType::MsgImage);
-
-			StreamingFormat::Image* imagePtr{ new StreamingFormat::Image };
-
-			// for testing only
-			imagePtr->set_serialnumber(serialNumber);
-			
-
-			//ImageConfig::ImageBuffer& imageBufferCache = cfgManager.getSubLightFieldImages(0);
-			//ImageConfig::ImageBuffer imageBufferCache = cfgManager.getAll();
-
-			//std::cerr << "[IMG CACHE SZ]: " << imageBufferCache.size() << " >>>>>>>>>>>>  ID: " << imageData.getID() << '\n';
-
-
 			uint8_t* rawPtr = mEncoder->getEncoderRawBuffer();
 
 			// TMP !!!
-			size_t subLFIndex = mCfgManagerRef.getIndexOfSubLightField(dx);
+			//size_t subLFIndex = mCfgManagerRef.getIndexOfSubLightField(dx);
+
+			auto indexArray = mCfgManagerRef.getIndexArrayOfSubLightField(dx);
+
 			size_t subLFSz = mCfgManagerRef.getNumberOfSubLFImages();
 
+			encodedDataVector.clear();
 
-			if (!mCfgManagerRef.getSubLightFieldRefreshState(subLFIndex)) {
-				std::cerr << "No need to send\n";
-				responsePtr = nullptr;
-				break;
-			} else {
-				std::cerr << "Get new: " << subLFIndex << "\n";
-			}
+			for (std::size_t subLFIndex : indexArray) {
 
-			// test
-			encodedImageData.clear();
 
-			for (size_t k = 0; k < subLFSz; ++k) {
-
-				// need to optimize for copying !
-				//ImageConfig imageData{ cfgManager.getImage() };
-				//ImageConfig::ImageBuffer& imageBufferCache{ imageData.getImageData() };
-
-				ImageConfig::ImageBuffer imageBufferCache{ mCfgManagerRef.getSubLightFieldImageWithIndex(subLFIndex, k) };
-
-				std::copy(imageBufferCache.begin(), imageBufferCache.end(), rawPtr);
-
-				uint8_t* outBufPtr;
-				int outSize = 0;
-				mEncoder->startEncoding(&outBufPtr, &outSize);
-
-				//ImageConfig::ImageBuffer encodedImageData;
-				if (outSize > 0) {
-
-					//std::cerr << "SUCCESS! Size: " << outSize << " SubLF Index: " << subLFIndex  << " img Index: " << k << " dx: " << dx << '\n';
-
-					//ImageBuffer encodedImageData(outBufPtr, outBufPtr + outSize);
-
-					//tmp
-					//encodedImageData = std::move(ImageConfig::ImageBuffer(outBufPtr, outBufPtr + outSize));
-
-					encodedImageData.insert(std::end(encodedImageData), outBufPtr, outBufPtr + outSize);
-
-					// accumulate
-					//accBuffer.insert(std::end(accBuffer), std::begin(imageData), std::end(imageData));
-
+				if (!mCfgManagerRef.getSubLightFieldRefreshState(subLFIndex)) {
+					//std::cerr << "No need to send\n";
+					//responsePtr = nullptr;
+					continue;
 				} else {
-					std::cerr << "Failed to Encode !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! " << '\n';
+					std::cerr << "Get new: " << subLFIndex << "\n";
 				}
 
+				Packet::MessagePointer responsePtr{ new StreamingFormat::StreamingMessage };
+
+				// reply the images
+				responsePtr->set_type(StreamingFormat::MessageType::MsgImage);
+
+				// test
+				//encodedDataVector.clear();
+
+				ImageConfig::ImageBuffer encodedImageData;
+
+				for (size_t k = 0; k < subLFSz; ++k) {
+
+					// need to optimize for copying !
+					//ImageConfig imageData{ cfgManager.getImage() };
+					//ImageConfig::ImageBuffer& imageBufferCache{ imageData.getImageData() };
+
+					ImageConfig::ImageBuffer imageBufferCache{ mCfgManagerRef.getSubLightFieldImageWithIndex(subLFIndex, k) };
+
+					std::copy(imageBufferCache.begin(), imageBufferCache.end(), rawPtr);
+
+					uint8_t* outBufPtr;
+					int outSize = 0;
+					mEncoder->startEncoding(&outBufPtr, &outSize);
+
+					//ImageConfig::ImageBuffer encodedImageData;
+					if (outSize > 0) {
+						encodedImageData.insert(std::end(encodedImageData), outBufPtr, outBufPtr + outSize);
+
+					} else {
+						std::cerr << "Failed to Encode !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! " << '\n';
+					}
+
+					//using namespace std::chrono_literals;
+					//std::this_thread::sleep_for(1s);
+
+				}
+
+
+				encodedDataVector.push_back(encodedImageData);
+
+				// mark read
+				//std::cerr << "mark read\n";
+				mCfgManagerRef.setSubLightFieldRefreshState(subLFIndex, false);
+
+
+				StreamingFormat::Image* imagePtr{ new StreamingFormat::Image };
+
+				// for testing only
+				imagePtr->set_serialnumber(serialNumber);
+
+				//std::cerr << "size" << encodedImageData.size() << std::endl;
+				imagePtr->set_bytesize(encodedImageData.size()); // tmp
+				//imagePtr->set_status(imageData.getID());  // tmp
+
+				imagePtr->set_status(subLFIndex);	// test
+
+				// image data ????
+				// need to check
+				//imagePtr->set_imagedata(reinterpret_cast<const char*>(imageData.getImageRawData()));
+
+				responsePtr->set_allocated_imagemsg(imagePtr);
+
+				responseVector.push_back(responsePtr);
+
 			}
-
-
-			// mark read
-			//std::cerr << "mark read\n";
-			mCfgManagerRef.setSubLightFieldRefreshState(subLFIndex, false);
-
-			//std::cerr << "size" << encodedImageData.size() << std::endl;
-			imagePtr->set_bytesize(encodedImageData.size()); // tmp
-			//imagePtr->set_status(imageData.getID());  // tmp
-
-			imagePtr->set_status(subLFIndex);	// test
-
-			// image data ????
-			// need to check
-			//imagePtr->set_imagedata(reinterpret_cast<const char*>(imageData.getImageRawData()));
-
-			responsePtr->set_allocated_imagemsg(imagePtr);
 
 			break;
 		}
 
 		case StreamingFormat::MessageType::MsgImage:
+		{
 			// Possible error
 			// The server will not get this one !
 			break;
+		}
 
 		case StreamingFormat::MessageType::MsgEnding:
+		{
+
+			Packet::MessagePointer responsePtr{ new StreamingFormat::StreamingMessage };
 
 			// tmp: for testing only
 			// Echo the Ending msg back ?
 			responsePtr->set_type(StreamingFormat::MessageType::MsgEnding);
+			responseVector.push_back(responsePtr);
 
 			// TODO:
 			// Close the connection !
 
 			break;
+		}
 
 		case StreamingFormat::MessageType::MsgControl:
 		{
@@ -326,7 +347,7 @@ namespace SP {
 
 
 
-			responsePtr = nullptr;
+			//responsePtr = nullptr;
 			break;
 		}
 
@@ -337,7 +358,7 @@ namespace SP {
 		}
 
 
-		return responsePtr;
+		return responseVector;
 	}
 
 	void Connection::writeResponse(Packet::MessagePointer msgPtr) {
@@ -368,7 +389,10 @@ namespace SP {
 					std::bind(&Connection::handleWriteImage, shared_from_this(), std::placeholders::_1)); */
 				//boost::asio::write(streamingSocket, boost::asio::buffer(encodedImageData));
 
-				appendImage(writeBuffer);
+
+				// KAOCC: Need to change ! Not a good approach !
+				appendImage(writeBuffer, encodedDataVector.front());
+				encodedDataVector.pop_front();
 
 			}
 
@@ -401,7 +425,7 @@ namespace SP {
 
 
 	// yet to be done
-	void Connection::appendImage(Packet::DataBuffer & buffer) {
+	void Connection::appendImage(Packet::DataBuffer & buffer, const ImageConfig::ImageBuffer& encodedData) {
 
 		//size_t currentSize = buffer.size();
 		//size_t newSize = currentSize + encodedImageData.size();
@@ -411,7 +435,7 @@ namespace SP {
 		//std::copy(encodedImageData.begin(), encodedImageData.end(), buffer.end());
 
 
-		buffer.insert(std::end(buffer), std::begin(encodedImageData), std::end(encodedImageData));
+		buffer.insert(std::end(buffer), std::begin(encodedData), std::end(encodedData));
 
 		// test
 		//std::cerr << "insert size " << buffer.size() << '\n';
