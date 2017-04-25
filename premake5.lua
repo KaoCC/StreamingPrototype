@@ -104,22 +104,16 @@ workspace "StreamingPrototype"
 
 	name="RadeonRays"
 	
-    filter {"platforms:x64"}
-        -- links {"RadeonRays64"}
+    filter {"configurations:Debug", "platforms:x64"}
+        links {"RadeonRays64D"}
+    filter {"configurations:Debug", "platforms:x86"}
+        links {"RadeonRaysD"}
 
-	name = name .. "64"
-    filter {"platforms:x86"}
-        -- links {"RadeonRays"}
-    filter {}
-
-
-	filter {"configurations:Debug"}
-		name = name .. "D"
-	filter {"configurations:Release"}
+	filter {"configurations:Release", "platforms:x64"}
+		links{"RadeonRays64"}
+	filter {"configurations:Release", "platforms:x86"}
+		links{"RadeonRays"}
 	filter{}
-
-	print (name)
-	links{name}
 
 
     --OIIO
