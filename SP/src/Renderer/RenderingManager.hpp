@@ -78,10 +78,10 @@ namespace SP {
 
 		// tmp
 		const std::string defaultPath = "../Resources/CornellBox";
-		const std::string defaultModelname = "orig.objm";
+		const std::string defaultModelname = "mid-box.objm";
 
 		//tmp
-		const float kStep = 0.025f;
+		const float kStep = 0.025f * 2;
 
 
 		// Scene Data

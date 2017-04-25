@@ -107,7 +107,7 @@ namespace SP {
 		static const std::size_t kHeight = 512;
 
 		// LFs
-		static const std::size_t kNumOfLFs = 4;
+		static const std::size_t kNumOfLFs = 16;
 		static const std::size_t kNumOfSubLFImgs = 4;
 
 
