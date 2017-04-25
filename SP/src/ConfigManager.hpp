@@ -39,6 +39,8 @@ namespace SP {
 		// LF indexing
 		std::size_t getIndexOfSubLightField(float dx) const;
 
+		// LF multi index
+		std::vector<std::size_t> getIndexArrayOfSubLightField(float dx) const;
 
 		// Light Field
 		ImageConfig::ImageBuffer getSubLightFieldImageWithIndex(size_t subLFIdx, size_t imgIdx);
@@ -126,7 +128,7 @@ namespace SP {
 
 
 		// default write buffer size
-		static const std::size_t mWriteBufferSize = 3;
+		static const std::size_t kWriteBufferSize = 3;
 
 		// renderer change scene flag
 		std::vector<bool> mChangeSceneFlags;

@@ -42,12 +42,12 @@ namespace SP {
 
 		Packet::MessagePointer resolvePacket();
 
-		Packet::MessagePointer createResponse(Packet::MessagePointer msgPtr);
+		std::vector<Packet::MessagePointer> createResponse(Packet::MessagePointer msgPtr);
 
 		void writeResponse(Packet::MessagePointer msgPtr);
 
 
-		void appendImage(Packet::DataBuffer& buffer);
+		void appendImage(Packet::DataBuffer& buffer, const ImageConfig::ImageBuffer& encodedData);
 
 
 
@@ -71,7 +71,9 @@ namespace SP {
 		//SyncBuffer<ImageConfig>& bufferRef;
 
 		// tmp
-		ImageConfig::ImageBuffer encodedImageData;
+		//ImageConfig::ImageBuffer encodedImageData;
+
+		std::deque<ImageConfig::ImageBuffer> encodedDataVector;
 
 
 		// tmp buffer for async write
