@@ -77,6 +77,10 @@ namespace SP {
 		// tmp
 		//void loadImages();
 
+
+		// Writebuffer Size
+		std::size_t getWriteBufferSize() const;
+
 	private:
 
 		uint32_t moduleID = 0;
@@ -121,6 +125,8 @@ namespace SP {
 		static const RadeonRays::float3 kCameraUp; //= RadeonRays::float3(0.f, 1.f, 0.f);
 
 
+		// default write buffer size
+		static const std::size_t mWriteBufferSize = 3;
 
 		// renderer change scene flag
 		std::vector<bool> mChangeSceneFlags;

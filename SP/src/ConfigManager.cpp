@@ -142,6 +142,10 @@ namespace SP {
 		return mCamera;
 	}
 
+	std::size_t ConfigManager::getWriteBufferSize() const {
+		return mWriteBufferSize;
+	}
+
 
 
 

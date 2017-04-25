@@ -174,7 +174,7 @@ namespace SP {
 
 
 			// TEST !
-			if (writeBufferQueue.size() > 3) {
+			if (writeBufferQueue.size() > mCfgManagerRef.getWriteBufferSize()) {
 				responsePtr = nullptr;
 				break;
 			}
