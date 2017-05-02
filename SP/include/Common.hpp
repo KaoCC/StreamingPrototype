@@ -10,38 +10,41 @@
 
 #include <string>
 
+#include "math/float3.h"
+
 namespace SP {
 
 
-	class Encoder;
+	//class Encoder;
 
-	struct Position {
+	//struct Position {
 
-		Position(float xIn, float yIn, float zIn) : x(xIn), y(yIn), z(zIn) {
-		}
+	//	Position(float xIn, float yIn, float zIn) : x(xIn), y(yIn), z(zIn) {
+	//	}
 
-		float x;
-		float y;
-		float z;
-	};
+	//	float x;
+	//	float y;
+	//	float z;
+	//};
 
-	struct Direction {
+	//struct Direction {
 
-		Direction(float vxIn, float vyIn, float vzIn) : vx(vxIn), vy(vyIn), vz(vzIn) {
-		}
+	//	Direction(float vxIn, float vyIn, float vzIn) : vx(vxIn), vy(vyIn), vz(vzIn) {
+	//	}
 
-		float vx;
-		float vy;
-		float vz;
-	};
+	//	float vx;
+	//	float vy;
+	//	float vz;
+	//};
 
 	struct CameraConfig {
 
-		CameraConfig(Position p, Direction d) : pos(p), dir(d) {
+		CameraConfig(RadeonRays::float3 pos, RadeonRays::float3 at, RadeonRays::float3 up) : mCameraPos(pos), mCameraAt(at), mCameraUp(up){
 		}
 
-		Position pos;
-		Direction dir;
+		RadeonRays::float3 mCameraPos;
+		RadeonRays::float3 mCameraAt;
+		RadeonRays::float3 mCameraUp;
 	};
 
 
@@ -52,20 +55,22 @@ namespace SP {
 
 		}
 
-		uint32_t width;
-		uint32_t height;
+		std::uint32_t width;
+		std::uint32_t height;
 	};
 
 
 	class ImageConfig {
 	public:
-		using ImageBuffer = std::vector<uint8_t>;
+		using ImageBuffer = std::vector<std::uint8_t>;
+		using RadianceMap = std::vector<RadeonRays::float3>;
 
 		ImageConfig() = default;
 
 		// for testing only
 		ImageConfig(uint8_t init, size_t size) {
 			imageData.resize(size);
+			radiance.resize(size);
 
 			for (size_t i = 0; i < size; ++i) {
 				imageData[i] = init;
@@ -91,6 +96,12 @@ namespace SP {
 			return imageData;
 		}
 
+
+		// radiance 	
+		RadianceMap& getRadianceMap() {
+			return radiance;
+		}
+
 		const uint8_t* getImageRawData() const {
 			return imageData.data();
 		}
@@ -111,6 +122,12 @@ namespace SP {
 		// test code
 		void storeToPPM(size_t serialNumber) const;
 
+		// test code
+		void storeToHDR(size_t serialNumber) const;
+
+		// test code
+		void reset();
+
 
 		// ...
 
@@ -120,6 +137,10 @@ namespace SP {
 		// test
 		int imageID;
 		ImageBuffer imageData;
+
+		// Renderer result cache
+		RadianceMap radiance;
+
 	};
 
 

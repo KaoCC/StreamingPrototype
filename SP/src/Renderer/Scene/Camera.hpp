@@ -63,10 +63,10 @@ namespace SP {
 		// Near and far Z
 		RadeonRays::float2 zcap;
 
-		float focalLength;
+		float focalLength = 0.f;
 		float aspect;
-		float focusDistance;
-		float aperture;
+		float focusDistance = 0.f;
+		float aperture = 0.f;
 
 	};
 

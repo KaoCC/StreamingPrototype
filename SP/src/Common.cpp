@@ -11,6 +11,10 @@
 #include "Common.hpp"
 #include "Encoder/Encoder.hpp"
 
+
+#include <OpenImageIO/imageio.h>
+
+
 namespace SP {
 
 
@@ -88,7 +92,11 @@ namespace SP {
 
 	void ImageConfig::storeToPPM(size_t serialNumber) const {
 
-		const std::string fileName = "test" + std::to_string(imageID) + "-" + std::to_string(serialNumber) +".ppm";
+		if (serialNumber == -1) {
+			serialNumber = this->imageID;
+		}
+
+		const std::string fileName = "image" + std::to_string(imageID) + "-" + std::to_string(serialNumber) +".ppm";
 
 		FILE* file = fopen(fileName.c_str(), "wb");
 		if (!file) {
@@ -107,6 +115,43 @@ namespace SP {
 		fclose(file);
 
 
+	}
+
+	// test
+	void ImageConfig::storeToHDR(size_t serialNumber) const {
+		OIIO_NAMESPACE_USING
+
+		if (serialNumber == -1) {
+			serialNumber = this->imageID;
+		}
+
+		const std::string fileName = "radiance" + std::to_string(imageID) + "-" + std::to_string(serialNumber) + ".hdr";
+
+		// KAOCC: TMP !!!!!!!!!!!!
+		const int xres = 512, yres = 512;
+		const int channels = 3; // RGB
+		//unsigned char pixels[xres*yres*channels];
+
+		ImageOutput* imgOut = ImageOutput::create(fileName);
+
+		if (!imgOut) {
+			throw std::runtime_error("Failed to create image: " + fileName);
+		}
+
+		ImageSpec spec(xres, yres, channels, TypeDesc::FLOAT);
+		imgOut->open(fileName, spec);
+		imgOut->write_image(TypeDesc::FLOAT, radiance.data(), sizeof(RadeonRays::float3));
+		imgOut->close();
+
+		delete imgOut;
+	}
+
+	void ImageConfig::reset() {
+
+		// reset all data to 0
+		for (auto& data : imageData) {
+			data = 0;
+		}
 	}
 
 

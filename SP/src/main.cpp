@@ -28,10 +28,13 @@ int main(int argc, char *argv[]) {
 		port = std::stoi(std::string(argv[1]));
 	}
 
-	SP::LightField imgLightField;
 
-	SP::SyncBuffer<SP::ImageConfig> imageOutput;
-	SP::RenderingManager renderMan(imageOutput, imgLightField);
+	SP::ConfigManager configMan;
+
+	//SP::LightField imgLightField;
+	//SP::SyncBuffer<SP::ImageConfig> imageOutput;
+
+	SP::RenderingManager renderMan(configMan);
 
 	renderMan.startRenderThread();
 
@@ -39,7 +42,7 @@ int main(int argc, char *argv[]) {
 
 	try {
 		boost::asio::io_service ios;
-		SP::Server server(ios, port, imageOutput, imgLightField);
+		SP::Server server(ios, port, configMan);
 		ios.run();
 
 		std::cerr << "End Server" << std::endl;

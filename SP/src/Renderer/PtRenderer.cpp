@@ -94,7 +94,16 @@ namespace SP {
 	}
 
 	void PtRenderer::clear(RadeonRays::float3 const & val, Output & output) const {
-		throw std::runtime_error("Yet to be done");
+		//throw std::runtime_error("Yet to be done");
+
+		RenderOutput& rendOutRef = dynamic_cast<RenderOutput&>(output); 		// test it !
+
+		auto& storedData = rendOutRef.getInternalStorage();
+
+		for (auto& data : storedData) {
+			data = val;
+		}
+
 	}
 
 	void PtRenderer::preprocess(Scene const & scene) {
@@ -254,7 +263,7 @@ namespace SP {
 		const uint32_t imageWidth = renderOutPtr->getWidth();
 		const uint32_t imageHeight = renderOutPtr->getHeight();
 
-		//uint32_t rngseed = RadeonRays::rand_uint();
+		uint32_t rngseed = RadeonRays::rand_uint();
 
 		for (uint32_t y = 0; y < imageHeight; ++y) {
 			for (uint32_t x = 0; x < imageWidth; ++x) {			// check this !
@@ -267,18 +276,17 @@ namespace SP {
 				//randomSampler.dimension = 0;
 
 
-				//uint32_t seed = x + imageWidth * y * rngseed;
-				//std::unique_ptr<Sampler> sampler = RandomSampler::create(seed);
+				uint32_t seed = x + imageWidth * y * rngseed;
+				std::unique_ptr<Sampler> sampler = RandomSampler::create(seed);
 
-				unsigned rnd = RadeonRays::rand_uint();		// test !
-				unsigned scramble = rnd * 0x1fe3434f * ((frameCount + 133 * rnd) / (CorrelatedMultiJitterSampler::kDim * CorrelatedMultiJitterSampler::kDim));
+				//unsigned rnd = RadeonRays::rand_uint();		// test !
+				//unsigned scramble = rnd * 0x1fe3434f * ((frameCount + 133 * rnd) / (CorrelatedMultiJitterSampler::kDim * CorrelatedMultiJitterSampler::kDim));
 
-				std::unique_ptr<Sampler> sampler = CorrelatedMultiJitterSampler::create(frameCount % (CorrelatedMultiJitterSampler::kDim  * CorrelatedMultiJitterSampler::kDim), 0, scramble);
+				//std::unique_ptr<Sampler> sampler = CorrelatedMultiJitterSampler::create(frameCount % (CorrelatedMultiJitterSampler::kDim  * CorrelatedMultiJitterSampler::kDim), 0, scramble);
 
 
 				RadeonRays::float2 sampleBase = sampler->sample2D();
-				//sampleBase.x = UniformSampler_Sample1D(&randomSampler);
-				//sampleBase.y = UniformSampler_Sample1D(&randomSampler);
+
 
 				RadeonRays::float2 imageSample;
 				imageSample.x = (float)x / imageWidth + sampleBase.x / imageWidth;
@@ -301,9 +309,11 @@ namespace SP {
 				currentRay.o.w = cameraPtr->getDepthRange().y - cameraPtr->getDepthRange().x;
 				currentRay.d.w = sampleBase.x;		// check
 
-				currentRay.extra.x = 0xFFFFFFFF;
-				currentRay.extra.y = 0xFFFFFFFF;
-				currentRay.padding = currentRay.extra;
+
+				//currentRay.SetMask(0xFFFFFFFFF);
+				//currentRay.extra.x = 0xFFFFFFFF;
+				//currentRay.extra.y = 0xFFFFFFFF;
+				//currentRay.padding = currentRay.extra;
 
 
 				//std::cerr << "Ray d x: " << currentRay.d.x << '\n';
@@ -413,16 +423,18 @@ namespace SP {
 	void PtRenderer::shadeSurface(int pass) {
 
 
-		std::vector<RadeonRays::ray>& rayArrayRef = renderData->host_rays[pass & 0x1];
+		const std::vector<RadeonRays::ray>& rayArrayRef = renderData->host_rays[pass & 0x1];
 		auto& indirectRayArrayRef = renderData->host_rays[(pass + 1) & 0x1];
 
 		auto& shadowRayArrayRef = renderData->host_shadowrays;
 		auto& lightSamplesArrayRef = renderData->host_lightSamples;
 		std::vector<RadeonRays::float3>& outRef = renderOutPtr->getInternalStorage();
 
-		std::vector<int>& pixelIndexArrayRef = renderData->host_pixelIndex[(pass) & 0x1];
+		const std::vector<int>& pixelIndexArrayRef = renderData->host_pixelIndex[(pass) & 0x1];
 
 		uint32_t rngseed = RadeonRays::rand_uint();
+
+		DifferentialGeometry diffGeo;
 
 		for (size_t i = 0; i < renderData->host_hitcount; ++i) {
 
@@ -447,13 +459,13 @@ namespace SP {
 			//randomSampler.scramble = 0;
 			//randomSampler.dimension = 0;
 
-			unsigned rnd = RadeonRays::rand_uint();
-			unsigned scramble = rnd * 0x1fe3434f * ((frameCount + 331 * rnd) / (CorrelatedMultiJitterSampler::kDim * CorrelatedMultiJitterSampler::kDim));
-			std::unique_ptr<Sampler> sampler = CorrelatedMultiJitterSampler::create(frameCount % (CorrelatedMultiJitterSampler::kDim  * CorrelatedMultiJitterSampler::kDim), 4 + numOfBounces * 300, scramble);
+			//unsigned rnd = RadeonRays::rand_uint();
+			//unsigned scramble = rnd * 0x1fe3434f * ((frameCount + 331 * rnd) / (CorrelatedMultiJitterSampler::kDim * CorrelatedMultiJitterSampler::kDim));
+			//std::unique_ptr<Sampler> sampler = CorrelatedMultiJitterSampler::create(frameCount % (CorrelatedMultiJitterSampler::kDim  * CorrelatedMultiJitterSampler::kDim), 4 + numOfBounces * 300, scramble);
 
-			//std::unique_ptr<Sampler> sampler = RandomSampler::create(seed);
+			std::unique_ptr<Sampler> sampler = RandomSampler::create(seed);
 
-			DifferentialGeometry diffGeo;
+			//DifferentialGeometry diffGeo;
 			diffGeo.fill(currentIntersect, sceneTracker.getInternalMeshPtrs());
 
 
@@ -555,7 +567,7 @@ namespace SP {
 			float lightWeight = 1.f;
 
 			// sample BxDf
-			RadeonRays::float3 bxdf = BxDFHelper::sample(diffGeo, wi, sampler->sample2D(), bxdfwo, bxdfPDF);		// value ?
+			const RadeonRays::float3& bxdf = BxDFHelper::sample(diffGeo, wi, sampler->sample2D(), bxdfwo, bxdfPDF);		// value ?
 
 			const auto currentScenePtr = sceneTracker.getCurrentScenePtr();
 
@@ -606,7 +618,7 @@ namespace SP {
 				// Luminance
 				0.2126f *  currentPath.getThroughput().x + 0.7152f * currentPath.getThroughput().y + 0.0722f * currentPath.getThroughput().z), 0.01f);
 			bool rrApplyFlag = pass > 3;
-			bool rrStopFlag  = 0 && rrApplyFlag;		// value ?		// wrong !
+			bool rrStopFlag  = (sampler->sample1D() > qq) && rrApplyFlag;		// value ?		// wrong !
 
 			//Sampler_Sample1D(&randomSampler) > qq
 			// ...
@@ -623,7 +635,7 @@ namespace SP {
 
 			// handle indirectrays
 			bxdfwo = normalize(bxdfwo);
-			RadeonRays::float3 t = bxdf * std::abs(RadeonRays::dot(diffGeo.getNormal(), bxdfwo));		// value ?
+			const RadeonRays::float3& t = bxdf * std::abs(RadeonRays::dot(diffGeo.getNormal(), bxdfwo));		// value ?
 
 			//std::cerr << "T: " << t.sqnorm()  << " bxdfPDF: " << bxdfPDF << std::endl;
 
@@ -758,7 +770,7 @@ namespace SP {
 
 	void PtRenderer::shadeMiss(int pass) {
 
-		std::vector<int>& pixelIndexArrayRef = renderData->host_pixelIndex[(pass + 1) & 0x1];
+		const std::vector<int>& pixelIndexArrayRef = renderData->host_pixelIndex[(pass + 1) & 0x1];
 
 		const size_t maxSize = renderOutPtr->getWidth() * renderOutPtr->getHeight();		// check the size !!
 		for (size_t i = 0; i < maxSize; ++i) {
@@ -801,7 +813,7 @@ namespace SP {
 	void PtRenderer::gatherLightSamples(int pass) {
 
 
-		std::vector<int>& pixelIndexArrayRef = renderData->host_pixelIndex[(pass) & 0x1];
+		const std::vector<int>& pixelIndexArrayRef = renderData->host_pixelIndex[(pass) & 0x1];
 		const auto& lightSamplesArrayRef = renderData->host_lightSamples;
 		std::vector<RadeonRays::float3>& outRef = renderOutPtr->getInternalStorage();
 
@@ -830,7 +842,7 @@ namespace SP {
 
 	void PtRenderer::restorePixelIndices(int pass) {
 
-		std::vector<int>& previousPixelIndexArrayRef = renderData->host_pixelIndex[(pass + 1) & 0x1];
+		const std::vector<int>& previousPixelIndexArrayRef = renderData->host_pixelIndex[(pass + 1) & 0x1];
 		std::vector<int>& newPixelIndexArrayRef = renderData->host_pixelIndex[(pass) & 0x1];
 
 		for (size_t i = 0; i < renderData->host_hitcount; ++i) {		// check upper bound ?
@@ -842,7 +854,7 @@ namespace SP {
 
 	void PtRenderer::filterPathStream(int pass) {
 
-		std::vector<int>& pixelIndexArrayRef = renderData->host_pixelIndex[(pass + 1) & 0x1];
+		const std::vector<int>& pixelIndexArrayRef = renderData->host_pixelIndex[(pass + 1) & 0x1];
 
 		for (size_t i = 0; i < renderData->host_hitcount; ++i) {		// check the upper limit
 

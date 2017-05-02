@@ -3,40 +3,40 @@
 
 namespace SP {
 
-	LightField::LightField() {
+	LightField::LightField(std::size_t numOfSubLFs, std::size_t numOfSubLFImgs) : mNumOfSubLFs(numOfSubLFs), mNumOfSubLFImgs(numOfSubLFImgs) {
 
 		// test images
 		//const std::string kFilePath{ pathBase + "crown_" + std::to_string(index) + ".ppm" };
 
 		for (size_t i = 0; i < numOfSubLFs; ++i) {
 			//subLFs.push_back(SubLightField(i, this->pathBase));
-			subLFs.push_back(SubLightField(i));
+			subLFs.push_back(SubLightField(i, numOfSubLFImgs));
 		}
 	}
 
-	LightField::SubLightField::SubLightField(size_t index) {
+	LightField::SubLightField::SubLightField(size_t index, std::size_t numOfSubLFImgs) : mNumOfImgs(numOfSubLFImgs) {
 
-		if (numOfImgs > 0) {
-			images.resize(numOfImgs);
+		if (numOfSubLFImgs > 0) {
+			images.resize(numOfSubLFImgs);
 		}
 
 	}
 
 
 	// for testing
-	LightField::SubLightField::SubLightField(size_t index, const std::string & basePath) {
+	//LightField::SubLightField::SubLightField(size_t index, const std::string & basePath) {
 
-		std::cerr << "LOAD LF\n";
+	//	std::cerr << "LOAD LF\n";
 
-		for (size_t i = 0; i < numOfImgs; ++i) {
-			//const std::string kFilePath{ basePath + "LF_crown_" + std::to_string(2 * index + i) + ".ppm" };
-			const std::string kFilePath{ basePath + "LF_crown_" + std::to_string(index) + ".ppm" };
-			images.push_back(ImageConfig(2 * index + i, kFilePath));
-		}
+	//	for (size_t i = 0; i < numOfImgs; ++i) {
+	//		//const std::string kFilePath{ basePath + "LF_crown_" + std::to_string(2 * index + i) + ".ppm" };
+	//		const std::string kFilePath{ basePath + "LF_crown_" + std::to_string(index) + ".ppm" };
+	//		images.push_back(ImageConfig(2 * index + i, kFilePath));
+	//	}
 
-		std::cerr << "LF FIN\n";
+	//	std::cerr << "LF FIN\n";
 
-	}
+	//}
 
 	ImageConfig::ImageBuffer LightField::getSubLightFieldImages(size_t index) {
 
@@ -44,11 +44,11 @@ namespace SP {
 
 		for (size_t i = 0; i < subLFs[index].images.size(); ++i) {
 
-			ImageConfig::ImageBuffer& imgBufferRef= subLFs[index].images[i].getImageData();
+			ImageConfig::ImageBuffer& imgBufferRef = subLFs[index].images[i].getImageData();
 			buffer.insert(buffer.end(), imgBufferRef.begin(), imgBufferRef.end());
 
 		}
-		
+
 
 		return buffer;
 	}
@@ -78,8 +78,8 @@ namespace SP {
 		return subLFs.size();
 	}
 
-	size_t LightField::getSubLightFieldSize(size_t subLFIdx) const {
-		return subLFs[subLFIdx].images.size();
+	size_t LightField::getSubLightFieldSize() const {
+		return mNumOfSubLFImgs;
 	}
 
 	// test only
@@ -88,9 +88,9 @@ namespace SP {
 		ImageConfig::ImageBuffer buffer;
 
 
-		for (size_t i = 0; i < subLFs.size(); ++i) {			// 3
+		for (size_t i = 0; i < subLFs.size(); ++i) {
 
-			for (size_t j = 0; j < subLFs[i].images.size(); ++j) {		// 2
+			for (size_t j = 0; j < subLFs[i].images.size(); ++j) {
 
 				ImageConfig::ImageBuffer& imgBufferRef = subLFs[i].images[j].getImageData();
 				buffer.insert(buffer.end(), imgBufferRef.begin(), imgBufferRef.end());
@@ -104,10 +104,32 @@ namespace SP {
 		return buffer;
 	}
 
+	void LightField::clearAll() {
+
+		for (auto& subLF : subLFs) {
+			for (auto& img : subLF.images) {
+				img.reset();
+			}
+
+		}
+
+	}
+
+	void LightField::saveAll() const {
+
+		for (const auto& subLF : subLFs) {
+			for (const auto& img : subLF.images) {
+				img.storeToPPM(-1);
+				img.storeToHDR(-1);
+			}
+		}
+
+	}
+
 
 	// test
 
 
-	
+
 
 }

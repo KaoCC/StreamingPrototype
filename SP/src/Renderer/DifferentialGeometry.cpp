@@ -26,29 +26,29 @@ namespace SP {
 
 		// This is the core of this function !
 		// if this goes wrong then ... boom !
-		uint32_t i0 = indexArray[3 * primId];								// CHECK ?
-		uint32_t i1 = indexArray[3 * primId + 1];
-		uint32_t i2 = indexArray[3 * primId + 2];
+		const uint32_t& i0 = indexArray[3 * primId];								// CHECK ?
+		const uint32_t& i1 = indexArray[3 * primId + 1];
+		const uint32_t& i2 = indexArray[3 * primId + 2];
 
 		const RadeonRays::float3* normalArray = meshDataPtr->getNormals();
 
-		RadeonRays::float3 n0 = normalArray[i0];
-		RadeonRays::float3 n1 = normalArray[i1];
-		RadeonRays::float3 n2 = normalArray[i2];
+		const RadeonRays::float3& n0 = normalArray[i0];
+		const RadeonRays::float3& n1 = normalArray[i1];
+		const RadeonRays::float3& n2 = normalArray[i2];
 
 
 		const RadeonRays::float3* verticeArray = meshDataPtr->getVertices();
 
-		RadeonRays::float3 v0 = verticeArray[i0];
-		RadeonRays::float3 v1 = verticeArray[i1];
-		RadeonRays::float3 v2 = verticeArray[i2];
+		const RadeonRays::float3& v0 = verticeArray[i0];
+		const RadeonRays::float3& v1 = verticeArray[i1];
+		const RadeonRays::float3& v2 = verticeArray[i2];
 
 
 		const RadeonRays::float2* uvArray = meshDataPtr->getUVs();
 
-		RadeonRays::float2 uv0 = uvArray[i0];
-		RadeonRays::float2 uv1 = uvArray[i1];
-		RadeonRays::float2 uv2 = uvArray[i2];
+		const RadeonRays::float2& uv0 = uvArray[i0];
+		const RadeonRays::float2& uv1 = uvArray[i1];
+		const RadeonRays::float2& uv2 = uvArray[i2];
 
 		RadeonRays::matrix matrixI;			// I
 
@@ -84,9 +84,9 @@ namespace SP {
 		dpdv = RadeonRays::normalize(RadeonRays::cross(normal, dpdu));
 
 		// For area calculation
-		RadeonRays::float3 p0 = RadeonRays::transform_point(v0, matrixI);
-		RadeonRays::float3 p1 = RadeonRays::transform_point(v1, matrixI);
-		RadeonRays::float3 p2 = RadeonRays::transform_point(v2, matrixI);
+		const RadeonRays::float3& p0 = RadeonRays::transform_point(v0, matrixI);
+		const RadeonRays::float3& p1 = RadeonRays::transform_point(v1, matrixI);
+		const RadeonRays::float3& p2 = RadeonRays::transform_point(v2, matrixI);
 
 
 		area = 0.5f * std::sqrt(RadeonRays::cross(p2 - p0, p2 - p1).sqnorm());   // check the value !
