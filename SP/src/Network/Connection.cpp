@@ -62,7 +62,7 @@ namespace SP {
 			// KAOCC: throw exception here if null ?
 			Packet::MessagePointer msgPtr = resolvePacket();
 
-			auto responseVector = createResponse(msgPtr);
+			const auto& responseVector{ createResponse(msgPtr) };
 
 			for (const auto& response : responseVector) {
 				writeResponse(response);
@@ -160,9 +160,11 @@ namespace SP {
 		}
 
 		case StreamingFormat::MessageType::MsgDefaultPos:
+		{
 			// Possible Error
 			// The server will not get this one!
 			break;
+		}
 
 		case StreamingFormat::MessageType::MsgCameraInfo:
 		{
@@ -215,13 +217,13 @@ namespace SP {
 			// TMP !!!
 			//size_t subLFIndex = mCfgManagerRef.getIndexOfSubLightField(dx);
 
-			auto indexArray = mCfgManagerRef.getIndexArrayOfSubLightField(dx);
+			const auto& indexArray{ mCfgManagerRef.getIndexArrayOfSubLightField(dx) };
 
 			size_t subLFSz = mCfgManagerRef.getNumberOfSubLFImages();
 
-			encodedDataVector.clear();
+			encodedDataQueue.clear();
 
-			for (std::size_t subLFIndex : indexArray) {
+			for (const std::size_t subLFIndex : indexArray) {
 
 
 				if (!mCfgManagerRef.getSubLightFieldRefreshState(subLFIndex)) {
@@ -248,11 +250,11 @@ namespace SP {
 					//ImageConfig imageData{ cfgManager.getImage() };
 					//ImageConfig::ImageBuffer& imageBufferCache{ imageData.getImageData() };
 
-					ImageConfig::ImageBuffer imageBufferCache{ mCfgManagerRef.getSubLightFieldImageWithIndex(subLFIndex, k) };
+					const ImageConfig::ImageBuffer& imageBufferCache{ mCfgManagerRef.getSubLightFieldImageWithIndex(subLFIndex, k) };
 
-					std::copy(imageBufferCache.begin(), imageBufferCache.end(), rawPtr);
+					std::copy(imageBufferCache.cbegin(), imageBufferCache.cend(), rawPtr);
 
-					uint8_t* outBufPtr;
+					uint8_t* outBufPtr = nullptr;
 					int outSize = 0;
 					mEncoder->startEncoding(&outBufPtr, &outSize);
 
@@ -269,11 +271,7 @@ namespace SP {
 
 				}
 
-
-				encodedDataVector.push_back(encodedImageData);
-
-				// mark read
-				//std::cerr << "mark read\n";
+				// disable read
 				mCfgManagerRef.setSubLightFieldRefreshState(subLFIndex, false);
 
 
@@ -291,6 +289,9 @@ namespace SP {
 				// image data ????
 				// need to check
 				//imagePtr->set_imagedata(reinterpret_cast<const char*>(imageData.getImageRawData()));
+
+				encodedDataQueue.push_back(std::move(encodedImageData));
+
 
 				responsePtr->set_allocated_imagemsg(imagePtr);
 
@@ -391,8 +392,8 @@ namespace SP {
 
 
 				// KAOCC: Need to change ! Not a good approach !
-				appendImage(writeBuffer, encodedDataVector.front());
-				encodedDataVector.pop_front();
+				appendImage(writeBuffer, encodedDataQueue.front());
+				encodedDataQueue.pop_front();
 
 			}
 

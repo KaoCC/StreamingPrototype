@@ -284,6 +284,7 @@ namespace SP {
 				img.setId(farmIdx);
 				convertOutputToImage(img, farmIdx);
 
+				// Note: this will be upside down !!!
 				auto& rMap = img.getRadianceMap();
 				rMap.resize(mConfigRef.getScreenWidth() * mConfigRef.getScreenHeight());
 				renderOutputData[farmIdx]->getData(rMap.data());
@@ -303,9 +304,13 @@ namespace SP {
 
 
 	// testing only
+	// should be changed
 	void RenderingManager::convertOutputToImage(ImageConfig & img, size_t outputIdx) {
 
 		const size_t kStride = 3;
+
+		const size_t screenWidth = mConfigRef.getScreenWidth();
+		const size_t screenHeight = mConfigRef.getScreenHeight();
 
 		std::vector<RadeonRays::float3> fdata(mConfigRef.getScreenWidth() * mConfigRef.getScreenHeight());
 		renderOutputData[outputIdx]->getData(fdata.data());
@@ -315,13 +320,29 @@ namespace SP {
 		imgBufferRef.resize(fdata.size() * kStride);
 
 		// tmp gamma
-		float gamma = 2.2f;
+		const float gamma = 2.2f;
 
-		for (size_t i = 0; i < fdata.size(); ++i) {
-			imgBufferRef[kStride * i] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(fdata[i].x / fdata[i].w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
-			imgBufferRef[kStride * i + 1] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(fdata[i].y / fdata[i].w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
-			imgBufferRef[kStride * i + 2] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(fdata[i].z / fdata[i].w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
-			//imgBufferRef[kStride * i + 3] = 1;
+		//for (size_t i = 0; i < fdata.size(); ++i) {
+		//	imgBufferRef[kStride * i] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(fdata[i].x / fdata[i].w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
+		//	imgBufferRef[kStride * i + 1] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(fdata[i].y / fdata[i].w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
+		//	imgBufferRef[kStride * i + 2] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(fdata[i].z / fdata[i].w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
+		//	//imgBufferRef[kStride * i + 3] = 1;
+		//}
+
+		size_t currentindex = 0;
+
+		for (size_t y = 0; y < screenHeight; ++y) {
+			for (size_t x = 0; x < screenWidth; ++x) {
+
+				const RadeonRays::float3& val = fdata[(screenHeight - 1 - y) * screenWidth + x];
+
+				imgBufferRef[currentindex] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(val.x / val.w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
+				imgBufferRef[currentindex + 1] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(val.y / val.w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
+				imgBufferRef[currentindex + 2] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(val.z / val.w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
+
+				currentindex += kStride;
+			}
+
 		}
 
 
