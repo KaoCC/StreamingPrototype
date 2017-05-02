@@ -109,8 +109,8 @@ namespace SP {
 		// Defaults !
 
 		// Screen
-		static const std::size_t kWidth = 512;
-		static const std::size_t kHeight = 512;
+		static const std::size_t kWidth = 256;
+		static const std::size_t kHeight = 256;
 
 		// LFs
 		static const std::size_t kNumOfLFs = 16;

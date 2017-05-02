@@ -286,8 +286,7 @@ namespace SP {
 
 
 				RadeonRays::float2 sampleBase = sampler->sample2D();
-				//sampleBase.x = UniformSampler_Sample1D(&randomSampler);
-				//sampleBase.y = UniformSampler_Sample1D(&randomSampler);
+
 
 				RadeonRays::float2 imageSample;
 				imageSample.x = (float)x / imageWidth + sampleBase.x / imageWidth;
@@ -843,7 +842,7 @@ namespace SP {
 
 	void PtRenderer::restorePixelIndices(int pass) {
 
-		std::vector<int>& previousPixelIndexArrayRef = renderData->host_pixelIndex[(pass + 1) & 0x1];
+		const std::vector<int>& previousPixelIndexArrayRef = renderData->host_pixelIndex[(pass + 1) & 0x1];
 		std::vector<int>& newPixelIndexArrayRef = renderData->host_pixelIndex[(pass) & 0x1];
 
 		for (size_t i = 0; i < renderData->host_hitcount; ++i) {		// check upper bound ?
@@ -855,7 +854,7 @@ namespace SP {
 
 	void PtRenderer::filterPathStream(int pass) {
 
-		std::vector<int>& pixelIndexArrayRef = renderData->host_pixelIndex[(pass + 1) & 0x1];
+		const std::vector<int>& pixelIndexArrayRef = renderData->host_pixelIndex[(pass + 1) & 0x1];
 
 		for (size_t i = 0; i < renderData->host_hitcount; ++i) {		// check the upper limit
 

@@ -73,7 +73,7 @@ namespace SP {
 		// tmp
 		//ImageConfig::ImageBuffer encodedImageData;
 
-		std::deque<ImageConfig::ImageBuffer> encodedDataVector;
+		std::deque<ImageConfig::ImageBuffer> encodedDataQueue;
 
 
 		// tmp buffer for async write
