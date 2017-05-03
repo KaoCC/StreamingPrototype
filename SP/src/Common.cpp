@@ -90,6 +90,10 @@ namespace SP {
 
 	}
 
+	void ImageConfig::setRadiancePtr(SP::RenderOutput * renderOut) {
+		radiancePtr = renderOut;
+	}
+
 	void ImageConfig::storeToPPM(size_t serialNumber) const {
 
 		if (serialNumber == -1) {

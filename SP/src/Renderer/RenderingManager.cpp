@@ -235,19 +235,20 @@ namespace SP {
 
 				// test !
 				sceneDataPtr->attachAutoreleaseObject(cameraPtr);
+
+				
+				// Link to RenderOutput
+				
+				//fieldRef.setSubLightFieldRadianceWithIndex(i, j, dynamic_cast<RenderOutput*>(renderOutputData[mConfigRef.getNumberOfSubLFImages() * i + j]));
+
+				fieldRef[i][j].setRadiancePtr(dynamic_cast<RenderOutput*>(renderOutputData[mConfigRef.getNumberOfSubLFImages() * i + j]));
+
 			}
 
 		}
 
-		//}
 
 
-		// Set Output
-		renderOutputData.resize(renderFarm.size());
-		for (size_t i = 0; i < renderFarm.size(); ++i) {
-			renderOutputData[i] = renderFarm[i]->createOutput(mConfigRef.getScreenWidth(), mConfigRef.getScreenHeight());
-			renderFarm[i]->setOutput(renderOutputData[i]);
-		}
 
 	}
 

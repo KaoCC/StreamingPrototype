@@ -12,6 +12,9 @@
 
 #include "math/float3.h"
 
+// tmp
+#include "../SP/src/Renderer/RenderOutput.hpp"
+
 namespace SP {
 
 
@@ -68,14 +71,14 @@ namespace SP {
 		ImageConfig() = default;
 
 		// for testing only
-		ImageConfig(uint8_t init, size_t size) {
-			imageData.resize(size);
-			radiance.resize(size);
+		//ImageConfig(uint8_t init, size_t size) {
+		//	imageData.resize(size);
+		//	radiance.resize(size);
 
-			for (size_t i = 0; i < size; ++i) {
-				imageData[i] = init;
-			}
-		}
+		//	for (size_t i = 0; i < size; ++i) {
+		//		imageData[i] = init;
+		//	}
+		//}
 
 
 		// for reading testing image only
@@ -101,6 +104,9 @@ namespace SP {
 		RadianceMap& getRadianceMap() {
 			return radiance;
 		}
+
+		//KAOCC: test
+		void setRadiancePtr(SP::RenderOutput* renderOut);
 
 		const uint8_t* getImageRawData() const {
 			return imageData.data();
@@ -140,6 +146,10 @@ namespace SP {
 
 		// Renderer result cache
 		RadianceMap radiance;
+
+
+		// test
+		SP::RenderOutput* radiancePtr;
 
 	};
 
