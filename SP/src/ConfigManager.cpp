@@ -118,9 +118,9 @@ namespace SP {
 	}
 
 
-	ImageConfig::ImageBuffer ConfigManager::getSubLightFieldImageWithIndex(size_t subLFIdx, size_t imgIdx) {
-		return mImageLightField.getSubLightFieldImageWithIndex(subLFIdx, imgIdx);
-	}
+	//ImageConfig::ImageBuffer ConfigManager::getSubLightFieldImageWithIndex(size_t subLFIdx, size_t imgIdx) {
+	//	return mImageLightField.getSubLightFieldImageWithIndex(subLFIdx, imgIdx);
+	//}
 
 	void ConfigManager::clearAll() {
 		mImageLightField.clearAll();
@@ -144,13 +144,13 @@ namespace SP {
 		}
 	}
 
-	bool ConfigManager::getSubLightFieldRefreshState(std::size_t subLFIdx) const {
-		return mImageLightField.getSubLightFieldRefreshState(subLFIdx);
-	}
+	//bool ConfigManager::getSubLightFieldRefreshState(std::size_t subLFIdx) const {
+	//	return mImageLightField.getSubLightFieldRefreshState(subLFIdx);
+	//}
 
-	void ConfigManager::setSubLightFieldRefreshState(std::size_t subLFIdx, bool state) {
-		mImageLightField.setSubLightFieldRefreshState(subLFIdx, state);
-	}
+	//void ConfigManager::setSubLightFieldRefreshState(std::size_t subLFIdx, bool state) {
+	//	mImageLightField.setSubLightFieldRefreshState(subLFIdx, state);
+	//}
 
 	const LightField & ConfigManager::getLightField() const {
 		return mImageLightField;

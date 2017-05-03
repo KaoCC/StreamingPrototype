@@ -22,6 +22,26 @@ namespace SP {
 
 	}
 
+	ImageConfig & LightField::SubLightField::operator[](std::size_t index) {
+		return images[index];
+	}
+
+	const ImageConfig & LightField::SubLightField::operator[](std::size_t index) const {
+		return images[index];
+	}
+
+	bool LightField::SubLightField::getRefreshFlag() const {
+		return refreshFlag;
+	}
+
+	void LightField::SubLightField::setRefreshFlag(bool flag) {
+		refreshFlag = flag;
+	}
+
+	size_t LightField::SubLightField::getNumOfImage() const {
+		return mNumOfImgs;
+	}
+
 
 	// for testing
 	//LightField::SubLightField::SubLightField(size_t index, const std::string & basePath) {
@@ -38,40 +58,52 @@ namespace SP {
 
 	//}
 
-	ImageConfig::ImageBuffer LightField::getSubLightFieldImages(size_t index) {
+	//ImageConfig::ImageBuffer LightField::getSubLightFieldImages(size_t index) {
 
-		ImageConfig::ImageBuffer buffer;
+	//	ImageConfig::ImageBuffer buffer;
 
-		for (size_t i = 0; i < subLFs[index].images.size(); ++i) {
+	//	for (size_t i = 0; i < subLFs[index].images.size(); ++i) {
 
-			ImageConfig::ImageBuffer& imgBufferRef = subLFs[index].images[i].getImageData();
-			buffer.insert(buffer.end(), imgBufferRef.begin(), imgBufferRef.end());
+	//		ImageConfig::ImageBuffer& imgBufferRef = subLFs[index].images[i].getImageData();
+	//		buffer.insert(buffer.end(), imgBufferRef.begin(), imgBufferRef.end());
 
-		}
+	//	}
 
 
-		return buffer;
+	//	return buffer;
+	//}
+
+	//ImageConfig::ImageBuffer LightField::getSubLightFieldImageWithIndex(size_t subLFIdx, size_t imgIdx) {
+	//	return subLFs[subLFIdx].images[imgIdx].getImageData();
+	//}
+
+	//void LightField::setSubLightFieldImageWithIndex(size_t subLFIdx, size_t imgIdx, const ImageConfig & imgConf) {
+
+	//	// KAOCC: WE NEED LOCK !
+
+	//	subLFs[subLFIdx].images[imgIdx] = (imgConf);
+
+	//	//std::cerr << "Write to sub LF: " << subLFIdx << " " << imgIdx << "\n";
+	//}
+
+	//void LightField::setSubLightFieldRadianceWithIndex(size_t subLFIdx, size_t imgIdx, RenderOutput * renderOut) {
+	//	subLFs[subLFIdx].images[imgIdx].setRadiancePtr(renderOut);
+	//}
+
+	//bool LightField::getSubLightFieldRefreshState(size_t subLFIdx) const {
+	//	return subLFs[subLFIdx].refreshFlag;
+	//}
+
+	//void LightField::setSubLightFieldRefreshState(size_t subLFIdx, bool state) {
+	//	subLFs[subLFIdx].refreshFlag = state;
+	//}
+
+	LightField::SubLightField & LightField::operator[](std::size_t index) {
+		return subLFs[index];
 	}
 
-	ImageConfig::ImageBuffer LightField::getSubLightFieldImageWithIndex(size_t subLFIdx, size_t imgIdx) {
-		return subLFs[subLFIdx].images[imgIdx].getImageData();
-	}
-
-	void LightField::setSubLightFieldImageWithIndex(size_t subLFIdx, size_t imgIdx, const ImageConfig & imgConf) {
-
-		// KAOCC: WE NEED LOCK !
-
-		subLFs[subLFIdx].images[imgIdx] = (imgConf);
-
-		//std::cerr << "Write to sub LF: " << subLFIdx << " " << imgIdx << "\n";
-	}
-
-	bool LightField::getSubLightFieldRefreshState(size_t subLFIdx) const {
-		return subLFs[subLFIdx].refreshFlag;
-	}
-
-	void LightField::setSubLightFieldRefreshState(size_t subLFIdx, bool state) {
-		subLFs[subLFIdx].refreshFlag = state;
+	const LightField::SubLightField & LightField::operator[](std::size_t index) const {
+		return subLFs[index];
 	}
 
 	size_t LightField::getTotalSize() const {
@@ -83,32 +115,32 @@ namespace SP {
 	}
 
 	// test only
-	ImageConfig::ImageBuffer LightField::getAll() {
+	//ImageConfig::ImageBuffer LightField::getAll() {
 
-		ImageConfig::ImageBuffer buffer;
-
-
-		for (size_t i = 0; i < subLFs.size(); ++i) {
-
-			for (size_t j = 0; j < subLFs[i].images.size(); ++j) {
-
-				ImageConfig::ImageBuffer& imgBufferRef = subLFs[i].images[j].getImageData();
-				buffer.insert(buffer.end(), imgBufferRef.begin(), imgBufferRef.end());
-				buffer.insert(buffer.end(), imgBufferRef.begin(), imgBufferRef.end());
-
-			}
+	//	ImageConfig::ImageBuffer buffer;
 
 
-		}
+	//	for (size_t i = 0; i < subLFs.size(); ++i) {
 
-		return buffer;
-	}
+	//		for (size_t j = 0; j < subLFs[i].images.size(); ++j) {
+
+	//			ImageConfig::ImageBuffer& imgBufferRef = subLFs[i].images[j].getImageData();
+	//			buffer.insert(buffer.end(), imgBufferRef.begin(), imgBufferRef.end());
+	//			buffer.insert(buffer.end(), imgBufferRef.begin(), imgBufferRef.end());
+
+	//		}
+
+
+	//	}
+
+	//	return buffer;
+	//}
 
 	void LightField::clearAll() {
 
 		for (auto& subLF : subLFs) {
-			for (auto& img : subLF.images) {
-				img.reset();
+			for (size_t i = 0; i < subLF.getNumOfImage(); ++i) {
+				subLF[i].reset();
 			}
 
 		}
@@ -118,9 +150,9 @@ namespace SP {
 	void LightField::saveAll() const {
 
 		for (const auto& subLF : subLFs) {
-			for (const auto& img : subLF.images) {
-				img.storeToPPM(-1);
-				img.storeToHDR(-1);
+			for (size_t i = 0; i < subLF.getNumOfImage(); ++i) {
+				subLF[i].storeToPPM(-1);
+				subLF[i].storeToHDR(-1);
 			}
 		}
 

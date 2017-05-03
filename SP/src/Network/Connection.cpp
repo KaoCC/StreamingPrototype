@@ -217,6 +217,8 @@ namespace SP {
 			// TMP !!!
 			//size_t subLFIndex = mCfgManagerRef.getIndexOfSubLightField(dx);
 
+			auto& lightFieldRef = mCfgManagerRef.getLightField();
+
 			const auto& indexArray{ mCfgManagerRef.getIndexArrayOfSubLightField(dx) };
 
 			size_t subLFSz = mCfgManagerRef.getNumberOfSubLFImages();
@@ -226,7 +228,7 @@ namespace SP {
 			for (const std::size_t subLFIndex : indexArray) {
 
 
-				if (!mCfgManagerRef.getSubLightFieldRefreshState(subLFIndex)) {
+				if (!lightFieldRef[subLFIndex].getRefreshFlag()) {
 					//std::cerr << "No need to send\n";
 					//responsePtr = nullptr;
 					continue;
@@ -250,7 +252,7 @@ namespace SP {
 					//ImageConfig imageData{ cfgManager.getImage() };
 					//ImageConfig::ImageBuffer& imageBufferCache{ imageData.getImageData() };
 
-					const ImageConfig::ImageBuffer& imageBufferCache{ mCfgManagerRef.getSubLightFieldImageWithIndex(subLFIndex, k) };
+					const ImageConfig::ImageBuffer& imageBufferCache{ lightFieldRef[subLFIndex][k].getImageData() };
 
 					std::copy(imageBufferCache.cbegin(), imageBufferCache.cend(), rawPtr);
 
@@ -272,7 +274,9 @@ namespace SP {
 				}
 
 				// disable read
-				mCfgManagerRef.setSubLightFieldRefreshState(subLFIndex, false);
+				//mCfgManagerRef.setSubLightFieldRefreshState(subLFIndex, false);
+
+				lightFieldRef[subLFIndex].setRefreshFlag(false);
 
 
 				StreamingFormat::Image* imagePtr{ new StreamingFormat::Image };

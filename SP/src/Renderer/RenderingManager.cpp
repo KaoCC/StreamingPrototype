@@ -197,9 +197,17 @@ namespace SP {
 		std::cerr << "number of lights: " << sceneDataPtr->getNumLights() << std::endl;
 
 
-		const auto& camDefault{ mConfigRef.getCameraConfig() };
+		// Set Output
+		renderOutputData.resize(renderFarm.size());
+		for (size_t i = 0; i < renderFarm.size(); ++i) {
+			renderOutputData[i] = renderFarm[i]->createOutput(mConfigRef.getScreenWidth(), mConfigRef.getScreenHeight());
+			renderFarm[i]->setOutput(renderOutputData[i]);
+		}
 
-		//for (size_t i = 0; i < kNumOfCamera; ++i) {
+
+		auto& fieldRef{ mConfigRef.getLightField() };
+
+		const auto& camDefault{ mConfigRef.getCameraConfig() };
 
 		for (size_t i = 0; i < mConfigRef.getNumberOfSubLFs(); ++i) {
 
@@ -289,11 +297,14 @@ namespace SP {
 				rMap.resize(mConfigRef.getScreenWidth() * mConfigRef.getScreenHeight());
 				renderOutputData[farmIdx]->getData(rMap.data());
 
-				fieldRef.setSubLightFieldImageWithIndex(subLFIdx, subImgIdx, img);
+				//fieldRef.setSubLightFieldImageWithIndex(subLFIdx, subImgIdx, img);
+				fieldRef[subLFIdx][subImgIdx] = img;
 
 
 				// refresh
-				fieldRef.setSubLightFieldRefreshState(subLFIdx, true);
+				//fieldRef.setSubLightFieldRefreshState(subLFIdx, true);
+
+				fieldRef[subLFIdx].setRefreshFlag(true);
 			}
 
 			++counter;
