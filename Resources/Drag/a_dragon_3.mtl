@@ -1,0 +1,12 @@
+# Blender MTL File: 'dragon_subdivided.blend'
+# Material Count: 1
+
+newmtl Material
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.381616 0.003002 0.055525
+Ks 0.500000 0.441469 0.441469
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
