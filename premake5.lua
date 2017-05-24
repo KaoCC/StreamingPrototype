@@ -135,7 +135,7 @@ workspace "StreamingPrototype"
 	    includedirs{"./3rdparty/oiio/dist/linux64/include"}
 	    libdirs {"./3rdparty/oiio/dist/linux64/lib"}
 
-	    links{"OpenImageIO", "pthread", "boost_system"}
+	    links{"OpenImageIO", "pthread", "boost_system", "boost_thread"}
     end
 
     
