@@ -11,8 +11,8 @@
 #include <string>
 
 #include <mutex>
+#include <shared_mutex>
 
-#include "math/mathutils.h"
 #include "math/float3.h"
 
 // tmp
@@ -98,70 +98,12 @@ namespace SP {
 		//	return imageData;
 		//}
 
-		const ImageBuffer& getImageData() {
-
-			// get Radiance Map
-			// Note: will check the refresh flag
-			const auto& tmpRadiance = getRadianceMap();
-
-			if (cacheFlag) {
-
-				// convert
-				const size_t kStride = 3;
-
-				const size_t screenWidth = getWidth();
-				const size_t screenHeight = getHeight();
-
-				imageData.resize(tmpRadiance.size() * kStride);
-
-				// tmp gamma
-				const float gamma = 2.2f;
-
-				//for (size_t i = 0; i < fdata.size(); ++i) {
-				//	imgBufferRef[kStride * i] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(fdata[i].x / fdata[i].w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
-				//	imgBufferRef[kStride * i + 1] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(fdata[i].y / fdata[i].w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
-				//	imgBufferRef[kStride * i + 2] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(fdata[i].z / fdata[i].w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
-				//	//imgBufferRef[kStride * i + 3] = 1;
-				//}
-
-				size_t currentindex = 0;
-
-				for (size_t y = 0; y < screenHeight; ++y) {
-					for (size_t x = 0; x < screenWidth; ++x) {
-
-						const RadeonRays::float3& val = tmpRadiance[(screenHeight - 1 - y) * screenWidth + x];
-
-						imageData[currentindex] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(val.x / val.w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
-						imageData[currentindex + 1] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(val.y / val.w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
-						imageData[currentindex + 2] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(val.z / val.w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
-
-						currentindex += kStride;
-					}
-
-				}
-
-				cacheFlag = false;
-			}
-
-			return imageData;
-		}
+		const ImageBuffer& getImageData();
 
 
 		// radiance 	
-		const RadianceMap& getRadianceMap()  {
+		const RadianceMap& getRadianceMap();
 
-			if (getRefreshState()) {
-				// save the Radiance
-				radiance = radiancePtr->copyData();
-
-				cacheFlag = true;
-				setRefreshState(false);
-			}
-
-			return radiance;
-		}
-
-		
 
 		//KAOCC: test
 		void setRadiancePtr(SP::RenderOutput* renderOut);
@@ -183,24 +125,11 @@ namespace SP {
 		}
 
 
-		// lock ?
-		void setRefreshState(bool flag) {
-			std::lock_guard<std::mutex> flagLock(*flagMutexPtr);
-			refreshFlag = flag;
-		}
+		// write: unique_lock
+		void setRefreshState(bool flag);
 
-		// lock ?
-		bool getRefreshState() {
-
-			bool tmpState = false;
-
-			{
-				std::lock_guard<std::mutex> flagLock(*flagMutexPtr);
-				tmpState = refreshFlag;
-			}
-
-			return tmpState;
-		}
+		// read: shared_lock 
+		bool getRefreshState() const;
 
 
 		// test code
@@ -247,7 +176,7 @@ namespace SP {
 		bool cacheFlag = false;
 
 		//workaround
-		std::unique_ptr<std::mutex> flagMutexPtr{new std::mutex()};
+		std::unique_ptr<std::shared_mutex> flagMutexPtr{new std::shared_mutex()};
 
 		// test
 		SP::RenderOutput* radiancePtr = nullptr;
