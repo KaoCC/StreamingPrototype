@@ -273,11 +273,6 @@ namespace SP {
 
 				}
 
-				// disable read
-				//mCfgManagerRef.setSubLightFieldRefreshState(subLFIndex, false);
-
-				//lightFieldRef[subLFIndex].setRefreshState(false);
-
 
 				StreamingFormat::Image* imagePtr{ new StreamingFormat::Image };
 
@@ -431,13 +426,6 @@ namespace SP {
 
 	// yet to be done
 	void Connection::appendImage(Packet::DataBuffer & buffer, const ImageConfig::ImageBuffer& encodedData) {
-
-		//size_t currentSize = buffer.size();
-		//size_t newSize = currentSize + encodedImageData.size();
-		//buffer.resize(newSize);
-		// test
-		//std::cerr << "Resize " << buffer.size() << '\n';
-		//std::copy(encodedImageData.begin(), encodedImageData.end(), buffer.end());
 
 
 		buffer.insert(std::end(buffer), std::begin(encodedData), std::end(encodedData));

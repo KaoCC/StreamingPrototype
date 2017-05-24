@@ -57,38 +57,6 @@ namespace SP {
 		//std::cerr << fail.what() << '\n';
 		//}
 
-
-		// Compress here
-
-		//Encoder* encoder = CreateEncoder(imageWidth, imageHeight);
-
-		//uint8_t* rawPtr = encoder->getEncoderRawBuffer();
-
-
-		//std::copy(imageData.begin(), imageData.end(), rawPtr);
-
-		//uint8_t* outBufPtr;
-		//int outSize = 0;
-		//encoder->startEncoding(&outBufPtr, &outSize);
-
-
-		//if (outSize > 0) {
-
-		//	std::cerr << "SUCCESS! " << outSize << '\n';
-
-		//	//ImageBuffer encodedImageData(outBufPtr, outBufPtr + outSize);
-
-		//	//tmp
-		//	imageData = std::move(ImageBuffer(outBufPtr, outBufPtr + outSize));
-
-
-		//	// accumulate
-		//	accBuffer.insert(std::end(accBuffer), std::begin(imageData), std::end(imageData));
-
-
-
-		//}
-
 	}
 
 	const ImageConfig::ImageBuffer & ImageConfig::getImageData() {
@@ -108,13 +76,6 @@ namespace SP {
 
 			// tmp gamma
 			const float gamma = 2.2f;
-
-			//for (size_t i = 0; i < fdata.size(); ++i) {
-			//	imgBufferRef[kStride * i] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(fdata[i].x / fdata[i].w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
-			//	imgBufferRef[kStride * i + 1] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(fdata[i].y / fdata[i].w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
-			//	imgBufferRef[kStride * i + 2] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(fdata[i].z / fdata[i].w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
-			//	//imgBufferRef[kStride * i + 3] = 1;
-			//}
 
 			size_t currentindex = 0;
 
@@ -170,7 +131,7 @@ namespace SP {
 		return tmpState;
 	}
 
-	void ImageConfig::storeToPPM(size_t serialNumber) const {
+	void ImageConfig::storeToPPM(int serialNumber) const {
 
 		if (serialNumber == -1) {
 			serialNumber = this->imageID;
@@ -198,7 +159,7 @@ namespace SP {
 	}
 
 	// test
-	void ImageConfig::storeToHDR(size_t serialNumber) const {
+	void ImageConfig::storeToHDR(int serialNumber) const {
 		OIIO_NAMESPACE_USING
 
 		if (serialNumber == -1) {
@@ -233,6 +194,22 @@ namespace SP {
 		// reset all data to 0
 		for (auto& data : imageData) {
 			data = 0;
+		}
+	}
+
+	std::uint32_t ImageConfig::getWidth() const {
+		if (radiancePtr != nullptr) {
+			return radiancePtr->getWidth();
+		} else {
+			return 0;
+		}
+	}
+
+	std::uint32_t ImageConfig::getHeight() const {
+		if (radiancePtr != nullptr) {
+			return radiancePtr->getHeight();
+		} else {
+			return 0;
 		}
 	}
 

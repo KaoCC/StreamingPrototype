@@ -85,7 +85,7 @@ namespace SP {
 		if (numLight == 0) {
 			return nullptr;
 		} else {
-			int lightIdx = RadeonRays::clamp((sample * numLight), 0, numLight - 1);
+			int lightIdx = static_cast<int>(RadeonRays::clamp((sample * numLight), 0, numLight - 1));
 			pdf = 1.f / numLight;
 			return scenePtr->lights[lightIdx];
 		}
