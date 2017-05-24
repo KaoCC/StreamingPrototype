@@ -69,7 +69,7 @@ namespace SP {
 		dx += 0.5;
 
 		const std::size_t totalSz = mImageLightField.getTotalSize();
-		std::size_t index = dx * totalSz;
+		std::size_t index = static_cast<std::size_t>(dx * totalSz);
 
 		if (index >= totalSz) {
 			index = totalSz - 1;
@@ -84,7 +84,7 @@ namespace SP {
 
 		dx += 0.5;
 		const std::size_t totalSz = mImageLightField.getTotalSize();
-		std::size_t index = dx * totalSz;
+		std::size_t index = static_cast<std::size_t>(dx * totalSz);
 
 		//indexArray.push_back(index);
 
@@ -118,10 +118,6 @@ namespace SP {
 	}
 
 
-	//ImageConfig::ImageBuffer ConfigManager::getSubLightFieldImageWithIndex(size_t subLFIdx, size_t imgIdx) {
-	//	return mImageLightField.getSubLightFieldImageWithIndex(subLFIdx, imgIdx);
-	//}
-
 	void ConfigManager::clearAll() {
 		mImageLightField.clearAll();
 	}
@@ -143,14 +139,6 @@ namespace SP {
 			mChangeSceneFlags[i] = flag;
 		}
 	}
-
-	//bool ConfigManager::getSubLightFieldRefreshState(std::size_t subLFIdx) const {
-	//	return mImageLightField.getSubLightFieldRefreshState(subLFIdx);
-	//}
-
-	//void ConfigManager::setSubLightFieldRefreshState(std::size_t subLFIdx, bool state) {
-	//	mImageLightField.setSubLightFieldRefreshState(subLFIdx, state);
-	//}
 
 	const LightField & ConfigManager::getLightField() const {
 		return mImageLightField;

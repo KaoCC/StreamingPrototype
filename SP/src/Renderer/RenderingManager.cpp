@@ -175,10 +175,7 @@ namespace SP {
 		// rand
 		RadeonRays::rand_init();
 
-
-
 		// Load obj file
-
 		std::string basepath = defaultPath;
 		basepath += "/";
 		std::string filename = basepath + defaultModelname;
@@ -273,6 +270,7 @@ namespace SP {
 				std::cerr << "Update time: " << std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1).count() << std::endl ;
 			}
 
+			// tmp, need lock , need interrupt-basde method
 			if (mConfigRef.isSceneChanged(farmIdx)) {
 				renderFarm[farmIdx]->clear(0.f, *(renderOutputData[farmIdx]));
 				mConfigRef.setSceneChangedFlag(farmIdx, false);
@@ -285,26 +283,9 @@ namespace SP {
 
 				auto& fieldRef = mConfigRef.getLightField();
 
-				auto& img = fieldRef[subLFIdx][subImgIdx];
-
 				// remove ?
-				img.setId(farmIdx);
+				fieldRef[subLFIdx][subImgIdx].setId(farmIdx);
 
-				// no need anymore
-				//convertOutputToImage(img, farmIdx);
-
-				// Note: this will be upside down !!!
-				//auto& rMap = img.getRadianceMap();
-				//rMap.resize(mConfigRef.getScreenWidth() * mConfigRef.getScreenHeight());
-				//renderOutputData[farmIdx]->getData(rMap.data());
-
-				//fieldRef.setSubLightFieldImageWithIndex(subLFIdx, subImgIdx, img);
-				//fieldRef[subLFIdx][subImgIdx] = img;
-
-
-				// refresh
-				//fieldRef.setSubLightFieldRefreshState(subLFIdx, true);
-				
 				//fieldRef[subLFIdx].setRefreshFlag(true);
 				fieldRef[subLFIdx][subImgIdx].setRefreshState(true);
 			}

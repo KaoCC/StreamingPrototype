@@ -54,10 +54,6 @@ namespace SP {
 		void setSceneChangedFlag(size_t index, bool flag);
 		void setAllSceneChangedFlag(bool flag);		// tmp
 
-		// tmp
-		//bool getSubLightFieldRefreshState(std::size_t subLFIdx) const;
-		//void setSubLightFieldRefreshState(std::size_t subLFIdx, bool state);
-
 
 		const LightField& getLightField() const;
 		LightField& getLightField();
