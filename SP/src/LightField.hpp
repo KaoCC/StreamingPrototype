@@ -23,8 +23,8 @@ namespace SP {
 			ImageConfig& operator[] (std::size_t index);
 			const ImageConfig& operator[] (std::size_t index) const;
 
-			bool getRefreshFlag() const;
-			void setRefreshFlag(bool flag);
+			bool getRefreshState() const;
+			//void setRefreshFlag(bool flag);
 
 			size_t getNumOfImage() const;
 
@@ -33,7 +33,7 @@ namespace SP {
 			const size_t mNumOfImgs;
 
 			std::vector<ImageConfig> images;
-			bool refreshFlag = false;
+			//bool refreshFlag = false;
 		};
 
 

@@ -30,13 +30,22 @@ namespace SP {
 		return images[index];
 	}
 
-	bool LightField::SubLightField::getRefreshFlag() const {
-		return refreshFlag;
+	bool LightField::SubLightField::getRefreshState() const {
+		bool status = false;
+
+		for (int i = 0; i < images.size(); ++i) {
+			if (images[i].getRefreshState()) {
+				status = true;
+				break;
+			}
+		}
+
+		return status;
 	}
 
-	void LightField::SubLightField::setRefreshFlag(bool flag) {
-		refreshFlag = flag;
-	}
+	//void LightField::SubLightField::setRefreshFlag(bool flag) {
+	//	refreshFlag = flag;
+	//}
 
 	size_t LightField::SubLightField::getNumOfImage() const {
 		return mNumOfImgs;
