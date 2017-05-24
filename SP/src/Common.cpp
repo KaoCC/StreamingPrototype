@@ -11,6 +11,7 @@
 #include "Common.hpp"
 #include "Encoder/Encoder.hpp"
 
+#include "math/mathutils.h"
 
 #include <OpenImageIO/imageio.h>
 
@@ -110,7 +111,7 @@ namespace SP {
 		}
 
 		// tmp
-		fprintf(file, "P6\n%i %i\n255\n", 512, 512);
+		fprintf(file, "P6\n%i %i\n255\n", getWidth(), getHeight());
 
 		for (size_t i = 0; i < imageData.size(); ++i) {
 			fputc(imageData[i], file);
@@ -132,7 +133,8 @@ namespace SP {
 		const std::string fileName = "radiance" + std::to_string(imageID) + "-" + std::to_string(serialNumber) + ".hdr";
 
 		// KAOCC: TMP !!!!!!!!!!!!
-		const int xres = 512, yres = 512;
+		const int xres = getWidth();
+		const int yres = getHeight();
 		const int channels = 3; // RGB
 		//unsigned char pixels[xres*yres*channels];
 
