@@ -128,7 +128,7 @@ namespace SP {
 
 
 		// default write buffer size
-		static const std::size_t kWriteBufferSize = 5;
+		static const std::size_t kWriteBufferSize = 4;
 
 		// renderer change scene flag
 		std::vector<bool> mChangeSceneFlags;
