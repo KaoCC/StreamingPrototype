@@ -228,7 +228,7 @@ namespace SP {
 			for (const std::size_t subLFIndex : indexArray) {
 
 
-				if (!lightFieldRef[subLFIndex].getRefreshFlag()) {
+				if (!lightFieldRef[subLFIndex].getRefreshState()) {
 					//std::cerr << "No need to send\n";
 					//responsePtr = nullptr;
 					continue;
@@ -276,7 +276,7 @@ namespace SP {
 				// disable read
 				//mCfgManagerRef.setSubLightFieldRefreshState(subLFIndex, false);
 
-				lightFieldRef[subLFIndex].setRefreshFlag(false);
+				//lightFieldRef[subLFIndex].setRefreshState(false);
 
 
 				StreamingFormat::Image* imagePtr{ new StreamingFormat::Image };
@@ -340,7 +340,7 @@ namespace SP {
 				std::cerr << "clear Scene\n";
 
 				mCfgManagerRef.setAllSceneChangedFlag(true);
-				mCfgManagerRef.clearAll();
+				//mCfgManagerRef.clearAll();
 			}
 
 

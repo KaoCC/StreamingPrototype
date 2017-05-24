@@ -305,7 +305,7 @@ namespace SP {
 				// refresh
 				//fieldRef.setSubLightFieldRefreshState(subLFIdx, true);
 				
-				fieldRef[subLFIdx].setRefreshFlag(true);
+				//fieldRef[subLFIdx].setRefreshFlag(true);
 				fieldRef[subLFIdx][subImgIdx].setRefreshState(true);
 			}
 
