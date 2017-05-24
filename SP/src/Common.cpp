@@ -155,7 +155,7 @@ namespace SP {
 	}
 
 	void ImageConfig::setRefreshState(bool flag) {
-		std::unique_lock<std::shared_mutex> flagLock(*flagMutexPtr);
+		std::unique_lock<boost::shared_mutex> flagLock(*flagMutexPtr);
 		refreshFlag = flag;
 	}
 
@@ -163,7 +163,7 @@ namespace SP {
 		bool tmpState = false;
 
 		{
-			std::shared_lock<std::shared_mutex> flagLock(*flagMutexPtr);
+			boost::shared_lock<boost::shared_mutex> flagLock(*flagMutexPtr);
 			tmpState = refreshFlag;
 		}
 

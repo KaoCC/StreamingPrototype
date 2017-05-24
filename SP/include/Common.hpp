@@ -15,6 +15,9 @@
 
 #include "math/float3.h"
 
+#include <boost/thread/shared_mutex.hpp>
+#include <boost/thread/locks.hpp>
+
 // tmp
 #include "../SP/src/Renderer/RenderOutput.hpp"
 
@@ -176,7 +179,7 @@ namespace SP {
 		bool cacheFlag = false;
 
 		//workaround
-		std::unique_ptr<std::shared_mutex> flagMutexPtr{new std::shared_mutex()};
+		std::unique_ptr<boost::shared_mutex> flagMutexPtr{new boost::shared_mutex()};
 
 		// test
 		SP::RenderOutput* radiancePtr = nullptr;
