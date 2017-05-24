@@ -10,7 +10,13 @@
 
 #include <string>
 
+#include <mutex>
+#include <shared_mutex>
+
 #include "math/float3.h"
+
+// tmp
+#include "../SP/src/Renderer/RenderOutput.hpp"
 
 namespace SP {
 
@@ -68,14 +74,14 @@ namespace SP {
 		ImageConfig() = default;
 
 		// for testing only
-		ImageConfig(uint8_t init, size_t size) {
-			imageData.resize(size);
-			radiance.resize(size);
+		//ImageConfig(uint8_t init, size_t size) {
+		//	imageData.resize(size);
+		//	radiance.resize(size);
 
-			for (size_t i = 0; i < size; ++i) {
-				imageData[i] = init;
-			}
-		}
+		//	for (size_t i = 0; i < size; ++i) {
+		//		imageData[i] = init;
+		//	}
+		//}
 
 
 		// for reading testing image only
@@ -88,27 +94,27 @@ namespace SP {
 		}
 
 
-		ImageBuffer& getImageData() {
-			return imageData;
-		}
+		//ImageBuffer& getImageData() {
+		//	return imageData;
+		//}
 
-		const ImageBuffer& getImageData() const {
-			return imageData;
-		}
+		const ImageBuffer& getImageData();
 
 
 		// radiance 	
-		RadianceMap& getRadianceMap() {
-			return radiance;
-		}
+		const RadianceMap& getRadianceMap();
 
-		const uint8_t* getImageRawData() const {
-			return imageData.data();
-		}
 
-		uint8_t* getImageRawData() {
-			return imageData.data();
-		}
+		//KAOCC: test
+		void setRadiancePtr(SP::RenderOutput* renderOut);
+
+		//const uint8_t* getImageRawData() const {
+		//	return imageData.data();
+		//}
+
+		//uint8_t* getImageRawData() {
+		//	return imageData.data();
+		//}
 
 		int getID() const {
 			return imageID;
@@ -117,6 +123,13 @@ namespace SP {
 		void setId(int id) {
 			imageID = id;
 		}
+
+
+		// write: unique_lock
+		void setRefreshState(bool flag);
+
+		// read: shared_lock 
+		bool getRefreshState() const;
 
 
 		// test code
@@ -129,6 +142,22 @@ namespace SP {
 		void reset();
 
 
+		std::uint32_t getWidth() const {
+			if (radiancePtr != nullptr) {
+				return radiancePtr->getWidth();
+			} else {
+				return 0;
+			}
+		}
+
+		std::uint32_t getHeight() const {
+			if (radiancePtr != nullptr) {
+				return radiancePtr->getHeight();
+			} else {
+				return 0;
+			}
+		}
+
 		// ...
 
 	private:
@@ -140,6 +169,17 @@ namespace SP {
 
 		// Renderer result cache
 		RadianceMap radiance;
+
+		//need lock ?
+		volatile bool refreshFlag = false;
+		
+		bool cacheFlag = false;
+
+		//workaround
+		std::unique_ptr<std::shared_mutex> flagMutexPtr{new std::shared_mutex()};
+
+		// test
+		SP::RenderOutput* radiancePtr = nullptr;
 
 	};
 
