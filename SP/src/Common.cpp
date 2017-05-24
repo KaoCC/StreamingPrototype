@@ -11,6 +11,7 @@
 #include "Common.hpp"
 #include "Encoder/Encoder.hpp"
 
+#include "math/mathutils.h"
 
 #include <OpenImageIO/imageio.h>
 
@@ -56,41 +57,81 @@ namespace SP {
 		//std::cerr << fail.what() << '\n';
 		//}
 
-
-		// Compress here
-
-		//Encoder* encoder = CreateEncoder(imageWidth, imageHeight);
-
-		//uint8_t* rawPtr = encoder->getEncoderRawBuffer();
-
-
-		//std::copy(imageData.begin(), imageData.end(), rawPtr);
-
-		//uint8_t* outBufPtr;
-		//int outSize = 0;
-		//encoder->startEncoding(&outBufPtr, &outSize);
-
-
-		//if (outSize > 0) {
-
-		//	std::cerr << "SUCCESS! " << outSize << '\n';
-
-		//	//ImageBuffer encodedImageData(outBufPtr, outBufPtr + outSize);
-
-		//	//tmp
-		//	imageData = std::move(ImageBuffer(outBufPtr, outBufPtr + outSize));
-
-
-		//	// accumulate
-		//	accBuffer.insert(std::end(accBuffer), std::begin(imageData), std::end(imageData));
-
-
-
-		//}
-
 	}
 
-	void ImageConfig::storeToPPM(size_t serialNumber) const {
+	const ImageConfig::ImageBuffer & ImageConfig::getImageData() {
+		// get Radiance Map
+		// Note: will check the refresh flag
+		const auto& tmpRadiance = getRadianceMap();
+
+		if (cacheFlag) {
+
+			// convert
+			const size_t kStride = 3;
+
+			const size_t screenWidth = getWidth();
+			const size_t screenHeight = getHeight();
+
+			imageData.resize(tmpRadiance.size() * kStride);
+
+			// tmp gamma
+			const float gamma = 2.2f;
+
+			size_t currentindex = 0;
+
+			for (size_t y = 0; y < screenHeight; ++y) {
+				for (size_t x = 0; x < screenWidth; ++x) {
+
+					const RadeonRays::float3& val = tmpRadiance[(screenHeight - 1 - y) * screenWidth + x];
+
+					imageData[currentindex] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(val.x / val.w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
+					imageData[currentindex + 1] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(val.y / val.w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
+					imageData[currentindex + 2] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(val.z / val.w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
+
+					currentindex += kStride;
+				}
+
+			}
+
+			cacheFlag = false;
+		}
+
+		return imageData;
+	}
+
+	const ImageConfig::RadianceMap & ImageConfig::getRadianceMap() {
+		if (getRefreshState()) {
+			// save the Radiance
+			radiance = radiancePtr->copyData();
+
+			cacheFlag = true;
+			setRefreshState(false);
+		}
+
+		return radiance;
+	}
+
+	void ImageConfig::setRadiancePtr(SP::RenderOutput * renderOut) {
+		radiancePtr = renderOut;
+	}
+
+	void ImageConfig::setRefreshState(bool flag) {
+		std::unique_lock<boost::shared_mutex> flagLock(*flagMutexPtr);
+		refreshFlag = flag;
+	}
+
+	bool ImageConfig::getRefreshState() const {
+		bool tmpState = false;
+
+		{
+			boost::shared_lock<boost::shared_mutex> flagLock(*flagMutexPtr);
+			tmpState = refreshFlag;
+		}
+
+		return tmpState;
+	}
+
+	void ImageConfig::storeToPPM(int serialNumber) const {
 
 		if (serialNumber == -1) {
 			serialNumber = this->imageID;
@@ -106,7 +147,7 @@ namespace SP {
 		}
 
 		// tmp
-		fprintf(file, "P6\n%i %i\n255\n", 512, 512);
+		fprintf(file, "P6\n%i %i\n255\n", getWidth(), getHeight());
 
 		for (size_t i = 0; i < imageData.size(); ++i) {
 			fputc(imageData[i], file);
@@ -118,7 +159,7 @@ namespace SP {
 	}
 
 	// test
-	void ImageConfig::storeToHDR(size_t serialNumber) const {
+	void ImageConfig::storeToHDR(int serialNumber) const {
 		OIIO_NAMESPACE_USING
 
 		if (serialNumber == -1) {
@@ -128,7 +169,8 @@ namespace SP {
 		const std::string fileName = "radiance" + std::to_string(imageID) + "-" + std::to_string(serialNumber) + ".hdr";
 
 		// KAOCC: TMP !!!!!!!!!!!!
-		const int xres = 512, yres = 512;
+		const int xres = getWidth();
+		const int yres = getHeight();
 		const int channels = 3; // RGB
 		//unsigned char pixels[xres*yres*channels];
 
@@ -146,11 +188,28 @@ namespace SP {
 		delete imgOut;
 	}
 
+	// tmp
 	void ImageConfig::reset() {
 
 		// reset all data to 0
 		for (auto& data : imageData) {
 			data = 0;
+		}
+	}
+
+	std::uint32_t ImageConfig::getWidth() const {
+		if (radiancePtr != nullptr) {
+			return radiancePtr->getWidth();
+		} else {
+			return 0;
+		}
+	}
+
+	std::uint32_t ImageConfig::getHeight() const {
+		if (radiancePtr != nullptr) {
+			return radiancePtr->getHeight();
+		} else {
+			return 0;
 		}
 	}
 

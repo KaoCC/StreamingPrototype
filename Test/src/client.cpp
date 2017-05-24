@@ -13,7 +13,7 @@ using boost::asio::ip::tcp;
 
 SP::CameraConfig globalCamera({ 0, 0, 0 }, { 0, 0, 0 }, {0, 0, 0});
 
-std::vector<SP::ImageConfig> images;
+std::vector<SP::ImageConfig::ImageBuffer> images;
 const unsigned MAX_IMAGE_COUNT = 20;
 
 
@@ -214,9 +214,9 @@ int main(int argc, char* argv[]) {
 				// get the image
 
 				// this one should be avoid
-				images[returnedSerialNumber].getImageData().resize(byteSize);
+				images[returnedSerialNumber].resize(byteSize);
 
-				boost::asio::read(streamingSocket, boost::asio::buffer(images[returnedSerialNumber].getImageData(), byteSize));
+				boost::asio::read(streamingSocket, boost::asio::buffer(images[returnedSerialNumber], byteSize));
 
 				//std::copy(msg->imagemsg().imagedata().begin(), msg->imagemsg().imagedata().end(), images[returnedSerialNumber].getImageData().begin());
 
@@ -226,7 +226,7 @@ int main(int argc, char* argv[]) {
 
 				std::cerr << "the first 10 elements: " << std::endl;
 				for (int v = 0; v < 10; ++v) {
-					std::cerr << (int) images[returnedSerialNumber].getImageData()[v] <<" ";
+					std::cerr << (int) images[returnedSerialNumber][v] <<" ";
 				}
 				std::cerr << std::endl;
 

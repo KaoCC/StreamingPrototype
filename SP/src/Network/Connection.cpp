@@ -217,6 +217,8 @@ namespace SP {
 			// TMP !!!
 			//size_t subLFIndex = mCfgManagerRef.getIndexOfSubLightField(dx);
 
+			auto& lightFieldRef = mCfgManagerRef.getLightField();
+
 			const auto& indexArray{ mCfgManagerRef.getIndexArrayOfSubLightField(dx) };
 
 			size_t subLFSz = mCfgManagerRef.getNumberOfSubLFImages();
@@ -226,7 +228,7 @@ namespace SP {
 			for (const std::size_t subLFIndex : indexArray) {
 
 
-				if (!mCfgManagerRef.getSubLightFieldRefreshState(subLFIndex)) {
+				if (!lightFieldRef[subLFIndex].getRefreshState()) {
 					//std::cerr << "No need to send\n";
 					//responsePtr = nullptr;
 					continue;
@@ -250,7 +252,7 @@ namespace SP {
 					//ImageConfig imageData{ cfgManager.getImage() };
 					//ImageConfig::ImageBuffer& imageBufferCache{ imageData.getImageData() };
 
-					const ImageConfig::ImageBuffer& imageBufferCache{ mCfgManagerRef.getSubLightFieldImageWithIndex(subLFIndex, k) };
+					const ImageConfig::ImageBuffer& imageBufferCache{ lightFieldRef[subLFIndex][k].getImageData() };
 
 					std::copy(imageBufferCache.cbegin(), imageBufferCache.cend(), rawPtr);
 
@@ -270,9 +272,6 @@ namespace SP {
 					//std::this_thread::sleep_for(1s);
 
 				}
-
-				// disable read
-				mCfgManagerRef.setSubLightFieldRefreshState(subLFIndex, false);
 
 
 				StreamingFormat::Image* imagePtr{ new StreamingFormat::Image };
@@ -336,7 +335,7 @@ namespace SP {
 				std::cerr << "clear Scene\n";
 
 				mCfgManagerRef.setAllSceneChangedFlag(true);
-				mCfgManagerRef.clearAll();
+				//mCfgManagerRef.clearAll();
 			}
 
 
@@ -427,13 +426,6 @@ namespace SP {
 
 	// yet to be done
 	void Connection::appendImage(Packet::DataBuffer & buffer, const ImageConfig::ImageBuffer& encodedData) {
-
-		//size_t currentSize = buffer.size();
-		//size_t newSize = currentSize + encodedImageData.size();
-		//buffer.resize(newSize);
-		// test
-		//std::cerr << "Resize " << buffer.size() << '\n';
-		//std::copy(encodedImageData.begin(), encodedImageData.end(), buffer.end());
 
 
 		buffer.insert(std::end(buffer), std::begin(encodedData), std::end(encodedData));

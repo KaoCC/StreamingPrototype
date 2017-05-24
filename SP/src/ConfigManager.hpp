@@ -43,7 +43,7 @@ namespace SP {
 		std::vector<std::size_t> getIndexArrayOfSubLightField(float dx) const;
 
 		// Light Field
-		ImageConfig::ImageBuffer getSubLightFieldImageWithIndex(size_t subLFIdx, size_t imgIdx);
+		//ImageConfig::ImageBuffer getSubLightFieldImageWithIndex(size_t subLFIdx, size_t imgIdx);
 
 		// LF control
 		void clearAll();
@@ -53,10 +53,6 @@ namespace SP {
 		bool isSceneChanged(size_t index) const;
 		void setSceneChangedFlag(size_t index, bool flag);
 		void setAllSceneChangedFlag(bool flag);		// tmp
-
-		// tmp
-		bool getSubLightFieldRefreshState(std::size_t subLFIdx) const;
-		void setSubLightFieldRefreshState(std::size_t subLFIdx, bool state);
 
 
 		const LightField& getLightField() const;
@@ -128,7 +124,7 @@ namespace SP {
 
 
 		// default write buffer size
-		static const std::size_t kWriteBufferSize = 3;
+		static const std::size_t kWriteBufferSize = 4;
 
 		// renderer change scene flag
 		std::vector<bool> mChangeSceneFlags;

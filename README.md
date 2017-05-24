@@ -43,3 +43,7 @@ The following compilers are supported:
 `make config=release_x64`
 
 
+## Client Code
+
+[StreamingPrototypeClient](https://github.com/lctseng/StreamingPrototypeClient)
+

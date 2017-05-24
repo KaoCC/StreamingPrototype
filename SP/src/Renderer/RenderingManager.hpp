@@ -53,7 +53,7 @@ namespace SP {
 
 		// Output convert
 		// tmp
-		void convertOutputToImage(ImageConfig& img, size_t outputIdx);
+		//void convertOutputToImage(ImageConfig& img, size_t outputIdx);
 
 
 		// Camera
