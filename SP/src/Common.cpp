@@ -169,8 +169,8 @@ namespace SP {
 		const std::string fileName = "radiance" + std::to_string(imageID) + "-" + std::to_string(serialNumber) + ".hdr";
 
 		// KAOCC: TMP !!!!!!!!!!!!
-		const int xres = getWidth();
-		const int yres = getHeight();
+		const std::uint32_t xres = getWidth();
+		const std::uint32_t yres = getHeight();
 		const int channels = 3; // RGB
 		//unsigned char pixels[xres*yres*channels];
 
@@ -180,12 +180,27 @@ namespace SP {
 			throw std::runtime_error("Failed to create image: " + fileName);
 		}
 
+
+		const int tmpSz = xres * yres * channels;
+
+		//tmp, may need lock
+		const auto& rr = radiancePtr->copyData();
+
+		float* tmp = new float [tmpSz];
+
+		for (int i = 0; i < rr.size(); ++i) {
+			tmp[i * channels] = rr[i].x;
+			tmp[i * channels + 1] = rr[i].y;
+			tmp[i * channels + 2] = rr[i].z;
+		}
+
 		ImageSpec spec(xres, yres, channels, TypeDesc::FLOAT);
 		imgOut->open(fileName, spec);
-		imgOut->write_image(TypeDesc::FLOAT, radiance.data(), sizeof(RadeonRays::float3));
+		imgOut->write_image(TypeDesc::FLOAT, tmp);
 		imgOut->close();
 
 		delete imgOut;
+		delete tmp;
 	}
 
 	// tmp
