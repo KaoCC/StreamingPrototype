@@ -75,11 +75,14 @@ namespace SP {
 
 	RenderingManager::~RenderingManager() {
 
-		for (auto& renderer : renderThreads) {
-			if (renderer) {
-				renderer->join();
-			}
-		}
+		//for (auto& renderer : renderThreads) {
+		//	if (renderer) {
+		//		renderer->join();
+		//	}
+		//}
+
+
+		std::for_each(renderThreads.begin(), renderThreads.end(), std::mem_fun_ref(&std::thread::join));
 
 		//delete encoder;
 
@@ -104,12 +107,33 @@ namespace SP {
 		//}
 
 
+		//for (size_t i = 0; i < mConfigRef.getNumberOfSubLFs(); ++i) {
+		//	for (size_t j = 0; j < mConfigRef.getNumberOfSubLFImages(); ++j) {
+		//		renderThreads.push_back(std::make_unique<std::thread>(std::thread(&RenderingManager::renderingWorker, this, i, j)));
+		//	}
+
+		//}
+
+
 		for (size_t i = 0; i < mConfigRef.getNumberOfSubLFs(); ++i) {
 			for (size_t j = 0; j < mConfigRef.getNumberOfSubLFImages(); ++j) {
-				renderThreads.push_back(std::make_unique<std::thread>(std::thread(&RenderingManager::renderingWorker, this, i, j)));
+				mTaskQueue.push(std::make_pair(i, j));
 			}
-
 		}
+
+		int numOfThreads = std::thread::hardware_concurrency();
+
+		if (numOfThreads == 0) {
+			numOfThreads = 4;
+		}
+
+		
+		for (size_t i = 0; i < numOfThreads; ++i) {
+			renderThreads.push_back(std::thread(&RenderingManager::renderingWorker, this));
+		}
+
+
+
 	}
 
 
@@ -248,53 +272,106 @@ namespace SP {
 	}
 
 	// helper function for rendering
-	void RenderingManager::renderingWorker(size_t subLFIdx, size_t subImgIdx) {
+	//void RenderingManager::renderingWorker(size_t subLFIdx, size_t subImgIdx) {
 
-		std::cerr << "Worker " << subLFIdx << ' '  << subImgIdx << " starts !\n";
+	//	std::cerr << "Worker " << subLFIdx << ' '  << subImgIdx << " starts !\n";
 
-		// test
-		//ImageConfig img;
+	//	// test
+	//	//ImageConfig img;
 
-		size_t farmIdx = mConfigRef.getNumberOfSubLFImages() * subLFIdx + subImgIdx;
+	//	size_t farmIdx = mConfigRef.getNumberOfSubLFImages() * subLFIdx + subImgIdx;
 
-		size_t counter = 0;
-		const size_t mod = 1;
+	//	size_t counter = 0;
+	//	const size_t mod = 1;
+
+	//	while (true) {
+
+	//		auto t1 = std::chrono::high_resolution_clock::now();
+	//		renderFarm[farmIdx]->render(*sceneDataPtr, farmIdx);
+	//		auto t2 = std::chrono::high_resolution_clock::now();
+
+	//		if (farmIdx == 0) {
+	//			std::cerr << "Update time: " << std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1).count() << std::endl ;
+	//		}
+
+	//		// tmp, need lock , need interrupt-basde method
+	//		if (mConfigRef.isSceneChanged(farmIdx)) {
+	//			renderFarm[farmIdx]->clear(0.f, *(renderOutputData[farmIdx]));
+	//			mConfigRef.setSceneChangedFlag(farmIdx, false);
+	//		}
+
+	//		// test code
+	//		if (counter % mod == 0) {
+
+	//			//std::cerr << "----------------- Convert and store ! \n";
+
+	//			auto& fieldRef = mConfigRef.getLightField();
+
+	//			// remove ?
+	//			fieldRef[subLFIdx][subImgIdx].setId(farmIdx);
+
+	//			//fieldRef[subLFIdx].setRefreshFlag(true);
+	//			fieldRef[subLFIdx][subImgIdx].setRefreshState(true);
+	//		}
+
+	//		++counter;
+
+	//	}
+
+	//}
+
+	void RenderingManager::renderingWorker(void) {
 
 		while (true) {
 
-			auto t1 = std::chrono::high_resolution_clock::now();
-			renderFarm[farmIdx]->render(*sceneDataPtr, farmIdx);
-			auto t2 = std::chrono::high_resolution_clock::now();
+			std::pair<int, int> taskIndex;
 
-			if (farmIdx == 0) {
-				std::cerr << "Update time: " << std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1).count() << std::endl ;
-			}
+			if (mTaskQueue.pop(taskIndex)) {
 
-			// tmp, need lock , need interrupt-basde method
-			if (mConfigRef.isSceneChanged(farmIdx)) {
-				renderFarm[farmIdx]->clear(0.f, *(renderOutputData[farmIdx]));
-				mConfigRef.setSceneChangedFlag(farmIdx, false);
-			}
+				size_t subLFIdx = taskIndex.first; 
+				size_t subImgIdx = taskIndex.second;
 
-			// test code
-			if (counter % mod == 0) {
+				//std::cerr << "Worker " << subLFIdx << ' ' << subImgIdx << " starts !\n";
 
-				//std::cerr << "----------------- Convert and store ! \n";
+				size_t farmIdx = mConfigRef.getNumberOfSubLFImages() * subLFIdx + subImgIdx;
+
+				// rendering
+				auto t1 = std::chrono::high_resolution_clock::now();
+				renderFarm[farmIdx]->render(*sceneDataPtr, farmIdx);
+				auto t2 = std::chrono::high_resolution_clock::now();
+
+				// test
+				if (farmIdx == 0) {
+					std::cerr << "FarmIndex: " <<farmIdx <<" Update time: " << std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1).count() << std::endl ;
+				}
+
+
+				// tmp, need lock , need interrupt-basde method
+				if (mConfigRef.isSceneChanged(farmIdx)) {
+					renderFarm[farmIdx]->clear(0.f, *(renderOutputData[farmIdx]));
+					mConfigRef.setSceneChangedFlag(farmIdx, false);
+				}
 
 				auto& fieldRef = mConfigRef.getLightField();
 
-				// remove ?
-				fieldRef[subLFIdx][subImgIdx].setId(farmIdx);
-
-				//fieldRef[subLFIdx].setRefreshFlag(true);
 				fieldRef[subLFIdx][subImgIdx].setRefreshState(true);
+
+				// push back the task
+				mTaskQueue.push(std::move(taskIndex));
+
+
+			} else {
+				//tmp
+				std::this_thread::sleep_for(std::chrono::milliseconds(10));
 			}
 
-			++counter;
 
 		}
 
+
 	}
+
+
 
 
 	// testing only
