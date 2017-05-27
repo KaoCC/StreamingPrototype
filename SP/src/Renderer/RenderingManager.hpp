@@ -9,6 +9,8 @@
 #include <memory>
 #include <string>
 
+#include <queue>
+
 #include "Scene/Scene.hpp"
 #include "../SyncBuffer.hpp"
 #include "Common.hpp"
@@ -19,6 +21,8 @@
 #include "Output.hpp"
 
 #include "../ConfigManager.hpp"
+
+#include "../HeterogeneousQueue/HQ/src/ThreadSafeQueue.hpp"
 
 namespace SP {
 
@@ -47,8 +51,11 @@ namespace SP {
 		void initData();
 
 		// helper function
-		void renderingWorker(size_t subLFIdx, size_t subImgIdx);
+		//void renderingWorker(size_t subLFIdx, size_t subImgIdx);
 
+		// helper function
+
+		void renderingWorker(void);
 
 
 		// Output convert
@@ -93,7 +100,7 @@ namespace SP {
 
 
 		// thread
-		std::vector<std::unique_ptr<std::thread>> renderThreads;
+		std::vector<std::thread> renderThreads;
 
 		// Path-Tracing Renderer
 		std::vector<std::unique_ptr<PtRenderer>> renderFarm;
@@ -102,6 +109,14 @@ namespace SP {
 		//ImageConfig::ImageBuffer accImageBuffer; // test
 
 		std::vector<Output*> renderOutputData;
+
+
+
+		// test
+		//std::queue<std::pair<int, int>> mTaskQueue;
+
+		HQ::ThreadSafeQueue<std::pair<int, int>> mTaskQueue;
+
 	};
 
 
