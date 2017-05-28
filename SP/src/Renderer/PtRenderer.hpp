@@ -93,7 +93,7 @@ namespace SP {
 
 
 		std::uint32_t numOfBounces;
-		std::uint32_t frameCount = 0;
+		std::uint32_t mFrameCount = 0;
 	};
 
 }

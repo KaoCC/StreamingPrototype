@@ -240,7 +240,7 @@ namespace SP {
 		
 		//std::cerr << "Frame: " << frameCount << '\n';
 
-		++frameCount;
+		++mFrameCount;
 	}
 
 	void PtRenderer::setOutput(Output * output) {
