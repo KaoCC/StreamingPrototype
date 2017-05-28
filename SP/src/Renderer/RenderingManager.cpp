@@ -16,7 +16,7 @@
 namespace SP {
 
 
-	RenderingManager::RenderingManager(ConfigManager& cfgRef) : mConfigRef (cfgRef){
+	RenderingManager::RenderingManager(ConfigManager& cfgRef, bool loadRadianceFlag) : mConfigRef (cfgRef){
 
 
 		// Get device / backend info
@@ -70,7 +70,7 @@ namespace SP {
 
 		renderThreads.resize(renderFarm.size());
 
-		initData();
+		initData(loadRadianceFlag);
 	}
 
 	RenderingManager::~RenderingManager() {
@@ -126,6 +126,8 @@ namespace SP {
 		if (numOfThreads == 0) {
 			numOfThreads = 4;
 		}
+
+		std::cout << ">>> number of threads: " << numOfThreads << std::endl;
 
 		
 		for (size_t i = 0; i < numOfThreads; ++i) {
@@ -190,7 +192,7 @@ namespace SP {
 
 	//}
 
-	void RenderingManager::initData() {
+	void RenderingManager::initData(bool loadRadianceFlag) {
 
 
 		std::cerr << "init data start" << std::endl;
@@ -264,9 +266,44 @@ namespace SP {
 
 				fieldRef[i][j].setRadiancePtr(dynamic_cast<RenderOutput*>(renderOutputData[mConfigRef.getNumberOfSubLFImages() * i + j]));
 
+
+
+				// load radiamce map if the flag is set
+
+				if (loadRadianceFlag) {
+					loadRadianceOutput(i, j);
+				}
+
+
+
 			}
 
 		}
+
+
+	}
+
+	void RenderingManager::loadRadianceOutput(int subLFIdx, int subImgIdx) {
+
+		// load Radiance Map to RenderOut
+
+		int outputId = mConfigRef.getNumberOfSubLFImages() * subLFIdx + subImgIdx;
+
+		// ...
+		RenderOutput* renderOut = dynamic_cast<RenderOutput*>(renderOutputData[outputId]);
+
+		if (renderOut == nullptr) {
+			throw std::runtime_error("RenderOutput is null");
+		}
+
+		auto& outputData = renderOut->getInternalStorage();
+
+		// read the radiacne data
+		// yet to be done
+
+
+
+		// copy to outputData
 
 
 	}
