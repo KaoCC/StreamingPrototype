@@ -47,3 +47,6 @@ The following compilers are supported:
 
 [StreamingPrototypeClient](https://github.com/lctseng/StreamingPrototypeClient)
 
+## Demo Video
+
+[Demo Video on Youtube](https://youtu.be/lMdvIzpLWpQ)
