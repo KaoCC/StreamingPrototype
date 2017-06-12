@@ -200,7 +200,7 @@ namespace SP {
 		imgOut->close();
 
 		delete imgOut;
-		delete tmp;
+		delete [] tmp;
 	}
 
 	// tmp
