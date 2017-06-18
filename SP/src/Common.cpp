@@ -166,7 +166,7 @@ namespace SP {
 			serialNumber = this->imageID;
 		}
 
-		const std::string fileName = "radiance" + std::to_string(imageID) + "-" + std::to_string(serialNumber) + ".hdr";
+		const std::string fileName = "radiance" + std::to_string(imageID) + "-" + std::to_string(serialNumber) + ".exr";
 
 		// KAOCC: TMP !!!!!!!!!!!!
 		const std::uint32_t xres = getWidth();
@@ -180,13 +180,13 @@ namespace SP {
 			throw std::runtime_error("Failed to create image: " + fileName);
 		}
 
-
-		const int tmpSz = xres * yres * channels;
+		const int totalNum = xres * yres;
+		const int tmpSz = totalNum * channels;
 
 		//tmp, may need lock
 		const auto& rr = radiancePtr->copyData();
 
-		float* tmp = new float [tmpSz];
+		float* tmp = new float[tmpSz];
 
 		for (int i = 0; i < rr.size(); ++i) {
 			tmp[i * channels] = rr[i].x;
@@ -195,12 +195,14 @@ namespace SP {
 		}
 
 		ImageSpec spec(xres, yres, channels, TypeDesc::FLOAT);
+		spec.attribute("w", rr[0].w);		// test
+
 		imgOut->open(fileName, spec);
 		imgOut->write_image(TypeDesc::FLOAT, tmp);
 		imgOut->close();
 
 		delete imgOut;
-		delete tmp;
+		delete [] tmp;
 	}
 
 	// tmp

@@ -35,7 +35,7 @@ namespace SP {
 		RenderingManager() = delete;
 
 
-		RenderingManager(ConfigManager& cfgRef);
+		RenderingManager(ConfigManager& cfgRef, bool loadRadianceFlag);
 
 		~RenderingManager();
 
@@ -48,13 +48,16 @@ namespace SP {
 		void testOutput(int id);
 
 		// helper function
-		void initData();
+		void initData(bool loadRadianceFlag);
+
+		// helper function for radiance loading
+
+		void loadRadianceOutput(int subLFIdx, int subImgIdx);
 
 		// helper function
 		//void renderingWorker(size_t subLFIdx, size_t subImgIdx);
 
-		// helper function
-
+		// helper function for worker thread
 		void renderingWorker(void);
 
 
