@@ -166,7 +166,7 @@ namespace SP {
 			serialNumber = this->imageID;
 		}
 
-		const std::string fileName = "radiance" + std::to_string(imageID) + "-" + std::to_string(serialNumber) + ".hdr";
+		const std::string fileName = "radiance" + std::to_string(imageID) + "-" + std::to_string(serialNumber) + ".exr";
 
 		// KAOCC: TMP !!!!!!!!!!!!
 		const std::uint32_t xres = getWidth();
