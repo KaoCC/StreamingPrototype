@@ -40,7 +40,7 @@ namespace SP {
 
 		OIIO_NAMESPACE_USING
 
-			ImageInput* input = ImageInput::open(filename);
+		ImageInput* input = ImageInput::open(filename);
 
 		if (!input) {
 			throw std::runtime_error("Failed to load image: " + filename);

@@ -11,6 +11,8 @@
 
 #include "../LightField.hpp"
 
+#include "OpenImageIO/imageio.h"
+
 #include <cstdio>
 
 namespace SP {
@@ -301,10 +303,64 @@ namespace SP {
 		// read the radiacne data
 		// yet to be done
 
+		OIIO_NAMESPACE_USING
 
+
+		const std::string& subFix = std::to_string(outputId);
+
+		std::string filename = "radiance" + subFix + '-' + subFix + ".exr";
+
+		std::cerr << "Load file name: " << filename << std::endl;
+
+		ImageInput* input = ImageInput::open(filename);
+
+		if (!input) {
+			throw std::runtime_error("Failed to load image: " + filename);
+		}
+
+
+		const ImageSpec imgSpec = input->spec();
+		int xRes = imgSpec.width;
+		int yRes = imgSpec.height;
+
+		int channels = imgSpec.nchannels;	// check
+
+		const ParamValue* par = imgSpec.find_attribute("w", TypeDesc::FLOAT);
+
+		float wVal = 10.0f;		// tmp value
+		if (par) {
+			wVal = *(static_cast<const float*>(par->data()));
+		} else {
+			std::cerr << "MetaData not found, roll back to the default" << std::endl;
+		}
+
+		const int totalPixelNum = xRes * yRes;
+
+		const int tmpSize = totalPixelNum * channels;
+
+		// check this !
+		outputData.resize(xRes * yRes);
+
+
+		// create a tmp buffer 
+		float* tmpBuff = new float[tmpSize];
 
 		// copy to outputData
+		input->read_image(TypeDesc::FLOAT, tmpBuff);
 
+
+		//dump the tmp data to output
+		for (int i = 0; i < outputData.size(); ++i) {
+			outputData[i].x = tmpBuff[i * channels];
+			outputData[i].y = tmpBuff[i * channels + 1];
+			outputData[i].z = tmpBuff[i * channels + 2];
+			outputData[i].w = wVal;
+		}
+
+		// close
+		input->close();
+		delete input;
+		delete [] tmpBuff;
 
 	}
 
@@ -392,6 +448,9 @@ namespace SP {
 				auto& fieldRef = mConfigRef.getLightField();
 
 				fieldRef[subLFIdx][subImgIdx].setRefreshState(true);
+
+				// for save images
+				fieldRef[subLFIdx][subImgIdx].setId(farmIdx);
 
 				// push back the task
 				mTaskQueue.push(std::move(taskIndex));
