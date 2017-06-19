@@ -88,11 +88,13 @@ namespace SP {
 
 		// tmp
 		const std::string defaultPath = "../Resources/CornellBox";
-		const std::string defaultModelname = "mid-box.objm";
+		const std::string defaultModelName = "mid-box.objm";
 
 		//tmp
 		const float kStep = 0.025f * 2;
 
+		// thread safe queue
+		const int kPauseTime = 10;
 
 		// Scene Data
 		std::unique_ptr<Scene> sceneDataPtr;

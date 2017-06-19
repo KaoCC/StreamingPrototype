@@ -168,11 +168,9 @@ namespace SP {
 
 		const std::string fileName = "radiance" + std::to_string(imageID) + "-" + std::to_string(serialNumber) + ".exr";
 
-		// KAOCC: TMP !!!!!!!!!!!!
 		const std::uint32_t xres = getWidth();
 		const std::uint32_t yres = getHeight();
 		const int channels = 3; // RGB
-		//unsigned char pixels[xres*yres*channels];
 
 		ImageOutput* imgOut = ImageOutput::create(fileName);
 
@@ -195,7 +193,7 @@ namespace SP {
 		}
 
 		ImageSpec spec(xres, yres, channels, TypeDesc::FLOAT);
-		spec.attribute("w", rr[0].w);		// test
+		spec.attribute("gammarank", rr[0].w);		// test
 
 		imgOut->open(fileName, spec);
 		imgOut->write_image(TypeDesc::FLOAT, tmp);

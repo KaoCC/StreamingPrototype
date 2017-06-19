@@ -70,23 +70,15 @@ namespace SP {
 			renderFarm[i] = std::make_unique<PtRenderer>(nativeIdx, 5);		// idx, num_of_bounce
 		}
 
-		renderThreads.resize(renderFarm.size());
+		//renderThreads.resize(renderFarm.size());
 
 		initData(loadRadianceFlag);
 	}
 
 	RenderingManager::~RenderingManager() {
 
-		//for (auto& renderer : renderThreads) {
-		//	if (renderer) {
-		//		renderer->join();
-		//	}
-		//}
-
 
 		std::for_each(renderThreads.begin(), renderThreads.end(), std::mem_fun_ref(&std::thread::join));
-
-		//delete encoder;
 
 
 		// delete output
@@ -97,24 +89,8 @@ namespace SP {
 
 	void RenderingManager::startRenderThread() {
 
-		// yet to be done
 
 		std::cerr << "Start Render Thread" << std::endl;
-
-		// testing 
-		//renderThread = std::make_unique<std::thread>(std::thread(&RenderingManager::testOutput, this, 0));
-
-		//for (size_t i = 0; i < renderFarm.size(); ++i) {
-		//	renderThreads[i] = std::make_unique<std::thread>(std::thread(&RenderingManager::renderingWorker, this, i));
-		//}
-
-
-		//for (size_t i = 0; i < mConfigRef.getNumberOfSubLFs(); ++i) {
-		//	for (size_t j = 0; j < mConfigRef.getNumberOfSubLFImages(); ++j) {
-		//		renderThreads.push_back(std::make_unique<std::thread>(std::thread(&RenderingManager::renderingWorker, this, i, j)));
-		//	}
-
-		//}
 
 
 		for (size_t i = 0; i < mConfigRef.getNumberOfSubLFs(); ++i) {
@@ -141,59 +117,6 @@ namespace SP {
 	}
 
 
-	// tmp, for testing only
-	//void RenderingManager::testOutput(int id) {
-
-	//	// tmp file location
-	//	const std::string pathBase{ "../Resources/LF/" };
-
-	//	//const std::string kFilePath{ pathBase + "crown_" + (char)('0' + index) + ".ppm" };
-
-	//	int localCounter = id;
-	//	while (true) {
-
-	//		int index = localCounter % 6;
-
-	//		//if (localCounter < 5) {
-	//		//	index = localCounter + 1;
-	//		//} else {
-	//		//	index = 0;
-	//		//}
-
-	//		//syncBuffer.insert(std::make_unique<ImageConfig>(localCounter, 10));
-
-	//		const std::string kFilePath{ pathBase + "LF_crown_" + std::to_string(index) + ".ppm" };
-	//		std::cerr << kFilePath << std::endl;
-
-	//		try {
-
-	//			//syncBuffer.insert(std::make_unique<ImageConfig>(localCounter, kFilePath, encoder, accImageBuffer));
-	//			syncBuffer.insert(std::make_unique<ImageConfig>(localCounter, kFilePath));
-	//			syncBuffer.insert(std::make_unique<ImageConfig>(localCounter, kFilePath));
-
-	//			std::this_thread::sleep_for(std::chrono::milliseconds(500));
-
-	//			// test
-	//			std::cerr << "Local Counter " << localCounter << '\n';
-	//			//if (localCounter == 10) {
-	//			//	std::ofstream outStream("Hi.txt", std::ifstream::binary);
-
-	//			//	std::ostream_iterator<char> oi(outStream);
-	//			//	std::copy(accImageBuffer.begin(), accImageBuffer.end(), oi);
-	//			//	std::cerr << "Output" << '\n';
-
-	//			//}
-
-	//		} catch (const std::exception &fail) {
-	//			std::cerr << fail.what() << '\n';
-	//		}
-
-
-	//		++localCounter;
-	//	}
-
-	//}
-
 	void RenderingManager::initData(bool loadRadianceFlag) {
 
 
@@ -206,7 +129,7 @@ namespace SP {
 		// Load obj file
 		std::string basepath = defaultPath;
 		basepath += "/";
-		std::string filename = basepath + defaultModelname;
+		std::string filename = basepath + defaultModelName;
 
 
 		// Load OBJ scene
@@ -291,7 +214,6 @@ namespace SP {
 
 		int outputId = mConfigRef.getNumberOfSubLFImages() * subLFIdx + subImgIdx;
 
-		// ...
 		RenderOutput* renderOut = dynamic_cast<RenderOutput*>(renderOutputData[outputId]);
 
 		if (renderOut == nullptr) {
@@ -299,9 +221,6 @@ namespace SP {
 		}
 
 		auto& outputData = renderOut->getInternalStorage();
-
-		// read the radiacne data
-		// yet to be done
 
 		OIIO_NAMESPACE_USING
 
@@ -325,13 +244,13 @@ namespace SP {
 
 		int channels = imgSpec.nchannels;	// check
 
-		const ParamValue* par = imgSpec.find_attribute("w", TypeDesc::FLOAT);
+		const ParamValue* par = imgSpec.find_attribute("gammarank", TypeDesc::FLOAT);
 
 		float wVal = 10.0f;		// tmp value
 		if (par) {
 			wVal = *(static_cast<const float*>(par->data()));
 		} else {
-			std::cerr << "MetaData not found, roll back to the default" << std::endl;
+			std::cerr << "MetaData (gammarank) not found, roll back to the default" << std::endl;
 		}
 
 		const int totalPixelNum = xRes * yRes;
@@ -364,55 +283,6 @@ namespace SP {
 
 	}
 
-	// helper function for rendering
-	//void RenderingManager::renderingWorker(size_t subLFIdx, size_t subImgIdx) {
-
-	//	std::cerr << "Worker " << subLFIdx << ' '  << subImgIdx << " starts !\n";
-
-	//	// test
-	//	//ImageConfig img;
-
-	//	size_t farmIdx = mConfigRef.getNumberOfSubLFImages() * subLFIdx + subImgIdx;
-
-	//	size_t counter = 0;
-	//	const size_t mod = 1;
-
-	//	while (true) {
-
-	//		auto t1 = std::chrono::high_resolution_clock::now();
-	//		renderFarm[farmIdx]->render(*sceneDataPtr, farmIdx);
-	//		auto t2 = std::chrono::high_resolution_clock::now();
-
-	//		if (farmIdx == 0) {
-	//			std::cerr << "Update time: " << std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1).count() << std::endl ;
-	//		}
-
-	//		// tmp, need lock , need interrupt-basde method
-	//		if (mConfigRef.isSceneChanged(farmIdx)) {
-	//			renderFarm[farmIdx]->clear(0.f, *(renderOutputData[farmIdx]));
-	//			mConfigRef.setSceneChangedFlag(farmIdx, false);
-	//		}
-
-	//		// test code
-	//		if (counter % mod == 0) {
-
-	//			//std::cerr << "----------------- Convert and store ! \n";
-
-	//			auto& fieldRef = mConfigRef.getLightField();
-
-	//			// remove ?
-	//			fieldRef[subLFIdx][subImgIdx].setId(farmIdx);
-
-	//			//fieldRef[subLFIdx].setRefreshFlag(true);
-	//			fieldRef[subLFIdx][subImgIdx].setRefreshState(true);
-	//		}
-
-	//		++counter;
-
-	//	}
-
-	//}
-
 	void RenderingManager::renderingWorker(void) {
 
 		while (true) {
@@ -439,7 +309,7 @@ namespace SP {
 				}
 
 
-				// tmp, need lock , need interrupt-basde method
+				// tmp, need lock , need interrupt-based method
 				if (mConfigRef.isSceneChanged(farmIdx)) {
 					renderFarm[farmIdx]->clear(0.f, *(renderOutputData[farmIdx]));
 					mConfigRef.setSceneChangedFlag(farmIdx, false);
@@ -449,7 +319,7 @@ namespace SP {
 
 				fieldRef[subLFIdx][subImgIdx].setRefreshState(true);
 
-				// for save images
+				// for saving images
 				fieldRef[subLFIdx][subImgIdx].setId(farmIdx);
 
 				// push back the task
@@ -457,8 +327,8 @@ namespace SP {
 
 
 			} else {
-				//tmp
-				std::this_thread::sleep_for(std::chrono::milliseconds(10));
+				// may need to change in the future
+				std::this_thread::sleep_for(std::chrono::milliseconds(kPauseTime));
 			}
 
 
@@ -468,52 +338,6 @@ namespace SP {
 	}
 
 
-
-
-	// testing only
-	// should be changed
-	//void RenderingManager::convertOutputToImage(ImageConfig & img, size_t outputIdx) {
-
-	//	const size_t kStride = 3;
-
-	//	const size_t screenWidth = mConfigRef.getScreenWidth();
-	//	const size_t screenHeight = mConfigRef.getScreenHeight();
-
-	//	std::vector<RadeonRays::float3> fdata(mConfigRef.getScreenWidth() * mConfigRef.getScreenHeight());
-	//	renderOutputData[outputIdx]->getData(fdata.data());
-
-	//	ImageConfig::ImageBuffer& imgBufferRef = img.getImageData();
-
-	//	imgBufferRef.resize(fdata.size() * kStride);
-
-	//	// tmp gamma
-	//	const float gamma = 2.2f;
-
-	//	//for (size_t i = 0; i < fdata.size(); ++i) {
-	//	//	imgBufferRef[kStride * i] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(fdata[i].x / fdata[i].w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
-	//	//	imgBufferRef[kStride * i + 1] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(fdata[i].y / fdata[i].w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
-	//	//	imgBufferRef[kStride * i + 2] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(fdata[i].z / fdata[i].w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
-	//	//	//imgBufferRef[kStride * i + 3] = 1;
-	//	//}
-
-	//	size_t currentindex = 0;
-
-	//	for (size_t y = 0; y < screenHeight; ++y) {
-	//		for (size_t x = 0; x < screenWidth; ++x) {
-
-	//			const RadeonRays::float3& val = fdata[(screenHeight - 1 - y) * screenWidth + x];
-
-	//			imgBufferRef[currentindex] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(val.x / val.w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
-	//			imgBufferRef[currentindex + 1] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(val.y / val.w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
-	//			imgBufferRef[currentindex + 2] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(val.z / val.w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
-
-	//			currentindex += kStride;
-	//		}
-
-	//	}
-
-
-	//}
 }
 
 
