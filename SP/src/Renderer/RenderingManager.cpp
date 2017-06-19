@@ -328,7 +328,7 @@ namespace SP {
 
 			} else {
 				// may need to change in the future
-				std::this_thread::sleep_for(std::chrono::milliseconds(kPauseTime));
+				std::this_thread::sleep_for(std::chrono::microseconds(kPauseTime));
 			}
 
 
