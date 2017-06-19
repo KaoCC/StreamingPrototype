@@ -40,13 +40,6 @@ namespace SP {
 		//number of Sub LFs, number of images
 		LightField(std::size_t numOfSubLFs, std::size_t numOfSubLFImgs);
 
-		//ImageConfig::ImageBuffer getSubLightFieldImages(size_t subLFIdx);
-
-		//ImageConfig::ImageBuffer getSubLightFieldImageWithIndex(size_t subLFIdx, size_t imgIdx);
-
-		//set
-		//void setSubLightFieldImageWithIndex(size_t subLFIdx, size_t imgIdx, const ImageConfig& imgConf);
-		//void setSubLightFieldRadianceWithIndex(size_t subLFIdx, size_t imgIdx, RenderOutput* renderOut);
 
 		// refresh
 		//bool getSubLightFieldRefreshState(size_t subLFIdx) const;

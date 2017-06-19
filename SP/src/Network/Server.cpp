@@ -10,7 +10,7 @@
 
 namespace SP {
 
-	Server::Server(boost::asio::io_service & ios, unsigned port, ConfigManager& config)
+	Server::Server(boost::asio::io_service & ios, unsigned short port, ConfigManager& config)
 		: acc(ios, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port)), mConfigRef(config) {
 		startAccept();
 	}

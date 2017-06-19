@@ -17,7 +17,7 @@ namespace SP {
 	public:
 
 		Server() = delete;
-		Server(boost::asio::io_service& ios, unsigned port, ConfigManager& config);
+		Server(boost::asio::io_service& ios, unsigned short port, ConfigManager& config);
 
 	private:
 

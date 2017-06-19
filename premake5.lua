@@ -135,7 +135,7 @@ workspace "StreamingPrototype"
 	    includedirs{"./3rdparty/oiio/dist/linux64/include"}
 	    libdirs {"./3rdparty/oiio/dist/linux64/lib"}
 
-	    links{"OpenImageIO", "pthread", "boost_system"}
+	    links{"OpenImageIO", "pthread", "boost_system", "boost_thread"}
     end
 
     
@@ -147,7 +147,7 @@ workspace "StreamingPrototype"
         flags { "StaticRuntime" }
 
         includedirs {"SP/include", "Protocol/"}
-        files {"SP/**.cpp", "SP/**.hpp", "SP/**.cc", "SP/**.h", "Protocol/**.cc", "Protocol/**.h"}
+        files {"SP/**.cpp", "SP/**.hpp", "SP/**.cc", "SP/**.h", "Protocol/**.cc", "Protocol/**.h", "HeterogeneousQueue/HQ/src/ThreadSafeQueue.hpp"}
 
 
     project "Test"

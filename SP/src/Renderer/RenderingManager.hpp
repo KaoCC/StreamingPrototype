@@ -9,6 +9,8 @@
 #include <memory>
 #include <string>
 
+#include <queue>
+
 #include "Scene/Scene.hpp"
 #include "../SyncBuffer.hpp"
 #include "Common.hpp"
@@ -19,6 +21,8 @@
 #include "Output.hpp"
 
 #include "../ConfigManager.hpp"
+
+#include "../HeterogeneousQueue/HQ/src/ThreadSafeQueue.hpp"
 
 namespace SP {
 
@@ -31,7 +35,7 @@ namespace SP {
 		RenderingManager() = delete;
 
 
-		RenderingManager(ConfigManager& cfgRef);
+		RenderingManager(ConfigManager& cfgRef, bool loadRadianceFlag);
 
 		~RenderingManager();
 
@@ -44,11 +48,17 @@ namespace SP {
 		void testOutput(int id);
 
 		// helper function
-		void initData();
+		void initData(bool loadRadianceFlag);
+
+		// helper function for radiance loading
+
+		void loadRadianceOutput(int subLFIdx, int subImgIdx);
 
 		// helper function
-		void renderingWorker(size_t subLFIdx, size_t subImgIdx);
+		//void renderingWorker(size_t subLFIdx, size_t subImgIdx);
 
+		// helper function for worker thread
+		void renderingWorker(void);
 
 
 		// Output convert
@@ -78,11 +88,13 @@ namespace SP {
 
 		// tmp
 		const std::string defaultPath = "../Resources/CornellBox";
-		const std::string defaultModelname = "mid-box.objm";
+		const std::string defaultModelName = "mid-box.objm";
 
 		//tmp
 		const float kStep = 0.025f * 2;
 
+		// thread safe queue
+		const int kPauseTime = 10;
 
 		// Scene Data
 		std::unique_ptr<Scene> sceneDataPtr;
@@ -93,7 +105,7 @@ namespace SP {
 
 
 		// thread
-		std::vector<std::unique_ptr<std::thread>> renderThreads;
+		std::vector<std::thread> renderThreads;
 
 		// Path-Tracing Renderer
 		std::vector<std::unique_ptr<PtRenderer>> renderFarm;
@@ -102,6 +114,14 @@ namespace SP {
 		//ImageConfig::ImageBuffer accImageBuffer; // test
 
 		std::vector<Output*> renderOutputData;
+
+
+
+		// test
+		//std::queue<std::pair<int, int>> mTaskQueue;
+
+		HQ::ThreadSafeQueue<std::pair<int, int>> mTaskQueue;
+
 	};
 
 

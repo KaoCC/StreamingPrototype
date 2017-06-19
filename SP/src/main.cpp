@@ -28,13 +28,20 @@ int main(int argc, char *argv[]) {
 		port = std::stoi(std::string(argv[1]));
 	}
 
+	bool loadRadianceFlag = false;
+
+	if (argc > 2) {
+		int flagNum = std::stoi(std::string(argv[2]));
+		loadRadianceFlag = (flagNum != 0);
+	}
+
 
 	SP::ConfigManager configMan;
 
 	//SP::LightField imgLightField;
 	//SP::SyncBuffer<SP::ImageConfig> imageOutput;
 
-	SP::RenderingManager renderMan(configMan);
+	SP::RenderingManager renderMan(configMan, loadRadianceFlag);
 
 	renderMan.startRenderThread();
 
