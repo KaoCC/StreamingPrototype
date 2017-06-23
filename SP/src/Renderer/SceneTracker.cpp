@@ -7,28 +7,28 @@
 
 namespace SP {
 
-	SceneTracker::SceneTracker(int devidx) {
+	SceneTracker::SceneTracker(RadeonRays::IntersectionApi* intersectApi) : apiRef(intersectApi) {
 
-		std::cerr << "API" << std::endl;
+		//std::cerr << "API" << std::endl;
 
 		// init API;
-		api = RadeonRays::IntersectionApi::Create(devidx);
+		//api = RadeonRays::IntersectionApi::Create(devidx);
 
-		std::cerr << "Done" << std::endl;
+		//std::cerr << "Done" << std::endl;
 
 		// ... 
 
-		api->SetOption("acc.type", "qbvh");
-		api->SetOption("bvh.builder", "sah");
+		//api->SetOption("acc.type", "qbvh");
+		//api->SetOption("bvh.builder", "sah");
 	}
 
-	SceneTracker::~SceneTracker() {
-		RadeonRays::IntersectionApi::Delete(api);
-	}
+	//SceneTracker::~SceneTracker() {
+	//	RadeonRays::IntersectionApi::Delete(api);
+	//}
 
-	RadeonRays::IntersectionApi * SceneTracker::getIntersectionApi() {
-		return api;
-	}
+	//RadeonRays::IntersectionApi * SceneTracker::getIntersectionApi() {
+	//	return api;
+	//}
 
 	void SceneTracker::compileSceneTest(const Scene& scene) {
 		// yet to be done
@@ -56,7 +56,7 @@ namespace SP {
 
 				const Mesh* mesh = static_cast<const Mesh*>(shapeIterator->nextItem());
 
-				RadeonRays::Shape* shape = api->CreateMesh(
+				RadeonRays::Shape* shape = apiRef->CreateMesh(
 					reinterpret_cast<const float*>(mesh->getVertices()),			// check this one !!!
 					static_cast<int>(mesh->getNumVertices()), 
 					sizeof(RadeonRays::float3), 
@@ -82,11 +82,11 @@ namespace SP {
 
 			// TEST !!!!!
 			for (const auto& s : internalShapes) {
-				api->AttachShape(s);
+				apiRef->AttachShape(s);
 				std::cerr << "Add shape !" << std::endl;
 			}
 
-			api->Commit();
+			apiRef->Commit();
 			std::cerr << "Commit" << std::endl;
 
 		}

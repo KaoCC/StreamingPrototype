@@ -13,11 +13,11 @@ namespace SP {
 
 	public:
 
-		SceneTracker(int devidx);
+		SceneTracker(RadeonRays::IntersectionApi* intersectApi);
 
-		virtual ~SceneTracker();
+		//virtual ~SceneTracker();
 
-		RadeonRays::IntersectionApi* getIntersectionApi();
+		//RadeonRays::IntersectionApi* getIntersectionApi();
 
 
 		void compileSceneTest(const Scene& scene);
@@ -32,8 +32,11 @@ namespace SP {
 
 		void updateMaterials();
 
+
+		// index of the device ?
+
 		// Intersection API for RR
-		RadeonRays::IntersectionApi* api;
+		RadeonRays::IntersectionApi*& apiRef;
 
 		// track curent scene
 		const Scene* currentScenePtr = nullptr;
