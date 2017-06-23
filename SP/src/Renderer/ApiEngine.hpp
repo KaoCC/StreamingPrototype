@@ -43,13 +43,16 @@ namespace SP {
 
 
 		struct BackendRecord {
+		public:
+			BackendRecord(RadeonRays::IntersectionApi* api, ScreenConfig screenCfg);
+
 			BackendBuffer buffer;
 			RadeonRays::IntersectionApi* api;
 			SceneTracker tracker;
 		};
 
 		// Buffer management
-		void createBuffers(ScreenConfig screenCfg);
+		//void createBuffers(ScreenConfig screenCfg);
 
 		// API index in parameter ?
 		void runLoop(RadeonRays::IntersectionApi* api);
