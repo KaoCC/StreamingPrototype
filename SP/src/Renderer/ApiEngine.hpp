@@ -78,6 +78,7 @@ namespace SP {
 
 
 		static void intersect(RadeonRays::IntersectionApi* api, BackendBuffer buffer, IntersectData data);
+		static void occlude(RadeonRays::IntersectionApi* api, BackendBuffer buffer, OccludeData data);
 	
 		//std::vector<SceneTracker> mTrackers;
 		// Intersection APIs

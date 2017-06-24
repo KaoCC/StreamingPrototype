@@ -62,6 +62,20 @@ namespace SP {
 		return taskFuture;
 	}
 
+	// KAOCC: make it a template
+	std::future<void> ApiEngine::queryOcclusion(std::vector<RadeonRays::ray>& shadowrayBuffer, int numOfRays, std::vector<int>& shadowhitBuffer) {
+
+		std::packaged_task<void(RadeonRays::IntersectionApi * api, BackendBuffer buffer)> task{ std::bind(&ApiEngine::occlude, std::placeholders::_1, std::placeholders::_2, OccludeData(shadowrayBuffer, numOfRays, shadowhitBuffer)) };
+
+		auto taskFuture = task.get_future();
+
+		// enqueue
+		taskQueue.push(std::move(task));
+
+		return taskFuture;
+
+	}
+
 	void ApiEngine::resizeBuffers(ScreenConfig screenCfg) {
 		for (auto& backend : mBackends) {
 
@@ -155,6 +169,12 @@ namespace SP {
 
 	}
 
+	void ApiEngine::occlude(RadeonRays::IntersectionApi * api, BackendBuffer buffer, OccludeData data) {
+
+		// yet to be done
+
+	}
+
 
 
 
@@ -172,6 +192,9 @@ namespace SP {
 	}
 
 	ApiEngine::IntersectData::IntersectData(std::vector<RadeonRays::ray>& rayB, int nR, std::vector<RadeonRays::Intersection>& interB) : rayBuffer(rayB), numOfRays(nR), intersectBuffer(interB){
+	}
+
+	ApiEngine::OccludeData::OccludeData(std::vector<RadeonRays::ray>& shadowrayB, int nR, std::vector<int>& shadowhitB) : shadowrayBuffer(shadowrayB), numOfRays(nR), shadowhitBuffer(shadowhitB){
 	}
 
 }
