@@ -8,6 +8,8 @@
 #include <vector>
 #include <thread>
 
+#include "../HeterogeneousQueue/HQ/src/ThreadSafeQueue.hpp"
+
 namespace SP {
 
 	class ApiEngine {
@@ -22,7 +24,7 @@ namespace SP {
 		~ApiEngine();
 
 
-		//void queryIntersection();
+		std::future<void> queryIntersection(std::vector<RadeonRays::ray>& rayBuffer, int numOfRays ,std::vector<RadeonRays::Intersection>& intersectBuffer);
 
 		void resizeBuffers(ScreenConfig screenCfg);
 
@@ -30,6 +32,13 @@ namespace SP {
 		void compileScene(const Scene& scene);
 
 	private:
+
+		struct IntersectData {
+			IntersectData(std::vector<RadeonRays::ray>& rayB, int nR, std::vector<RadeonRays::Intersection>& interB);
+			std::vector<RadeonRays::ray>& rayBuffer;
+			int numOfRays;
+			std::vector<RadeonRays::Intersection>& intersectBuffer;
+		};
 
 		// Buffers
 		struct BackendBuffer {
@@ -55,8 +64,10 @@ namespace SP {
 		//void createBuffers(ScreenConfig screenCfg);
 
 		// API index in parameter ?
-		void runLoop(RadeonRays::IntersectionApi* api);
+		void runLoop(RadeonRays::IntersectionApi* api, BackendBuffer buffer);
 
+
+		static void intersect(RadeonRays::IntersectionApi* api, BackendBuffer buffer, IntersectData data);
 	
 		//std::vector<SceneTracker> mTrackers;
 		// Intersection APIs
@@ -68,8 +79,9 @@ namespace SP {
 
 		std::vector<std::thread> mWorkerThreads;
 
-		// thread safe queue ?
 
+		// thread safe queue ?
+		HQ::ThreadSafeQueue<std::packaged_task<void(RadeonRays::IntersectionApi* api, BackendBuffer buffer)>> taskQueue;
 
 
 		std::vector<BackendRecord> mBackends;
