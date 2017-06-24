@@ -24,6 +24,8 @@
 
 #include "../HeterogeneousQueue/HQ/src/ThreadSafeQueue.hpp"
 
+#include "ApiEngine.hpp"
+
 namespace SP {
 
 
@@ -116,6 +118,7 @@ namespace SP {
 		std::vector<Output*> renderOutputData;
 
 
+		std::unique_ptr<ApiEngine> mEnginePtr;
 
 		// test
 		//std::queue<std::pair<int, int>> mTaskQueue;

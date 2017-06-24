@@ -50,25 +50,38 @@ namespace SP {
 			}
 		}
 
+		std::vector<int> apiIndex;
 
-		int nativeIdx = -1;
+		//int nativeIdx = -1;
 
 		// select order:  GPU > Embree > CPU
 		if (gpuIdx != -1) {
-			nativeIdx = gpuIdx;
+			//nativeIdx = gpuIdx;
+			apiIndex.push_back(gpuIdx);
+
 		} else if (embreeIdx != -1) {
-			nativeIdx = embreeIdx;
+			//nativeIdx = embreeIdx;
+			apiIndex.push_back(embreeIdx);
 		} else if (cpuIdx != -1) {
-			nativeIdx = cpuIdx;
+			//nativeIdx = cpuIdx;
+			apiIndex.push_back(cpuIdx);
 		}
 
-		std::cerr << "Selected Device ID: " << nativeIdx << std::endl;
+		//std::cerr << "Selected Device ID: " << nativeIdx << std::endl;
 
+		ScreenConfig screenCfg(mConfigRef.getScreenWidth(), mConfigRef.getScreenHeight());
+
+		mEnginePtr = std::make_unique<ApiEngine>(screenCfg, apiIndex);
+
+
+		// change this
 		// allocate renderer
 		renderFarm.resize(cfgRef.getNumberOfCameras());
 		for (size_t i = 0; i < renderFarm.size(); ++i) {
-			renderFarm[i] = std::make_unique<PtRenderer>(nativeIdx, 5);		// idx, num_of_bounce
+			renderFarm[i] = std::make_unique<PtRenderer>(5, mEnginePtr);		// num_of_bounce
 		}
+
+
 
 		//renderThreads.resize(renderFarm.size());
 
