@@ -118,6 +118,39 @@ namespace SP {
 
 	void ApiEngine::intersect(RadeonRays::IntersectionApi * api, BackendBuffer buffer, IntersectData data) {
 
+		// copy host data to buffers
+
+		RadeonRays::Event* writeEvent = nullptr;
+		RadeonRays::ray* rawRayPtr = data.rayBuffer.data();
+
+		// memory map
+		api->MapBuffer(buffer.rays[0], RadeonRays::kMapWrite, 0, data.numOfRays * sizeof(RadeonRays::ray), reinterpret_cast<void**>(&rawRayPtr), &writeEvent);
+		writeEvent->Wait();
+		api->DeleteEvent(writeEvent);
+		writeEvent = nullptr;
+
+		// to RR memory
+		std::copy(data.rayBuffer.begin(), data.rayBuffer.end(), rawRayPtr);
+
+		api->UnmapBuffer(buffer.rays[0], static_cast<void*>(rawRayPtr), &writeEvent);
+		writeEvent->Wait();
+		api->DeleteEvent(writeEvent);
+
+		
+		// T and I
+		api->QueryIntersection(buffer.rays[0], data.numOfRays, buffer.intersections, nullptr, nullptr);
+
+		// copy buffer data back to host
+
+		RadeonRays::Event* mapEvent = nullptr;
+		RadeonRays::Intersection* resultPtr = nullptr;
+
+		api->MapBuffer(buffer.intersections, RadeonRays::kMapRead, 0, data.numOfRays * sizeof(RadeonRays::Intersection), reinterpret_cast<void**>(&resultPtr), &mapEvent);
+		mapEvent->Wait();
+		api->DeleteEvent(mapEvent);
+
+		// copy intersections
+		std::copy(resultPtr, resultPtr + data.numOfRays, data.intersectBuffer.begin());
 
 
 	}
