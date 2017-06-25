@@ -108,6 +108,17 @@ namespace SP {
 	}
 
 
+	// workaround !
+	const std::vector<const Mesh*>& ApiEngine::getInternalMeshPtrs() const {
+		return mBackends[0].tracker.getInternalMeshPtrs();
+	}
+
+	// workaround !
+	const Scene * ApiEngine::getCurrentScenePtr() const {
+		return mBackends[0].tracker.getCurrentScenePtr();
+	}
+
+
 
 	// for worker thread
 	void ApiEngine::runLoop(RadeonRays::IntersectionApi * api, BackendBuffer buffer) {

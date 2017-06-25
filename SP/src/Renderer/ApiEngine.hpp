@@ -25,13 +25,19 @@ namespace SP {
 
 
 		std::future<void> queryIntersection(std::vector<RadeonRays::ray>& rayBuffer, int numOfRays ,std::vector<RadeonRays::Intersection>& intersectBuffer);
-
 		std::future<void> queryOcclusion(std::vector<RadeonRays::ray>& shadowrayBuffer, int numOfRays, std::vector<int>& shadowhitBuffer);
 
 		void resizeBuffers(ScreenConfig screenCfg);
 
 
 		void compileScene(const Scene& scene);
+
+		//workaround
+		const std::vector<const Mesh*>& getInternalMeshPtrs() const;
+
+
+		//workaround !
+		const Scene* getCurrentScenePtr() const;
 
 	private:
 
