@@ -36,7 +36,7 @@ namespace SP {
 		// index of the device ?
 
 		// Intersection API for RR
-		RadeonRays::IntersectionApi*& apiRef;
+		RadeonRays::IntersectionApi* api;
 
 		// track curent scene
 		const Scene* currentScenePtr = nullptr;

@@ -7,7 +7,7 @@
 
 namespace SP {
 
-	SceneTracker::SceneTracker(RadeonRays::IntersectionApi* intersectApi) : apiRef(intersectApi) {
+	SceneTracker::SceneTracker(RadeonRays::IntersectionApi* intersectApi) : api(intersectApi) {
 
 		//std::cerr << "API" << std::endl;
 
@@ -56,7 +56,7 @@ namespace SP {
 
 				const Mesh* mesh = static_cast<const Mesh*>(shapeIterator->nextItem());
 
-				RadeonRays::Shape* shape = apiRef->CreateMesh(
+				RadeonRays::Shape* shape = api->CreateMesh(
 					reinterpret_cast<const float*>(mesh->getVertices()),			// check this one !!!
 					static_cast<int>(mesh->getNumVertices()), 
 					sizeof(RadeonRays::float3), 
@@ -82,11 +82,11 @@ namespace SP {
 
 			// TEST !!!!!
 			for (const auto& s : internalShapes) {
-				apiRef->AttachShape(s);
+				api->AttachShape(s);
 				std::cerr << "Add shape !" << std::endl;
 			}
 
-			apiRef->Commit();
+			api->Commit();
 			std::cerr << "Commit" << std::endl;
 
 		}
