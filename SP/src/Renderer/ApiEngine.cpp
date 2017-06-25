@@ -178,6 +178,12 @@ namespace SP {
 		std::copy(resultPtr, resultPtr + data.numOfRays, data.intersectBuffer.begin());
 
 
+		// unmap
+		mapEvent = nullptr;
+		api->UnmapBuffer(buffer.intersections, static_cast<void*>(resultPtr), &mapEvent);
+		mapEvent->Wait();
+		api->DeleteEvent(mapEvent);
+
 	}
 
 	void ApiEngine::occlude(RadeonRays::IntersectionApi * api, BackendBuffer buffer, OccludeData data) {
