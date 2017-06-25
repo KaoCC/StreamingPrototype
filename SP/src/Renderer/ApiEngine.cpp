@@ -11,7 +11,7 @@ namespace SP {
 		std::cerr << "Number of APIs: " << apiIndexList.size() << std::endl;
 		std::cerr << "Create APIs" << std::endl;
 		for (int index : apiIndexList) {
-		
+
 			auto api = RadeonRays::IntersectionApi::Create(index);
 			api->SetOption("acc.type", "qbvh");
 			api->SetOption("bvh.builder", "sah");
@@ -52,8 +52,8 @@ namespace SP {
 
 	std::future<void> ApiEngine::queryIntersection(std::vector<RadeonRays::ray>& rayBuffer, int numOfRays, std::vector<RadeonRays::Intersection>& intersectBuffer) {
 
-		std::packaged_task<void(RadeonRays::IntersectionApi * api, BackendBuffer buffer)> task {std::bind(&ApiEngine::intersect, std::placeholders::_1, std::placeholders::_2, IntersectData(rayBuffer, numOfRays, intersectBuffer)) };
-	
+		std::packaged_task<void(RadeonRays::IntersectionApi * api, BackendBuffer buffer)> task{ std::bind(&ApiEngine::intersect, std::placeholders::_1, std::placeholders::_2, IntersectData(rayBuffer, numOfRays, intersectBuffer)) };
+
 		auto taskFuture = task.get_future();
 
 		// enqueue
@@ -150,7 +150,7 @@ namespace SP {
 		writeEvent->Wait();
 		api->DeleteEvent(writeEvent);
 
-		
+
 		// T and I
 		api->QueryIntersection(buffer.rays[0], data.numOfRays, buffer.intersections, nullptr, nullptr);
 
@@ -173,12 +173,52 @@ namespace SP {
 
 		// yet to be done
 
+		RadeonRays::Event* mapEvent = nullptr;
+		RadeonRays::ray* rawShadowrayPtr = data.shadowrayBuffer.data();
+
+		// memory map
+		api->MapBuffer(buffer.shadowrays, RadeonRays::kMapWrite, 0, data.numOfRays * sizeof(RadeonRays::ray), reinterpret_cast<void**>(&rawShadowrayPtr), &mapEvent);
+		mapEvent->Wait();
+		api->DeleteEvent(mapEvent);
+		mapEvent = nullptr;
+
+		// to RR memory
+		std::copy(data.shadowrayBuffer.begin(), data.shadowrayBuffer.end(), rawShadowrayPtr);
+
+		api->UnmapBuffer(buffer.shadowrays, static_cast<void*>(rawShadowrayPtr), &mapEvent);
+		mapEvent->Wait();
+		api->DeleteEvent(mapEvent);
+
+
+
+		// occlude
+		api->QueryOcclusion(buffer.shadowrays, data.numOfRays, buffer.shadowhits, nullptr, nullptr);
+
+		// copy back 
+
+		int* shadowResultPtr = nullptr;
+
+		mapEvent = nullptr;
+		api->MapBuffer(buffer.shadowhits, RadeonRays::kMapRead, 0, data.numOfRays * sizeof(int), reinterpret_cast<void**>(&shadowResultPtr), &mapEvent);
+		mapEvent->Wait();
+		api->DeleteEvent(mapEvent);
+
+
+		// copy shadowhits
+		std::copy(shadowResultPtr, shadowResultPtr + data.numOfRays, data.shadowhitBuffer.begin());
+
+
+		mapEvent = nullptr;
+		api->UnmapBuffer(buffer.shadowhits, static_cast<void*>(shadowResultPtr), &mapEvent);
+		mapEvent->Wait();
+		api->DeleteEvent(mapEvent);
+
 	}
 
 
 
 
-	ApiEngine::BackendRecord::BackendRecord(RadeonRays::IntersectionApi * inputApi, ScreenConfig screenCfg) : api(inputApi), tracker(inputApi){
+	ApiEngine::BackendRecord::BackendRecord(RadeonRays::IntersectionApi * inputApi, ScreenConfig screenCfg) : api(inputApi), tracker(inputApi) {
 
 		// disable this part ?
 		buffer.rays[0] = api->CreateBuffer(screenCfg.width * screenCfg.height * sizeof(RadeonRays::ray), nullptr);
@@ -191,10 +231,10 @@ namespace SP {
 
 	}
 
-	ApiEngine::IntersectData::IntersectData(std::vector<RadeonRays::ray>& rayB, int nR, std::vector<RadeonRays::Intersection>& interB) : rayBuffer(rayB), numOfRays(nR), intersectBuffer(interB){
+	ApiEngine::IntersectData::IntersectData(std::vector<RadeonRays::ray>& rayB, int nR, std::vector<RadeonRays::Intersection>& interB) : rayBuffer(rayB), numOfRays(nR), intersectBuffer(interB) {
 	}
 
-	ApiEngine::OccludeData::OccludeData(std::vector<RadeonRays::ray>& shadowrayB, int nR, std::vector<int>& shadowhitB) : shadowrayBuffer(shadowrayB), numOfRays(nR), shadowhitBuffer(shadowhitB){
+	ApiEngine::OccludeData::OccludeData(std::vector<RadeonRays::ray>& shadowrayB, int nR, std::vector<int>& shadowhitB) : shadowrayBuffer(shadowrayB), numOfRays(nR), shadowhitBuffer(shadowhitB) {
 	}
 
 }
