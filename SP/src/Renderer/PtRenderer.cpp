@@ -54,34 +54,13 @@ namespace SP {
 		std::vector<RadeonRays::float3> host_lightSamples;
 
 
-		// RadeonRays stuff
-		RadeonRays::Buffer* rays[2] = {nullptr, nullptr};
-		RadeonRays::Buffer* shadowrays = nullptr;
-		RadeonRays::Buffer* shadowhits = nullptr;
-		RadeonRays::Buffer* hits = nullptr;
-		RadeonRays::Buffer* intersections = nullptr;
-		RadeonRays::Buffer* hitcount = nullptr;				// types ?
-
-
-
 	};
 
 
 	PtRenderer::~PtRenderer() = default;
 
 
-	PtRenderer::PtRenderer(int devidx, int num_bounces) : renderData(new RenderData), numOfBounces(num_bounces), sceneTracker(devidx) {
-
-
-		// Allocate space ?
-
-
-		// init HQ ?
-
-
-		// scene tracking
-
-		//sceneTracker.compileSceneTest();
+	PtRenderer::PtRenderer(int num_bounces, std::unique_ptr<ApiEngine>& engine) : renderData(new RenderData), numOfBounces(num_bounces), mEngineRef(engine){
 
 	}
 
@@ -112,8 +91,11 @@ namespace SP {
 	// this is the entry point of the main path tracing algorithm
 	void PtRenderer::render(Scene const & scene, size_t configIdx) {
 
-		auto api = sceneTracker.getIntersectionApi();
-		sceneTracker.compileSceneTest(scene);
+		//auto api = sceneTracker.getIntersectionApi();
+		//sceneTracker.compileSceneTest(scene);
+
+		//mEngineRef->compileScene(scene);
+		
 
 		// ray gen ?
 		generatePrimaryRays(scene, configIdx);
@@ -130,40 +112,12 @@ namespace SP {
 			// clear hit buffer
 			std::fill(renderData->host_hits.begin(), renderData->host_hits.end(), 0);
 
-			api->QueryIntersection(renderData->rays[pass & 0x1], renderData->host_hitcount, renderData->intersections, nullptr, nullptr);		
+			//api->QueryIntersection(renderData->rays[pass & 0x1], renderData->host_hitcount, renderData->intersections, nullptr, nullptr);		
 
-			RadeonRays::Event* mapEvent = nullptr;
-			RadeonRays::Intersection* resultPtr = nullptr;
+			mEngineRef->queryIntersection(renderData->host_rays[pass & 0x1], renderData->host_hitcount, renderData->host_intersections).wait();
 
-			api->MapBuffer(renderData->intersections, RadeonRays::kMapRead, 0, renderData->host_hitcount * sizeof(RadeonRays::Intersection), reinterpret_cast<void**>(&resultPtr), &mapEvent);
-			mapEvent->Wait();
-			api->DeleteEvent(mapEvent);
-
-			// copy intersections
-			std::copy(resultPtr, resultPtr + renderData->host_hitcount, renderData->host_intersections.begin());
-
-
-			// tmp
-			//int count = 0;
-			//std::cerr << "PASS: " << pass << "\n";
-			//for (int i = 0; i < renderData->host_hitcount; ++i) {
-			//	if (renderData->host_intersections[i].shapeid != -1) {
-			//		++count;
-
-			//		//std::cerr << ">>>>>>>>>>>>>>>>>>> shape: " << renderData->host_intersections[i].shapeid <<" Pri: " << renderData->host_intersections[i].primid << '\n';
-			//	}
-			//}
-
-			//std::cerr << "alive: " << count << '\n';
-
-			mapEvent = nullptr;
-			api->UnmapBuffer(renderData->intersections, static_cast<void*>(resultPtr), &mapEvent);
-			mapEvent->Wait();
-			api->DeleteEvent(mapEvent);
-			
 
 			// evaluate V		(X)
-
 
 			filterPathStream(pass);
 
@@ -171,7 +125,6 @@ namespace SP {
 			//std::cerr << "NEW hit count:" << renderData->host_hitcount << '\n';
 
 			restorePixelIndices(pass);
-
 
 
 			// --- RENDERING ---
@@ -196,25 +149,9 @@ namespace SP {
 			// KAOCC: move shadow rays to the GPU ?
 			// Read the shadow hit to host ?
 			// hit count ? max ray ?
-			api->QueryOcclusion(renderData->shadowrays, renderData->host_hitcount, renderData->shadowhits, nullptr, nullptr);
 
-
-			int* shadowResultPtr = nullptr;
-
-			mapEvent = nullptr;
-			api->MapBuffer(renderData->shadowhits, RadeonRays::kMapRead, 0, renderData->host_hitcount * sizeof(int), reinterpret_cast<void**>(&shadowResultPtr), &mapEvent);
-			mapEvent->Wait();
-			api->DeleteEvent(mapEvent);
-
-
-			// copy shadowhits
-			std::copy(shadowResultPtr, shadowResultPtr + renderData->host_hitcount, renderData->host_shadowhits.begin());
-
-
-			mapEvent = nullptr;
-			api->UnmapBuffer(renderData->shadowhits, static_cast<void*>(shadowResultPtr), &mapEvent);
-			mapEvent->Wait();
-			api->DeleteEvent(mapEvent);
+			//api->QueryOcclusion(renderData->shadowrays, renderData->host_hitcount, renderData->shadowhits, nullptr, nullptr);
+			mEngineRef->queryOcclusion(renderData->host_shadowrays, renderData->host_hitcount, renderData->host_shadowhits).wait();
 
 
 			//// test
@@ -231,12 +168,7 @@ namespace SP {
 
 			gatherLightSamples(pass);
 
-
-
-
-
 		}
-
 		
 		//std::cerr << "Frame: " << frameCount << '\n';
 
@@ -252,8 +184,6 @@ namespace SP {
 		// KAOCC: check the type !
 		renderOutPtr = static_cast<RenderOutput*>(output);
 	}
-
-
 
 
 
@@ -327,26 +257,6 @@ namespace SP {
 			}
 		}
 
-		RadeonRays::Event* rayGenEvent = nullptr;
-		RadeonRays::ray* rawRayPtr = renderData->host_rays[0].data();
-
-		auto api{ sceneTracker.getIntersectionApi() };
-
-		// memory map
-		api->MapBuffer(renderData->rays[0], RadeonRays::kMapWrite, 0, imageWidth * imageHeight * sizeof(RadeonRays::ray), reinterpret_cast<void**>(&rawRayPtr), &rayGenEvent);
-		rayGenEvent->Wait();
-		api->DeleteEvent(rayGenEvent);
-		rayGenEvent = nullptr;
-
-		// to RR memory
-		std::copy(renderData->host_rays[0].begin(), renderData->host_rays[0].end(), rawRayPtr);
-
-		api->UnmapBuffer(renderData->rays[0], static_cast<void*>(rawRayPtr), &rayGenEvent);
-		rayGenEvent->Wait();
-		api->DeleteEvent(rayGenEvent);
-		
-
-		//throw std::runtime_error("Gen: Yet to be done");
 	}
 
 	void PtRenderer::resizeWorkingSet(const Output& out) {
@@ -392,30 +302,6 @@ namespace SP {
 		renderData->host_lightSamples.clear();
 		renderData->host_lightSamples.resize(out.getWidth() * out.getHeight());
 
-		auto api{ sceneTracker.getIntersectionApi() };
-
-		// Delete buffer connections
-		api->DeleteBuffer(renderData->rays[0]);
-		api->DeleteBuffer(renderData->rays[1]);
-		api->DeleteBuffer(renderData->shadowrays);
-		api->DeleteBuffer(renderData->shadowhits);
-		api->DeleteBuffer(renderData->hits);
-		api->DeleteBuffer(renderData->intersections);
-		api->DeleteBuffer(renderData->hitcount);
-
-		// Create new buffers
-		// KaoCC: be careful of the size
-		renderData->rays[0] = api->CreateBuffer(out.getWidth() * out.getHeight()  * sizeof(RadeonRays::ray), renderData->host_rays[0].data());
-		renderData->rays[1] = api->CreateBuffer(out.getWidth() * out.getHeight() * sizeof(RadeonRays::ray), renderData->host_rays[1].data());
-		renderData->shadowrays = api->CreateBuffer(out.getWidth() * out.getHeight() * sizeof(RadeonRays::ray), renderData->host_shadowrays.data());
-		renderData->shadowhits = api->CreateBuffer(out.getWidth() * out.getHeight() * sizeof(int), renderData->host_shadowhits.data());
-		renderData->intersections = api->CreateBuffer(out.getWidth() * out.getHeight() * sizeof(RadeonRays::Intersection), renderData->host_intersections.data());
-		renderData->hits = api->CreateBuffer(out.getWidth() * out.getHeight() * sizeof(int), renderData->host_hits.data());
-		renderData->hitcount = api->CreateBuffer( sizeof(int), &renderData->host_hitcount);
-
-		// ......
-
-		//throw std::runtime_error("Yet to be done !");
 
 	}
 
@@ -465,8 +351,10 @@ namespace SP {
 
 			std::unique_ptr<Sampler> sampler = RandomSampler::create(seed);
 
+
+			// KAOCC: how to change this ?
 			//DifferentialGeometry diffGeo;
-			diffGeo.fill(currentIntersect, sceneTracker.getInternalMeshPtrs());
+			diffGeo.fill(currentIntersect, mEngineRef->getInternalMeshPtrs());
 
 
 			bool backfaced = (RadeonRays::dot(diffGeo.getNormal(), wi) < 0);
@@ -569,7 +457,7 @@ namespace SP {
 			// sample BxDf
 			const RadeonRays::float3& bxdf = BxDFHelper::sample(diffGeo, wi, sampler->sample2D(), bxdfwo, bxdfPDF);		// value ?
 
-			const auto currentScenePtr = sceneTracker.getCurrentScenePtr();
+			const auto currentScenePtr = mEngineRef->getCurrentScenePtr();
 
 			// Radiance
 			RadeonRays::float3 radiance = 0.f;
@@ -659,51 +547,6 @@ namespace SP {
 
 		}
 
-
-		// map indirect rays ?
-
-		RadeonRays::Event* mappingEvent = nullptr;
-		RadeonRays::ray* rawIndirectRayPtr = indirectRayArrayRef.data();
-
-		auto api{ sceneTracker.getIntersectionApi() };
-
-		// memory map
-		api->MapBuffer(renderData->rays[ (pass + 1) & 0x1], RadeonRays::kMapWrite, 0, renderData->host_hitcount * sizeof(RadeonRays::ray), reinterpret_cast<void**>(&rawIndirectRayPtr), &mappingEvent);
-		mappingEvent->Wait();
-		api->DeleteEvent(mappingEvent);
-		mappingEvent = nullptr;
-
-		// to RR memory
-		std::copy(indirectRayArrayRef.begin(), indirectRayArrayRef.end(), rawIndirectRayPtr);
-
-		api->UnmapBuffer(renderData->rays[(pass + 1) & 0x1], static_cast<void*>(rawIndirectRayPtr), &mappingEvent);
-		mappingEvent->Wait();
-		api->DeleteEvent(mappingEvent);
-
-
-		// ---------------------------- 
-
-		// map shadow rays
-
-		mappingEvent = nullptr;
-		RadeonRays::ray* rawShadowrayPtr = shadowRayArrayRef.data();
-
-		// memory map
-		api->MapBuffer(renderData->shadowrays, RadeonRays::kMapWrite, 0, renderData->host_hitcount * sizeof(RadeonRays::ray), reinterpret_cast<void**>(&rawShadowrayPtr), &mappingEvent);
-		mappingEvent->Wait();
-		api->DeleteEvent(mappingEvent);
-		mappingEvent = nullptr;
-
-		// to RR memory
-		std::copy(shadowRayArrayRef.begin(), shadowRayArrayRef.end(), rawShadowrayPtr);
-
-		api->UnmapBuffer(renderData->shadowrays, static_cast<void*>(rawShadowrayPtr), &mappingEvent);
-		mappingEvent->Wait();
-		api->DeleteEvent(mappingEvent);
-
-
-
-		//throw std::runtime_error("surface: yet to be done");
 	}
 
 	// not used ...
