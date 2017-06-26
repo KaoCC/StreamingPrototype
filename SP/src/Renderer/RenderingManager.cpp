@@ -85,8 +85,6 @@ namespace SP {
 			renderFarm[i] = std::make_unique<PtRenderer>(5, mEnginePtr);		// num_of_bounce
 		}
 
-
-
 		//renderThreads.resize(renderFarm.size());
 
 		initData(loadRadianceFlag);
