@@ -59,10 +59,14 @@ namespace SP {
 			//nativeIdx = gpuIdx;
 			apiIndex.push_back(gpuIdx);
 
-		} else if (embreeIdx != -1) {
+		}
+
+		if (embreeIdx != -1) {
 			//nativeIdx = embreeIdx;
-			apiIndex.push_back(embreeIdx);
-		} else if (cpuIdx != -1) {
+			//apiIndex.push_back(embreeIdx);
+		}
+		
+		if (cpuIdx != -1) {
 			//nativeIdx = cpuIdx;
 			apiIndex.push_back(cpuIdx);
 		}
@@ -218,6 +222,8 @@ namespace SP {
 
 		}
 
+
+		mEnginePtr->compileScene(*sceneDataPtr);
 
 	}
 
