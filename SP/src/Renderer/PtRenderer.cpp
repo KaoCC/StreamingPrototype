@@ -302,7 +302,6 @@ namespace SP {
 		renderData->host_lightSamples.clear();
 		renderData->host_lightSamples.resize(out.getWidth() * out.getHeight());
 
-
 	}
 
 
