@@ -9,17 +9,7 @@ namespace SP {
 
 	SceneTracker::SceneTracker(RadeonRays::IntersectionApi* intersectApi) : api(intersectApi) {
 
-		//std::cerr << "API" << std::endl;
 
-		// init API;
-		//api = RadeonRays::IntersectionApi::Create(devidx);
-
-		//std::cerr << "Done" << std::endl;
-
-		// ... 
-
-		//api->SetOption("acc.type", "qbvh");
-		//api->SetOption("bvh.builder", "sah");
 	}
 
 	//SceneTracker::~SceneTracker() {
