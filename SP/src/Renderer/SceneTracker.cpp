@@ -7,28 +7,18 @@
 
 namespace SP {
 
-	SceneTracker::SceneTracker(int devidx) {
+	SceneTracker::SceneTracker(RadeonRays::IntersectionApi* intersectApi) : api(intersectApi) {
 
-		std::cerr << "API" << std::endl;
 
-		// init API;
-		api = RadeonRays::IntersectionApi::Create(devidx);
-
-		std::cerr << "Done" << std::endl;
-
-		// ... 
-
-		api->SetOption("acc.type", "qbvh");
-		api->SetOption("bvh.builder", "sah");
 	}
 
-	SceneTracker::~SceneTracker() {
-		RadeonRays::IntersectionApi::Delete(api);
-	}
+	//SceneTracker::~SceneTracker() {
+	//	RadeonRays::IntersectionApi::Delete(api);
+	//}
 
-	RadeonRays::IntersectionApi * SceneTracker::getIntersectionApi() {
-		return api;
-	}
+	//RadeonRays::IntersectionApi * SceneTracker::getIntersectionApi() {
+	//	return api;
+	//}
 
 	void SceneTracker::compileSceneTest(const Scene& scene) {
 		// yet to be done

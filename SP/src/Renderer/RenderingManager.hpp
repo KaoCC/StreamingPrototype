@@ -24,6 +24,8 @@
 
 #include "../HeterogeneousQueue/HQ/src/ThreadSafeQueue.hpp"
 
+#include "ApiEngine.hpp"
+
 namespace SP {
 
 
@@ -94,7 +96,7 @@ namespace SP {
 		const float kStep = 0.025f * 2;
 
 		// thread safe queue
-		const int kPauseTime = 10;
+		const int kPauseTime = 100;
 
 		// Scene Data
 		std::unique_ptr<Scene> sceneDataPtr;
@@ -116,6 +118,7 @@ namespace SP {
 		std::vector<Output*> renderOutputData;
 
 
+		std::unique_ptr<ApiEngine> mEnginePtr;
 
 		// test
 		//std::queue<std::pair<int, int>> mTaskQueue;

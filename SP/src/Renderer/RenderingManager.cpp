@@ -50,24 +50,41 @@ namespace SP {
 			}
 		}
 
+		std::vector<int> apiIndex;
 
-		int nativeIdx = -1;
+		//int nativeIdx = -1;
 
 		// select order:  GPU > Embree > CPU
 		if (gpuIdx != -1) {
-			nativeIdx = gpuIdx;
-		} else if (embreeIdx != -1) {
-			nativeIdx = embreeIdx;
-		} else if (cpuIdx != -1) {
-			nativeIdx = cpuIdx;
+			//nativeIdx = gpuIdx;
+			apiIndex.push_back(gpuIdx);
+
 		}
 
-		std::cerr << "Selected Device ID: " << nativeIdx << std::endl;
+		if (embreeIdx != -1) {
+			//nativeIdx = embreeIdx;
+			apiIndex.push_back(embreeIdx);
+		}
+		
+		if (cpuIdx != -1) {
+			//nativeIdx = cpuIdx;
+			apiIndex.push_back(cpuIdx);
+		}
 
+		// KAOCC: we should support multiple GPUs !
+
+		//std::cerr << "Selected Device ID: " << nativeIdx << std::endl;
+
+		ScreenConfig screenCfg(mConfigRef.getScreenWidth(), mConfigRef.getScreenHeight());
+
+		mEnginePtr = std::make_unique<ApiEngine>(screenCfg, apiIndex);
+
+
+		// change this
 		// allocate renderer
 		renderFarm.resize(cfgRef.getNumberOfCameras());
 		for (size_t i = 0; i < renderFarm.size(); ++i) {
-			renderFarm[i] = std::make_unique<PtRenderer>(nativeIdx, 5);		// idx, num_of_bounce
+			renderFarm[i] = std::make_unique<PtRenderer>(5, mEnginePtr);		// num_of_bounce
 		}
 
 		//renderThreads.resize(renderFarm.size());
@@ -103,6 +120,8 @@ namespace SP {
 
 		if (numOfThreads == 0) {
 			numOfThreads = 4;
+		} else {
+			++numOfThreads;
 		}
 
 		std::cout << ">>> number of threads: " << numOfThreads << std::endl;
@@ -205,6 +224,8 @@ namespace SP {
 
 		}
 
+
+		mEnginePtr->compileScene(*sceneDataPtr);
 
 	}
 
@@ -328,7 +349,7 @@ namespace SP {
 
 			} else {
 				// may need to change in the future
-				std::this_thread::sleep_for(std::chrono::milliseconds(kPauseTime));
+				std::this_thread::sleep_for(std::chrono::microseconds(kPauseTime));
 			}
 
 

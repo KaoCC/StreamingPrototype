@@ -10,7 +10,7 @@
 
 #include "radeon_rays.h"
 
-
+#include "ApiEngine.hpp"
 
 namespace SP {
 
@@ -21,7 +21,7 @@ namespace SP {
 
 	public:
 
-		PtRenderer(int devidx, int num_bounces);
+		PtRenderer(int num_bounces, std::unique_ptr<ApiEngine>& engine);
 
 
 
@@ -85,12 +85,14 @@ namespace SP {
 		RenderOutput* renderOutPtr  = nullptr;
 
 
-		SceneTracker sceneTracker;
+		//SceneTracker sceneTracker;
 
 		std::unique_ptr<RenderData> renderData;
 
 		//std::vector<RadeonRays::Shape*> shapes;
 
+		// KAOCC: add ref to ApiEngine
+		std::unique_ptr<ApiEngine>& mEngineRef;
 
 		std::uint32_t numOfBounces;
 		std::uint32_t mFrameCount = 0;
