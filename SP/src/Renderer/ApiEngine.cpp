@@ -133,7 +133,7 @@ namespace SP {
 
 			} else {
 				// TMP !!!
-				std::this_thread::sleep_for(std::chrono::milliseconds(1));
+				std::this_thread::sleep_for(std::chrono::microseconds(100));
 			}
 
 
@@ -188,10 +188,8 @@ namespace SP {
 
 	void ApiEngine::occlude(RadeonRays::IntersectionApi * api, BackendBuffer buffer, OccludeData data) {
 
-		// yet to be done
-
 		RadeonRays::Event* mapEvent = nullptr;
-		RadeonRays::ray* rawShadowrayPtr = data.shadowrayBuffer.data();
+		RadeonRays::ray* rawShadowrayPtr = nullptr;
 
 		// memory map
 		api->MapBuffer(buffer.shadowrays, RadeonRays::kMapWrite, 0, data.numOfRays * sizeof(RadeonRays::ray), reinterpret_cast<void**>(&rawShadowrayPtr), &mapEvent);

@@ -96,7 +96,7 @@ namespace SP {
 		const float kStep = 0.025f * 2;
 
 		// thread safe queue
-		const int kPauseTime = 200;
+		const int kPauseTime = 100;
 
 		// Scene Data
 		std::unique_ptr<Scene> sceneDataPtr;
