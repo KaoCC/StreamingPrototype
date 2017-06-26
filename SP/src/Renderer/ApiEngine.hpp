@@ -58,7 +58,7 @@ namespace SP {
 
 		// Buffers
 		struct BackendBuffer {
-			RadeonRays::Buffer* rays[2] = { nullptr, nullptr };
+			RadeonRays::Buffer* rays = nullptr;
 			RadeonRays::Buffer* shadowrays = nullptr;
 			RadeonRays::Buffer* shadowhits = nullptr;
 			RadeonRays::Buffer* hits = nullptr;

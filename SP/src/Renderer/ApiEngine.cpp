@@ -37,8 +37,8 @@ namespace SP {
 	ApiEngine::~ApiEngine() {
 
 		for (auto& backend : mBackends) {
-			backend.api->DeleteBuffer(backend.buffer.rays[0]);
-			backend.api->DeleteBuffer(backend.buffer.rays[1]);
+			backend.api->DeleteBuffer(backend.buffer.rays);
+			//backend.api->DeleteBuffer(backend.buffer.rays[1]);
 			backend.api->DeleteBuffer(backend.buffer.shadowrays);
 			backend.api->DeleteBuffer(backend.buffer.shadowhits);
 			backend.api->DeleteBuffer(backend.buffer.hits);
@@ -80,8 +80,8 @@ namespace SP {
 		for (auto& backend : mBackends) {
 
 			// delete old buffers
-			backend.api->DeleteBuffer(backend.buffer.rays[0]);
-			backend.api->DeleteBuffer(backend.buffer.rays[1]);
+			backend.api->DeleteBuffer(backend.buffer.rays);
+			//backend.api->DeleteBuffer(backend.buffer.rays[1]);
 			backend.api->DeleteBuffer(backend.buffer.shadowrays);
 			backend.api->DeleteBuffer(backend.buffer.shadowhits);
 			backend.api->DeleteBuffer(backend.buffer.hits);
@@ -89,8 +89,8 @@ namespace SP {
 			backend.api->DeleteBuffer(backend.buffer.hitcount);
 
 			// create new buffers
-			backend.buffer.rays[0] = backend.api->CreateBuffer(screenCfg.width * screenCfg.height * sizeof(RadeonRays::ray), nullptr);
-			backend.buffer.rays[1] = backend.api->CreateBuffer(screenCfg.width * screenCfg.height * sizeof(RadeonRays::ray), nullptr);
+			backend.buffer.rays= backend.api->CreateBuffer(screenCfg.width * screenCfg.height * sizeof(RadeonRays::ray), nullptr);
+			//backend.buffer.rays[1] = backend.api->CreateBuffer(screenCfg.width * screenCfg.height * sizeof(RadeonRays::ray), nullptr);
 			backend.buffer.shadowrays = backend.api->CreateBuffer(screenCfg.width * screenCfg.height * sizeof(RadeonRays::ray), nullptr);
 			backend.buffer.shadowhits = backend.api->CreateBuffer(screenCfg.width * screenCfg.height * sizeof(int), nullptr);
 			backend.buffer.intersections = backend.api->CreateBuffer(screenCfg.width * screenCfg.height * sizeof(RadeonRays::Intersection), nullptr);
@@ -146,10 +146,10 @@ namespace SP {
 		// copy host data to buffers
 
 		RadeonRays::Event* writeEvent = nullptr;
-		RadeonRays::ray* rawRayPtr = data.rayBuffer.data();
+		RadeonRays::ray* rawRayPtr = nullptr;
 
 		// memory map
-		api->MapBuffer(buffer.rays[0], RadeonRays::kMapWrite, 0, data.numOfRays * sizeof(RadeonRays::ray), reinterpret_cast<void**>(&rawRayPtr), &writeEvent);
+		api->MapBuffer(buffer.rays, RadeonRays::kMapWrite, 0, data.numOfRays * sizeof(RadeonRays::ray), reinterpret_cast<void**>(&rawRayPtr), &writeEvent);
 		writeEvent->Wait();
 		api->DeleteEvent(writeEvent);
 		writeEvent = nullptr;
@@ -157,13 +157,13 @@ namespace SP {
 		// to RR memory
 		std::copy(data.rayBuffer.begin(), data.rayBuffer.end(), rawRayPtr);
 
-		api->UnmapBuffer(buffer.rays[0], static_cast<void*>(rawRayPtr), &writeEvent);
+		api->UnmapBuffer(buffer.rays, static_cast<void*>(rawRayPtr), &writeEvent);
 		writeEvent->Wait();
 		api->DeleteEvent(writeEvent);
 
 
 		// T and I
-		api->QueryIntersection(buffer.rays[0], data.numOfRays, buffer.intersections, nullptr, nullptr);
+		api->QueryIntersection(buffer.rays, data.numOfRays, buffer.intersections, nullptr, nullptr);
 
 		// copy buffer data back to host
 
@@ -206,8 +206,6 @@ namespace SP {
 		mapEvent->Wait();
 		api->DeleteEvent(mapEvent);
 
-
-
 		// occlude
 		api->QueryOcclusion(buffer.shadowrays, data.numOfRays, buffer.shadowhits, nullptr, nullptr);
 
@@ -238,8 +236,8 @@ namespace SP {
 	ApiEngine::BackendRecord::BackendRecord(RadeonRays::IntersectionApi * inputApi, ScreenConfig screenCfg) : api(inputApi), tracker(inputApi) {
 
 		// disable this part ?
-		buffer.rays[0] = api->CreateBuffer(screenCfg.width * screenCfg.height * sizeof(RadeonRays::ray), nullptr);
-		buffer.rays[1] = api->CreateBuffer(screenCfg.width * screenCfg.height * sizeof(RadeonRays::ray), nullptr);
+		buffer.rays = api->CreateBuffer(screenCfg.width * screenCfg.height * sizeof(RadeonRays::ray), nullptr);
+		//buffer.rays[1] = api->CreateBuffer(screenCfg.width * screenCfg.height * sizeof(RadeonRays::ray), nullptr);
 		buffer.shadowrays = api->CreateBuffer(screenCfg.width * screenCfg.height * sizeof(RadeonRays::ray), nullptr);
 		buffer.shadowhits = api->CreateBuffer(screenCfg.width * screenCfg.height * sizeof(int), nullptr);
 		buffer.intersections = api->CreateBuffer(screenCfg.width * screenCfg.height * sizeof(RadeonRays::Intersection), nullptr);
