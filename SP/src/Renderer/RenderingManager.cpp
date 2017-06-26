@@ -63,13 +63,15 @@ namespace SP {
 
 		if (embreeIdx != -1) {
 			//nativeIdx = embreeIdx;
-			//apiIndex.push_back(embreeIdx);
+			apiIndex.push_back(embreeIdx);
 		}
 		
 		if (cpuIdx != -1) {
 			//nativeIdx = cpuIdx;
 			apiIndex.push_back(cpuIdx);
 		}
+
+		// KAOCC: we should support multiple GPUs !
 
 		//std::cerr << "Selected Device ID: " << nativeIdx << std::endl;
 
@@ -118,6 +120,8 @@ namespace SP {
 
 		if (numOfThreads == 0) {
 			numOfThreads = 4;
+		} else {
+			++numOfThreads;
 		}
 
 		std::cout << ">>> number of threads: " << numOfThreads << std::endl;

@@ -25,7 +25,7 @@ namespace SP {
 		}
 
 
-		return RadeonRays::normalize(p);
+		return p;
 
 	}
 
