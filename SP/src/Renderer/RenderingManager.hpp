@@ -110,7 +110,7 @@ namespace SP {
 		std::vector<std::thread> renderThreads;
 
 		// Path-Tracing Renderer
-		std::vector<std::unique_ptr<PtRenderer>> renderFarm;
+		std::vector<std::unique_ptr<Renderer>> renderFarm;
 
 		//Encoder* encoder;
 		//ImageConfig::ImageBuffer accImageBuffer; // test
