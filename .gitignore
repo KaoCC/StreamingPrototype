@@ -34,3 +34,7 @@
 
 Build/*
 Generated/*
+
+# Editor
+*.swp
+*.swo
