@@ -89,8 +89,8 @@ namespace SP {
 
 
 		// tmp
-		const std::string defaultPath = "../Resources/CornellBox";
-		const std::string defaultModelName = "mid-box.objm";
+		const std::string defaultPath = "../Resources/Conf";
+		const std::string defaultModelName = "conf_room_2.objm";
 
 		//tmp
 		const float kStep = 0.025f * 2;
