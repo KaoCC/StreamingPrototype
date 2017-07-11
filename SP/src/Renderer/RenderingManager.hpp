@@ -43,6 +43,10 @@ namespace SP {
 
 		void startRenderThread();
 
+
+		void pause();
+		void resume();
+
 	private:
 
 
@@ -111,6 +115,14 @@ namespace SP {
 
 		// Path-Tracing Renderer
 		std::vector<std::unique_ptr<Renderer>> renderFarm;
+
+		// cond variable
+		std::condition_variable mThreadControlCV;
+
+		// mutex for cv
+		std::mutex mMutex;
+
+		bool pauseFlag = false;
 
 		//Encoder* encoder;
 		//ImageConfig::ImageBuffer accImageBuffer; // test
