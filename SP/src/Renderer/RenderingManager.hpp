@@ -23,7 +23,6 @@
 #include "../ConfigManager.hpp"
 
 #include "../HeterogeneousQueue/HQ/src/ThreadSafeQueue.hpp"
-#include "../HeterogeneousQueue/HQ/src/EventSys.hpp"
 
 #include "ApiEngine.hpp"
 
