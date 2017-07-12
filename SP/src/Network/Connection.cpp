@@ -345,6 +345,16 @@ namespace SP {
 				mCfgManagerRef.saveAll();
 			}
 
+			if(msgPtr->controlmsg().has_editingmsg()){
+			        const auto&  editingMsg = msgPtr->controlmsg().editingmsg();
+			        // op is enum
+			        // StreamingFormat::EditOperation.START(0)/FINISH(1)/UPDATE(2)
+                                std::cerr << "Op:" << editingMsg.op() << ", screen X: " <<  editingMsg.screen_x()  << ", screen Y: " << editingMsg.screen_y() << std::endl;
+                        }
+
+
+
+
 
 
 			//responsePtr = nullptr;
