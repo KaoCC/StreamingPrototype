@@ -11,9 +11,13 @@
 
 #include "../LightField.hpp"
 
+#include "SimpleRenderer.hpp"
+
 #include "OpenImageIO/imageio.h"
 
 #include <cstdio>
+
+ 
 
 namespace SP {
 
@@ -85,6 +89,7 @@ namespace SP {
 		renderFarm.resize(cfgRef.getNumberOfCameras());
 		for (size_t i = 0; i < renderFarm.size(); ++i) {
 			renderFarm[i] = std::make_unique<PtRenderer>(5, mEnginePtr);		// num_of_bounce
+			//renderFarm[i] = std::make_unique<SimpleRenderer>(mEnginePtr);
 		}
 
 		//renderThreads.resize(renderFarm.size());
@@ -116,22 +121,75 @@ namespace SP {
 			}
 		}
 
-		int numOfThreads = std::thread::hardware_concurrency();
+		unsigned int numOfThreads = std::thread::hardware_concurrency();
 
 		if (numOfThreads == 0) {
 			numOfThreads = 4;
-		} else {
-			++numOfThreads;
 		}
 
 		std::cout << ">>> number of threads: " << numOfThreads << std::endl;
+
+		// set thread count
+
+		mThreadCount = numOfThreads;
+
 
 		
 		for (size_t i = 0; i < numOfThreads; ++i) {
 			renderThreads.push_back(std::thread(&RenderingManager::renderingWorker, this));
 		}
 
+	}
 
+	void RenderingManager::pause() {
+
+		{
+			std::lock_guard<std::mutex> lock(mFlagMutex);
+			pauseFlag = true;
+		}
+
+
+		{
+			std::unique_lock<std::mutex> counterLock(mCounterMutex);
+			mCounterCV.wait(counterLock, [this] { return mCurrentCounter == mThreadCount; });
+
+			// reset
+			mCurrentCounter = 0;
+		}
+
+
+	}
+
+	void RenderingManager::resume() {
+
+		std::lock_guard<std::mutex> lock(mFlagMutex);
+		pauseFlag = false;
+
+		mThreadControlCV.notify_all();
+	}
+
+
+	// make sure all the threads are paused !
+	void RenderingManager::reset() {
+
+		// TMP, test
+
+		if (!pauseFlag) {
+			throw std::runtime_error("thread not paused !");
+		}
+
+		// reset API Engine ?
+
+		// reset Scene ?
+
+		for (size_t i = 0; i < renderFarm.size(); ++i) {
+			renderFarm[i] = std::make_unique<SimpleRenderer>(mEnginePtr);
+		}
+
+		for (size_t i = 0; i < renderFarm.size(); ++i) {
+			//renderOutputData[i] = renderFarm[i]->createOutput(mConfigRef.getScreenWidth(), mConfigRef.getScreenHeight());
+			renderFarm[i]->setOutput(renderOutputData[i]);
+		}
 
 	}
 
@@ -307,6 +365,33 @@ namespace SP {
 	void RenderingManager::renderingWorker(void) {
 
 		while (true) {
+
+			// wait for condition variable !
+
+			//std::unique_lock<std::mutex> lock(mMutex);
+			//mThreadControlCV.wait(lock, [this] {return pause; });
+
+			{
+				std::unique_lock<std::mutex> lock(mFlagMutex);
+				if (pauseFlag) {
+
+					{
+						std::lock_guard<std::mutex> counterLock(mCounterMutex);
+
+						++mCurrentCounter;
+
+						if (mCurrentCounter == mThreadCount) {
+							mCounterCV.notify_one();
+						}
+
+					}
+
+
+					mThreadControlCV.wait(lock, [this] {return !pauseFlag; });
+				}
+			}
+
+
 
 			std::pair<int, int> taskIndex;
 

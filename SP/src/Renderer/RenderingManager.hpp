@@ -43,6 +43,13 @@ namespace SP {
 
 		void startRenderThread();
 
+
+		void pause();
+		void resume();
+
+		// reset the data
+		void reset();
+
 	private:
 
 
@@ -89,8 +96,8 @@ namespace SP {
 
 
 		// tmp
-		const std::string defaultPath = "../Resources/CornellBox";
-		const std::string defaultModelName = "mid-box.objm";
+		const std::string defaultPath = "../Resources/Conf";
+		const std::string defaultModelName = "conf_room_2.objm";
 
 		//tmp
 		const float kStep = 0.025f * 2;
@@ -110,7 +117,27 @@ namespace SP {
 		std::vector<std::thread> renderThreads;
 
 		// Path-Tracing Renderer
-		std::vector<std::unique_ptr<PtRenderer>> renderFarm;
+		std::vector<std::unique_ptr<Renderer>> renderFarm;
+
+		// cond variable for flag
+		std::condition_variable mThreadControlCV;
+
+		// mutex for flag cv
+		std::mutex mFlagMutex;
+
+		bool pauseFlag = false;
+
+		
+		// cond for wait
+		std::condition_variable mCounterCV;
+
+		// mutex for wait cv
+		std::mutex mCounterMutex;
+
+		unsigned mThreadCount = 0;
+		unsigned mCurrentCounter = 0;
+
+		//std::unique_ptr<HQ::EventSys> mPauseEventPtr;
 
 		//Encoder* encoder;
 		//ImageConfig::ImageBuffer accImageBuffer; // test
