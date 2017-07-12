@@ -11,9 +11,13 @@
 
 #include "../LightField.hpp"
 
+#include "SimpleRenderer.hpp"
+
 #include "OpenImageIO/imageio.h"
 
 #include <cstdio>
+
+ 
 
 namespace SP {
 
@@ -85,6 +89,7 @@ namespace SP {
 		renderFarm.resize(cfgRef.getNumberOfCameras());
 		for (size_t i = 0; i < renderFarm.size(); ++i) {
 			renderFarm[i] = std::make_unique<PtRenderer>(5, mEnginePtr);		// num_of_bounce
+			//renderFarm[i] = std::make_unique<SimpleRenderer>(mEnginePtr);
 		}
 
 		//renderThreads.resize(renderFarm.size());
@@ -161,6 +166,31 @@ namespace SP {
 		pauseFlag = false;
 
 		mThreadControlCV.notify_all();
+	}
+
+
+	// make sure all the threads are paused !
+	void RenderingManager::reset() {
+
+		// TMP, test
+
+		if (!pauseFlag) {
+			throw std::runtime_error("thread not paused !");
+		}
+
+		// reset API Engine ?
+
+		// reset Scene ?
+
+		for (size_t i = 0; i < renderFarm.size(); ++i) {
+			renderFarm[i] = std::make_unique<SimpleRenderer>(mEnginePtr);
+		}
+
+		for (size_t i = 0; i < renderFarm.size(); ++i) {
+			//renderOutputData[i] = renderFarm[i]->createOutput(mConfigRef.getScreenWidth(), mConfigRef.getScreenHeight());
+			renderFarm[i]->setOutput(renderOutputData[i]);
+		}
+
 	}
 
 
