@@ -120,15 +120,25 @@ namespace SP {
 		// Path-Tracing Renderer
 		std::vector<std::unique_ptr<Renderer>> renderFarm;
 
-		// cond variable
+		// cond variable for flag
 		std::condition_variable mThreadControlCV;
 
-		// mutex for cv
-		std::mutex mMutex;
+		// mutex for flag cv
+		std::mutex mFlagMutex;
 
 		bool pauseFlag = false;
 
-		std::unique_ptr<HQ::EventSys> mPauseEventPtr;
+		
+		// cond for wait
+		std::condition_variable mCounterCV;
+
+		// mutex for wait cv
+		std::mutex mCounterMutex;
+
+		unsigned mThreadCount = 0;
+		unsigned mCurrentCounter = 0;
+
+		//std::unique_ptr<HQ::EventSys> mPauseEventPtr;
 
 		//Encoder* encoder;
 		//ImageConfig::ImageBuffer accImageBuffer; // test
