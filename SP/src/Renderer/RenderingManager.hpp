@@ -23,6 +23,7 @@
 #include "../ConfigManager.hpp"
 
 #include "../HeterogeneousQueue/HQ/src/ThreadSafeQueue.hpp"
+#include "../HeterogeneousQueue/HQ/src/EventSys.hpp"
 
 #include "ApiEngine.hpp"
 
@@ -46,6 +47,9 @@ namespace SP {
 
 		void pause();
 		void resume();
+
+		// reset the data
+		void reset();
 
 	private:
 
@@ -123,6 +127,8 @@ namespace SP {
 		std::mutex mMutex;
 
 		bool pauseFlag = false;
+
+		std::unique_ptr<HQ::EventSys> mPauseEventPtr;
 
 		//Encoder* encoder;
 		//ImageConfig::ImageBuffer accImageBuffer; // test

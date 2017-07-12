@@ -120,11 +120,12 @@ namespace SP {
 
 		if (numOfThreads == 0) {
 			numOfThreads = 4;
-		} else {
-			++numOfThreads;
 		}
 
 		std::cout << ">>> number of threads: " << numOfThreads << std::endl;
+
+		// setup semaphore (event) for pause event
+		mPauseEventPtr = std::make_unique<HQ::EventSys>(numOfThreads);
 
 		
 		for (size_t i = 0; i < numOfThreads; ++i) {
@@ -133,6 +134,25 @@ namespace SP {
 
 
 
+	}
+
+	void RenderingManager::pause() {
+
+		std::lock_guard<std::mutex> lock(mMutex);
+
+		pauseFlag = true;
+
+		//wait for event, make sure all the threads are in the waiting state .
+		mPauseEventPtr->wait();
+
+	}
+
+	void RenderingManager::resume() {
+
+		std::lock_guard<std::mutex> lock(mMutex);
+		pauseFlag = false;
+
+		mThreadControlCV.notify_all();
 	}
 
 
@@ -307,6 +327,21 @@ namespace SP {
 	void RenderingManager::renderingWorker(void) {
 
 		while (true) {
+
+			// wait for condition variable !
+
+			//std::unique_lock<std::mutex> lock(mMutex);
+			//mThreadControlCV.wait(lock, [this] {return pause; });
+
+			{
+				std::unique_lock<std::mutex> lock(mMutex);
+				if (pauseFlag) {
+					mPauseEventPtr->signal();
+					mThreadControlCV.wait(lock, [this] {return !pauseFlag; });
+				}
+			}
+
+
 
 			std::pair<int, int> taskIndex;
 
