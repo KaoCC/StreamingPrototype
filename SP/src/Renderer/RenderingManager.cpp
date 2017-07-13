@@ -172,11 +172,9 @@ namespace SP {
 	// make sure all the threads are paused !
 	void RenderingManager::reset() {
 
-		// TMP, test
+		// pause first
+		pause();
 
-		if (!pauseFlag) {
-			throw std::runtime_error("thread not paused !");
-		}
 
 		// reset API Engine ?
 
@@ -367,9 +365,6 @@ namespace SP {
 		while (true) {
 
 			// wait for condition variable !
-
-			//std::unique_lock<std::mutex> lock(mMutex);
-			//mThreadControlCV.wait(lock, [this] {return pause; });
 
 			{
 				std::unique_lock<std::mutex> flagLock(mFlagMutex);
