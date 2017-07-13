@@ -390,47 +390,44 @@ namespace SP {
 
 			std::pair<int, int> taskIndex;
 
-			if (mTaskQueue.pop(taskIndex)) {
+			mTaskQueue.popWait(taskIndex);
 
-				size_t subLFIdx = taskIndex.first; 
-				size_t subImgIdx = taskIndex.second;
+			size_t subLFIdx = taskIndex.first;
+			size_t subImgIdx = taskIndex.second;
 
-				//std::cerr << "Worker " << subLFIdx << ' ' << subImgIdx << " starts !\n";
+			//std::cerr << "Worker " << subLFIdx << ' ' << subImgIdx << " starts !\n";
 
-				size_t farmIdx = mConfigRef.getNumberOfSubLFImages() * subLFIdx + subImgIdx;
+			size_t farmIdx = mConfigRef.getNumberOfSubLFImages() * subLFIdx + subImgIdx;
 
-				// rendering
-				auto t1 = std::chrono::high_resolution_clock::now();
-				renderFarm[farmIdx]->render(*sceneDataPtr, farmIdx);
-				auto t2 = std::chrono::high_resolution_clock::now();
+			// rendering
+			auto t1 = std::chrono::high_resolution_clock::now();
+			renderFarm[farmIdx]->render(*sceneDataPtr, farmIdx);
+			auto t2 = std::chrono::high_resolution_clock::now();
 
-				// test
-				if (farmIdx == 0) {
-					std::cerr << "FarmIndex: " <<farmIdx <<" Update time: " << std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1).count() << std::endl ;
-				}
-
-
-				// tmp, need lock , need interrupt-based method
-				if (mConfigRef.isSceneChanged(farmIdx)) {
-					renderFarm[farmIdx]->clear(0.f, *(renderOutputData[farmIdx]));
-					mConfigRef.setSceneChangedFlag(farmIdx, false);
-				}
-
-				auto& fieldRef = mConfigRef.getLightField();
-
-				fieldRef[subLFIdx][subImgIdx].setRefreshState(true);
-
-				// for saving images
-				fieldRef[subLFIdx][subImgIdx].setId(farmIdx);
-
-				// push back the task
-				mTaskQueue.push(std::move(taskIndex));
-
-
-			} else {
-				// may need to change in the future
-				std::this_thread::sleep_for(std::chrono::microseconds(kPauseTime));
+			// test
+			if (farmIdx == 0) {
+				std::cerr << "FarmIndex: " << farmIdx << " Update time: " << std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1).count() << std::endl;
 			}
+
+
+			// tmp, need lock , need interrupt-based method
+			if (mConfigRef.isSceneChanged(farmIdx)) {
+				renderFarm[farmIdx]->clear(0.f, *(renderOutputData[farmIdx]));
+				mConfigRef.setSceneChangedFlag(farmIdx, false);
+			}
+
+			auto& fieldRef = mConfigRef.getLightField();
+
+			fieldRef[subLFIdx][subImgIdx].setRefreshState(true);
+
+			// for saving images
+			fieldRef[subLFIdx][subImgIdx].setId(farmIdx);
+
+			// push back the task
+			mTaskQueue.push(std::move(taskIndex));
+
+
+
 
 
 		}
