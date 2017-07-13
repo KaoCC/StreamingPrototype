@@ -120,7 +120,7 @@ namespace SP {
 		std::vector<std::unique_ptr<Renderer>> renderFarm;
 
 		// cond variable for flag
-		std::condition_variable mThreadControlCV;
+		std::condition_variable mFlagControlCV;
 
 		// mutex for flag cv
 		std::mutex mFlagMutex;

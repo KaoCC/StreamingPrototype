@@ -165,7 +165,7 @@ namespace SP {
 		std::lock_guard<std::mutex> lock(mFlagMutex);
 		pauseFlag = false;
 
-		mThreadControlCV.notify_all();
+		mFlagControlCV.notify_all();
 	}
 
 
@@ -372,7 +372,7 @@ namespace SP {
 			//mThreadControlCV.wait(lock, [this] {return pause; });
 
 			{
-				std::unique_lock<std::mutex> lock(mFlagMutex);
+				std::unique_lock<std::mutex> flagLock(mFlagMutex);
 				if (pauseFlag) {
 
 					{
@@ -387,7 +387,7 @@ namespace SP {
 					}
 
 
-					mThreadControlCV.wait(lock, [this] {return !pauseFlag; });
+					mFlagControlCV.wait(flagLock, [this] {return !pauseFlag; });
 				}
 			}
 
