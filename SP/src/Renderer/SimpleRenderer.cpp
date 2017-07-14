@@ -68,6 +68,8 @@ namespace SP {
 
 	}
 
+	SimpleRenderer::~SimpleRenderer() = default;
+
 	void SimpleRenderer::generatePrimaryRays(const Scene & scene, size_t camIdx) {
 
 		const uint32_t imageWidth = mRenderOutPtr->getWidth();

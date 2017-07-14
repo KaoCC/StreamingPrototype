@@ -28,6 +28,8 @@ namespace SP {
 
 		virtual void setOutput(Output * output) override;
 
+		~SimpleRenderer();
+
 	private:
 
 		struct SimpleRenderData;
