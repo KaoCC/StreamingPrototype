@@ -17,12 +17,12 @@
 
 #include <cstdio>
 
- 
+
 
 namespace SP {
 
 
-	RenderingManager::RenderingManager(ConfigManager& cfgRef, bool loadRadianceFlag) : mConfigRef (cfgRef){
+	RenderingManager::RenderingManager(ConfigManager& cfgRef, bool loadRadianceFlag) : mConfigRef(cfgRef) {
 
 
 		// Get device / backend info
@@ -39,9 +39,9 @@ namespace SP {
 			RadeonRays::IntersectionApi::GetDeviceInfo(idx, devinfo);
 
 			// KAOCC: device platform is bugged?
-			std::printf( "DeviceInfo: [%s] [%s] [%i] [%x]\n", devinfo.name, devinfo.vendor, devinfo.type, devinfo.platform );
+			std::printf("DeviceInfo: [%s] [%s] [%i] [%x]\n", devinfo.name, devinfo.vendor, devinfo.type, devinfo.platform);
 
-			if ( devinfo.type == RadeonRays::DeviceInfo::kCpu && cpuIdx == -1) {
+			if (devinfo.type == RadeonRays::DeviceInfo::kCpu && cpuIdx == -1) {
 				cpuIdx = idx;
 			}
 
@@ -69,7 +69,7 @@ namespace SP {
 			//nativeIdx = embreeIdx;
 			apiIndex.push_back(embreeIdx);
 		}
-		
+
 		if (cpuIdx != -1) {
 			//nativeIdx = cpuIdx;
 			apiIndex.push_back(cpuIdx);
@@ -115,9 +115,13 @@ namespace SP {
 		std::cerr << "Start Render Thread" << std::endl;
 
 
-		for (size_t i = 0; i < mConfigRef.getNumberOfSubLFs(); ++i) {
-			for (size_t j = 0; j < mConfigRef.getNumberOfSubLFImages(); ++j) {
-				mTaskQueue.push(std::make_pair(i, j));
+		{
+			std::lock_guard<std::mutex> queueLock(mQueueMutex);
+
+			for (size_t i = 0; i < mConfigRef.getNumberOfSubLFs(); ++i) {
+				for (size_t j = 0; j < mConfigRef.getNumberOfSubLFImages(); ++j) {
+					mTaskQueue.push(std::make_pair(i, j));
+				}
 			}
 		}
 
@@ -134,7 +138,7 @@ namespace SP {
 		mThreadCount = numOfThreads;
 
 
-		
+
 		for (size_t i = 0; i < numOfThreads; ++i) {
 			renderThreads.push_back(std::thread(&RenderingManager::renderingWorker, this));
 		}
@@ -143,42 +147,44 @@ namespace SP {
 
 	void RenderingManager::pause() {
 
-		{
-			std::lock_guard<std::mutex> lock(mFlagMutex);
-			pauseFlag = true;
-		}
-
+		std::cerr << "Enter Pause" << std::endl;
 
 		{
-			std::unique_lock<std::mutex> counterLock(mCounterMutex);
-			mCounterCV.wait(counterLock, [this] { return mCurrentCounter == mThreadCount; });
+			std::unique_lock<std::mutex> queueLock(mQueueMutex);
+			mPauseFlag = true;
 
-			// reset
-			mCurrentCounter = 0;
+			mCounterCV.wait(queueLock, [this] { return mWaitingCounter == mThreadCount; });
 		}
 
+		std::cerr << "Finish Pause" << std::endl;
 
 	}
 
 	void RenderingManager::resume() {
 
-		std::lock_guard<std::mutex> lock(mFlagMutex);
-		pauseFlag = false;
+		{
+			std::lock_guard<std::mutex> lock(mQueueMutex);
+			mPauseFlag = false;
+		}
 
-		mFlagControlCV.notify_all();
+		mQueueCV.notify_all();
 	}
 
 
-	// make sure all the threads are paused !
 	void RenderingManager::reset() {
 
 		// pause first
 		pause();
 
+		// clear queue ?
 
-		// reset API Engine ?
+		// pause, clear and reset API Engine ?
+		mEnginePtr->pause();
+		mEnginePtr->clear();
 
 		// reset Scene ?
+
+		std::cerr << "Resetting ... " << std::endl;
 
 		for (size_t i = 0; i < renderFarm.size(); ++i) {
 			renderFarm[i] = std::make_unique<SimpleRenderer>(mEnginePtr);
@@ -189,6 +195,12 @@ namespace SP {
 			renderFarm[i]->setOutput(renderOutputData[i]);
 		}
 
+
+		std::cerr << "Resumming ..." << std::endl;
+
+		// resume all
+		mEnginePtr->resume();
+		resume();
 	}
 
 
@@ -259,9 +271,9 @@ namespace SP {
 				// test !
 				sceneDataPtr->attachAutoreleaseObject(cameraPtr);
 
-				
+
 				// Link to RenderOutput
-				
+
 				//fieldRef.setSubLightFieldRadianceWithIndex(i, j, dynamic_cast<RenderOutput*>(renderOutputData[mConfigRef.getNumberOfSubLFImages() * i + j]));
 
 				fieldRef[i][j].setRadiancePtr(dynamic_cast<RenderOutput*>(renderOutputData[mConfigRef.getNumberOfSubLFImages() * i + j]));
@@ -302,7 +314,7 @@ namespace SP {
 		OIIO_NAMESPACE_USING
 
 
-		const std::string& subFix = std::to_string(outputId);
+			const std::string& subFix = std::to_string(outputId);
 
 		std::string filename = "radiance" + subFix + '-' + subFix + ".exr";
 
@@ -356,41 +368,42 @@ namespace SP {
 		// close
 		input->close();
 		delete input;
-		delete [] tmpBuff;
+		delete[] tmpBuff;
 
 	}
 
 	void RenderingManager::renderingWorker(void) {
 
+		std::pair<int, int> taskIndex;
+
 		while (true) {
 
-			// wait for condition variable !
 
 			{
-				std::unique_lock<std::mutex> flagLock(mFlagMutex);
-				if (pauseFlag) {
+				std::unique_lock<std::mutex> queueLock(mQueueMutex);
 
-					{
-						std::lock_guard<std::mutex> counterLock(mCounterMutex);
+				if (mTaskQueue.empty() || mPauseFlag) {
 
-						++mCurrentCounter;
+					++mWaitingCounter;
 
-						if (mCurrentCounter == mThreadCount) {
-							mCounterCV.notify_one();
-						}
-
+					if (mWaitingCounter == mThreadCount) {
+						queueLock.unlock();
+						mCounterCV.notify_one();
+						queueLock.lock();
 					}
 
-
-					mFlagControlCV.wait(flagLock, [this] {return !pauseFlag; });
+					mQueueCV.wait(queueLock, [this] {return !(mTaskQueue.empty() || mPauseFlag); });
+					--mWaitingCounter;
 				}
+
+
+				taskIndex = std::move(mTaskQueue.front());
+				mTaskQueue.pop();
+
 			}
 
 
-
-			std::pair<int, int> taskIndex;
-
-			mTaskQueue.popWait(taskIndex);
+			// async part
 
 			size_t subLFIdx = taskIndex.first;
 			size_t subImgIdx = taskIndex.second;
@@ -423,12 +436,13 @@ namespace SP {
 			// for saving images
 			fieldRef[subLFIdx][subImgIdx].setId(farmIdx);
 
+
 			// push back the task
-			mTaskQueue.push(std::move(taskIndex));
-
-
-
-
+			{
+				std::lock_guard<std::mutex> queueLock(mQueueMutex);
+				mTaskQueue.push(std::move(taskIndex));
+			}
+			mQueueCV.notify_one();
 
 		}
 
