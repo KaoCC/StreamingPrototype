@@ -9,9 +9,12 @@
 #include "Encoder/Encoder.hpp"
 #include "LightField.hpp"
 
+
 #include "math/float3.h"
 
 namespace SP {
+
+	class RenderingManager;
 
 	class ConfigManager {
 
@@ -79,6 +82,12 @@ namespace SP {
 		// Writebuffer Size
 		std::size_t getWriteBufferSize() const;
 
+
+		// workaround
+		void setRenderManagerPtr(RenderingManager* renManPtr);
+
+		void resetRenderer();
+
 	private:
 
 		uint32_t moduleID = 0;
@@ -92,7 +101,7 @@ namespace SP {
 		// cache for current image
 		//SyncBuffer<ImageConfig>::DataPointer imagePtr{ new ImageConfig };
 
-		// timer linit, wait no longer than this
+		// timer limit, wait no longer than this
 		const int kTimeLimit = 10;
 
 		//SyncBuffer<ImageConfig>& bufferRef;
@@ -128,6 +137,11 @@ namespace SP {
 
 		// renderer change scene flag
 		std::vector<bool> mChangeSceneFlags;
+
+
+
+		// workaround
+		RenderingManager* renderManagerPtr = nullptr;
 
 	};
 

@@ -22,8 +22,6 @@
 
 #include "../ConfigManager.hpp"
 
-#include "../HeterogeneousQueue/HQ/src/ThreadSafeQueue.hpp"
-
 #include "ApiEngine.hpp"
 
 namespace SP {
@@ -119,23 +117,8 @@ namespace SP {
 		// Path-Tracing Renderer
 		std::vector<std::unique_ptr<Renderer>> renderFarm;
 
-		// cond variable for flag
-		std::condition_variable mThreadControlCV;
 
-		// mutex for flag cv
-		std::mutex mFlagMutex;
 
-		bool pauseFlag = false;
-
-		
-		// cond for wait
-		std::condition_variable mCounterCV;
-
-		// mutex for wait cv
-		std::mutex mCounterMutex;
-
-		unsigned mThreadCount = 0;
-		unsigned mCurrentCounter = 0;
 
 		//std::unique_ptr<HQ::EventSys> mPauseEventPtr;
 
@@ -144,13 +127,24 @@ namespace SP {
 
 		std::vector<Output*> renderOutputData;
 
-
 		std::unique_ptr<ApiEngine> mEnginePtr;
 
 		// test
 		//std::queue<std::pair<int, int>> mTaskQueue;
 
-		HQ::ThreadSafeQueue<std::pair<int, int>> mTaskQueue;
+		//HQ::ThreadSafeQueue<std::pair<int, int>> mTaskQueue;
+
+		std::mutex mQueueMutex;
+		std::condition_variable mQueueCV;
+		std::queue<std::pair<int, int>> mTaskQueue;
+		
+		unsigned mThreadCount = 0;
+		unsigned mWaitingCounter = 0;
+
+		std::condition_variable mCounterCV;
+
+		bool mPauseFlag = false;
+
 
 	};
 

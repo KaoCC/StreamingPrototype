@@ -13,9 +13,8 @@ namespace SP {
 	}
 
 	Connection::Connection(boost::asio::io_service & ios, ConfigManager& configRef) :
-		streamingSocket(ios), packet(Packet::MessagePointer(new StreamingFormat::StreamingMessage())), mCfgManagerRef(configRef), 
-		responsePacket(Packet::MessagePointer(new StreamingFormat::StreamingMessage())) , mEncoder(CreateEncoder(configRef.getScreenWidth(), configRef.getScreenHeight()))
-	{
+		streamingSocket(ios), packet(Packet::MessagePointer(new StreamingFormat::StreamingMessage())), mCfgManagerRef(configRef),
+		responsePacket(Packet::MessagePointer(new StreamingFormat::StreamingMessage())), mEncoder(CreateEncoder(configRef.getScreenWidth(), configRef.getScreenHeight())) {
 	}
 
 	void Connection::start() {
@@ -110,7 +109,7 @@ namespace SP {
 
 	std::vector<Packet::MessagePointer> Connection::createResponse(Packet::MessagePointer msgPtr) {
 
-		
+
 		std::vector<Packet::MessagePointer> responseVector;
 
 		// KAOCC: TODO: prevent creating new Messages for optimization
@@ -345,12 +344,17 @@ namespace SP {
 				mCfgManagerRef.saveAll();
 			}
 
-			if(msgPtr->controlmsg().has_editingmsg()){
-			        const auto&  editingMsg = msgPtr->controlmsg().editingmsg();
-			        // op is enum
-			        // StreamingFormat::EditOperation.START(0)/FINISH(1)/UPDATE(2)
-                                std::cerr << "Op:" << editingMsg.op() << ", screen X: " <<  editingMsg.screen_x()  << ", screen Y: " << editingMsg.screen_y() << std::endl;
-                        }
+			if (msgPtr->controlmsg().has_editingmsg()) {
+				const auto&  editingMsg = msgPtr->controlmsg().editingmsg();
+				// op is enum
+				// StreamingFormat::EditOperation.START(0)/FINISH(1)/UPDATE(2)
+				std::cerr << "Op:" << editingMsg.op() << ", screen X: " << editingMsg.screen_x() << ", screen Y: " << editingMsg.screen_y() << std::endl;
+
+				// reset test
+
+				mCfgManagerRef.resetRenderer();
+
+			}
 
 
 
@@ -397,10 +401,10 @@ namespace SP {
 				//boost::asio::write(streamingSocket, boost::asio::buffer(cfgManager.getImageCache().getImageData()));
 				/*boost::asio::async_write(streamingSocket, boost::asio::buffer(encodedImageData),
 					std::bind(&Connection::handleWriteImage, shared_from_this(), std::placeholders::_1)); */
-				//boost::asio::write(streamingSocket, boost::asio::buffer(encodedImageData));
+					//boost::asio::write(streamingSocket, boost::asio::buffer(encodedImageData));
 
 
-				// KAOCC: Need to change ! Not a good approach !
+					// KAOCC: Need to change ! Not a good approach !
 				appendImage(writeBuffer, encodedDataQueue.front());
 				encodedDataQueue.pop_front();
 
@@ -415,7 +419,7 @@ namespace SP {
 
 				/*boost::asio::async_write(streamingSocket, boost::asio::buffer(writeBuffer),
 					std::bind(&Connection::handleWriteMessage, shared_from_this(), std::placeholders::_1)); */
-				//boost::asio::write(streamingSocket, boost::asio::buffer(writeBuffer));
+					//boost::asio::write(streamingSocket, boost::asio::buffer(writeBuffer));
 
 				boost::asio::async_write(streamingSocket, boost::asio::buffer(writeBufferQueue.front()),
 					std::bind(&Connection::handleWriteMessage, shared_from_this(), std::placeholders::_1));
