@@ -43,6 +43,8 @@ int main(int argc, char *argv[]) {
 
 	SP::RenderingManager renderMan(configMan, loadRadianceFlag);
 
+	configMan.setRenderManagerPtr(&renderMan);
+
 	renderMan.startRenderThread();
 
 	std::cout << "Server : Listen on Port " << port << std::endl;
