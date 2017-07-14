@@ -11,14 +11,18 @@
 
 #include "../LightField.hpp"
 
+#include "SimpleRenderer.hpp"
+
 #include "OpenImageIO/imageio.h"
 
 #include <cstdio>
 
+
+
 namespace SP {
 
 
-	RenderingManager::RenderingManager(ConfigManager& cfgRef, bool loadRadianceFlag) : mConfigRef (cfgRef){
+	RenderingManager::RenderingManager(ConfigManager& cfgRef, bool loadRadianceFlag) : mConfigRef(cfgRef) {
 
 
 		// Get device / backend info
@@ -35,9 +39,9 @@ namespace SP {
 			RadeonRays::IntersectionApi::GetDeviceInfo(idx, devinfo);
 
 			// KAOCC: device platform is bugged?
-			std::printf( "DeviceInfo: [%s] [%s] [%i] [%x]\n", devinfo.name, devinfo.vendor, devinfo.type, devinfo.platform );
+			std::printf("DeviceInfo: [%s] [%s] [%i] [%x]\n", devinfo.name, devinfo.vendor, devinfo.type, devinfo.platform);
 
-			if ( devinfo.type == RadeonRays::DeviceInfo::kCpu && cpuIdx == -1) {
+			if (devinfo.type == RadeonRays::DeviceInfo::kCpu && cpuIdx == -1) {
 				cpuIdx = idx;
 			}
 
@@ -65,7 +69,7 @@ namespace SP {
 			//nativeIdx = embreeIdx;
 			apiIndex.push_back(embreeIdx);
 		}
-		
+
 		if (cpuIdx != -1) {
 			//nativeIdx = cpuIdx;
 			apiIndex.push_back(cpuIdx);
@@ -85,6 +89,7 @@ namespace SP {
 		renderFarm.resize(cfgRef.getNumberOfCameras());
 		for (size_t i = 0; i < renderFarm.size(); ++i) {
 			renderFarm[i] = std::make_unique<PtRenderer>(5, mEnginePtr);		// num_of_bounce
+			//renderFarm[i] = std::make_unique<SimpleRenderer>(mEnginePtr);
 		}
 
 		//renderThreads.resize(renderFarm.size());
@@ -110,29 +115,92 @@ namespace SP {
 		std::cerr << "Start Render Thread" << std::endl;
 
 
-		for (size_t i = 0; i < mConfigRef.getNumberOfSubLFs(); ++i) {
-			for (size_t j = 0; j < mConfigRef.getNumberOfSubLFImages(); ++j) {
-				mTaskQueue.push(std::make_pair(i, j));
+		{
+			std::lock_guard<std::mutex> queueLock(mQueueMutex);
+
+			for (size_t i = 0; i < mConfigRef.getNumberOfSubLFs(); ++i) {
+				for (size_t j = 0; j < mConfigRef.getNumberOfSubLFImages(); ++j) {
+					mTaskQueue.push(std::make_pair(i, j));
+				}
 			}
 		}
 
-		int numOfThreads = std::thread::hardware_concurrency();
+		unsigned int numOfThreads = std::thread::hardware_concurrency();
 
 		if (numOfThreads == 0) {
 			numOfThreads = 4;
-		} else {
-			++numOfThreads;
 		}
 
 		std::cout << ">>> number of threads: " << numOfThreads << std::endl;
 
-		
+		// set thread count
+
+		mThreadCount = numOfThreads;
+
+
+
 		for (size_t i = 0; i < numOfThreads; ++i) {
 			renderThreads.push_back(std::thread(&RenderingManager::renderingWorker, this));
 		}
 
+	}
+
+	void RenderingManager::pause() {
+
+		std::cerr << "Enter Pause" << std::endl;
+
+		{
+			std::unique_lock<std::mutex> queueLock(mQueueMutex);
+			mPauseFlag = true;
+
+			mCounterCV.wait(queueLock, [this] { return mWaitingCounter == mThreadCount; });
+		}
+
+		std::cerr << "Finish Pause" << std::endl;
+
+	}
+
+	void RenderingManager::resume() {
+
+		{
+			std::lock_guard<std::mutex> lock(mQueueMutex);
+			mPauseFlag = false;
+		}
+
+		mQueueCV.notify_all();
+	}
 
 
+	void RenderingManager::reset() {
+
+		// pause first
+		pause();
+
+		// clear queue ?
+
+		// pause, clear and reset API Engine ?
+		mEnginePtr->pause();
+		mEnginePtr->clear();
+
+		// reset Scene ?
+
+		std::cerr << "Resetting ... " << std::endl;
+
+		for (size_t i = 0; i < renderFarm.size(); ++i) {
+			renderFarm[i] = std::make_unique<SimpleRenderer>(mEnginePtr);
+		}
+
+		for (size_t i = 0; i < renderFarm.size(); ++i) {
+			//renderOutputData[i] = renderFarm[i]->createOutput(mConfigRef.getScreenWidth(), mConfigRef.getScreenHeight());
+			renderFarm[i]->setOutput(renderOutputData[i]);
+		}
+
+
+		std::cerr << "Resumming ..." << std::endl;
+
+		// resume all
+		mEnginePtr->resume();
+		resume();
 	}
 
 
@@ -203,9 +271,9 @@ namespace SP {
 				// test !
 				sceneDataPtr->attachAutoreleaseObject(cameraPtr);
 
-				
+
 				// Link to RenderOutput
-				
+
 				//fieldRef.setSubLightFieldRadianceWithIndex(i, j, dynamic_cast<RenderOutput*>(renderOutputData[mConfigRef.getNumberOfSubLFImages() * i + j]));
 
 				fieldRef[i][j].setRadiancePtr(dynamic_cast<RenderOutput*>(renderOutputData[mConfigRef.getNumberOfSubLFImages() * i + j]));
@@ -246,7 +314,7 @@ namespace SP {
 		OIIO_NAMESPACE_USING
 
 
-		const std::string& subFix = std::to_string(outputId);
+			const std::string& subFix = std::to_string(outputId);
 
 		std::string filename = "radiance" + subFix + '-' + subFix + ".exr";
 
@@ -300,58 +368,81 @@ namespace SP {
 		// close
 		input->close();
 		delete input;
-		delete [] tmpBuff;
+		delete[] tmpBuff;
 
 	}
 
 	void RenderingManager::renderingWorker(void) {
 
+		std::pair<int, int> taskIndex;
+
 		while (true) {
 
-			std::pair<int, int> taskIndex;
 
-			if (mTaskQueue.pop(taskIndex)) {
+			{
+				std::unique_lock<std::mutex> queueLock(mQueueMutex);
 
-				size_t subLFIdx = taskIndex.first; 
-				size_t subImgIdx = taskIndex.second;
+				if (mTaskQueue.empty() || mPauseFlag) {
 
-				//std::cerr << "Worker " << subLFIdx << ' ' << subImgIdx << " starts !\n";
+					++mWaitingCounter;
 
-				size_t farmIdx = mConfigRef.getNumberOfSubLFImages() * subLFIdx + subImgIdx;
+					if (mWaitingCounter == mThreadCount) {
+						queueLock.unlock();
+						mCounterCV.notify_one();
+						queueLock.lock();
+					}
 
-				// rendering
-				auto t1 = std::chrono::high_resolution_clock::now();
-				renderFarm[farmIdx]->render(*sceneDataPtr, farmIdx);
-				auto t2 = std::chrono::high_resolution_clock::now();
-
-				// test
-				if (farmIdx == 0) {
-					std::cerr << "FarmIndex: " <<farmIdx <<" Update time: " << std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1).count() << std::endl ;
+					mQueueCV.wait(queueLock, [this] {return !(mTaskQueue.empty() || mPauseFlag); });
+					--mWaitingCounter;
 				}
 
 
-				// tmp, need lock , need interrupt-based method
-				if (mConfigRef.isSceneChanged(farmIdx)) {
-					renderFarm[farmIdx]->clear(0.f, *(renderOutputData[farmIdx]));
-					mConfigRef.setSceneChangedFlag(farmIdx, false);
-				}
+				taskIndex = std::move(mTaskQueue.front());
+				mTaskQueue.pop();
 
-				auto& fieldRef = mConfigRef.getLightField();
-
-				fieldRef[subLFIdx][subImgIdx].setRefreshState(true);
-
-				// for saving images
-				fieldRef[subLFIdx][subImgIdx].setId(farmIdx);
-
-				// push back the task
-				mTaskQueue.push(std::move(taskIndex));
-
-
-			} else {
-				// may need to change in the future
-				std::this_thread::sleep_for(std::chrono::microseconds(kPauseTime));
 			}
 
+
+			// async part
+
+			size_t subLFIdx = taskIndex.first;
+			size_t subImgIdx = taskIndex.second;
+
+			//std::cerr << "Worker " << subLFIdx << ' ' << subImgIdx << " starts !\n";
+
+			size_t farmIdx = mConfigRef.getNumberOfSubLFImages() * subLFIdx + subImgIdx;
+
+			// rendering
+			auto t1 = std::chrono::high_resolution_clock::now();
+			renderFarm[farmIdx]->render(*sceneDataPtr, farmIdx);
+			auto t2 = std::chrono::high_resolution_clock::now();
+
+			// test
+			if (farmIdx == 0) {
+				std::cerr << "FarmIndex: " << farmIdx << " Update time: " << std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1).count() << std::endl;
+			}
+
+
+			// tmp, need lock , need interrupt-based method
+			if (mConfigRef.isSceneChanged(farmIdx)) {
+				renderFarm[farmIdx]->clear(0.f, *(renderOutputData[farmIdx]));
+				mConfigRef.setSceneChangedFlag(farmIdx, false);
+			}
+
+			auto& fieldRef = mConfigRef.getLightField();
+
+			fieldRef[subLFIdx][subImgIdx].setRefreshState(true);
+
+			// for saving images
+			fieldRef[subLFIdx][subImgIdx].setId(farmIdx);
+
+
+			// push back the task
+			{
+				std::lock_guard<std::mutex> queueLock(mQueueMutex);
+				mTaskQueue.push(std::move(taskIndex));
+			}
+			mQueueCV.notify_one();
 
 		}
 

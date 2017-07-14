@@ -40,6 +40,9 @@ extern ControlDefaultTypeInternal _Control_default_instance_;
 class DefaultPos;
 class DefaultPosDefaultTypeInternal;
 extern DefaultPosDefaultTypeInternal _DefaultPos_default_instance_;
+class Editing;
+class EditingDefaultTypeInternal;
+extern EditingDefaultTypeInternal _Editing_default_instance_;
 class Ending;
 class EndingDefaultTypeInternal;
 extern EndingDefaultTypeInternal _Ending_default_instance_;
@@ -91,6 +94,28 @@ inline bool MessageType_Parse(
     const ::std::string& name, MessageType* value) {
   return ::google::protobuf::internal::ParseNamedEnum<MessageType>(
     MessageType_descriptor(), name, value);
+}
+enum EditOperation {
+  START = 0,
+  FINISH = 1,
+  UPDATE = 2,
+  EditOperation_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
+  EditOperation_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
+};
+bool EditOperation_IsValid(int value);
+const EditOperation EditOperation_MIN = START;
+const EditOperation EditOperation_MAX = UPDATE;
+const int EditOperation_ARRAYSIZE = EditOperation_MAX + 1;
+
+const ::google::protobuf::EnumDescriptor* EditOperation_descriptor();
+inline const ::std::string& EditOperation_Name(EditOperation value) {
+  return ::google::protobuf::internal::NameOfEnum(
+    EditOperation_descriptor(), value);
+}
+inline bool EditOperation_Parse(
+    const ::std::string& name, EditOperation* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<EditOperation>(
+    EditOperation_descriptor(), name, value);
 }
 // ===================================================================
 
@@ -434,6 +459,103 @@ class Camera : public ::google::protobuf::Message /* @@protoc_insertion_point(cl
 };
 // -------------------------------------------------------------------
 
+class Editing : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:StreamingFormat.Editing) */ {
+ public:
+  Editing();
+  virtual ~Editing();
+
+  Editing(const Editing& from);
+
+  inline Editing& operator=(const Editing& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const Editing& default_instance();
+
+  static inline const Editing* internal_default_instance() {
+    return reinterpret_cast<const Editing*>(
+               &_Editing_default_instance_);
+  }
+
+  void Swap(Editing* other);
+
+  // implements Message ----------------------------------------------
+
+  inline Editing* New() const PROTOBUF_FINAL { return New(NULL); }
+
+  Editing* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
+  void CopyFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void MergeFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void CopyFrom(const Editing& from);
+  void MergeFrom(const Editing& from);
+  void Clear() PROTOBUF_FINAL;
+  bool IsInitialized() const PROTOBUF_FINAL;
+
+  size_t ByteSizeLong() const PROTOBUF_FINAL;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) PROTOBUF_FINAL;
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const PROTOBUF_FINAL;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* target) const PROTOBUF_FINAL;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output)
+      const PROTOBUF_FINAL {
+    return InternalSerializeWithCachedSizesToArray(
+        ::google::protobuf::io::CodedOutputStream::IsDefaultSerializationDeterministic(), output);
+  }
+  int GetCachedSize() const PROTOBUF_FINAL { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const PROTOBUF_FINAL;
+  void InternalSwap(Editing* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return NULL;
+  }
+  inline void* MaybeArenaPtr() const {
+    return NULL;
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const PROTOBUF_FINAL;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // .StreamingFormat.EditOperation op = 1;
+  void clear_op();
+  static const int kOpFieldNumber = 1;
+  ::StreamingFormat::EditOperation op() const;
+  void set_op(::StreamingFormat::EditOperation value);
+
+  // float screen_x = 2;
+  void clear_screen_x();
+  static const int kScreenXFieldNumber = 2;
+  float screen_x() const;
+  void set_screen_x(float value);
+
+  // float screen_y = 3;
+  void clear_screen_y();
+  static const int kScreenYFieldNumber = 3;
+  float screen_y() const;
+  void set_screen_y(float value);
+
+  // @@protoc_insertion_point(class_scope:StreamingFormat.Editing)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  int op_;
+  float screen_x_;
+  float screen_y_;
+  mutable int _cached_size_;
+  friend struct  protobuf_message_2eproto::TableStruct;
+};
+// -------------------------------------------------------------------
+
 class Control : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:StreamingFormat.Control) */ {
  public:
   Control();
@@ -513,6 +635,15 @@ class Control : public ::google::protobuf::Message /* @@protoc_insertion_point(c
   ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >*
       mutable_drop_index();
 
+  // .StreamingFormat.Editing editingMsg = 4;
+  bool has_editingmsg() const;
+  void clear_editingmsg();
+  static const int kEditingMsgFieldNumber = 4;
+  const ::StreamingFormat::Editing& editingmsg() const;
+  ::StreamingFormat::Editing* mutable_editingmsg();
+  ::StreamingFormat::Editing* release_editingmsg();
+  void set_allocated_editingmsg(::StreamingFormat::Editing* editingmsg);
+
   // uint32 save_frame = 2;
   void clear_save_frame();
   static const int kSaveFrameFieldNumber = 2;
@@ -531,6 +662,7 @@ class Control : public ::google::protobuf::Message /* @@protoc_insertion_point(c
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::google::protobuf::RepeatedField< ::google::protobuf::uint32 > drop_index_;
   mutable int _drop_index_cached_byte_size_;
+  ::StreamingFormat::Editing* editingmsg_;
   ::google::protobuf::uint32 save_frame_;
   ::google::protobuf::uint32 change_scene_;
   mutable int _cached_size_;
@@ -1109,6 +1241,52 @@ inline void Camera::set_delta_vz(float value) {
 
 // -------------------------------------------------------------------
 
+// Editing
+
+// .StreamingFormat.EditOperation op = 1;
+inline void Editing::clear_op() {
+  op_ = 0;
+}
+inline ::StreamingFormat::EditOperation Editing::op() const {
+  // @@protoc_insertion_point(field_get:StreamingFormat.Editing.op)
+  return static_cast< ::StreamingFormat::EditOperation >(op_);
+}
+inline void Editing::set_op(::StreamingFormat::EditOperation value) {
+  
+  op_ = value;
+  // @@protoc_insertion_point(field_set:StreamingFormat.Editing.op)
+}
+
+// float screen_x = 2;
+inline void Editing::clear_screen_x() {
+  screen_x_ = 0;
+}
+inline float Editing::screen_x() const {
+  // @@protoc_insertion_point(field_get:StreamingFormat.Editing.screen_x)
+  return screen_x_;
+}
+inline void Editing::set_screen_x(float value) {
+  
+  screen_x_ = value;
+  // @@protoc_insertion_point(field_set:StreamingFormat.Editing.screen_x)
+}
+
+// float screen_y = 3;
+inline void Editing::clear_screen_y() {
+  screen_y_ = 0;
+}
+inline float Editing::screen_y() const {
+  // @@protoc_insertion_point(field_get:StreamingFormat.Editing.screen_y)
+  return screen_y_;
+}
+inline void Editing::set_screen_y(float value) {
+  
+  screen_y_ = value;
+  // @@protoc_insertion_point(field_set:StreamingFormat.Editing.screen_y)
+}
+
+// -------------------------------------------------------------------
+
 // Control
 
 // repeated uint32 drop_index = 1;
@@ -1167,6 +1345,45 @@ inline void Control::set_change_scene(::google::protobuf::uint32 value) {
   
   change_scene_ = value;
   // @@protoc_insertion_point(field_set:StreamingFormat.Control.change_scene)
+}
+
+// .StreamingFormat.Editing editingMsg = 4;
+inline bool Control::has_editingmsg() const {
+  return this != internal_default_instance() && editingmsg_ != NULL;
+}
+inline void Control::clear_editingmsg() {
+  if (GetArenaNoVirtual() == NULL && editingmsg_ != NULL) delete editingmsg_;
+  editingmsg_ = NULL;
+}
+inline const ::StreamingFormat::Editing& Control::editingmsg() const {
+  // @@protoc_insertion_point(field_get:StreamingFormat.Control.editingMsg)
+  return editingmsg_ != NULL ? *editingmsg_
+                         : *::StreamingFormat::Editing::internal_default_instance();
+}
+inline ::StreamingFormat::Editing* Control::mutable_editingmsg() {
+  
+  if (editingmsg_ == NULL) {
+    editingmsg_ = new ::StreamingFormat::Editing;
+  }
+  // @@protoc_insertion_point(field_mutable:StreamingFormat.Control.editingMsg)
+  return editingmsg_;
+}
+inline ::StreamingFormat::Editing* Control::release_editingmsg() {
+  // @@protoc_insertion_point(field_release:StreamingFormat.Control.editingMsg)
+  
+  ::StreamingFormat::Editing* temp = editingmsg_;
+  editingmsg_ = NULL;
+  return temp;
+}
+inline void Control::set_allocated_editingmsg(::StreamingFormat::Editing* editingmsg) {
+  delete editingmsg_;
+  editingmsg_ = editingmsg;
+  if (editingmsg) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:StreamingFormat.Control.editingMsg)
 }
 
 // -------------------------------------------------------------------
@@ -1536,6 +1753,8 @@ inline void StreamingMessage::set_allocated_controlmsg(::StreamingFormat::Contro
 
 // -------------------------------------------------------------------
 
+// -------------------------------------------------------------------
+
 
 // @@protoc_insertion_point(namespace_scope)
 
@@ -1550,6 +1769,11 @@ template <> struct is_proto_enum< ::StreamingFormat::MessageType> : ::google::pr
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::StreamingFormat::MessageType>() {
   return ::StreamingFormat::MessageType_descriptor();
+}
+template <> struct is_proto_enum< ::StreamingFormat::EditOperation> : ::google::protobuf::internal::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::StreamingFormat::EditOperation>() {
+  return ::StreamingFormat::EditOperation_descriptor();
 }
 
 }  // namespace protobuf

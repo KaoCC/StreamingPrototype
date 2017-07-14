@@ -22,8 +22,6 @@
 
 #include "../ConfigManager.hpp"
 
-#include "../HeterogeneousQueue/HQ/src/ThreadSafeQueue.hpp"
-
 #include "ApiEngine.hpp"
 
 namespace SP {
@@ -42,6 +40,13 @@ namespace SP {
 		~RenderingManager();
 
 		void startRenderThread();
+
+
+		void pause();
+		void resume();
+
+		// reset the data
+		void reset();
 
 	private:
 
@@ -89,8 +94,8 @@ namespace SP {
 
 
 		// tmp
-		const std::string defaultPath = "../Resources/CornellBox";
-		const std::string defaultModelName = "mid-box.objm";
+		const std::string defaultPath = "../Resources/Conf";
+		const std::string defaultModelName = "conf_room_2.objm";
 
 		//tmp
 		const float kStep = 0.025f * 2;
@@ -110,20 +115,36 @@ namespace SP {
 		std::vector<std::thread> renderThreads;
 
 		// Path-Tracing Renderer
-		std::vector<std::unique_ptr<PtRenderer>> renderFarm;
+		std::vector<std::unique_ptr<Renderer>> renderFarm;
+
+
+
+
+		//std::unique_ptr<HQ::EventSys> mPauseEventPtr;
 
 		//Encoder* encoder;
 		//ImageConfig::ImageBuffer accImageBuffer; // test
 
 		std::vector<Output*> renderOutputData;
 
-
 		std::unique_ptr<ApiEngine> mEnginePtr;
 
 		// test
 		//std::queue<std::pair<int, int>> mTaskQueue;
 
-		HQ::ThreadSafeQueue<std::pair<int, int>> mTaskQueue;
+		//HQ::ThreadSafeQueue<std::pair<int, int>> mTaskQueue;
+
+		std::mutex mQueueMutex;
+		std::condition_variable mQueueCV;
+		std::queue<std::pair<int, int>> mTaskQueue;
+		
+		unsigned mThreadCount = 0;
+		unsigned mWaitingCounter = 0;
+
+		std::condition_variable mCounterCV;
+
+		bool mPauseFlag = false;
+
 
 	};
 

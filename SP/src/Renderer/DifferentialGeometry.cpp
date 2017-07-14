@@ -50,7 +50,7 @@ namespace SP {
 		const RadeonRays::float2& uv1 = uvArray[i1];
 		const RadeonRays::float2& uv2 = uvArray[i2];
 
-		RadeonRays::matrix matrixI;			// I
+		//RadeonRays::matrix matrixI;			// I
 
 		// normal, position, uv, ng (barycentric)
 		normal = RadeonRays::normalize(RadeonRays::transform_vector((1.f - localUV.x - localUV.y) * n0 + localUV.x * n1 + localUV.y * n2, matrixI));  //CHECK THIS !

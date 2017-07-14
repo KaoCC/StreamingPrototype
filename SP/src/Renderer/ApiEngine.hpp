@@ -8,7 +8,8 @@
 #include <vector>
 #include <thread>
 
-#include "../HeterogeneousQueue/HQ/src/ThreadSafeQueue.hpp"
+#include <queue>
+#include <future>
 
 namespace SP {
 
@@ -23,6 +24,11 @@ namespace SP {
 
 		~ApiEngine();
 
+
+		void pause();
+		void resume();
+
+		void clear();
 
 		std::future<void> queryIntersection(std::vector<RadeonRays::ray>& rayBuffer, int numOfRays ,std::vector<RadeonRays::Intersection>& intersectBuffer);
 		std::future<void> queryOcclusion(std::vector<RadeonRays::ray>& shadowrayBuffer, int numOfRays, std::vector<int>& shadowhitBuffer);
@@ -98,10 +104,24 @@ namespace SP {
 
 
 		// thread safe queue ?
-		HQ::ThreadSafeQueue<std::packaged_task<void(RadeonRays::IntersectionApi* api, BackendBuffer buffer)>> taskQueue;
+		//HQ::ThreadSafeQueue<std::packaged_task<void(RadeonRays::IntersectionApi* api, BackendBuffer buffer)>> taskQueue;
 
+
+		std::mutex mQueueMutex;
+		std::condition_variable mQueueCV;
+		std::queue<std::packaged_task<void(RadeonRays::IntersectionApi* api, BackendBuffer buffer)>> mTaskQueue;
+
+		bool mPauseFlag = false;
+
+		// counter cv
+		std::condition_variable mCounterCV;
+
+		unsigned mWaitingCounter = 0;
+		unsigned mThreadCount = 0;
 
 		std::vector<BackendRecord> mBackends;
+
+
 
 	};
 

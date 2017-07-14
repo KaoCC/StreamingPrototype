@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-
+#include "Renderer/RenderingManager.hpp"
 
 namespace SP {
 
@@ -175,6 +175,20 @@ namespace SP {
 
 	std::size_t ConfigManager::getWriteBufferSize() const {
 		return kWriteBufferSize;
+	}
+
+	void ConfigManager::setRenderManagerPtr(RenderingManager * renManPtr) {
+		renderManagerPtr = renManPtr;
+	}
+
+	void ConfigManager::resetRenderer() {
+
+		if (renderManagerPtr == nullptr) {
+			throw std::runtime_error("renderer not set (null pointer) !");
+		}
+
+		renderManagerPtr->reset();
+
 	}
 
 

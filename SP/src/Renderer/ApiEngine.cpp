@@ -13,6 +13,8 @@ namespace SP {
 		for (int index : apiIndexList) {
 
 			auto api = RadeonRays::IntersectionApi::Create(index);
+
+			// make these settings configurable
 			api->SetOption("acc.type", "qbvh");
 			api->SetOption("bvh.builder", "sah");
 
@@ -29,6 +31,8 @@ namespace SP {
 		for (auto& backend : mBackends) {
 			mWorkerThreads.push_back(std::thread(&ApiEngine::runLoop, this, backend.api, backend.buffer));
 		}
+
+		mThreadCount = mWorkerThreads.size();
 
 		// Buffers ?
 		//createBuffers(screenCfg);
@@ -50,6 +54,41 @@ namespace SP {
 		std::for_each(mWorkerThreads.begin(), mWorkerThreads.end(), std::mem_fun_ref(&std::thread::join));
 	}
 
+	void ApiEngine::pause() {
+
+		std::cerr << "Enter API Pause" << std::endl;
+
+		{
+			std::unique_lock<std::mutex> queueLock(mQueueMutex);
+			mPauseFlag = true;
+
+		// wait here until all threads are paused
+
+			mCounterCV.wait(queueLock, [this] { return mWaitingCounter == mThreadCount; });
+		}
+
+
+		std::cerr << "Finish API Pause" << std::endl;
+	}
+
+	void ApiEngine::resume() {
+
+		{
+			std::lock_guard<std::mutex> lock(mQueueMutex);
+			mPauseFlag = false;
+		}
+
+		mQueueCV.notify_all();
+
+	}
+
+	void ApiEngine::clear() {
+
+		std::lock_guard<std::mutex> lock(mQueueMutex);
+		std::queue<std::packaged_task<void(RadeonRays::IntersectionApi* api, BackendBuffer buffer)>>().swap(mTaskQueue);
+
+	}
+
 	std::future<void> ApiEngine::queryIntersection(std::vector<RadeonRays::ray>& rayBuffer, int numOfRays, std::vector<RadeonRays::Intersection>& intersectBuffer) {
 
 		std::packaged_task<void(RadeonRays::IntersectionApi * api, BackendBuffer buffer)> task{ std::bind(&ApiEngine::intersect, std::placeholders::_1, std::placeholders::_2, IntersectData(rayBuffer, numOfRays, intersectBuffer)) };
@@ -57,7 +96,12 @@ namespace SP {
 		auto taskFuture = task.get_future();
 
 		// enqueue
-		taskQueue.push(std::move(task));
+		{
+			std::lock_guard<std::mutex> queueLock(mQueueMutex);
+			mTaskQueue.push(std::move(task));
+		}
+
+		mQueueCV.notify_one();
 
 		return taskFuture;
 	}
@@ -70,7 +114,12 @@ namespace SP {
 		auto taskFuture = task.get_future();
 
 		// enqueue
-		taskQueue.push(std::move(task));
+		{
+			std::lock_guard<std::mutex> queueLock(mQueueMutex);
+			mTaskQueue.push(std::move(task));
+		}
+
+		mQueueCV.notify_one();
 
 		return taskFuture;
 
@@ -89,7 +138,7 @@ namespace SP {
 			backend.api->DeleteBuffer(backend.buffer.hitcount);
 
 			// create new buffers
-			backend.buffer.rays= backend.api->CreateBuffer(screenCfg.width * screenCfg.height * sizeof(RadeonRays::ray), nullptr);
+			backend.buffer.rays = backend.api->CreateBuffer(screenCfg.width * screenCfg.height * sizeof(RadeonRays::ray), nullptr);
 			//backend.buffer.rays[1] = backend.api->CreateBuffer(screenCfg.width * screenCfg.height * sizeof(RadeonRays::ray), nullptr);
 			backend.buffer.shadowrays = backend.api->CreateBuffer(screenCfg.width * screenCfg.height * sizeof(RadeonRays::ray), nullptr);
 			backend.buffer.shadowhits = backend.api->CreateBuffer(screenCfg.width * screenCfg.height * sizeof(int), nullptr);
@@ -123,19 +172,36 @@ namespace SP {
 	// for worker thread
 	void ApiEngine::runLoop(RadeonRays::IntersectionApi * api, BackendBuffer buffer) {
 
-		// yet to be done
+
 		std::packaged_task<void(RadeonRays::IntersectionApi * api, BackendBuffer buffer)> runFunction;
 		while (true) {
 
-			if (taskQueue.pop(runFunction)) {
+			{
+				std::unique_lock<std::mutex> queueLock(mQueueMutex);
 
-				runFunction(api, buffer);
+				if (mTaskQueue.empty() || mPauseFlag) {
 
-			} else {
-				// TMP !!!
-				std::this_thread::sleep_for(std::chrono::microseconds(100));
+					++mWaitingCounter;
+
+					if (mWaitingCounter == mThreadCount) {
+						queueLock.unlock();
+						mCounterCV.notify_one();
+						queueLock.lock();
+					}
+
+					mQueueCV.wait(queueLock, [this] {return !(mTaskQueue.empty() || mPauseFlag); });
+					--mWaitingCounter;
+				}
+
+
+				runFunction = std::move(mTaskQueue.front());
+				mTaskQueue.pop();
+
 			}
 
+
+			//async exec
+			runFunction(api, buffer);
 
 		}
 	}

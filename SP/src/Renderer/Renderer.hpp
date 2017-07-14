@@ -7,11 +7,14 @@
 
 #include "math/float3.h"
 #include "math/int2.h"
+#include "radeon_rays.h"
+
 
 namespace SP {
 
 	class Output;
 	class Scene;
+	class PerspectiveCamera;
 
 	class Renderer {
 
@@ -76,7 +79,8 @@ namespace SP {
 
 
 
-
+	// helper function
+	void generateRandomRay(uint32_t rngseed, uint32_t x, uint32_t y, uint32_t imageWidth, uint32_t imageHeight, RadeonRays::ray& currentRay, const PerspectiveCamera* cameraPtr);
 
 
 }
