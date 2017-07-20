@@ -10,7 +10,9 @@
 
 #include "radeon_rays.h"
 
+#include "Path.hpp"
 #include "ApiEngine.hpp"
+
 
 namespace SP {
 
@@ -20,13 +22,11 @@ namespace SP {
 
 
 	public:
-
 		PtRenderer(unsigned num_bounces, ApiEngine& engine);
 
 
-
 		// Inherited via Renderer
-		virtual std::shared_ptr<Output>  createOutput(std::uint32_t w, std::uint32_t h) const override;
+		virtual std::shared_ptr<Output> createOutput(std::uint32_t w, std::uint32_t h) const override;
 
 		//virtual void deleteOutput(Output * output) const override;
 
@@ -40,7 +40,30 @@ namespace SP {
 
 
 
-		struct RenderData;
+		struct RenderData {
+			// host buffers
+			std::vector<RadeonRays::ray> host_rays[2];
+			std::vector<int> host_hits;
+
+			std::vector<int> host_pixelIndex[2];
+			std::vector<int> host_compactedIndex;
+			std::vector<int> host_iota;
+
+			std::vector<RadeonRays::ray> host_shadowrays;
+			std::vector<int> host_shadowhits;
+
+			std::vector<RadeonRays::Intersection> host_intersections;
+			int host_hitcount;
+
+
+			std::vector<Path> host_path;
+
+			std::vector<RadeonRays::float3> host_lightSamples;
+
+
+		};
+
+
 		struct PathState;
 
 
@@ -86,7 +109,7 @@ namespace SP {
 
 		//SceneTracker sceneTracker;
 
-		std::unique_ptr<RenderData> renderData;
+		RenderData renderData;
 
 		//std::vector<RadeonRays::Shape*> shapes;
 
