@@ -18,13 +18,13 @@ namespace SP {
 	}
 
 
-	Output * SimpleRenderer::createOutput(std::uint32_t w, std::uint32_t h) const {
-		return new RenderOutput(w, h);;
+	std::shared_ptr<Output>  SimpleRenderer::createOutput(std::uint32_t w, std::uint32_t h) const {
+		return std::shared_ptr<RenderOutput>(new RenderOutput(w, h));
 	}
 
-	void SimpleRenderer::deleteOutput(Output * output) const {
-		delete output;
-	}
+	//void SimpleRenderer::deleteOutput(Output * output) const {
+	//	delete output;
+	//}
 
 
 	// KAOCC: tmp ! not an accurate approach
@@ -57,15 +57,13 @@ namespace SP {
 		simpleShading();
 	}
 
-	void SimpleRenderer::setOutput(Output * output) {
+	void SimpleRenderer::setOutput(std::shared_ptr<Output> output) {
 
 		if (!mRenderOutPtr || mRenderOutPtr->getWidth() < output->getWidth() || mRenderOutPtr->getHeight() < output->getHeight()) {
 			resizeWorkingSet(*output);
 		}
 
-		// KAOCC: check the type !
-		mRenderOutPtr = static_cast<RenderOutput*>(output);
-
+		mRenderOutPtr = std::dynamic_pointer_cast<RenderOutput>(output);
 	}
 
 	SimpleRenderer::~SimpleRenderer() = default;

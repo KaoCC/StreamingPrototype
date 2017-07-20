@@ -64,13 +64,13 @@ namespace SP {
 
 	}
 
-	Output * PtRenderer::createOutput(std::uint32_t w, std::uint32_t h) const {
-		return new RenderOutput(w, h);
+	std::shared_ptr<Output> PtRenderer::createOutput(std::uint32_t w, std::uint32_t h) const {
+		return std::shared_ptr<RenderOutput>(new RenderOutput(w, h));
 	}
 
-	void PtRenderer::deleteOutput(Output * output) const {
-		delete output;
-	}
+	//void PtRenderer::deleteOutput(Output * output) const {
+	//	delete output;
+	//}
 
 	void PtRenderer::clear(RadeonRays::float3 const & val, Output & output) const {
 		//throw std::runtime_error("Yet to be done");
@@ -175,14 +175,13 @@ namespace SP {
 		++mFrameCount;
 	}
 
-	void PtRenderer::setOutput(Output * output) {
+	void PtRenderer::setOutput(std::shared_ptr<Output> output) {
 
 		if (!renderOutPtr || renderOutPtr->getWidth() < output->getWidth() || renderOutPtr->getHeight() < output->getHeight()) {
 			resizeWorkingSet(*output);
 		}
 
-		// KAOCC: check the type !
-		renderOutPtr = static_cast<RenderOutput*>(output);
+		renderOutPtr = std::dynamic_pointer_cast<RenderOutput>(output);
 	}
 
 

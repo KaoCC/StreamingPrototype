@@ -100,13 +100,14 @@ namespace SP {
 	RenderingManager::~RenderingManager() {
 
 
+		// KAOCC: this is wrong ! chack pop wait 
 		std::for_each(renderThreads.begin(), renderThreads.end(), std::mem_fun_ref(&std::thread::join));
 
 
 		// delete output
-		for (size_t i = 0; i < renderFarm.size(); ++i) {
-			renderFarm[i]->deleteOutput(renderOutputData[i]);
-		}
+		//for (size_t i = 0; i < renderFarm.size(); ++i) {
+		//	renderFarm[i]->deleteOutput(renderOutputData[i]);
+		//}
 	}
 
 	void RenderingManager::startRenderThread() {
@@ -276,7 +277,7 @@ namespace SP {
 
 				//fieldRef.setSubLightFieldRadianceWithIndex(i, j, dynamic_cast<RenderOutput*>(renderOutputData[mConfigRef.getNumberOfSubLFImages() * i + j]));
 
-				fieldRef[i][j].setRadiancePtr(dynamic_cast<RenderOutput*>(renderOutputData[mConfigRef.getNumberOfSubLFImages() * i + j]));
+				fieldRef[i][j].setRadiancePtr(std::dynamic_pointer_cast<RenderOutput>(renderOutputData[mConfigRef.getNumberOfSubLFImages() * i + j]));
 
 
 
@@ -303,7 +304,7 @@ namespace SP {
 
 		int outputId = mConfigRef.getNumberOfSubLFImages() * subLFIdx + subImgIdx;
 
-		RenderOutput* renderOut = dynamic_cast<RenderOutput*>(renderOutputData[outputId]);
+		std::shared_ptr<RenderOutput> renderOut = std::dynamic_pointer_cast<RenderOutput>(renderOutputData[outputId]);
 
 		if (renderOut == nullptr) {
 			throw std::runtime_error("RenderOutput is null");

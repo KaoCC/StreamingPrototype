@@ -16,9 +16,9 @@ namespace SP {
 
 
 		// Inherited via Renderer
-		virtual Output * createOutput(std::uint32_t w, std::uint32_t h) const override;
+		virtual std::shared_ptr<Output> createOutput(std::uint32_t w, std::uint32_t h) const override;
 
-		virtual void deleteOutput(Output * output) const override;
+		//virtual void deleteOutput(Output * output) const override;
 
 		virtual void clear(RadeonRays::float3 const & val, Output & output) const override;
 
@@ -26,7 +26,7 @@ namespace SP {
 
 		virtual void render(Scene const & scene, size_t configIdx) override;
 
-		virtual void setOutput(Output * output) override;
+		virtual void setOutput(std::shared_ptr<Output>  output) override;
 
 		~SimpleRenderer();
 
@@ -42,7 +42,7 @@ namespace SP {
 		std::unique_ptr<ApiEngine>& mEngineRef;
 		std::unique_ptr<SimpleRenderData> mSimpleRenderDataPtr;
 
-		RenderOutput* mRenderOutPtr = nullptr;
+		std::shared_ptr<RenderOutput> mRenderOutPtr;
 
 
 	};

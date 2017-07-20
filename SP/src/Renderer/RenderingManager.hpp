@@ -125,7 +125,7 @@ namespace SP {
 		//Encoder* encoder;
 		//ImageConfig::ImageBuffer accImageBuffer; // test
 
-		std::vector<Output*> renderOutputData;
+		std::vector<std::shared_ptr<Output>> renderOutputData;
 
 		std::unique_ptr<ApiEngine> mEnginePtr;
 

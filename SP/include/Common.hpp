@@ -69,7 +69,7 @@ namespace SP {
 		const RadianceMap& getRadianceMap();
 
 
-		void setRadiancePtr(SP::RenderOutput* renderOut);
+		void setRadiancePtr(std::shared_ptr<SP::RenderOutput> renderOut);
 
 		int getID() const {
 			return imageID;
@@ -120,7 +120,7 @@ namespace SP {
 		std::unique_ptr<boost::shared_mutex> flagMutexPtr{new boost::shared_mutex()};
 
 		// test
-		SP::RenderOutput* radiancePtr = nullptr;
+		std::shared_ptr<SP::RenderOutput> radiancePtr;
 
 	};
 

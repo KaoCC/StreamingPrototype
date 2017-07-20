@@ -111,7 +111,7 @@ namespace SP {
 		return radiance;
 	}
 
-	void ImageConfig::setRadiancePtr(SP::RenderOutput * renderOut) {
+	void ImageConfig::setRadiancePtr(std::shared_ptr<SP::RenderOutput> renderOut) {
 		radiancePtr = renderOut;
 	}
 
