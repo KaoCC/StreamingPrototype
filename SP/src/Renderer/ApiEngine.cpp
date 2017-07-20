@@ -298,7 +298,7 @@ namespace SP {
 
 
 
-	ApiEngine::BackendRecord::BackendRecord(RadeonRays::IntersectionApi * inputApi, ScreenConfig screenCfg) : api(inputApi), tracker(inputApi) {
+	ApiEngine::BackendRecord::BackendRecord(RadeonRays::IntersectionApi * inputApi, ScreenConfig screenCfg) : api{ inputApi }, tracker{ inputApi } {
 
 		// disable this part ?
 		buffer.rays = api->CreateBuffer(screenCfg.width * screenCfg.height * sizeof(RadeonRays::ray), nullptr);
@@ -311,10 +311,10 @@ namespace SP {
 
 	}
 
-	ApiEngine::IntersectData::IntersectData(std::vector<RadeonRays::ray>& rayB, int nR, std::vector<RadeonRays::Intersection>& interB) : rayBuffer(rayB), numOfRays(nR), intersectBuffer(interB) {
+	ApiEngine::IntersectData::IntersectData(std::vector<RadeonRays::ray>& rayB, int nR, std::vector<RadeonRays::Intersection>& interB) : rayBuffer{ rayB }, numOfRays{ nR }, intersectBuffer{ interB } {
 	}
 
-	ApiEngine::OccludeData::OccludeData(std::vector<RadeonRays::ray>& shadowrayB, int nR, std::vector<int>& shadowhitB) : shadowrayBuffer(shadowrayB), numOfRays(nR), shadowhitBuffer(shadowhitB) {
+	ApiEngine::OccludeData::OccludeData(std::vector<RadeonRays::ray>& shadowrayB, int nR, std::vector<int>& shadowhitB) : shadowrayBuffer{ shadowrayB }, numOfRays{ nR }, shadowhitBuffer{ shadowhitB } {
 	}
 
 }
