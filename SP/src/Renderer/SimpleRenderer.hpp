@@ -32,7 +32,12 @@ namespace SP {
 
 	private:
 
-		struct SimpleRenderData;
+		struct SimpleRenderData {
+			std::vector<RadeonRays::ray> host_rays[2];
+
+			std::vector<RadeonRays::Intersection> host_intersections;
+			int host_hitcount;
+		};
 
 		void generatePrimaryRays(const Scene& scene, size_t camIdx);
 		void resizeWorkingSet(const Output& out);
@@ -40,13 +45,15 @@ namespace SP {
 		void simpleShading();
 
 		ApiEngine& mEngineRef;
-		std::unique_ptr<SimpleRenderData> mSimpleRenderDataPtr;
+		SimpleRenderData mSimpleRenderDataPtr;
 
 		std::shared_ptr<RenderOutput> mRenderOutPtr;
 
 		const RadeonRays::matrix matrixI;
 
 	};
+
+
 
 }
 

@@ -7,14 +7,9 @@
 namespace SP {
 
 
-	struct SimpleRenderer::SimpleRenderData{
-		std::vector<RadeonRays::ray> host_rays[2];
 
-		std::vector<RadeonRays::Intersection> host_intersections;
-		int host_hitcount;
-	};
 
-	SimpleRenderer::SimpleRenderer(ApiEngine& engine) : mSimpleRenderDataPtr{ new SimpleRenderData }, mEngineRef{ engine } {
+	SimpleRenderer::SimpleRenderer(ApiEngine& engine) : mEngineRef{ engine } {
 	}
 
 
@@ -49,10 +44,10 @@ namespace SP {
 
 		int maxrays = mRenderOutPtr->getWidth() * mRenderOutPtr->getHeight();
 
-		mSimpleRenderDataPtr->host_hitcount = maxrays;
+		mSimpleRenderDataPtr.host_hitcount = maxrays;
 
 
-		mEngineRef.queryIntersection(mSimpleRenderDataPtr->host_rays[0], mSimpleRenderDataPtr->host_hitcount, mSimpleRenderDataPtr->host_intersections).wait();
+		mEngineRef.queryIntersection(mSimpleRenderDataPtr.host_rays[0], mSimpleRenderDataPtr.host_hitcount, mSimpleRenderDataPtr.host_intersections).wait();
 
 		simpleShading();
 	}
@@ -80,7 +75,7 @@ namespace SP {
 			for (uint32_t x = 0; x < imageWidth; ++x) {
 
 				const PerspectiveCamera* cameraPtr{ static_cast<const PerspectiveCamera*>(scene.getCamera(camIdx)) };
-				RadeonRays::ray& currentRay = mSimpleRenderDataPtr->host_rays[0][y * imageWidth + x];
+				RadeonRays::ray& currentRay = mSimpleRenderDataPtr.host_rays[0][y * imageWidth + x];
 				generateRandomRay(rngseed, x, y, imageWidth, imageHeight, currentRay,cameraPtr);
 
 			}
@@ -91,19 +86,19 @@ namespace SP {
 
 	void SimpleRenderer::resizeWorkingSet(const Output & out) {
 
-		mSimpleRenderDataPtr->host_rays[0].clear();
-		mSimpleRenderDataPtr->host_rays[0].resize(out.getWidth() * out.getHeight());
+		mSimpleRenderDataPtr.host_rays[0].clear();
+		mSimpleRenderDataPtr.host_rays[0].resize(out.getWidth() * out.getHeight());
 
-		mSimpleRenderDataPtr->host_intersections.clear();
-		mSimpleRenderDataPtr->host_intersections.resize(out.getWidth() * out.getHeight());
+		mSimpleRenderDataPtr.host_intersections.clear();
+		mSimpleRenderDataPtr.host_intersections.resize(out.getWidth() * out.getHeight());
 
-		mSimpleRenderDataPtr->host_hitcount = 0;
+		mSimpleRenderDataPtr.host_hitcount = 0;
 
 	}
 
 	void SimpleRenderer::simpleShading() {
 
-		const std::vector<RadeonRays::ray>& rayArrayRef = mSimpleRenderDataPtr->host_rays[0];
+		const std::vector<RadeonRays::ray>& rayArrayRef = mSimpleRenderDataPtr.host_rays[0];
 
 		std::vector<RadeonRays::float3>& outRef = mRenderOutPtr->getInternalStorage();
 
@@ -111,9 +106,9 @@ namespace SP {
 
 		
 
-		for (size_t i = 0; i < mSimpleRenderDataPtr->host_hitcount; ++i) {
+		for (size_t i = 0; i < mSimpleRenderDataPtr.host_hitcount; ++i) {
 
-			const RadeonRays::Intersection& isectRef = mSimpleRenderDataPtr->host_intersections[i];
+			const RadeonRays::Intersection& isectRef = mSimpleRenderDataPtr.host_intersections[i];
 
 			if (isectRef.shapeid == -1) {
 
