@@ -5,8 +5,8 @@
 namespace SP {
 	std::unique_ptr<RandomSampler> RandomSampler::create(std::uint32_t seed) {
 
-		std::unique_ptr<RandomSampler> samplerInst = std::make_unique<RandomSampler>(seed);
-		return std::move(samplerInst);
+		//std::unique_ptr<RandomSampler> samplerInst = std::make_unique<RandomSampler>(seed);
+		return std::make_unique<RandomSampler>(seed);
 	}
 
 	float RandomSampler::sample1D() {
