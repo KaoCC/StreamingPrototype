@@ -44,6 +44,7 @@ namespace SP {
 
 		std::shared_ptr<RenderOutput> mRenderOutPtr;
 
+		const RadeonRays::matrix matrixI;
 
 	};
 

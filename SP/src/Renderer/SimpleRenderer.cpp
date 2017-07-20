@@ -109,7 +109,7 @@ namespace SP {
 
 		const std::vector<const Mesh*>& meshPtrs = mEngineRef.getInternalMeshPtrs();
 
-		const RadeonRays::matrix matrixI;
+		
 
 		for (size_t i = 0; i < mSimpleRenderDataPtr->host_hitcount; ++i) {
 
