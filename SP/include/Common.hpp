@@ -37,12 +37,12 @@ namespace SP {
 
 	struct ScreenConfig {
 
-		ScreenConfig(uint32_t w, uint32_t h) : width(w), height(h) {
+		ScreenConfig(size_t w, size_t h) : width(w), height(h) {
 
 		}
 
-		std::uint32_t width;
-		std::uint32_t height;
+		size_t width;
+		size_t height;
 	};
 
 

@@ -39,7 +39,9 @@ namespace SP {
 			RadeonRays::IntersectionApi::GetDeviceInfo(idx, devinfo);
 
 			// KAOCC: device platform is bugged?
-			std::printf("DeviceInfo: [%s] [%s] [%i] [%x]\n", devinfo.name, devinfo.vendor, devinfo.type, devinfo.platform);
+			//std::printf("DeviceInfo: [%s] [%s] [%i] [%x]\n", devinfo.name, devinfo.vendor, devinfo.type, devinfo.platform);
+			
+			std::cerr << "Device Info:" << " [" <<devinfo.name << "][" <<devinfo.vendor << "][" <<devinfo.type << "][" <<devinfo.platform << "]" <<std::endl;
 
 			if (devinfo.type == RadeonRays::DeviceInfo::kCpu && cpuIdx == -1) {
 				cpuIdx = idx;
@@ -79,7 +81,7 @@ namespace SP {
 
 		//std::cerr << "Selected Device ID: " << nativeIdx << std::endl;
 
-		ScreenConfig screenCfg(mConfigRef.getScreenWidth(), mConfigRef.getScreenHeight());
+		ScreenConfig screenCfg{ mConfigRef.getScreenWidth(), mConfigRef.getScreenHeight() };
 
 		mEnginePtr = std::make_unique<ApiEngine>(screenCfg, apiIndex);
 
