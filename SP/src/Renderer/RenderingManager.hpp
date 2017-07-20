@@ -90,7 +90,7 @@ namespace SP {
 		float g_camera_aperture = 0.f;
 
 
-		const int kNumberOfBounce = 5;
+		const unsigned kNumberOfBounce = 5;
 
 
 		// tmp
