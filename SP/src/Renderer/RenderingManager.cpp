@@ -88,7 +88,7 @@ namespace SP {
 		// allocate renderer
 		renderFarm.resize(cfgRef.getNumberOfCameras());
 		for (size_t i = 0; i < renderFarm.size(); ++i) {
-			renderFarm[i] = std::make_unique<PtRenderer>(5, mEnginePtr);		// num_of_bounce
+			renderFarm[i] = std::make_unique<PtRenderer>(5, *mEnginePtr);		// num_of_bounce
 			//renderFarm[i] = std::make_unique<SimpleRenderer>(mEnginePtr);
 		}
 

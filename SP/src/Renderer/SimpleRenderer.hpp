@@ -12,7 +12,7 @@ namespace SP {
 
 	public:
 
-		SimpleRenderer(std::unique_ptr<ApiEngine>& engine);
+		SimpleRenderer(ApiEngine& engine);
 
 
 		// Inherited via Renderer
@@ -39,7 +39,7 @@ namespace SP {
 
 		void simpleShading();
 
-		std::unique_ptr<ApiEngine>& mEngineRef;
+		ApiEngine& mEngineRef;
 		std::unique_ptr<SimpleRenderData> mSimpleRenderDataPtr;
 
 		std::shared_ptr<RenderOutput> mRenderOutPtr;

@@ -60,12 +60,12 @@ namespace SP {
 	PtRenderer::~PtRenderer() = default;
 
 
-	PtRenderer::PtRenderer(int num_bounces, std::unique_ptr<ApiEngine>& engine) : renderData(new RenderData), numOfBounces(num_bounces), mEngineRef(engine){
+	PtRenderer::PtRenderer(unsigned num_bounces, ApiEngine& engine) : renderData{ new RenderData }, numOfBounces{ num_bounces }, mEngineRef{ engine } {
 
 	}
 
 	std::shared_ptr<Output> PtRenderer::createOutput(std::uint32_t w, std::uint32_t h) const {
-		return std::shared_ptr<RenderOutput>(new RenderOutput(w, h));
+		return std::shared_ptr<RenderOutput>{new RenderOutput(w, h)};
 	}
 
 	//void PtRenderer::deleteOutput(Output * output) const {
@@ -75,7 +75,7 @@ namespace SP {
 	void PtRenderer::clear(RadeonRays::float3 const & val, Output & output) const {
 		//throw std::runtime_error("Yet to be done");
 
-		RenderOutput& rendOutRef = dynamic_cast<RenderOutput&>(output); 		// test it !
+		RenderOutput& rendOutRef{ dynamic_cast<RenderOutput&>(output) }; 		// test it !
 
 		auto& storedData = rendOutRef.getInternalStorage();
 
@@ -107,14 +107,14 @@ namespace SP {
 		int maxrays = renderOutPtr->getWidth() * renderOutPtr->getHeight();
 		renderData->host_hitcount = maxrays;
 
-		for (std::uint32_t pass = 0; pass < numOfBounces; ++pass) {
+		for (unsigned pass = 0; pass < numOfBounces; ++pass) {
 
 			// clear hit buffer
 			std::fill(renderData->host_hits.begin(), renderData->host_hits.end(), 0);
 
 			//api->QueryIntersection(renderData->rays[pass & 0x1], renderData->host_hitcount, renderData->intersections, nullptr, nullptr);		
 
-			mEngineRef->queryIntersection(renderData->host_rays[pass & 0x1], renderData->host_hitcount, renderData->host_intersections).wait();
+			mEngineRef.queryIntersection(renderData->host_rays[pass & 0x1], renderData->host_hitcount, renderData->host_intersections).wait();
 
 
 			// evaluate V		(X)
@@ -151,7 +151,7 @@ namespace SP {
 			// hit count ? max ray ?
 
 			//api->QueryOcclusion(renderData->shadowrays, renderData->host_hitcount, renderData->shadowhits, nullptr, nullptr);
-			mEngineRef->queryOcclusion(renderData->host_shadowrays, renderData->host_hitcount, renderData->host_shadowhits).wait();
+			mEngineRef.queryOcclusion(renderData->host_shadowrays, renderData->host_hitcount, renderData->host_shadowhits).wait();
 
 
 			//// test
@@ -304,7 +304,7 @@ namespace SP {
 	}
 
 
-	void PtRenderer::shadeSurface(int pass) {
+	void PtRenderer::shadeSurface(unsigned pass) {
 
 
 		const std::vector<RadeonRays::ray>& rayArrayRef = renderData->host_rays[pass & 0x1];
@@ -352,7 +352,7 @@ namespace SP {
 
 			// KAOCC: how to change this ?
 			//DifferentialGeometry diffGeo;
-			diffGeo.fill(currentIntersect, mEngineRef->getInternalMeshPtrs());
+			diffGeo.fill(currentIntersect, mEngineRef.getInternalMeshPtrs());
 
 
 			bool backfaced = (RadeonRays::dot(diffGeo.getNormal(), wi) < 0);
@@ -455,7 +455,7 @@ namespace SP {
 			// sample BxDf
 			const RadeonRays::float3& bxdf = BxDFHelper::sample(diffGeo, wi, sampler->sample2D(), bxdfwo, bxdfPDF);		// value ?
 
-			const auto currentScenePtr = mEngineRef->getCurrentScenePtr();
+			const auto currentScenePtr = mEngineRef.getCurrentScenePtr();
 
 			// Radiance
 			RadeonRays::float3 radiance = 0.f;
@@ -548,7 +548,7 @@ namespace SP {
 	}
 
 	// not used ...
-	void PtRenderer::evaluateVolume(int pass) {
+	void PtRenderer::evaluateVolume(unsigned pass) {
 
 		std::vector<RadeonRays::ray>& rayArrayRef = renderData->host_rays[pass & 0x1];
 		std::vector<int>& pixelIndexArrayRef = renderData->host_pixelIndex[(pass + 1) & 0x1];
@@ -609,7 +609,7 @@ namespace SP {
 	}
 
 
-	void PtRenderer::shadeMiss(int pass) {
+	void PtRenderer::shadeMiss(unsigned pass) {
 
 		const std::vector<int>& pixelIndexArrayRef = renderData->host_pixelIndex[(pass + 1) & 0x1];
 
@@ -651,7 +651,7 @@ namespace SP {
 
 	}
 
-	void PtRenderer::gatherLightSamples(int pass) {
+	void PtRenderer::gatherLightSamples(unsigned pass) {
 
 
 		const std::vector<int>& pixelIndexArrayRef = renderData->host_pixelIndex[(pass) & 0x1];
@@ -681,7 +681,7 @@ namespace SP {
 
 
 
-	void PtRenderer::restorePixelIndices(int pass) {
+	void PtRenderer::restorePixelIndices(unsigned pass) {
 
 		const std::vector<int>& previousPixelIndexArrayRef = renderData->host_pixelIndex[(pass + 1) & 0x1];
 		std::vector<int>& newPixelIndexArrayRef = renderData->host_pixelIndex[(pass) & 0x1];
@@ -693,7 +693,7 @@ namespace SP {
 	}
 
 
-	void PtRenderer::filterPathStream(int pass) {
+	void PtRenderer::filterPathStream(unsigned pass) {
 
 		const std::vector<int>& pixelIndexArrayRef = renderData->host_pixelIndex[(pass + 1) & 0x1];
 

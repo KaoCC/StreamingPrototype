@@ -14,7 +14,7 @@ namespace SP {
 		int host_hitcount;
 	};
 
-	SimpleRenderer::SimpleRenderer(std::unique_ptr<ApiEngine>& engine) : mSimpleRenderDataPtr(new SimpleRenderData), mEngineRef(engine) {
+	SimpleRenderer::SimpleRenderer(ApiEngine& engine) : mSimpleRenderDataPtr{ new SimpleRenderData }, mEngineRef{ engine } {
 	}
 
 
@@ -52,7 +52,7 @@ namespace SP {
 		mSimpleRenderDataPtr->host_hitcount = maxrays;
 
 
-		mEngineRef->queryIntersection(mSimpleRenderDataPtr->host_rays[0], mSimpleRenderDataPtr->host_hitcount, mSimpleRenderDataPtr->host_intersections).wait();
+		mEngineRef.queryIntersection(mSimpleRenderDataPtr->host_rays[0], mSimpleRenderDataPtr->host_hitcount, mSimpleRenderDataPtr->host_intersections).wait();
 
 		simpleShading();
 	}
@@ -79,7 +79,7 @@ namespace SP {
 		for (uint32_t y = 0; y < imageHeight; ++y) {
 			for (uint32_t x = 0; x < imageWidth; ++x) {
 
-				const PerspectiveCamera* cameraPtr = static_cast<const PerspectiveCamera*>(scene.getCamera(camIdx));
+				const PerspectiveCamera* cameraPtr{ static_cast<const PerspectiveCamera*>(scene.getCamera(camIdx)) };
 				RadeonRays::ray& currentRay = mSimpleRenderDataPtr->host_rays[0][y * imageWidth + x];
 				generateRandomRay(rngseed, x, y, imageWidth, imageHeight, currentRay,cameraPtr);
 
@@ -107,7 +107,7 @@ namespace SP {
 
 		std::vector<RadeonRays::float3>& outRef = mRenderOutPtr->getInternalStorage();
 
-		const std::vector<const Mesh*>& meshPtrs = mEngineRef->getInternalMeshPtrs();
+		const std::vector<const Mesh*>& meshPtrs = mEngineRef.getInternalMeshPtrs();
 
 		const RadeonRays::matrix matrixI;
 

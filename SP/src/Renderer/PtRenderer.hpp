@@ -21,7 +21,7 @@ namespace SP {
 
 	public:
 
-		PtRenderer(int num_bounces, std::unique_ptr<ApiEngine>& engine);
+		PtRenderer(unsigned num_bounces, ApiEngine& engine);
 
 
 
@@ -56,21 +56,21 @@ namespace SP {
 
 
 		// Shade first hit
-		void shadeSurface(int pass);
+		void shadeSurface(unsigned pass);
 		// Evaluate volume
-		void evaluateVolume(int pass);
+		void evaluateVolume(unsigned pass);
 		// Handle missing rays
-		void shadeMiss(int pass);
+		void shadeMiss(unsigned pass);
 		// Gather light samples and account for visibility
-		void gatherLightSamples(int pass);
+		void gatherLightSamples(unsigned pass);
 		// Restore pixel indices after compaction
-		void restorePixelIndices(int pass);
+		void restorePixelIndices(unsigned pass);
 		// Convert intersection info to compaction predicate
-		void filterPathStream(int pass);
+		void filterPathStream(unsigned pass);
 		// Integrate volume
-		void shadeVolume(int pass);
+		void shadeVolume(unsigned pass);
 		// Shade background
-		void shadeBackground(int pass);
+		void shadeBackground(unsigned pass);
 
 
 		// Helper
@@ -81,7 +81,6 @@ namespace SP {
 	private:
 
 		// Output 
-		// KAOCC: use shared pointer ???
 		std::shared_ptr<RenderOutput> renderOutPtr;
 
 
@@ -92,9 +91,11 @@ namespace SP {
 		//std::vector<RadeonRays::Shape*> shapes;
 
 		// KAOCC: add ref to ApiEngine
-		std::unique_ptr<ApiEngine>& mEngineRef;
+		//std::unique_ptr<ApiEngine>& mEngineRef;
 
-		std::uint32_t numOfBounces;
+		ApiEngine& mEngineRef;
+
+		unsigned numOfBounces;
 		std::uint32_t mFrameCount = 0;
 	};
 
