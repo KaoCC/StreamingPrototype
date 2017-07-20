@@ -16,7 +16,7 @@
 #include "Common.hpp"
 #include "PtRenderer.hpp"
 
-#include "../Encoder/Encoder.hpp"
+//#include "../Encoder/Encoder.hpp"
 
 #include "Output.hpp"
 
@@ -52,7 +52,7 @@ namespace SP {
 
 
 		// for testing
-		void testOutput(int id);
+		//void testOutput(int id);
 
 		// helper function
 		void initData(bool loadRadianceFlag);
@@ -118,8 +118,6 @@ namespace SP {
 		std::vector<std::unique_ptr<Renderer>> renderFarm;
 
 
-
-
 		//std::unique_ptr<HQ::EventSys> mPauseEventPtr;
 
 		//Encoder* encoder;
@@ -137,7 +135,7 @@ namespace SP {
 		std::mutex mQueueMutex;
 		std::condition_variable mQueueCV;
 		std::queue<std::pair<int, int>> mTaskQueue;
-		
+
 		unsigned mThreadCount = 0;
 		unsigned mWaitingCounter = 0;
 

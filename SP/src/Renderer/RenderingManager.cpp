@@ -100,7 +100,7 @@ namespace SP {
 	RenderingManager::~RenderingManager() {
 
 
-		// KAOCC: this is wrong ! chack pop wait 
+		// KAOCC: this is wrong ! check pop wait 
 		std::for_each(renderThreads.begin(), renderThreads.end(), std::mem_fun_ref(&std::thread::join));
 
 
@@ -117,7 +117,7 @@ namespace SP {
 
 
 		{
-			std::lock_guard<std::mutex> queueLock(mQueueMutex);
+			std::lock_guard<std::mutex> queueLock{ mQueueMutex };
 
 			for (size_t i = 0; i < mConfigRef.getNumberOfSubLFs(); ++i) {
 				for (size_t j = 0; j < mConfigRef.getNumberOfSubLFImages(); ++j) {
@@ -151,7 +151,7 @@ namespace SP {
 		std::cerr << "Enter Pause" << std::endl;
 
 		{
-			std::unique_lock<std::mutex> queueLock(mQueueMutex);
+			std::unique_lock<std::mutex> queueLock{ mQueueMutex };
 			mPauseFlag = true;
 
 			mCounterCV.wait(queueLock, [this] { return mWaitingCounter == mThreadCount; });
@@ -164,7 +164,7 @@ namespace SP {
 	void RenderingManager::resume() {
 
 		{
-			std::lock_guard<std::mutex> lock(mQueueMutex);
+			std::lock_guard<std::mutex> lock{ mQueueMutex };
 			mPauseFlag = false;
 		}
 
@@ -188,7 +188,7 @@ namespace SP {
 		std::cerr << "Resetting ... " << std::endl;
 
 		for (size_t i = 0; i < renderFarm.size(); ++i) {
-			renderFarm[i] = std::make_unique<SimpleRenderer>(mEnginePtr);
+			renderFarm[i] = std::make_unique<SimpleRenderer>(*mEnginePtr);
 		}
 
 		for (size_t i = 0; i < renderFarm.size(); ++i) {
@@ -302,7 +302,7 @@ namespace SP {
 
 		// load Radiance Map to RenderOut
 
-		int outputId = mConfigRef.getNumberOfSubLFImages() * subLFIdx + subImgIdx;
+		unsigned outputId = mConfigRef.getNumberOfSubLFImages() * subLFIdx + subImgIdx;
 
 		std::shared_ptr<RenderOutput> renderOut = std::dynamic_pointer_cast<RenderOutput>(renderOutputData[outputId]);
 
@@ -328,13 +328,13 @@ namespace SP {
 		}
 
 
-		const ImageSpec imgSpec = input->spec();
+		const ImageSpec imgSpec{ input->spec() };
 		int xRes = imgSpec.width;
 		int yRes = imgSpec.height;
 
 		int channels = imgSpec.nchannels;	// check
 
-		const ParamValue* par = imgSpec.find_attribute("gammarank", TypeDesc::FLOAT);
+		const ParamValue* par{ imgSpec.find_attribute("gammarank", TypeDesc::FLOAT) };
 
 		float wVal = 10.0f;		// tmp value
 		if (par) {
@@ -352,7 +352,7 @@ namespace SP {
 
 
 		// create a tmp buffer 
-		float* tmpBuff = new float[tmpSize];
+		float* tmpBuff{ new float[tmpSize] };
 
 		// copy to outputData
 		input->read_image(TypeDesc::FLOAT, tmpBuff);
@@ -381,7 +381,7 @@ namespace SP {
 
 
 			{
-				std::unique_lock<std::mutex> queueLock(mQueueMutex);
+				std::unique_lock<std::mutex> queueLock{ mQueueMutex };
 
 				if (mTaskQueue.empty() || mPauseFlag) {
 
@@ -440,7 +440,7 @@ namespace SP {
 
 			// push back the task
 			{
-				std::lock_guard<std::mutex> queueLock(mQueueMutex);
+				std::lock_guard<std::mutex> queueLock{ mQueueMutex };
 				mTaskQueue.push(std::move(taskIndex));
 			}
 			mQueueCV.notify_one();
