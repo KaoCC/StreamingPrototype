@@ -19,6 +19,7 @@ namespace SP {
 	public:
 
 		ApiEngine() = delete;
+		ApiEngine(const ApiEngine&) = delete;
 
 		ApiEngine(ScreenConfig screenCfg, const std::vector<int>& apiIndexList);
 

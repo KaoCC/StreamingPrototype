@@ -50,6 +50,7 @@ namespace SP {
 			backend.api->DeleteBuffer(backend.buffer.hitcount);
 		}
 
+		//KAOCC: this is wrong !!! check pop wait !
 		// thread cleanup
 		std::for_each(mWorkerThreads.begin(), mWorkerThreads.end(), std::mem_fun_ref(&std::thread::join));
 	}
