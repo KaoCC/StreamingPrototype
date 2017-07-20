@@ -10,6 +10,7 @@ namespace SP {
 
 		std::cerr << "Number of APIs: " << apiIndexList.size() << std::endl;
 		std::cerr << "Create APIs" << std::endl;
+
 		for (int index : apiIndexList) {
 
 			auto api = RadeonRays::IntersectionApi::Create(index);
@@ -18,16 +19,13 @@ namespace SP {
 			api->SetOption("acc.type", "qbvh");
 			api->SetOption("bvh.builder", "sah");
 
-			//mApiList.push_back(api);
-			//mTrackers.push_back(SceneTracker(api));
-
-
 			mBackends.push_back(BackendRecord(api, screenCfg));
 		}
 
 
 		// Threads ?
 		std::cerr << "Create TnI threads" << std::endl;
+		mWorkerThreads.reserve(apiIndexList.size());
 		for (auto& backend : mBackends) {
 			mWorkerThreads.push_back(std::thread(&ApiEngine::runLoop, this, backend.api, backend.buffer));
 		}
@@ -310,6 +308,8 @@ namespace SP {
 		buffer.hitcount = api->CreateBuffer(sizeof(int), nullptr);
 
 	}
+
+
 
 	ApiEngine::IntersectData::IntersectData(std::vector<RadeonRays::ray>& rayB, int nR, std::vector<RadeonRays::Intersection>& interB) : rayBuffer{ rayB }, numOfRays{ nR }, intersectBuffer{ interB } {
 	}

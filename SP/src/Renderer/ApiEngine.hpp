@@ -77,6 +77,13 @@ namespace SP {
 		struct BackendRecord {
 		public:
 			BackendRecord(RadeonRays::IntersectionApi* api, ScreenConfig screenCfg);
+			BackendRecord() = delete;
+			//disallow copy
+			BackendRecord(const BackendRecord&) = delete;
+			BackendRecord& operator=(const BackendRecord&) = delete;
+			// allow move
+			BackendRecord(BackendRecord&&) = default;
+			BackendRecord& operator=(BackendRecord&&) = default;
 
 			BackendBuffer buffer;
 			RadeonRays::IntersectionApi* api;
@@ -99,7 +106,7 @@ namespace SP {
 		//std::vector<BackendBuffer> mBuffers;
 
 		// no need ?
-		std::vector<int> mApiIndex;
+		//std::vector<int> mApiIndex;
 
 		std::vector<std::thread> mWorkerThreads;
 
