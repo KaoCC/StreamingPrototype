@@ -220,7 +220,7 @@ namespace SP {
 		writeEvent = nullptr;
 
 		// to RR memory
-		std::copy(data.rayBuffer.begin(), data.rayBuffer.end(), rawRayPtr);
+		std::copy_n(data.rayBuffer.begin(), data.numOfRays, rawRayPtr);
 
 		api->UnmapBuffer(buffer.rays, static_cast<void*>(rawRayPtr), &writeEvent);
 		writeEvent->Wait();
@@ -263,7 +263,7 @@ namespace SP {
 		mapEvent = nullptr;
 
 		// to RR memory
-		std::copy(data.shadowrayBuffer.begin(), data.shadowrayBuffer.end(), rawShadowrayPtr);
+		std::copy_n(data.shadowrayBuffer.begin(), data.numOfRays, rawShadowrayPtr);
 
 		api->UnmapBuffer(buffer.shadowrays, static_cast<void*>(rawShadowrayPtr), &mapEvent);
 		mapEvent->Wait();
