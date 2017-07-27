@@ -66,7 +66,7 @@ namespace SP {
 		std::set<Material const*> emissives;
 		std::vector<Material const*> materials(objMaterials.size());
 
-		auto imageIO{ ImageIO::createImageIO() };
+		auto imageIO = ImageIO::createImageIO() ;
 
 		for (size_t i = 0; i < objMaterials.size(); ++i) {
 			// parse the materials

@@ -191,6 +191,14 @@ namespace SP {
 
 	}
 
+	void ConfigManager::recompileScene() {
+
+		std::cerr << "recompile Scene test" << std::endl;
+		renderManagerPtr->recompileScene();
+
+
+	}
+
 
 
 

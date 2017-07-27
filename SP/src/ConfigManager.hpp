@@ -88,6 +88,8 @@ namespace SP {
 
 		void resetRenderer();
 
+		void recompileScene();
+
 	private:
 
 		uint32_t moduleID = 0;
