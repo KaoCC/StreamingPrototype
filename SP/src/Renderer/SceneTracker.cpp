@@ -5,9 +5,12 @@
 #include "Scene/Iterator.hpp"
 #include "Scene/Shape.hpp"
 
+// test only, should be remove later
+#include "Scene/Material.hpp"
+
 namespace SP {
 
-	SceneTracker::SceneTracker(RadeonRays::IntersectionApi* intersectApi) : api(intersectApi) {
+	SceneTracker::SceneTracker(RadeonRays::IntersectionApi* intersectApi) : api{ intersectApi } {
 
 
 	}
@@ -48,13 +51,13 @@ namespace SP {
 
 				RadeonRays::Shape* shape = api->CreateMesh(
 					reinterpret_cast<const float*>(mesh->getVertices()),			// check this one !!!
-					static_cast<int>(mesh->getNumVertices()), 
-					sizeof(RadeonRays::float3), 
+					static_cast<int>(mesh->getNumVertices()),
+					sizeof(RadeonRays::float3),
 					reinterpret_cast<const int*>(mesh->getIndices()),
 					0,
 					nullptr,
 					static_cast<int>(mesh->getNumIndices() / 3)
-					);
+				);
 
 
 
@@ -94,12 +97,50 @@ namespace SP {
 
 	}
 
-	const std::vector<const Mesh*>& SceneTracker::getInternalMeshPtrs() const{
+	const std::vector<const Mesh*>& SceneTracker::getInternalMeshPtrs() const {
 		return internalMeshPtrs;
 	}
 
 	const Scene * SceneTracker::getCurrentScenePtr() const {
 		return currentScenePtr;
+	}
+
+	// for testing only
+	void SceneTracker::changeShapesInScene_test() {
+
+		std::cerr << "change shape start !" << std::endl;
+
+		if (!internalShapes.empty()) {
+
+
+			auto delShape = internalShapes.back();
+			internalShapes.pop_back();
+
+			size_t sz = internalShapes.size();
+
+			std::cerr << "Number of shapes left:" << sz << std::endl;
+
+			if (sz > 0) {
+
+				// tests
+				if (!internalMeshPtrs[sz-1]->getMaterial()->hasEmission()) {
+					api->DetachShape(delShape);
+					api->DeleteShape(delShape);
+
+					api->Commit();
+
+				} else {
+					std::cerr << "<<<<<< This is the Light ! ..." << std::endl;
+				}
+
+			}
+
+		} else {
+			std::cerr << " >>>>>>>>>>> Empty Scene ......" << std::endl;
+		}
+
+		std::cerr << "change Shapes Commit" << std::endl;
+
 	}
 
 }

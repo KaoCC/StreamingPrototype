@@ -32,6 +32,10 @@ namespace SP {
 		// tmp
 		const Scene* getCurrentScenePtr() const;
 
+		// test
+		void changeShapesInScene_test();
+
+
 	private:
 
 		void updateMaterials();
