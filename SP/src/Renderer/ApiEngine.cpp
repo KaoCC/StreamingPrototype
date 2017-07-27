@@ -10,6 +10,7 @@ namespace SP {
 
 		std::cerr << "Number of APIs: " << apiIndexList.size() << std::endl;
 		std::cerr << "Create APIs" << std::endl;
+
 		for (int index : apiIndexList) {
 
 			auto api = RadeonRays::IntersectionApi::Create(index);
@@ -18,16 +19,13 @@ namespace SP {
 			api->SetOption("acc.type", "qbvh");
 			api->SetOption("bvh.builder", "sah");
 
-			//mApiList.push_back(api);
-			//mTrackers.push_back(SceneTracker(api));
-
-
 			mBackends.push_back(BackendRecord(api, screenCfg));
 		}
 
 
 		// Threads ?
 		std::cerr << "Create TnI threads" << std::endl;
+		mWorkerThreads.reserve(apiIndexList.size());
 		for (auto& backend : mBackends) {
 			mWorkerThreads.push_back(std::thread(&ApiEngine::runLoop, this, backend.api, backend.buffer));
 		}
@@ -50,6 +48,7 @@ namespace SP {
 			backend.api->DeleteBuffer(backend.buffer.hitcount);
 		}
 
+		//KAOCC: this is wrong !!! check pop wait !
 		// thread cleanup
 		std::for_each(mWorkerThreads.begin(), mWorkerThreads.end(), std::mem_fun_ref(&std::thread::join));
 	}
@@ -165,6 +164,13 @@ namespace SP {
 	// workaround !
 	const Scene * ApiEngine::getCurrentScenePtr() const {
 		return mBackends[0].tracker.getCurrentScenePtr();
+	}
+
+	// test
+	void ApiEngine::changeShape_test() {
+		for (auto& backend : mBackends) {
+			backend.tracker.changeShapesInScene_test();
+		}
 	}
 
 
@@ -297,7 +303,7 @@ namespace SP {
 
 
 
-	ApiEngine::BackendRecord::BackendRecord(RadeonRays::IntersectionApi * inputApi, ScreenConfig screenCfg) : api(inputApi), tracker(inputApi) {
+	ApiEngine::BackendRecord::BackendRecord(RadeonRays::IntersectionApi * inputApi, ScreenConfig screenCfg) : api{ inputApi }, tracker{ inputApi } {
 
 		// disable this part ?
 		buffer.rays = api->CreateBuffer(screenCfg.width * screenCfg.height * sizeof(RadeonRays::ray), nullptr);
@@ -310,10 +316,12 @@ namespace SP {
 
 	}
 
-	ApiEngine::IntersectData::IntersectData(std::vector<RadeonRays::ray>& rayB, int nR, std::vector<RadeonRays::Intersection>& interB) : rayBuffer(rayB), numOfRays(nR), intersectBuffer(interB) {
+
+
+	ApiEngine::IntersectData::IntersectData(std::vector<RadeonRays::ray>& rayB, int nR, std::vector<RadeonRays::Intersection>& interB) : rayBuffer{ rayB }, numOfRays{ nR }, intersectBuffer{ interB } {
 	}
 
-	ApiEngine::OccludeData::OccludeData(std::vector<RadeonRays::ray>& shadowrayB, int nR, std::vector<int>& shadowhitB) : shadowrayBuffer(shadowrayB), numOfRays(nR), shadowhitBuffer(shadowhitB) {
+	ApiEngine::OccludeData::OccludeData(std::vector<RadeonRays::ray>& shadowrayB, int nR, std::vector<int>& shadowhitB) : shadowrayBuffer{ shadowrayB }, numOfRays{ nR }, shadowhitBuffer{ shadowhitB } {
 	}
 
 }

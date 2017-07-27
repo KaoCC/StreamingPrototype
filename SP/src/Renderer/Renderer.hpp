@@ -10,6 +10,8 @@
 #include "radeon_rays.h"
 
 
+#include <memory>
+
 namespace SP {
 
 	class Output;
@@ -28,14 +30,14 @@ namespace SP {
 		\param w Output surface width
 		\param h Output surface height
 		*/
-		virtual Output* createOutput(std::uint32_t w, std::uint32_t h) const = 0;
+		virtual std::shared_ptr<Output> createOutput(std::uint32_t w, std::uint32_t h) const = 0;
 
 		/**
 		\brief Delete given output.
 
 		\param output The output to delete
 		*/
-		virtual void deleteOutput(Output* output) const = 0;
+		//virtual void deleteOutput(Output* output) const = 0;
 
 		/**
 		\brief Clear output surface using given value.
@@ -64,7 +66,7 @@ namespace SP {
 
 		\param output The output to render into.
 		*/
-		virtual void setOutput(Output* output) = 0;
+		virtual void setOutput(std::shared_ptr<Output> output) = 0;
 
 
 		/**

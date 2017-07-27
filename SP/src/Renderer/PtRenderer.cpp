@@ -3,7 +3,7 @@
 
 #include "Scene/Camera.hpp"
 
-#include "Path.hpp"
+
 #include "DifferentialGeometry.hpp"
 
 #include "BxDFHelper.hpp"
@@ -30,52 +30,25 @@ namespace SP {
 	//};
 
 
-	struct PtRenderer::RenderData {
-
-
-		// host buffers
-
-		std::vector<RadeonRays::ray> host_rays[2];
-		std::vector<int> host_hits;
-
-		std::vector<int> host_pixelIndex[2];
-		std::vector<int> host_compactedIndex;
-		std::vector<int> host_iota;
-
-		std::vector<RadeonRays::ray> host_shadowrays;
-		std::vector<int> host_shadowhits;
-
-		std::vector<RadeonRays::Intersection> host_intersections;
-		int host_hitcount;
-
-
-		std::vector<Path> host_path;
-
-		std::vector<RadeonRays::float3> host_lightSamples;
-
-
-	};
-
-
 	PtRenderer::~PtRenderer() = default;
 
 
-	PtRenderer::PtRenderer(int num_bounces, std::unique_ptr<ApiEngine>& engine) : renderData(new RenderData), numOfBounces(num_bounces), mEngineRef(engine){
+	PtRenderer::PtRenderer(unsigned num_bounces, ApiEngine& engine) : numOfBounces{ num_bounces }, mEngineRef{ engine } {
 
 	}
 
-	Output * PtRenderer::createOutput(std::uint32_t w, std::uint32_t h) const {
-		return new RenderOutput(w, h);
+	std::shared_ptr<Output> PtRenderer::createOutput(std::uint32_t w, std::uint32_t h) const {
+		return std::shared_ptr<RenderOutput>{new RenderOutput(w, h)};
 	}
 
-	void PtRenderer::deleteOutput(Output * output) const {
-		delete output;
-	}
+	//void PtRenderer::deleteOutput(Output * output) const {
+	//	delete output;
+	//}
 
 	void PtRenderer::clear(RadeonRays::float3 const & val, Output & output) const {
 		//throw std::runtime_error("Yet to be done");
 
-		RenderOutput& rendOutRef = dynamic_cast<RenderOutput&>(output); 		// test it !
+		RenderOutput& rendOutRef{ dynamic_cast<RenderOutput&>(output) }; 		// test it !
 
 		auto& storedData = rendOutRef.getInternalStorage();
 
@@ -100,21 +73,21 @@ namespace SP {
 		// ray gen ?
 		generatePrimaryRays(scene, configIdx);
 
-		std::copy(renderData->host_iota.begin(), renderData->host_iota.end(), renderData->host_pixelIndex[0].begin());
-		std::copy(renderData->host_iota.begin(), renderData->host_iota.end(), renderData->host_pixelIndex[1].begin());
+		std::copy(renderData.host_iota.begin(), renderData.host_iota.end(), renderData.host_pixelIndex[0].begin());
+		std::copy(renderData.host_iota.begin(), renderData.host_iota.end(), renderData.host_pixelIndex[1].begin());
 	
 		// Number of rays 
 		int maxrays = renderOutPtr->getWidth() * renderOutPtr->getHeight();
-		renderData->host_hitcount = maxrays;
+		renderData.host_hitcount = maxrays;
 
-		for (std::uint32_t pass = 0; pass < numOfBounces; ++pass) {
+		for (unsigned pass = 0; pass < numOfBounces; ++pass) {
 
 			// clear hit buffer
-			std::fill(renderData->host_hits.begin(), renderData->host_hits.end(), 0);
+			std::fill(renderData.host_hits.begin(), renderData.host_hits.end(), 0);
 
-			//api->QueryIntersection(renderData->rays[pass & 0x1], renderData->host_hitcount, renderData->intersections, nullptr, nullptr);		
+			//api->QueryIntersection(renderData.rays[pass & 0x1], renderData.host_hitcount, renderData.intersections, nullptr, nullptr);		
 
-			mEngineRef->queryIntersection(renderData->host_rays[pass & 0x1], renderData->host_hitcount, renderData->host_intersections).wait();
+			mEngineRef.queryIntersection(renderData.host_rays[pass & 0x1], renderData.host_hitcount, renderData.host_intersections).wait();
 
 
 			// evaluate V		(X)
@@ -122,7 +95,7 @@ namespace SP {
 			filterPathStream(pass);
 
 			compactIndex();
-			//std::cerr << "NEW hit count:" << renderData->host_hitcount << '\n';
+			//std::cerr << "NEW hit count:" << renderData.host_hitcount << '\n';
 
 			restorePixelIndices(pass);
 
@@ -140,7 +113,7 @@ namespace SP {
 
 
 			// tmp
-			if (renderData->host_hitcount == 0) {
+			if (renderData.host_hitcount == 0) {
 				std::cerr << ">>> BREAK AT PASS: " << pass << "\n";
 				break;
 			}
@@ -150,17 +123,17 @@ namespace SP {
 			// Read the shadow hit to host ?
 			// hit count ? max ray ?
 
-			//api->QueryOcclusion(renderData->shadowrays, renderData->host_hitcount, renderData->shadowhits, nullptr, nullptr);
-			mEngineRef->queryOcclusion(renderData->host_shadowrays, renderData->host_hitcount, renderData->host_shadowhits).wait();
+			//api->QueryOcclusion(renderData.shadowrays, renderData.host_hitcount, renderData.shadowhits, nullptr, nullptr);
+			mEngineRef.queryOcclusion(renderData.host_shadowrays, renderData.host_hitcount, renderData.host_shadowhits).wait();
 
 
 			//// test
 			//int shadowCount = 0;
-			//for (int i = 0; i < renderData->host_hitcount; ++i) {
-			//	if (renderData->host_shadowhits[i] != -1) {
+			//for (int i = 0; i < renderData.host_hitcount; ++i) {
+			//	if (renderData.host_shadowhits[i] != -1) {
 			//		++shadowCount;
 
-			//		//std::cerr << ">>>>>>>>>>>>>>>>>>> shape: " << renderData->host_intersections[i].shapeid <<" Pri: " << renderData->host_intersections[i].primid << '\n';
+			//		//std::cerr << ">>>>>>>>>>>>>>>>>>> shape: " << renderData.host_intersections[i].shapeid <<" Pri: " << renderData.host_intersections[i].primid << '\n';
 			//	}
 			//}
 
@@ -175,14 +148,13 @@ namespace SP {
 		++mFrameCount;
 	}
 
-	void PtRenderer::setOutput(Output * output) {
+	void PtRenderer::setOutput(std::shared_ptr<Output> output) {
 
 		if (!renderOutPtr || renderOutPtr->getWidth() < output->getWidth() || renderOutPtr->getHeight() < output->getHeight()) {
 			resizeWorkingSet(*output);
 		}
 
-		// KAOCC: check the type !
-		renderOutPtr = static_cast<RenderOutput*>(output);
+		renderOutPtr = std::dynamic_pointer_cast<RenderOutput>(output);
 	}
 
 
@@ -231,7 +203,7 @@ namespace SP {
 
 
 				// set ray
-				RadeonRays::ray& currentRay = renderData->host_rays[0][y * imageWidth + x];
+				RadeonRays::ray& currentRay = renderData.host_rays[0][y * imageWidth + x];
 
 				currentRay.d = RadeonRays::normalize(cameraPtr->getFocalLength() * cameraPtr->getForwardVector() + cSample.x * cameraPtr->getRightVector() + cSample.y * cameraPtr->getUpVector());
 				currentRay.o = cameraPtr->getPosition() + cameraPtr->getDepthRange().x * currentRay.d;
@@ -252,7 +224,7 @@ namespace SP {
 				// ...
 
 				// path ?
-				Path& path = renderData->host_path[y * imageWidth + x];
+				Path& path{ renderData.host_path[y * imageWidth + x] };
 				path.initGen();
 			}
 		}
@@ -262,72 +234,72 @@ namespace SP {
 	void PtRenderer::resizeWorkingSet(const Output& out) {
 
 		// clear and resize
-		renderData->host_rays[0].clear();
-		renderData->host_rays[0].resize(out.getWidth() * out.getHeight());
+		renderData.host_rays[0].clear();
+		renderData.host_rays[0].resize(out.getWidth() * out.getHeight());
 
-		renderData->host_rays[1].clear();
-		renderData->host_rays[1].resize(out.getWidth() * out.getHeight());
+		renderData.host_rays[1].clear();
+		renderData.host_rays[1].resize(out.getWidth() * out.getHeight());
 
-		renderData->host_shadowrays.clear();
-		renderData->host_shadowrays.resize(out.getWidth() * out.getHeight());
+		renderData.host_shadowrays.clear();
+		renderData.host_shadowrays.resize(out.getWidth() * out.getHeight());
 
-		renderData->host_shadowhits.clear();
-		renderData->host_shadowhits.resize(out.getWidth() * out.getHeight());
+		renderData.host_shadowhits.clear();
+		renderData.host_shadowhits.resize(out.getWidth() * out.getHeight());
 
-		renderData->host_intersections.clear();
-		renderData->host_intersections.resize(out.getWidth() * out.getHeight());
+		renderData.host_intersections.clear();
+		renderData.host_intersections.resize(out.getWidth() * out.getHeight());
 
-		renderData->host_hits.clear();
-		renderData->host_hits.resize(out.getWidth() * out.getHeight());
+		renderData.host_hits.clear();
+		renderData.host_hits.resize(out.getWidth() * out.getHeight());
 
-		renderData->host_iota.clear();
-		renderData->host_iota.resize(out.getWidth() * out.getHeight());
-		std::iota(renderData->host_iota.begin(), renderData->host_iota.end(), 0);
+		renderData.host_iota.clear();
+		renderData.host_iota.resize(out.getWidth() * out.getHeight());
+		std::iota(renderData.host_iota.begin(), renderData.host_iota.end(), 0);
 
 
-		renderData->host_pixelIndex[0].clear();
-		renderData->host_pixelIndex[0].resize(out.getWidth() * out.getHeight());
+		renderData.host_pixelIndex[0].clear();
+		renderData.host_pixelIndex[0].resize(out.getWidth() * out.getHeight());
 
-		renderData->host_pixelIndex[1].clear();
-		renderData->host_pixelIndex[1].resize(out.getWidth() * out.getHeight());
+		renderData.host_pixelIndex[1].clear();
+		renderData.host_pixelIndex[1].resize(out.getWidth() * out.getHeight());
 
-		renderData->host_compactedIndex.clear();
-		renderData->host_compactedIndex.resize(out.getWidth() * out.getHeight());
+		renderData.host_compactedIndex.clear();
+		renderData.host_compactedIndex.resize(out.getWidth() * out.getHeight());
 
-		renderData->host_hitcount = 0;
+		renderData.host_hitcount = 0;
 
-		renderData->host_path.clear();
-		renderData->host_path.resize(out.getWidth() * out.getHeight());
+		renderData.host_path.clear();
+		renderData.host_path.resize(out.getWidth() * out.getHeight());
 
-		renderData->host_lightSamples.clear();
-		renderData->host_lightSamples.resize(out.getWidth() * out.getHeight());
+		renderData.host_lightSamples.clear();
+		renderData.host_lightSamples.resize(out.getWidth() * out.getHeight());
 
 	}
 
 
-	void PtRenderer::shadeSurface(int pass) {
+	void PtRenderer::shadeSurface(unsigned pass) {
 
 
-		const std::vector<RadeonRays::ray>& rayArrayRef = renderData->host_rays[pass & 0x1];
-		auto& indirectRayArrayRef = renderData->host_rays[(pass + 1) & 0x1];
+		const std::vector<RadeonRays::ray>& rayArrayRef = renderData.host_rays[pass & 0x1];
+		auto& indirectRayArrayRef = renderData.host_rays[(pass + 1) & 0x1];
 
-		auto& shadowRayArrayRef = renderData->host_shadowrays;
-		auto& lightSamplesArrayRef = renderData->host_lightSamples;
+		auto& shadowRayArrayRef = renderData.host_shadowrays;
+		auto& lightSamplesArrayRef = renderData.host_lightSamples;
 		std::vector<RadeonRays::float3>& outRef = renderOutPtr->getInternalStorage();
 
-		const std::vector<int>& pixelIndexArrayRef = renderData->host_pixelIndex[(pass) & 0x1];
+		const std::vector<int>& pixelIndexArrayRef = renderData.host_pixelIndex[(pass) & 0x1];
 
 		uint32_t rngseed = RadeonRays::rand_uint();
 
 		DifferentialGeometry diffGeo;
 
-		for (size_t i = 0; i < renderData->host_hitcount; ++i) {
+		for (size_t i = 0; i < renderData.host_hitcount; ++i) {
 
-			size_t hitIndex = renderData->host_compactedIndex[i];
+			size_t hitIndex = renderData.host_compactedIndex[i];
 			size_t pixelIndex = pixelIndexArrayRef[i];
-			const RadeonRays::Intersection& currentIntersect = renderData->host_intersections[hitIndex];
+			const RadeonRays::Intersection& currentIntersect = renderData.host_intersections[hitIndex];
 
-			Path& currentPath = renderData->host_path[pixelIndex];
+			Path& currentPath = renderData.host_path[pixelIndex];
 
 			if (currentPath.isScattered()) {
 				continue;
@@ -353,7 +325,7 @@ namespace SP {
 
 			// KAOCC: how to change this ?
 			//DifferentialGeometry diffGeo;
-			diffGeo.fill(currentIntersect, mEngineRef->getInternalMeshPtrs());
+			diffGeo.fill(currentIntersect, mEngineRef.getInternalMeshPtrs());
 
 
 			bool backfaced = (RadeonRays::dot(diffGeo.getNormal(), wi) < 0);
@@ -456,7 +428,7 @@ namespace SP {
 			// sample BxDf
 			const RadeonRays::float3& bxdf = BxDFHelper::sample(diffGeo, wi, sampler->sample2D(), bxdfwo, bxdfPDF);		// value ?
 
-			const auto currentScenePtr = mEngineRef->getCurrentScenePtr();
+			const auto currentScenePtr = mEngineRef.getCurrentScenePtr();
 
 			// Radiance
 			RadeonRays::float3 radiance = 0.f;
@@ -549,17 +521,17 @@ namespace SP {
 	}
 
 	// not used ...
-	void PtRenderer::evaluateVolume(int pass) {
+	void PtRenderer::evaluateVolume(unsigned pass) {
 
-		std::vector<RadeonRays::ray>& rayArrayRef = renderData->host_rays[pass & 0x1];
-		std::vector<int>& pixelIndexArrayRef = renderData->host_pixelIndex[(pass + 1) & 0x1];
+		std::vector<RadeonRays::ray>& rayArrayRef = renderData.host_rays[pass & 0x1];
+		std::vector<int>& pixelIndexArrayRef = renderData.host_pixelIndex[(pass + 1) & 0x1];
 
-		for (size_t i = 0; i < renderData->host_hitcount; ++i) {  // Need to check the size
+		for (size_t i = 0; i < renderData.host_hitcount; ++i) {  // Need to check the size
 
 			int pixelIndex = pixelIndexArrayRef[i];
 
 			// Path ?
-			Path& path = renderData->host_path[pixelIndex];
+			Path& path = renderData.host_path[pixelIndex];
 
 			if (!path.isAlive()) {
 				continue;
@@ -610,9 +582,9 @@ namespace SP {
 	}
 
 
-	void PtRenderer::shadeMiss(int pass) {
+	void PtRenderer::shadeMiss(unsigned pass) {
 
-		const std::vector<int>& pixelIndexArrayRef = renderData->host_pixelIndex[(pass + 1) & 0x1];
+		const std::vector<int>& pixelIndexArrayRef = renderData.host_pixelIndex[(pass + 1) & 0x1];
 
 		const size_t maxSize = renderOutPtr->getWidth() * renderOutPtr->getHeight();		// check the size !!
 		for (size_t i = 0; i < maxSize; ++i) {
@@ -623,9 +595,9 @@ namespace SP {
 			// this part is not complete yet
 			// texture is not support yet
 			/*  Test Area */
-			if (renderData->host_intersections[i].shapeid < 0) {
+			if (renderData.host_intersections[i].shapeid < 0) {
 
-				int volumeIndex = renderData->host_path[pixelIndex].getVolumeIdx();
+				int volumeIndex = renderData.host_path[pixelIndex].getVolumeIdx();
 
 				std::vector<RadeonRays::float3>& outRef = renderOutPtr->getInternalStorage();
 
@@ -652,19 +624,19 @@ namespace SP {
 
 	}
 
-	void PtRenderer::gatherLightSamples(int pass) {
+	void PtRenderer::gatherLightSamples(unsigned pass) {
 
 
-		const std::vector<int>& pixelIndexArrayRef = renderData->host_pixelIndex[(pass) & 0x1];
-		const auto& lightSamplesArrayRef = renderData->host_lightSamples;
+		const std::vector<int>& pixelIndexArrayRef = renderData.host_pixelIndex[(pass) & 0x1];
+		const auto& lightSamplesArrayRef = renderData.host_lightSamples;
 		std::vector<RadeonRays::float3>& outRef = renderOutPtr->getInternalStorage();
 
-		for (size_t i = 0; i < renderData->host_hitcount; ++i) {		// check upper bound !
+		for (size_t i = 0; i < renderData.host_hitcount; ++i) {		// check upper bound !
 			int pixelIndex = pixelIndexArrayRef[i];
 
 			RadeonRays::float3 radiance = RadeonRays::float3(0.f, 0.f, 0.f);
 
-			if (renderData->host_shadowhits[i] == -1) {
+			if (renderData.host_shadowhits[i] == -1) {
 				// test
 				//std::cerr << "shadow: " << i << '\n';
 
@@ -682,26 +654,26 @@ namespace SP {
 
 
 
-	void PtRenderer::restorePixelIndices(int pass) {
+	void PtRenderer::restorePixelIndices(unsigned pass) {
 
-		const std::vector<int>& previousPixelIndexArrayRef = renderData->host_pixelIndex[(pass + 1) & 0x1];
-		std::vector<int>& newPixelIndexArrayRef = renderData->host_pixelIndex[(pass) & 0x1];
+		const std::vector<int>& previousPixelIndexArrayRef = renderData.host_pixelIndex[(pass + 1) & 0x1];
+		std::vector<int>& newPixelIndexArrayRef = renderData.host_pixelIndex[(pass) & 0x1];
 
-		for (size_t i = 0; i < renderData->host_hitcount; ++i) {		// check upper bound ?
-			newPixelIndexArrayRef[i] = previousPixelIndexArrayRef[renderData->host_compactedIndex[i]];
+		for (size_t i = 0; i < renderData.host_hitcount; ++i) {		// check upper bound ?
+			newPixelIndexArrayRef[i] = previousPixelIndexArrayRef[renderData.host_compactedIndex[i]];
 		}
 
 	}
 
 
-	void PtRenderer::filterPathStream(int pass) {
+	void PtRenderer::filterPathStream(unsigned pass) {
 
-		const std::vector<int>& pixelIndexArrayRef = renderData->host_pixelIndex[(pass + 1) & 0x1];
+		const std::vector<int>& pixelIndexArrayRef = renderData.host_pixelIndex[(pass + 1) & 0x1];
 
-		for (size_t i = 0; i < renderData->host_hitcount; ++i) {		// check the upper limit
+		for (size_t i = 0; i < renderData.host_hitcount; ++i) {		// check the upper limit
 
 			int pixelIndex = pixelIndexArrayRef[i];
-			Path& path = renderData->host_path[pixelIndex];
+			Path& path = renderData.host_path[pixelIndex];
 
 			if (path.isAlive()) {
 
@@ -711,15 +683,15 @@ namespace SP {
 
 				if (!kill) {
 
-					renderData->host_hits[i] = (renderData->host_intersections[i].shapeid >= 0) ? 1 : 0;
+					renderData.host_hits[i] = (renderData.host_intersections[i].shapeid >= 0) ? 1 : 0;
 
 				} else {
 					path.kill();
-					renderData->host_hits[i] = 0;
+					renderData.host_hits[i] = 0;
 				}
 
 			} else {
-				renderData->host_hits[i] = 0;
+				renderData.host_hits[i] = 0;
 			}
 
 		}
@@ -728,7 +700,7 @@ namespace SP {
 
 	void PtRenderer::compactIndex() {
 
-		const size_t  maxSize = renderData->host_hits.size();
+		const size_t  maxSize = renderData.host_hits.size();
 
 		//Exclusive scan add 
 		// ...
@@ -738,15 +710,15 @@ namespace SP {
 
 		for (size_t i = 0; i < maxSize; ++i) {  // KAOCC: check the upper limit
 
-			if (renderData->host_hits[i]) {
+			if (renderData.host_hits[i]) {
 
-				renderData->host_compactedIndex[address[i]] = renderData->host_iota[i];
+				renderData.host_compactedIndex[address[i]] = renderData.host_iota[i];
 			}
 
 		}
 
 
-		renderData->host_hitcount = address[maxSize - 1] + renderData->host_hits[maxSize - 1];
+		renderData.host_hitcount = address[maxSize - 1] + renderData.host_hits[maxSize - 1];
 	}
 
 	// simple sequential version
@@ -759,7 +731,7 @@ namespace SP {
 
 		addr[0] = 0;
 		for (size_t i = 1; i < maxSize; ++i) {
-			addr[i] = renderData->host_hits[i - 1] + addr[i - 1];
+			addr[i] = renderData.host_hits[i - 1] + addr[i - 1];
 		}
 
 	}

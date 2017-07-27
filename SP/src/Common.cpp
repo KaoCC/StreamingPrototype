@@ -111,12 +111,12 @@ namespace SP {
 		return radiance;
 	}
 
-	void ImageConfig::setRadiancePtr(SP::RenderOutput * renderOut) {
+	void ImageConfig::setRadiancePtr(std::shared_ptr<SP::RenderOutput> renderOut) {
 		radiancePtr = renderOut;
 	}
 
 	void ImageConfig::setRefreshState(bool flag) {
-		std::unique_lock<boost::shared_mutex> flagLock(*flagMutexPtr);
+		std::unique_lock<boost::shared_mutex> flagLock{ *flagMutexPtr };
 		refreshFlag = flag;
 	}
 
@@ -124,7 +124,7 @@ namespace SP {
 		bool tmpState = false;
 
 		{
-			boost::shared_lock<boost::shared_mutex> flagLock(*flagMutexPtr);
+			boost::shared_lock<boost::shared_mutex> flagLock{ *flagMutexPtr };
 			tmpState = refreshFlag;
 		}
 
@@ -147,7 +147,7 @@ namespace SP {
 		}
 
 		// tmp
-		fprintf(file, "P6\n%i %i\n255\n", getWidth(), getHeight());
+		std::fprintf(file, "P6\n%i %i\n255\n", getWidth(), getHeight());
 
 		for (size_t i = 0; i < imageData.size(); ++i) {
 			fputc(imageData[i], file);
@@ -172,7 +172,7 @@ namespace SP {
 		const std::uint32_t yres = getHeight();
 		const int channels = 3; // RGB
 
-		ImageOutput* imgOut = ImageOutput::create(fileName);
+		ImageOutput* imgOut{ ImageOutput::create(fileName) };
 
 		if (!imgOut) {
 			throw std::runtime_error("Failed to create image: " + fileName);

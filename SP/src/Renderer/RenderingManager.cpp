@@ -39,7 +39,9 @@ namespace SP {
 			RadeonRays::IntersectionApi::GetDeviceInfo(idx, devinfo);
 
 			// KAOCC: device platform is bugged?
-			std::printf("DeviceInfo: [%s] [%s] [%i] [%x]\n", devinfo.name, devinfo.vendor, devinfo.type, devinfo.platform);
+			//std::printf("DeviceInfo: [%s] [%s] [%i] [%x]\n", devinfo.name, devinfo.vendor, devinfo.type, devinfo.platform);
+			
+			std::cerr << "Device Info:" << " [" <<devinfo.name << "][" <<devinfo.vendor << "][" <<devinfo.type << "][" <<devinfo.platform << "]" <<std::endl;
 
 			if (devinfo.type == RadeonRays::DeviceInfo::kCpu && cpuIdx == -1) {
 				cpuIdx = idx;
@@ -79,7 +81,7 @@ namespace SP {
 
 		//std::cerr << "Selected Device ID: " << nativeIdx << std::endl;
 
-		ScreenConfig screenCfg(mConfigRef.getScreenWidth(), mConfigRef.getScreenHeight());
+		ScreenConfig screenCfg{ mConfigRef.getScreenWidth(), mConfigRef.getScreenHeight() };
 
 		mEnginePtr = std::make_unique<ApiEngine>(screenCfg, apiIndex);
 
@@ -88,7 +90,7 @@ namespace SP {
 		// allocate renderer
 		renderFarm.resize(cfgRef.getNumberOfCameras());
 		for (size_t i = 0; i < renderFarm.size(); ++i) {
-			renderFarm[i] = std::make_unique<PtRenderer>(5, mEnginePtr);		// num_of_bounce
+			renderFarm[i] = std::make_unique<PtRenderer>(kNumberOfBounce, *mEnginePtr);		// num_of_bounce
 			//renderFarm[i] = std::make_unique<SimpleRenderer>(mEnginePtr);
 		}
 
@@ -100,13 +102,14 @@ namespace SP {
 	RenderingManager::~RenderingManager() {
 
 
+		// KAOCC: this is wrong ! check pop wait 
 		std::for_each(renderThreads.begin(), renderThreads.end(), std::mem_fun_ref(&std::thread::join));
 
 
 		// delete output
-		for (size_t i = 0; i < renderFarm.size(); ++i) {
-			renderFarm[i]->deleteOutput(renderOutputData[i]);
-		}
+		//for (size_t i = 0; i < renderFarm.size(); ++i) {
+		//	renderFarm[i]->deleteOutput(renderOutputData[i]);
+		//}
 	}
 
 	void RenderingManager::startRenderThread() {
@@ -116,7 +119,7 @@ namespace SP {
 
 
 		{
-			std::lock_guard<std::mutex> queueLock(mQueueMutex);
+			std::lock_guard<std::mutex> queueLock{ mQueueMutex };
 
 			for (size_t i = 0; i < mConfigRef.getNumberOfSubLFs(); ++i) {
 				for (size_t j = 0; j < mConfigRef.getNumberOfSubLFImages(); ++j) {
@@ -150,7 +153,7 @@ namespace SP {
 		std::cerr << "Enter Pause" << std::endl;
 
 		{
-			std::unique_lock<std::mutex> queueLock(mQueueMutex);
+			std::unique_lock<std::mutex> queueLock{ mQueueMutex };
 			mPauseFlag = true;
 
 			mCounterCV.wait(queueLock, [this] { return mWaitingCounter == mThreadCount; });
@@ -163,7 +166,7 @@ namespace SP {
 	void RenderingManager::resume() {
 
 		{
-			std::lock_guard<std::mutex> lock(mQueueMutex);
+			std::lock_guard<std::mutex> lock{ mQueueMutex };
 			mPauseFlag = false;
 		}
 
@@ -187,7 +190,7 @@ namespace SP {
 		std::cerr << "Resetting ... " << std::endl;
 
 		for (size_t i = 0; i < renderFarm.size(); ++i) {
-			renderFarm[i] = std::make_unique<SimpleRenderer>(mEnginePtr);
+			renderFarm[i] = std::make_unique<SimpleRenderer>(*mEnginePtr);
 		}
 
 		for (size_t i = 0; i < renderFarm.size(); ++i) {
@@ -201,6 +204,34 @@ namespace SP {
 		// resume all
 		mEnginePtr->resume();
 		resume();
+	}
+
+	void RenderingManager::recompileScene() {
+
+		pause();
+
+		mEnginePtr->pause();
+		mEnginePtr->clear();
+
+		std::cerr << "recompile Pause ... " << std::endl;
+
+
+		// clear output?		
+		//for (size_t i = 0; i < renderFarm.size(); ++i) {
+		//	renderFarm[i]->clear(0, *renderOutputData[i]);
+		//}
+		
+
+		// add new shapes
+		// API commit 
+		// rebuild BVH
+		mEnginePtr->changeShape_test();
+
+		std::cerr << "recompile Resume ..." << std::endl;
+
+		mEnginePtr->resume();
+		resume();
+
 	}
 
 
@@ -276,7 +307,7 @@ namespace SP {
 
 				//fieldRef.setSubLightFieldRadianceWithIndex(i, j, dynamic_cast<RenderOutput*>(renderOutputData[mConfigRef.getNumberOfSubLFImages() * i + j]));
 
-				fieldRef[i][j].setRadiancePtr(dynamic_cast<RenderOutput*>(renderOutputData[mConfigRef.getNumberOfSubLFImages() * i + j]));
+				fieldRef[i][j].setRadiancePtr(std::dynamic_pointer_cast<RenderOutput>(renderOutputData[mConfigRef.getNumberOfSubLFImages() * i + j]));
 
 
 
@@ -301,9 +332,9 @@ namespace SP {
 
 		// load Radiance Map to RenderOut
 
-		int outputId = mConfigRef.getNumberOfSubLFImages() * subLFIdx + subImgIdx;
+		unsigned outputId = mConfigRef.getNumberOfSubLFImages() * subLFIdx + subImgIdx;
 
-		RenderOutput* renderOut = dynamic_cast<RenderOutput*>(renderOutputData[outputId]);
+		std::shared_ptr<RenderOutput> renderOut = std::dynamic_pointer_cast<RenderOutput>(renderOutputData[outputId]);
 
 		if (renderOut == nullptr) {
 			throw std::runtime_error("RenderOutput is null");
@@ -327,13 +358,13 @@ namespace SP {
 		}
 
 
-		const ImageSpec imgSpec = input->spec();
+		const ImageSpec imgSpec{ input->spec() };
 		int xRes = imgSpec.width;
 		int yRes = imgSpec.height;
 
 		int channels = imgSpec.nchannels;	// check
 
-		const ParamValue* par = imgSpec.find_attribute("gammarank", TypeDesc::FLOAT);
+		const ParamValue* par{ imgSpec.find_attribute("gammarank", TypeDesc::FLOAT) };
 
 		float wVal = 10.0f;		// tmp value
 		if (par) {
@@ -351,7 +382,7 @@ namespace SP {
 
 
 		// create a tmp buffer 
-		float* tmpBuff = new float[tmpSize];
+		float* tmpBuff{ new float[tmpSize] };
 
 		// copy to outputData
 		input->read_image(TypeDesc::FLOAT, tmpBuff);
@@ -380,7 +411,7 @@ namespace SP {
 
 
 			{
-				std::unique_lock<std::mutex> queueLock(mQueueMutex);
+				std::unique_lock<std::mutex> queueLock{ mQueueMutex };
 
 				if (mTaskQueue.empty() || mPauseFlag) {
 
@@ -439,7 +470,7 @@ namespace SP {
 
 			// push back the task
 			{
-				std::lock_guard<std::mutex> queueLock(mQueueMutex);
+				std::lock_guard<std::mutex> queueLock{ mQueueMutex };
 				mTaskQueue.push(std::move(taskIndex));
 			}
 			mQueueCV.notify_one();
