@@ -206,6 +206,34 @@ namespace SP {
 		resume();
 	}
 
+	void RenderingManager::recompileScene() {
+
+		pause();
+
+		mEnginePtr->pause();
+		mEnginePtr->clear();
+
+		std::cerr << "recompile Pause ... " << std::endl;
+
+
+		// clear output?		
+		//for (size_t i = 0; i < renderFarm.size(); ++i) {
+		//	renderFarm[i]->clear(0, *renderOutputData[i]);
+		//}
+		
+
+		// add new shapes
+		// API commit 
+		// rebuild BVH
+		mEnginePtr->changeShape_test();
+
+		std::cerr << "recompile Resume ..." << std::endl;
+
+		mEnginePtr->resume();
+		resume();
+
+	}
+
 
 	void RenderingManager::initData(bool loadRadianceFlag) {
 

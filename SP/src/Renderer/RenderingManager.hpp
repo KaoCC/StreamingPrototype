@@ -48,6 +48,9 @@ namespace SP {
 		// reset the data
 		void reset();
 
+		// KAOCC: tmp testing
+		void recompileScene();
+
 	private:
 
 
