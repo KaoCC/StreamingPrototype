@@ -166,6 +166,13 @@ namespace SP {
 		return mBackends[0].tracker.getCurrentScenePtr();
 	}
 
+	// test
+	void ApiEngine::changeShape_test() {
+		for (auto& backend : mBackends) {
+			backend.tracker.changeShapesInScene_test();
+		}
+	}
+
 
 
 	// for worker thread

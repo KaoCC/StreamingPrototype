@@ -46,6 +46,9 @@ namespace SP {
 		//workaround !
 		const Scene* getCurrentScenePtr() const;
 
+		// test
+		void changeShape_test();
+
 	private:
 
 		struct IntersectData {
