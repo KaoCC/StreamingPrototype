@@ -181,14 +181,14 @@ namespace SP {
 		renderManagerPtr = renManPtr;
 	}
 
-	void ConfigManager::resetRenderer() {
+
+	void ConfigManager::enterState(State state) {
 
 		if (renderManagerPtr == nullptr) {
 			throw std::runtime_error("renderer not set (null pointer) !");
 		}
 
-		renderManagerPtr->reset();
-
+		renderManagerPtr->reset(state);
 	}
 
 	void ConfigManager::recompileScene() {

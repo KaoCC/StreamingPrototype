@@ -46,7 +46,8 @@ namespace SP {
 		void resume();
 
 		// reset the data
-		void reset();
+		void reset(ConfigManager::State state);
+
 
 		// KAOCC: tmp testing
 		void recompileScene();

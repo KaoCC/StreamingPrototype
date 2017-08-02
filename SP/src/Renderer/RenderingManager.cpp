@@ -40,8 +40,8 @@ namespace SP {
 
 			// KAOCC: device platform is bugged?
 			//std::printf("DeviceInfo: [%s] [%s] [%i] [%x]\n", devinfo.name, devinfo.vendor, devinfo.type, devinfo.platform);
-			
-			std::cerr << "Device Info:" << " [" <<devinfo.name << "][" <<devinfo.vendor << "][" <<devinfo.type << "][" <<devinfo.platform << "]" <<std::endl;
+
+			std::cerr << "Device Info:" << " [" << devinfo.name << "][" << devinfo.vendor << "][" << devinfo.type << "][" << devinfo.platform << "]" << std::endl;
 
 			if (devinfo.type == RadeonRays::DeviceInfo::kCpu && cpuIdx == -1) {
 				cpuIdx = idx;
@@ -173,8 +173,7 @@ namespace SP {
 		mQueueCV.notify_all();
 	}
 
-
-	void RenderingManager::reset() {
+	void RenderingManager::reset(ConfigManager::State state) {
 
 		// pause first
 		pause();
@@ -188,10 +187,23 @@ namespace SP {
 		// reset Scene ?
 
 		std::cerr << "Resetting ... " << std::endl;
+		
+		if (state == ConfigManager::State::kSimple) {
 
-		for (size_t i = 0; i < renderFarm.size(); ++i) {
-			renderFarm[i] = std::make_unique<SimpleRenderer>(*mEnginePtr);
+			for (size_t i = 0; i < renderFarm.size(); ++i) {
+				renderFarm[i] = std::make_unique<SimpleRenderer>(*mEnginePtr);
+			}
+
+		} else if (state == ConfigManager::State::kPathTracing) {
+			for (size_t i = 0; i < renderFarm.size(); ++i) {
+				renderFarm[i] = std::make_unique<PtRenderer>(kNumberOfBounce, *mEnginePtr);
+			}
+
+		} else {
+			throw std::runtime_error("Unsupported state");
 		}
+
+
 
 		for (size_t i = 0; i < renderFarm.size(); ++i) {
 			//renderOutputData[i] = renderFarm[i]->createOutput(mConfigRef.getScreenWidth(), mConfigRef.getScreenHeight());
@@ -220,7 +232,7 @@ namespace SP {
 		//for (size_t i = 0; i < renderFarm.size(); ++i) {
 		//	renderFarm[i]->clear(0, *renderOutputData[i]);
 		//}
-		
+
 
 		// add new shapes
 		// API commit 
@@ -479,6 +491,7 @@ namespace SP {
 
 
 	}
+
 
 
 }

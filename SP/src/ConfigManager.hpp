@@ -86,7 +86,14 @@ namespace SP {
 		// workaround
 		void setRenderManagerPtr(RenderingManager* renManPtr);
 
-		void resetRenderer();
+		// reset states
+		enum class State {
+			kSimple,
+			kPathTracing
+		};
+
+		void enterState(State state);
+
 
 		void recompileScene();
 
