@@ -1,0 +1,28 @@
+cmake_minimum_required(VERSION 2.6)
+
+set(CMAKE_BUILD_TYPE debug)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+
+
+set(CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR}/install)
+
+
+set(SP_DIR ${CMAKE_SOURCE_DIR}/SP)
+
+project(StreamingPrototype)
+
+
+message("CMAKE_BUILD_TYPE= ${CMAKE_BUILD_TYPE}")
+message("CMAKE_SOURCE_DIR= ${CMAKE_SOURCE_DIR}")
+message("CMAKE_BINARY_DIR= ${CMAKE_BINARY_DIR}")
+message("CMAKE_INSTALL_PREFIX= ${CMAKE_INSTALL_PREFIX}")
+
+
+
+add_subdirectory(SP)
+# add_subdirectory(Protocol)
+
