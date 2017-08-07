@@ -1,5 +1,6 @@
 
 
+message("CMAKE_SYSTEM_PREFIX_PATH= ${CMAKE_SYSTEM_PREFIX_PATH}")
 
 # find_package(OpenCL REQUIRED)
 find_package (Threads REQUIRED)
@@ -9,12 +10,11 @@ find_package(Protobuf REQUIRED)
 find_package(Boost REQUIRED)
 
 
-
-# x264 ?
-#find_package(x264 REQUIRED)
+# x264
+find_package(x264 REQUIRED)
 
 # OpenImageIO ?
-#find_package(OpenImageIO REQUIRED)
+find_package(OpenImageIO REQUIRED)
 
 include_directories(${SP_DIR}/include)
 include_directories(${SP_DIR}/src)

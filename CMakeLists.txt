@@ -22,6 +22,9 @@ message("CMAKE_BINARY_DIR= ${CMAKE_BINARY_DIR}")
 message("CMAKE_INSTALL_PREFIX= ${CMAKE_INSTALL_PREFIX}")
 
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+message("CMAKE_MODULE_PATH= ${CMAKE_MODULE_PATH}")
+
 
 add_subdirectory(SP)
 # add_subdirectory(Protocol)
