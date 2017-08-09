@@ -146,7 +146,7 @@ workspace "StreamingPrototype"
         -- tmp
         flags { "StaticRuntime" }
 
-        includedirs {"SP/include", "Protocol/"}
+        includedirs {"SP/include", "Protocol/", "SP/src"}
         files {"SP/**.cpp", "SP/**.hpp", "SP/**.cc", "SP/**.h", "Protocol/**.cc", "Protocol/**.h", "HeterogeneousQueue/HQ/src/ThreadSafeQueue.hpp"}
 
 
@@ -157,6 +157,6 @@ workspace "StreamingPrototype"
         -- tmp
         flags { "StaticRuntime" }
 
-        includedirs {"Test/include", "SP/include", "Protocol/"}
+        includedirs {"Test/include", "SP/include", "Protocol/", "SP/src"}
         files {"Test/**.cpp", "Protocol/**.cc", "Protocol/**.h", "SP/include/Packet.hpp", "SP/src/Packet.cpp"}
 
