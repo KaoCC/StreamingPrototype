@@ -22,6 +22,11 @@ if (WIN32)
     link_directories(${Boost_LIBRARY_DIRS})
 endif()
 
+message("PROTOC: ${Protobuf_PROTOC_EXECUTABLE}")
+protobuf_generate_cpp(PROTO_SRCS PROTO_HEADER ${Protocol_DIR}/message.proto)
+set_source_files_properties(${PROTO_SRCS} ${PROTO_HEADER} PROPERTIES GENERATED TRUE)
+message("PROTO Files: ${PROTO_SRCS}, ${PROTO_HEADER}")
+
 add_executable(
     Radiance
     ./src/Common.cpp
@@ -36,7 +41,8 @@ add_executable(
 
     ./src/Encoder/EncoderImpl.cpp
 
-    ${Protocol_DIR}/message.pb.cc
+    ${PROTO_SRCS}
+    ${PROTO_HEADER}
 
     ./src/Renderer/ApiEngine.cpp
     ./src/Renderer/BxDFHelper.cpp

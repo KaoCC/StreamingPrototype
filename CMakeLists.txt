@@ -36,6 +36,8 @@ list(APPEND CMAKE_PREFIX_PATH ${3RDPARTY_DIR}/RadeonRays)
 # find_package(Protobuf REQUIRED HINTS ${CMAKE_SOURCE_DIR}/3rdparty/protobuf/cmake)
 find_package(Protobuf REQUIRED)
 
+
+
 # boost
 if (WIN32)
     set (Boost_DEBUG ON)
