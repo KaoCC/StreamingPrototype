@@ -3,7 +3,7 @@
 
 namespace SP {
 
-	Packet::Packet(MessagePointer msgPtr) : messagePtr(msgPtr) {
+	Packet::Packet(MessagePointer msgPtr) : messagePtr{ msgPtr } {
 	}
 
 	void Packet::setMessagePtr(MessagePointer msgPtr) {

@@ -88,6 +88,8 @@ namespace SP {
 
 		void resetRenderer();
 
+		void recompileScene();
+
 	private:
 
 		uint32_t moduleID = 0;
@@ -118,8 +120,8 @@ namespace SP {
 		static const std::size_t kHeight = 256;
 
 		// LFs
-		static const std::size_t kNumOfLFs = 16;
-		static const std::size_t kNumOfSubLFImgs = 4;
+		static const std::size_t kNumOfLFs = 8;
+		static const std::size_t kNumOfSubLFImgs = 8;
 
 
 		// A set: one camera, one render, one output, one thread

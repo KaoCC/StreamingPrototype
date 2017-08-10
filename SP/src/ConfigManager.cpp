@@ -6,8 +6,8 @@
 
 namespace SP {
 
-	const RadeonRays::float3 ConfigManager::kCameraPos{ 0.f, 1.2f, 2.f };
-	const RadeonRays::float3 ConfigManager::kCameraAt{ 0.f, 1.2f, -1.f };
+	const RadeonRays::float3 ConfigManager::kCameraPos{ -2.f, 1.8f, 0.f };
+	const RadeonRays::float3 ConfigManager::kCameraAt{ 2.f, 1.8f, 0.f };
 	const RadeonRays::float3 ConfigManager::kCameraUp{ 0.f, 1.1f, 0.f };
 
 	ConfigManager::ConfigManager() : mImageLightField(kNumOfLFs, kNumOfSubLFImgs), mCamera(kCameraPos, kCameraAt, kCameraUp) {
@@ -188,6 +188,14 @@ namespace SP {
 		}
 
 		renderManagerPtr->reset();
+
+	}
+
+	void ConfigManager::recompileScene() {
+
+		std::cerr << "recompile Scene test" << std::endl;
+		renderManagerPtr->recompileScene();
+
 
 	}
 

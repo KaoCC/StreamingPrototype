@@ -16,7 +16,7 @@
 #include "Common.hpp"
 #include "PtRenderer.hpp"
 
-#include "../Encoder/Encoder.hpp"
+//#include "../Encoder/Encoder.hpp"
 
 #include "Output.hpp"
 
@@ -48,11 +48,14 @@ namespace SP {
 		// reset the data
 		void reset();
 
+		// KAOCC: tmp testing
+		void recompileScene();
+
 	private:
 
 
 		// for testing
-		void testOutput(int id);
+		//void testOutput(int id);
 
 		// helper function
 		void initData(bool loadRadianceFlag);
@@ -85,20 +88,20 @@ namespace SP {
 
 		RadeonRays::float2 g_camera_sensor_size = RadeonRays::float2(0.036f, 0.024f);  // default full frame sensor 36x24 mm
 		RadeonRays::float2 g_camera_zcap = RadeonRays::float2(0.0f, 100000.f);
-		float g_camera_focal_length = 0.035f; // 35mm lens
+		float g_camera_focal_length = 0.020f; // 35mm lens
 		float g_camera_focus_distance = 1.f;
 		float g_camera_aperture = 0.f;
 
 
-		const int kNumberOfBounce = 5;
+		const unsigned kNumberOfBounce = 5;
 
 
 		// tmp
-		const std::string defaultPath = "../Resources/Conf";
+		const std::string defaultPath = "Resources/Conf";
 		const std::string defaultModelName = "conf_room_2.objm";
 
 		//tmp
-		const float kStep = 0.025f * 2;
+		const float kStep = 0.025f * 4;
 
 		// thread safe queue
 		const int kPauseTime = 100;
@@ -118,14 +121,12 @@ namespace SP {
 		std::vector<std::unique_ptr<Renderer>> renderFarm;
 
 
-
-
 		//std::unique_ptr<HQ::EventSys> mPauseEventPtr;
 
 		//Encoder* encoder;
 		//ImageConfig::ImageBuffer accImageBuffer; // test
 
-		std::vector<Output*> renderOutputData;
+		std::vector<std::shared_ptr<Output>> renderOutputData;
 
 		std::unique_ptr<ApiEngine> mEnginePtr;
 
@@ -137,7 +138,7 @@ namespace SP {
 		std::mutex mQueueMutex;
 		std::condition_variable mQueueCV;
 		std::queue<std::pair<int, int>> mTaskQueue;
-		
+
 		unsigned mThreadCount = 0;
 		unsigned mWaitingCounter = 0;
 

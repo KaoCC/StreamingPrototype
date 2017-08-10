@@ -348,11 +348,22 @@ namespace SP {
 				const auto&  editingMsg = msgPtr->controlmsg().editingmsg();
 				// op is enum
 				// StreamingFormat::EditOperation.START(0)/FINISH(1)/UPDATE(2)
-				std::cerr << "Op:" << editingMsg.op() << ", screen X: " << editingMsg.screen_x() << ", screen Y: " << editingMsg.screen_y() << std::endl;
 
 				// reset test
+				switch (editingMsg.op()) {
+				case StreamingFormat::EditOperation::START:
+					std::cerr << "Editing START:" << std::endl;
+					mCfgManagerRef.resetRenderer();
+					break;
+				case StreamingFormat::EditOperation::FINISH:
+					std::cerr << "Editing FINISH:" << std::endl;
+					break;
+				case StreamingFormat::EditOperation::UPDATE:
+					std::cerr << "Editing UPDATE:" << editingMsg.op() << ", screen X: " << editingMsg.screen_x() << ", screen Y: " << editingMsg.screen_y() << std::endl;
+					mCfgManagerRef.recompileScene();
+					break;
+				}
 
-				mCfgManagerRef.resetRenderer();
 
 			}
 

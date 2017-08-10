@@ -10,7 +10,9 @@
 
 #include "radeon_rays.h"
 
+#include "Path.hpp"
 #include "ApiEngine.hpp"
+
 
 namespace SP {
 
@@ -20,15 +22,13 @@ namespace SP {
 
 
 	public:
-
-		PtRenderer(int num_bounces, std::unique_ptr<ApiEngine>& engine);
-
+		PtRenderer(unsigned num_bounces, ApiEngine& engine);
 
 
 		// Inherited via Renderer
-		virtual Output * createOutput(std::uint32_t w, std::uint32_t h) const override;
+		virtual std::shared_ptr<Output> createOutput(std::uint32_t w, std::uint32_t h) const override;
 
-		virtual void deleteOutput(Output * output) const override;
+		//virtual void deleteOutput(Output * output) const override;
 
 		virtual void clear(RadeonRays::float3 const & val, Output & output) const override;
 
@@ -36,11 +36,34 @@ namespace SP {
 
 		virtual void render(Scene const & scene, size_t configIdx) override;
 
-		virtual void setOutput(Output * output) override;
+		virtual void setOutput(std::shared_ptr<Output> output) override;
 
 
 
-		struct RenderData;
+		struct RenderData {
+			// host buffers
+			std::vector<RadeonRays::ray> host_rays[2];
+			std::vector<int> host_hits;
+
+			std::vector<int> host_pixelIndex[2];
+			std::vector<int> host_compactedIndex;
+			std::vector<int> host_iota;
+
+			std::vector<RadeonRays::ray> host_shadowrays;
+			std::vector<int> host_shadowhits;
+
+			std::vector<RadeonRays::Intersection> host_intersections;
+			int host_hitcount;
+
+
+			std::vector<Path> host_path;
+
+			std::vector<RadeonRays::float3> host_lightSamples;
+
+
+		};
+
+
 		struct PathState;
 
 
@@ -56,21 +79,21 @@ namespace SP {
 
 
 		// Shade first hit
-		void shadeSurface(int pass);
+		void shadeSurface(unsigned pass);
 		// Evaluate volume
-		void evaluateVolume(int pass);
+		void evaluateVolume(unsigned pass);
 		// Handle missing rays
-		void shadeMiss(int pass);
+		void shadeMiss(unsigned pass);
 		// Gather light samples and account for visibility
-		void gatherLightSamples(int pass);
+		void gatherLightSamples(unsigned pass);
 		// Restore pixel indices after compaction
-		void restorePixelIndices(int pass);
+		void restorePixelIndices(unsigned pass);
 		// Convert intersection info to compaction predicate
-		void filterPathStream(int pass);
+		void filterPathStream(unsigned pass);
 		// Integrate volume
-		void shadeVolume(int pass);
+		void shadeVolume(unsigned pass);
 		// Shade background
-		void shadeBackground(int pass);
+		void shadeBackground(unsigned pass);
 
 
 		// Helper
@@ -81,20 +104,21 @@ namespace SP {
 	private:
 
 		// Output 
-		// KAOCC: use shared pointer ???
-		RenderOutput* renderOutPtr  = nullptr;
+		std::shared_ptr<RenderOutput> renderOutPtr;
 
 
 		//SceneTracker sceneTracker;
 
-		std::unique_ptr<RenderData> renderData;
+		RenderData renderData;
 
 		//std::vector<RadeonRays::Shape*> shapes;
 
 		// KAOCC: add ref to ApiEngine
-		std::unique_ptr<ApiEngine>& mEngineRef;
+		//std::unique_ptr<ApiEngine>& mEngineRef;
 
-		std::uint32_t numOfBounces;
+		ApiEngine& mEngineRef;
+
+		unsigned numOfBounces;
 		std::uint32_t mFrameCount = 0;
 	};
 
