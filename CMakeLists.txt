@@ -23,7 +23,9 @@ project(StreamingPrototype)
 # find_package(OpenCL REQUIRED)
 
 find_package(Threads REQUIRED)
-find_package(Protobuf REQUIRED)
+
+# Google Protobuf
+find_package(Protobuf REQUIRED HINTS ${CMAKE_SOURCE_DIR}/3rdparty/protobuf/cmake)
 
 
 # boost
