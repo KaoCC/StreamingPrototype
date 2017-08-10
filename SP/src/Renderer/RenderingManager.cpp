@@ -89,8 +89,8 @@ namespace SP {
 		// change this
 		// allocate renderer
 		renderFarm.resize(cfgRef.getNumberOfCameras());
-		for (size_t i = 0; i < renderFarm.size(); ++i) {
-			renderFarm[i] = std::make_unique<PtRenderer>(kNumberOfBounce, *mEnginePtr);		// num_of_bounce
+		for (auto &renderItem : renderFarm) {
+			renderItem = std::make_unique<PtRenderer>(kNumberOfBounce, *mEnginePtr);		// num_of_bounce
 			//renderFarm[i] = std::make_unique<SimpleRenderer>(mEnginePtr);
 		}
 
@@ -190,13 +190,13 @@ namespace SP {
 		
 		if (state == ConfigManager::State::kSimple) {
 
-			for (size_t i = 0; i < renderFarm.size(); ++i) {
-				renderFarm[i] = std::make_unique<SimpleRenderer>(*mEnginePtr);
+			for (auto &renderItem : renderFarm) {
+				renderItem = std::make_unique<SimpleRenderer>(*mEnginePtr);
 			}
 
 		} else if (state == ConfigManager::State::kPathTracing) {
-			for (size_t i = 0; i < renderFarm.size(); ++i) {
-				renderFarm[i] = std::make_unique<PtRenderer>(kNumberOfBounce, *mEnginePtr);
+			for (auto &renderItem : renderFarm) {
+				renderItem = std::make_unique<PtRenderer>(kNumberOfBounce, *mEnginePtr);
 			}
 
 		} else {
@@ -283,9 +283,9 @@ namespace SP {
 		}
 
 
-		auto& fieldRef{ mConfigRef.getLightField() };
+		auto& fieldRef =  mConfigRef.getLightField();
 
-		const auto& camDefault{ mConfigRef.getCameraConfig() };
+		const auto& camDefault =  mConfigRef.getCameraConfig();
 
 		for (size_t i = 0; i < mConfigRef.getNumberOfSubLFs(); ++i) {
 
