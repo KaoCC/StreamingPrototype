@@ -11,8 +11,16 @@ include_directories(${Protocol_DIR}/)
 
 # include_directories(${OpenCL_INCLUDE_DIR})
 include_directories(${Boost_INCLUDE_DIRS})
+include_directories(${OPENIMAGEIO_INCLUDE_DIRS})
+include_directories(${X264_INCLUDE_DIRS})
+include_directories(${Protobuf_INCLUDE_DIRS})
 
 include_directories(${CMAKE_SOURCE_DIR}/3rdparty/RadeonRays/include)
+
+if (WIN32)
+    message("Windows Boost: ${Boost_LIBRARY_DIRS}")
+    link_directories(${Boost_LIBRARY_DIRS})
+endif()
 
 add_executable(
     Radiance
@@ -67,6 +75,8 @@ add_executable(
 # message("Protobuf_LIBRARIES= ${Protobuf_LIBRARIES} , ${Protobuf_LITE_LIBRARIES}, ${Protobuf_LIBRARY}, ${Protobuf_LIBRARY_DEBUG}")
 message("VARS : ${Protobuf_FOUND}, ${Protobuf_INCLUDE_DIR}, ${Protobuf_VERSION}, ${Boost_LIBRARIES}")
 
-target_link_libraries(Radiance ${X264_LIBRARIES} ${OPENIMAGEIO_LIBRARIES} ${Protobuf_LIBRARIES} Boost::system Boost::thread)
+
+
+target_link_libraries(Radiance ${Boost_LIBRARIES} ${RR_LIBRARIES} ${X264_LIBRARIES} ${OPENIMAGEIO_LIBRARIES} ${Protobuf_LIBRARIES})
 
 # target_link_libraries(Radiance ${OpenCL_LIBRARY} ${CMAKE_THREAD_LIBS_INIT})

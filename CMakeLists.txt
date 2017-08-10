@@ -11,7 +11,7 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 set(CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR}/install)
 
-
+set(3RDPARTY_DIR ${CMAKE_SOURCE_DIR}/3rdparty)
 set(SP_DIR ${CMAKE_SOURCE_DIR}/SP)
 set(Protocol_DIR ${CMAKE_SOURCE_DIR}/Protocol)
 
@@ -24,11 +24,25 @@ project(StreamingPrototype)
 
 find_package(Threads REQUIRED)
 
-# Google Protobuf
-find_package(Protobuf REQUIRED HINTS ${CMAKE_SOURCE_DIR}/3rdparty/protobuf/cmake)
 
+list(APPEND CMAKE_PREFIX_PATH ${3RDPARTY_DIR}/protobuf)
+list(APPEND CMAKE_PREFIX_PATH ${3RDPARTY_DIR}/x264)
+list(APPEND CMAKE_PREFIX_PATH ${3RDPARTY_DIR}/oiio)
+list(APPEND CMAKE_PREFIX_PATH ${3RDPARTY_DIR}/RadeonRays)
+
+# Google Protobuf
+# find_package(Protobuf REQUIRED HINTS ${CMAKE_SOURCE_DIR}/3rdparty/protobuf/cmake)
+find_package(Protobuf REQUIRED)
 
 # boost
+if (WIN32)
+    set (Boost_DEBUG ON)
+    set (Boost_USE_STATIC_LIBS ON)
+    set (Boost_USE_STATIC_RUNTIME ON)
+    add_definitions(${Boost_LIB_DIAGNOSTIC_DEFINITIONS})
+    message(STATUS "Boost_LIB_DIAGNOSTIC_DEFINITIONS ${Boost_LIB_DIAGNOSTIC_DEFINITIONS} ")
+endif()
+
 find_package(Boost REQUIRED COMPONENTS system thread)
 
 # x264
@@ -40,7 +54,7 @@ find_package(OpenImageIO REQUIRED)
 
 # RadeonRays
 
-
+find_library(RR_LIBRARIES NAMES RadeonRays64)
 
 message("CMAKE_BUILD_TYPE= ${CMAKE_BUILD_TYPE}")
 message("CMAKE_SOURCE_DIR= ${CMAKE_SOURCE_DIR}")
