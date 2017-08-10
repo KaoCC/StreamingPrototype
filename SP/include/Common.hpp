@@ -19,7 +19,7 @@
 #include <boost/thread/locks.hpp>
 
 // tmp
-#include "../SP/src/Renderer/RenderOutput.hpp"
+#include "Renderer/RenderOutput.hpp"
 
 namespace SP {
 

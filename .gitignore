@@ -28,8 +28,9 @@
 *.out
 *.app
 
-!Tool/premake/win/*
-!Tool/protoc/win32/bin/*
+# Vim
+*~
+
 !3rdparty/**
 
 Build/*
@@ -38,3 +39,8 @@ Generated/*
 # Editor
 *.swp
 *.swo
+
+
+# For Mac OS
+.DS_Store
+
