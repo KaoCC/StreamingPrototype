@@ -30,6 +30,51 @@ message("PROTO Files: ${PROTO_SRCS}, ${PROTO_HEADER}")
 
 add_executable(
     Radiance
+
+    ./include/Common.hpp 
+    ./include/Packet.hpp
+
+    ./src/ConfigManager.hpp
+    ./src/LightField.hpp
+    ./src/SyncBuffer.hpp
+
+    ./src/Network/Connection.hpp
+    ./src/Network/Server.hpp
+
+    ./src/Encoder/Encoder.hpp
+    ./src/Encoder/EncoderImpl.hpp
+
+    ./src/Renderer/ApiEngine.hpp
+    ./src/Renderer/BxDFHelper.hpp
+    ./src/Renderer/CorrelatedMultiJitterSampler.hpp
+    ./src/Renderer/DifferentialGeometry.hpp
+    ./src/Renderer/MathUtility.hpp
+    ./src/Renderer/Output.hpp
+    ./src/Renderer/Path.hpp
+    ./src/Renderer/PtRenderer.hpp
+    ./src/Renderer/RandomSampler.hpp
+    ./src/Renderer/Renderer.hpp
+    ./src/Renderer/RenderingManager.hpp
+    ./src/Renderer/RenderOutput.hpp
+    ./src/Renderer/Sampler.hpp
+    ./src/Renderer/SceneTracker.hpp
+    ./src/Renderer/SimpleRenderer.hpp
+
+    ./src/Renderer/Scene/IO/tiny_obj_loader.h
+
+    ./src/Renderer/Scene/Camera.hpp
+    ./src/Renderer/Scene/Iterator.hpp
+    ./src/Renderer/Scene/Light.hpp
+    ./src/Renderer/Scene/Material.hpp
+    ./src/Renderer/Scene/Scene.hpp
+    ./src/Renderer/Scene/SceneObject.hpp
+    ./src/Renderer/Scene/Shape.hpp
+    ./src/Renderer/Scene/Texture.hpp
+
+    ./src/Renderer/Scene/IO/ImageIO.hpp
+    ./src/Renderer/Scene/IO/MaterialIO.hpp
+    ./src/Renderer/Scene/IO/SceneIO.hpp
+
     ./src/Common.cpp
     ./src/SyncBuffer.cpp
     ./src/ConfigManager.cpp 
