@@ -9,7 +9,6 @@ include_directories(${SP_DIR}/src/Encoder)
 include_directories(${SP_DIR}/src/Network)
 include_directories(${Protocol_DIR}/)
 
-# include_directories(${OpenCL_INCLUDE_DIR})
 include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${OPENIMAGEIO_INCLUDE_DIRS})
 include_directories(${X264_INCLUDE_DIRS})
@@ -140,10 +139,18 @@ add_executable(
     )
 
 # message("Protobuf_LIBRARIES= ${Protobuf_LIBRARIES} , ${Protobuf_LITE_LIBRARIES}, ${Protobuf_LIBRARY}, ${Protobuf_LIBRARY_DEBUG}")
-message("VARS : ${Protobuf_FOUND}, ${Protobuf_INCLUDE_DIR}, ${Protobuf_VERSION}, ${Boost_LIBRARIES}")
+message("VARS :  ${Protobuf_INCLUDE_DIR}, ${Protobuf_VERSION}, ${Boost_LIBRARIES}")
 
 
 
 target_link_libraries(Radiance ${Boost_LIBRARIES} ${RR_LIBRARIES} ${X264_LIBRARIES} ${OPENIMAGEIO_LIBRARIES} ${Protobuf_LIBRARIES})
 
-# target_link_libraries(Radiance ${OpenCL_LIBRARY} ${CMAKE_THREAD_LIBS_INIT})
+
+add_custom_command(TARGET Radiance POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/Resources
+        $<TARGET_FILE_DIR:Radiance>/Resources)
+
+if (WIN32)
+    set(WK_DIR "$<TARGET_FILE_DIR:Radiance>")
+    set_target_properties(Radiance PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE})
+endif()
