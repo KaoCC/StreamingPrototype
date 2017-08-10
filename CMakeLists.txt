@@ -24,10 +24,12 @@ project(StreamingPrototype)
 
 find_package(Threads REQUIRED)
 
+if (WIN32)
+    list(APPEND CMAKE_PREFIX_PATH ${3RDPARTY_DIR}/protobuf)
+    list(APPEND CMAKE_PREFIX_PATH ${3RDPARTY_DIR}/x264)
+    list(APPEND CMAKE_PREFIX_PATH ${3RDPARTY_DIR}/oiio)
+endif()
 
-list(APPEND CMAKE_PREFIX_PATH ${3RDPARTY_DIR}/protobuf)
-list(APPEND CMAKE_PREFIX_PATH ${3RDPARTY_DIR}/x264)
-list(APPEND CMAKE_PREFIX_PATH ${3RDPARTY_DIR}/oiio)
 list(APPEND CMAKE_PREFIX_PATH ${3RDPARTY_DIR}/RadeonRays)
 
 # Google Protobuf
@@ -53,7 +55,6 @@ find_package(OpenImageIO REQUIRED)
 
 
 # RadeonRays
-
 find_library(RR_LIBRARIES NAMES RadeonRays64)
 
 message("CMAKE_BUILD_TYPE= ${CMAKE_BUILD_TYPE}")
