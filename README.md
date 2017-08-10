@@ -1,5 +1,5 @@
 # StreamingPrototype
-Streaming Prototype is a demo version of the Cloud-Based Rendering Engine that creates photo-realistic images for seamless viewing and editing.
+Streaming Prototype is a demo version of the Cloud-Based Rendering Engine that creates photo-realistic images for seamless viewing and online editing.
 
 ## System requirements and Dependencies
 
@@ -20,27 +20,14 @@ The following compilers are supported:
 
 ## Build
 
-### Windows
+### Windows & Mac OS X & Linux
 
-- Create Visual Studio 2017 Solution
+We have recently changed from premake to cmake.
 
-`./Tool/premake/win/premake5.exe vs2017`
-
-
-- (Optional) Create C++ classes from Google Protocol Buffer to modify the message format
-
-`./Tool/protoc/win32/bin/protoc.exe -I="./Protocol" --cpp_out="./Protocol" ./Protocol/message.proto`
-
-
-### Linux
-
-- Create the Makefile
-
-`./Tool/premake/linux64/premake gmake`
-
-- Build it !
-
-`make config=release_x64`
+1. Create your build directory `mkdir SP_build`
+2. Run CMake `cmake ..` or `cmake -DCMAKE_BUILD_TYPE=Debug` for debugging
+3. Compile by running `make`
+4. The binary is named Radiance.
 
 
 ## Client Code
