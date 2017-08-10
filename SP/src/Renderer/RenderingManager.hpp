@@ -97,7 +97,7 @@ namespace SP {
 
 
 		// tmp
-		const std::string defaultPath = "../Resources/Conf";
+		const std::string defaultPath = "Resources/Conf";
 		const std::string defaultModelName = "conf_room_2.objm";
 
 		//tmp

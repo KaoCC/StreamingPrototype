@@ -38,3 +38,7 @@ Generated/*
 # Editor
 *.swp
 *.swo
+
+
+# For Mac OS
+.DS_Store
