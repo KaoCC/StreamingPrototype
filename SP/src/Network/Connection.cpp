@@ -1,6 +1,6 @@
 #include "Connection.hpp"
 
-#include <iostream>
+
 
 #include <thread>
 #include <chrono>
@@ -61,7 +61,7 @@ namespace SP {
 			// KAOCC: throw exception here if null ?
 			Packet::MessagePointer msgPtr = resolvePacket();
 
-			const auto& responseVector{ createResponse(msgPtr) };
+			const auto& responseVector =  createResponse(msgPtr);
 
 			for (const auto& response : responseVector) {
 				writeResponse(response);
@@ -218,7 +218,7 @@ namespace SP {
 
 			auto& lightFieldRef = mCfgManagerRef.getLightField();
 
-			const auto& indexArray{ mCfgManagerRef.getIndexArrayOfSubLightField(dx) };
+			const auto& indexArray =  mCfgManagerRef.getIndexArrayOfSubLightField(dx);
 
 			size_t subLFSz = mCfgManagerRef.getNumberOfSubLFImages();
 

@@ -14,11 +14,11 @@ namespace SP {
 
 	bool BxDFHelper::isSingular(const Material * matPtr) {
 
-		auto sinMatPtr{ dynamic_cast<const SingleBxDF*>(matPtr) };
+		auto sinMatPtr =  dynamic_cast<const SingleBxDF*>(matPtr);
 
-		if (sinMatPtr) {
+		if (sinMatPtr != nullptr) {
 
-			auto type{ sinMatPtr->getBxDFType() };
+			auto type = sinMatPtr->getBxDFType() ;
 			return type == SingleBxDF::BxDFType::kIdealReflect || type == SingleBxDF::BxDFType::kIdealRefract || type == SingleBxDF::BxDFType::kPassthrough;
 
 		} else {		// mixed
@@ -29,11 +29,11 @@ namespace SP {
 	}
 
 	bool BxDFHelper::isBTDF(const Material * matPtr) {
-		auto sinMatPtr{ dynamic_cast<const SingleBxDF*>(matPtr) };
+		auto sinMatPtr =  dynamic_cast<const SingleBxDF*>(matPtr);
 
-		if (sinMatPtr) {
+		if (sinMatPtr != nullptr) {
 
-			auto type{ sinMatPtr->getBxDFType() };
+			auto type = sinMatPtr->getBxDFType();
 			return type == SingleBxDF::BxDFType::kIdealRefract || type == SingleBxDF::BxDFType::kPassthrough || type == SingleBxDF::BxDFType::kTranslucent
 				|| type == SingleBxDF::BxDFType::kMicrofacetRefractionGGX || type == SingleBxDF::BxDFType::kMicrofacetRefractionBeckmann;
 
