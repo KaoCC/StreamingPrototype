@@ -56,6 +56,7 @@ find_package(OpenImageIO REQUIRED)
 
 # RadeonRays
 find_library(RR_LIBRARIES NAMES RadeonRays64)
+message("RR: ${RR_LIBRARIES}")
 
 message("CMAKE_BUILD_TYPE= ${CMAKE_BUILD_TYPE}")
 message("CMAKE_SOURCE_DIR= ${CMAKE_SOURCE_DIR}")
