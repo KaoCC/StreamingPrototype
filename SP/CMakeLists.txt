@@ -14,6 +14,7 @@ include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${OPENIMAGEIO_INCLUDE_DIRS})
 include_directories(${X264_INCLUDE_DIRS})
 include_directories(${Protobuf_INCLUDE_DIRS})
+include_directories(${CMAKE_CURRENT_BINARY_DIR}) # for auto generated files
 
 include_directories(${CMAKE_SOURCE_DIR}/3rdparty/RadeonRays/include)
 
