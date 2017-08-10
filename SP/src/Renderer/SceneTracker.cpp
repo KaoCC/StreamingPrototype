@@ -47,7 +47,7 @@ namespace SP {
 
 				// get mesh ?
 
-				const Mesh* mesh = static_cast<const Mesh*>(shapeIterator->nextItem());
+				const auto * mesh = static_cast<const Mesh*>(shapeIterator->nextItem());
 
 				RadeonRays::Shape* shape = api->CreateMesh(
 					reinterpret_cast<const float*>(mesh->getVertices()),			// check this one !!!

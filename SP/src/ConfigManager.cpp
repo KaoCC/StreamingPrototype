@@ -69,7 +69,7 @@ namespace SP {
 		dx += 0.5;
 
 		const std::size_t totalSz = mImageLightField.getTotalSize();
-		std::size_t index = static_cast<std::size_t>(dx * totalSz);
+		auto index = static_cast<std::size_t>(dx * totalSz);
 
 		if (index >= totalSz) {
 			index = totalSz - 1;
@@ -84,7 +84,7 @@ namespace SP {
 
 		dx += 0.5;
 		const std::size_t totalSz = mImageLightField.getTotalSize();
-		std::size_t index = static_cast<std::size_t>(dx * totalSz);
+		auto index = static_cast<std::size_t>(dx * totalSz);
 
 		//indexArray.push_back(index);
 

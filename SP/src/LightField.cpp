@@ -33,8 +33,8 @@ namespace SP {
 	bool LightField::SubLightField::getRefreshState() const {
 		bool status = false;
 
-		for (int i = 0; i < images.size(); ++i) {
-			if (images[i].getRefreshState()) {
+		for (const auto &image : images) {
+			if (image.getRefreshState()) {
 				status = true;
 				break;
 			}

@@ -24,7 +24,7 @@ namespace SP {
 
 	// KAOCC: tmp ! not an accurate approach
 	void SimpleRenderer::clear(RadeonRays::float3 const & val, Output & output) const {
-		RenderOutput& rendOutRef = dynamic_cast<RenderOutput&>(output); 		// test it !
+		auto & rendOutRef = dynamic_cast<RenderOutput&>(output); 		// test it !
 
 		auto& storedData = rendOutRef.getInternalStorage();
 

@@ -198,7 +198,7 @@ namespace SP {
 				RadeonRays::float2 hSample = imageSample - RadeonRays::float2(0.5f, 0.5f);
 
 				// Transform into [-dim/2, dim/2]		
-				const PerspectiveCamera* cameraPtr = static_cast<const PerspectiveCamera*>(scene.getCamera(camIdx));  // check this 
+				const auto * cameraPtr = static_cast<const PerspectiveCamera*>(scene.getCamera(camIdx));  // check this
 				RadeonRays::float2 cSample = hSample * cameraPtr->getSensorSize();
 
 
