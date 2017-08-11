@@ -179,7 +179,7 @@ namespace SP {
 	void ApiEngine::runLoop(RadeonRays::IntersectionApi * api, BackendBuffer buffer) {
 
 
-		std::packaged_task<void(RadeonRays::IntersectionApi * api, BackendBuffer buffer)> runFunction;
+		std::packaged_task<void(RadeonRays::IntersectionApi *, BackendBuffer )> runFunction;
 		while (true) {
 
 			{
