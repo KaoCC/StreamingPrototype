@@ -106,7 +106,7 @@ namespace SP {
 	}
 
 	// for testing only
-	void SceneTracker::changeShapesInScene_test() {
+	void SceneTracker::removeShapesInScene_test() {
 
 		std::cerr << "change shape start !" << std::endl;
 

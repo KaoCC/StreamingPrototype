@@ -33,7 +33,7 @@ namespace SP {
 		const Scene* getCurrentScenePtr() const;
 
 		// test
-		void changeShapesInScene_test();
+		void removeShapesInScene_test();
 
 
 	private:
