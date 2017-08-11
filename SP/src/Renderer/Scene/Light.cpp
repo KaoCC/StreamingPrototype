@@ -112,10 +112,10 @@ namespace SP {
 		if (n_dot_v > 0.f) {
 			float denom = (std::sqrt(wo.sqnorm()) * std::sqrt(wo.sqnorm()));
 			return denom > 0.f ? (ke * n_dot_v * (1 / denom)) : 0.f;
-		} else {
-			pdf = 0.f;
-			return 0.f;
 		}
+
+		pdf = 0.f;
+			return 0.f;
 
 
 	}

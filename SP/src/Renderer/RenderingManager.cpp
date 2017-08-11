@@ -363,12 +363,12 @@ namespace SP {
 
 		ImageInput* input = ImageInput::open(filename);
 
-		if (!input) {
+		if (input == nullptr) {
 			throw std::runtime_error("Failed to load image: " + filename);
 		}
 
 
-		const ImageSpec imgSpec{ input->spec() };
+		const ImageSpec imgSpec =  input->spec();
 		int xRes = imgSpec.width;
 		int yRes = imgSpec.height;
 
@@ -377,7 +377,7 @@ namespace SP {
 		const ParamValue* par{ imgSpec.find_attribute("gammarank", TypeDesc::FLOAT) };
 
 		float wVal = 10.0f;		// tmp value
-		if (par) {
+		if (par != nullptr) {
 			wVal = *(static_cast<const float*>(par->data()));
 		} else {
 			std::cerr << "MetaData (gammarank) not found, roll back to the default" << std::endl;
@@ -413,7 +413,7 @@ namespace SP {
 
 	}
 
-	void RenderingManager::renderingWorker(void) {
+	void RenderingManager::renderingWorker() {
 
 		std::pair<int, int> taskIndex;
 
