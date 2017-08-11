@@ -38,7 +38,7 @@ namespace SP {
 	}
 
 	std::shared_ptr<Output> PtRenderer::createOutput(std::uint32_t w, std::uint32_t h) const {
-		return std::shared_ptr<RenderOutput>{new RenderOutput(w, h)};
+		return std::make_shared<RenderOutput>(w, h);
 	}
 
 	//void PtRenderer::deleteOutput(Output * output) const {
