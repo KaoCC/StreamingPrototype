@@ -47,9 +47,10 @@ namespace SP {
 
 			if (hasNext()) {
 				return *(current++);
-			} else {
-				throw std::runtime_error("Iterator: No more NEXT");
 			}
+
+			throw std::runtime_error("Iterator: No more NEXT");
+
 		}
 
 	private:

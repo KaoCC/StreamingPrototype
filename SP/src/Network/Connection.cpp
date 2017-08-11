@@ -101,9 +101,10 @@ namespace SP {
 
 		if (packet.unpacking(localBuffer)) {
 			return packet.getMessagePtr();
-		} else {
-			return nullptr;
 		}
+
+		return nullptr;
+
 
 	}
 
@@ -231,9 +232,10 @@ namespace SP {
 					//std::cerr << "No need to send\n";
 					//responsePtr = nullptr;
 					continue;
-				} else {
-					std::cerr << "Get new: " << subLFIndex << "\n";
 				}
+
+				std::cerr << "Get new: " << subLFIndex << "\n";
+
 
 				Packet::MessagePointer responsePtr{ new StreamingFormat::StreamingMessage };
 
