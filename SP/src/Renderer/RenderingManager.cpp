@@ -9,20 +9,18 @@
 
 #include "math/mathutils.h"
 
-#include "../LightField.hpp"
 
 #include "SimpleRenderer.hpp"
 
 #include "OpenImageIO/imageio.h"
 
-#include <cstdio>
 
 
 
 namespace SP {
 
 
-	RenderingManager::RenderingManager(ConfigManager& cfgRef, bool loadRadianceFlag) : mConfigRef(cfgRef) {
+	RenderingManager::RenderingManager(ConfigManager& cfgRef, bool loadRadianceFlag) : mConfigRef{cfgRef} {
 
 
 		// Get device / backend info

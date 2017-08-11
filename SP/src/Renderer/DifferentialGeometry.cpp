@@ -1,11 +1,10 @@
 #include "DifferentialGeometry.hpp"
 
-#include "Scene/Shape.hpp"
+
 
 #include "MathUtility.hpp"
 
-#include "math/matrix.h"
-#include "math/mathutils.h"
+
 
 namespace SP {
 

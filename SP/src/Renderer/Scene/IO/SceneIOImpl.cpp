@@ -13,7 +13,6 @@
 
 #include "../Shape.hpp"
 #include "../Light.hpp"
-#include "../Material.hpp"
 
 #include <iostream>
 

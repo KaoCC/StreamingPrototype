@@ -2,7 +2,7 @@
 
 #include "Scene/Camera.hpp"
 #include "RandomSampler.hpp"
-#include "radeon_rays.h"
+
 #include <memory>
 
 
