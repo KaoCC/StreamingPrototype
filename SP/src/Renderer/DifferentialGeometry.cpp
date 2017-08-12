@@ -1,19 +1,17 @@
 #include "DifferentialGeometry.hpp"
 
 
-
 #include "MathUtility.hpp"
-
 
 
 namespace SP {
 
-	void DifferentialGeometry::fill(const RadeonRays::Intersection & isectRef, const std::vector<const Mesh*>& meshPtrs) {
+	void DifferentialGeometry::fill(const RadeonRays::Intersection& isectRef, const std::vector<const Mesh*>& meshPtrs) {
 
-		int shapeId = isectRef.shapeid - 1;			//CHECK !
-		int primId = isectRef.primid;								// CHECK !!!
+		int shapeId = isectRef.shapeid - 1;            //CHECK !
+		int primId = isectRef.primid;                                // CHECK !!!
 
-		RadeonRays::float2 localUV;						// check this !
+		RadeonRays::float2 localUV;                        // check this !
 		localUV.x = isectRef.uvwt.x;
 		localUV.y = isectRef.uvwt.y;
 
@@ -25,7 +23,7 @@ namespace SP {
 
 		// This is the core of this function !
 		// if this goes wrong then ... boom !
-		const uint32_t& i0 = indexArray[3 * primId];								// CHECK ?
+		const uint32_t& i0 = indexArray[3 * primId];                                // CHECK ?
 		const uint32_t& i1 = indexArray[3 * primId + 1];
 		const uint32_t& i2 = indexArray[3 * primId + 2];
 
@@ -52,7 +50,8 @@ namespace SP {
 		//RadeonRays::matrix matrixI;			// I
 
 		// normal, position, uv, ng (barycentric)
-		normal = RadeonRays::normalize(RadeonRays::transform_vector((1.f - localUV.x - localUV.y) * n0 + localUV.x * n1 + localUV.y * n2, matrixI));  //CHECK THIS !
+		normal = RadeonRays::normalize(
+				RadeonRays::transform_vector((1.f - localUV.x - localUV.y) * n0 + localUV.x * n1 + localUV.y * n2, matrixI));  //CHECK THIS !
 		pos = RadeonRays::transform_point((1.f - localUV.x - localUV.y) * v0 + localUV.x * v1 + localUV.y * v2, matrixI);
 		uv = (1.f - localUV.x - localUV.y) * uv0 + localUV.x * uv1 + localUV.y * uv2;
 		normalGeo = RadeonRays::normalize(RadeonRays::cross(v1 - v0, v2 - v0));
@@ -130,11 +129,11 @@ namespace SP {
 		return uv;
 	}
 
-	RadeonRays::float3 & DifferentialGeometry::getDpDu() {
+	RadeonRays::float3& DifferentialGeometry::getDpDu() {
 		return dpdu;
 	}
 
-	RadeonRays::float3 & DifferentialGeometry::getDpDv() {
+	RadeonRays::float3& DifferentialGeometry::getDpDv() {
 		return dpdv;
 	}
 
@@ -142,15 +141,15 @@ namespace SP {
 		return area;
 	}
 
-	const Material * DifferentialGeometry::getMaterialPtr() const {
+	const Material* DifferentialGeometry::getMaterialPtr() const {
 		return matPtr;
 	}
 
-	const RadeonRays::matrix & DifferentialGeometry::getWorldToTangentMatrix() const {
+	const RadeonRays::matrix& DifferentialGeometry::getWorldToTangentMatrix() const {
 		return worldToTangent;
 	}
 
-	const RadeonRays::matrix & DifferentialGeometry::getTangentToWorldMatrix() const {
+	const RadeonRays::matrix& DifferentialGeometry::getTangentToWorldMatrix() const {
 		return tangentToWorld;
 	}
 
