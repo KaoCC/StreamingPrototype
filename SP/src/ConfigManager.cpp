@@ -8,7 +8,7 @@ namespace SP {
 
 	const RadeonRays::float3 ConfigManager::kCameraPos{ -2.f, 1.8f, 0.f };
 	const RadeonRays::float3 ConfigManager::kCameraAt{ 2.f, 1.8f, 0.f };
-	const RadeonRays::float3 ConfigManager::kCameraUp{ 0.f, 1.1f, 0.f };
+	const RadeonRays::float3 ConfigManager::kCameraUp{ 0.f, -1.f, 0.f };
 
 	ConfigManager::ConfigManager() : mImageLightField(kNumOfLFs, kNumOfSubLFImgs), mCamera(kCameraPos, kCameraAt, kCameraUp) {
 
