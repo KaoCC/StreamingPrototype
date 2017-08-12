@@ -1,20 +1,22 @@
 #include "Connection.hpp"
 
 
-
 #include <thread>
 #include <chrono>
 
 namespace SP {
 
 
-	Connection::ConnectionPointer Connection::create(boost::asio::io_service & ios, ConfigManager& configRef) {
+	Connection::ConnectionPointer Connection::create(boost::asio::io_service& ios, ConfigManager& configRef) {
 		return ConnectionPointer(new Connection(ios, configRef));
 	}
 
-	Connection::Connection(boost::asio::io_service & ios, ConfigManager& configRef) :
-		streamingSocket(ios), packet(Packet::MessagePointer(new StreamingFormat::StreamingMessage())), mCfgManagerRef(configRef),
-		responsePacket(Packet::MessagePointer(new StreamingFormat::StreamingMessage())), mEncoder(CreateEncoder(configRef.getScreenWidth(), configRef.getScreenHeight())) {
+	Connection::Connection(boost::asio::io_service& ios, ConfigManager& configRef) :
+			streamingSocket(ios),
+			packet(Packet::MessagePointer(new StreamingFormat::StreamingMessage())),
+			mCfgManagerRef(configRef),
+			responsePacket(Packet::MessagePointer(new StreamingFormat::StreamingMessage())),
+			mEncoder(CreateEncoder(configRef.getScreenWidth(), configRef.getScreenHeight())) {
 	}
 
 	void Connection::start() {
@@ -25,12 +27,12 @@ namespace SP {
 		localBuffer.resize(Packet::HEADER_SIZE);
 
 		boost::asio::async_read(streamingSocket, boost::asio::buffer(localBuffer),
-			std::bind(&Connection::handleReadHeader, shared_from_this(), std::placeholders::_1));
+								std::bind(&Connection::handleReadHeader, shared_from_this(), std::placeholders::_1));
 
 
 	}
 
-	void Connection::handleReadHeader(const boost::system::error_code & error) {
+	void Connection::handleReadHeader(const boost::system::error_code& error) {
 
 		if (!error) {
 			size_t msgSize = packet.decodeHeader(localBuffer);
@@ -48,11 +50,11 @@ namespace SP {
 		//boost::asio::mutable_buffers_1 mutableBuffer = boost::asio::buffer(&localBuffer[Packet::HEADER_SIZE], msgSize);
 
 		boost::asio::async_read(streamingSocket, boost::asio::buffer(&localBuffer[Packet::HEADER_SIZE], msgSize),
-			std::bind(&Connection::handleReadMessage, shared_from_this(), std::placeholders::_1));
+								std::bind(&Connection::handleReadMessage, shared_from_this(), std::placeholders::_1));
 
 	}
 
-	void Connection::handleReadMessage(const boost::system::error_code & error) {
+	void Connection::handleReadMessage(const boost::system::error_code& error) {
 
 		if (!error) {
 
@@ -61,7 +63,7 @@ namespace SP {
 			// KAOCC: throw exception here if null ?
 			Packet::MessagePointer msgPtr = resolvePacket();
 
-			const auto& responseVector =  createResponse(msgPtr);
+			const auto& responseVector = createResponse(msgPtr);
 
 			for (const auto& response : responseVector) {
 				writeResponse(response);
@@ -76,7 +78,7 @@ namespace SP {
 
 
 	// KAOCC: need to change !!
-	void Connection::handleWriteMessage(const boost::system::error_code & error) {
+	void Connection::handleWriteMessage(const boost::system::error_code& error) {
 
 		if (!error) {
 
@@ -85,7 +87,8 @@ namespace SP {
 			// if not empty ?
 			if (!writeBufferQueue.empty()) {
 				boost::asio::async_write(streamingSocket, boost::asio::buffer(writeBufferQueue.front()),
-					std::bind(&Connection::handleWriteMessage, shared_from_this(), std::placeholders::_1));
+										 std::bind(&Connection::handleWriteMessage, shared_from_this(),
+												   std::placeholders::_1));
 			}
 
 		} else {
@@ -117,8 +120,7 @@ namespace SP {
 		//Packet::MessagePointer responsePtr{ new StreamingFormat::StreamingMessage };
 
 		switch (msgPtr->type()) {
-		case StreamingFormat::MessageType::MsgInit:
-		{
+		case StreamingFormat::MessageType::MsgInit: {
 
 			// read the msg (init info)
 
@@ -131,13 +133,13 @@ namespace SP {
 			// more from here
 			//...
 
-			Packet::MessagePointer responsePtr{ new StreamingFormat::StreamingMessage };
+			Packet::MessagePointer responsePtr { new StreamingFormat::StreamingMessage };
 
 			// reply the default positions
 			responsePtr->set_type(StreamingFormat::MessageType::MsgDefaultPos);
 
 			// must be on the heap
-			StreamingFormat::DefaultPos* defPosPtr{ new StreamingFormat::DefaultPos };
+			StreamingFormat::DefaultPos* defPosPtr { new StreamingFormat::DefaultPos };
 
 			// for testing only
 			//CameraConfig camCfg{ mCfgManagerRef.getCamera() };
@@ -159,15 +161,13 @@ namespace SP {
 
 		}
 
-		case StreamingFormat::MessageType::MsgDefaultPos:
-		{
+		case StreamingFormat::MessageType::MsgDefaultPos: {
 			// Possible Error
 			// The server will not get this one!
 			break;
 		}
 
-		case StreamingFormat::MessageType::MsgCameraInfo:
-		{
+		case StreamingFormat::MessageType::MsgCameraInfo: {
 
 			// read the msg (camera info)
 
@@ -201,7 +201,7 @@ namespace SP {
 			//}
 
 
-			// KAOCC: check if we need locks 
+			// KAOCC: check if we need locks
 
 			// position
 			//mCfgManagerRef.setPositionDelta(dx, dy, dz);
@@ -219,7 +219,7 @@ namespace SP {
 
 			auto& lightFieldRef = mCfgManagerRef.getLightField();
 
-			const auto& indexArray =  mCfgManagerRef.getIndexArrayOfSubLightField(dx);
+			const auto& indexArray = mCfgManagerRef.getIndexArrayOfSubLightField(dx);
 
 			size_t subLFSz = mCfgManagerRef.getNumberOfSubLFImages();
 
@@ -237,7 +237,7 @@ namespace SP {
 				std::cerr << "Get new: " << subLFIndex << "\n";
 
 
-				Packet::MessagePointer responsePtr{ new StreamingFormat::StreamingMessage };
+				Packet::MessagePointer responsePtr { new StreamingFormat::StreamingMessage };
 
 				// reply the images
 				responsePtr->set_type(StreamingFormat::MessageType::MsgImage);
@@ -253,7 +253,7 @@ namespace SP {
 					//ImageConfig imageData{ cfgManager.getImage() };
 					//ImageConfig::ImageBuffer& imageBufferCache{ imageData.getImageData() };
 
-					const ImageConfig::ImageBuffer& imageBufferCache{ lightFieldRef[subLFIndex][k].getImageData() };
+					const ImageConfig::ImageBuffer& imageBufferCache { lightFieldRef[subLFIndex][k].getImageData() };
 
 					std::copy(imageBufferCache.cbegin(), imageBufferCache.cend(), rawPtr);
 
@@ -275,7 +275,7 @@ namespace SP {
 				}
 
 
-				StreamingFormat::Image* imagePtr{ new StreamingFormat::Image };
+				StreamingFormat::Image* imagePtr { new StreamingFormat::Image };
 
 				// for testing only
 				imagePtr->set_serialnumber(serialNumber);
@@ -284,7 +284,7 @@ namespace SP {
 				imagePtr->set_bytesize(encodedImageData.size()); // tmp
 				//imagePtr->set_status(imageData.getID());  // tmp
 
-				imagePtr->set_status(subLFIndex);	// test
+				imagePtr->set_status(subLFIndex);    // test
 
 				// image data ????
 				// need to check
@@ -302,17 +302,15 @@ namespace SP {
 			break;
 		}
 
-		case StreamingFormat::MessageType::MsgImage:
-		{
+		case StreamingFormat::MessageType::MsgImage: {
 			// Possible error
 			// The server will not get this one !
 			break;
 		}
 
-		case StreamingFormat::MessageType::MsgEnding:
-		{
+		case StreamingFormat::MessageType::MsgEnding: {
 
-			Packet::MessagePointer responsePtr{ new StreamingFormat::StreamingMessage };
+			Packet::MessagePointer responsePtr { new StreamingFormat::StreamingMessage };
 
 			// tmp: for testing only
 			// Echo the Ending msg back ?
@@ -325,13 +323,12 @@ namespace SP {
 			break;
 		}
 
-		case StreamingFormat::MessageType::MsgControl:
-		{
+		case StreamingFormat::MessageType::MsgControl: {
 			// test
 			std::cerr << "control msg\n";
 
 			const auto& changeFlag = msgPtr->controlmsg().change_scene();
-			if (changeFlag) {		// != 0
+			if (changeFlag) {        // != 0
 				// tmp
 				std::cerr << "clear Scene\n";
 
@@ -347,7 +344,7 @@ namespace SP {
 			}
 
 			if (msgPtr->controlmsg().has_editingmsg()) {
-				const auto&  editingMsg = msgPtr->controlmsg().editingmsg();
+				const auto& editingMsg = msgPtr->controlmsg().editingmsg();
 				// op is enum
 				// StreamingFormat::EditOperation.START(0)/FINISH(1)/UPDATE(2)
 
@@ -362,9 +359,13 @@ namespace SP {
 					mCfgManagerRef.enterState(ConfigManager::State::kPathTracing);
 					break;
 				case StreamingFormat::EditOperation::UPDATE:
-					std::cerr << "Editing UPDATE:" << editingMsg.op() << ", screen X: " << editingMsg.screen_x() << ", screen Y: " << editingMsg.screen_y() << std::endl;
+					std::cerr << "Editing UPDATE:" << editingMsg.op() << ", screen X: " << editingMsg.screen_x() << ", screen Y: " << editingMsg.screen_y()
+							  << std::endl;
 					mCfgManagerRef.recompileScene();
 					break;
+				default:
+					break;
+
 				}
 
 
@@ -415,10 +416,10 @@ namespace SP {
 				//boost::asio::write(streamingSocket, boost::asio::buffer(cfgManager.getImageCache().getImageData()));
 				/*boost::asio::async_write(streamingSocket, boost::asio::buffer(encodedImageData),
 					std::bind(&Connection::handleWriteImage, shared_from_this(), std::placeholders::_1)); */
-					//boost::asio::write(streamingSocket, boost::asio::buffer(encodedImageData));
+				//boost::asio::write(streamingSocket, boost::asio::buffer(encodedImageData));
 
 
-					// KAOCC: Need to change ! Not a good approach !
+				// KAOCC: Need to change ! Not a good approach !
 				appendImage(writeBuffer, encodedDataQueue.front());
 				encodedDataQueue.pop_front();
 
@@ -433,13 +434,12 @@ namespace SP {
 
 				/*boost::asio::async_write(streamingSocket, boost::asio::buffer(writeBuffer),
 					std::bind(&Connection::handleWriteMessage, shared_from_this(), std::placeholders::_1)); */
-					//boost::asio::write(streamingSocket, boost::asio::buffer(writeBuffer));
+				//boost::asio::write(streamingSocket, boost::asio::buffer(writeBuffer));
 
 				boost::asio::async_write(streamingSocket, boost::asio::buffer(writeBufferQueue.front()),
-					std::bind(&Connection::handleWriteMessage, shared_from_this(), std::placeholders::_1));
+										 std::bind(&Connection::handleWriteMessage, shared_from_this(), std::placeholders::_1));
 
 			}
-
 
 
 		} else {
@@ -453,7 +453,7 @@ namespace SP {
 
 
 	// yet to be done
-	void Connection::appendImage(Packet::DataBuffer & buffer, const ImageConfig::ImageBuffer& encodedData) {
+	void Connection::appendImage(Packet::DataBuffer& buffer, const ImageConfig::ImageBuffer& encodedData) {
 
 
 		buffer.insert(std::end(buffer), std::begin(encodedData), std::end(encodedData));
@@ -463,14 +463,9 @@ namespace SP {
 	}
 
 
-
-	boost::asio::ip::tcp::socket & Connection::getSocketRef() {
+	boost::asio::ip::tcp::socket& Connection::getSocketRef() {
 		return streamingSocket;
 	}
-
-
-
-
 
 
 }

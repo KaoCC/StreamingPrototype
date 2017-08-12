@@ -11,36 +11,35 @@
 namespace SP {
 
 
-    // helper function for matrix debugging
-    static void printMat(const RadeonRays::matrix& mat) {
+	// helper function for matrix debugging
+	static void printMat(const RadeonRays::matrix& mat) {
 
-        // its a 4*4 matrix
-        for (int i = 0 ; i < 4; ++i) {
+		// its a 4*4 matrix
+		for (int i = 0; i < 4; ++i) {
 
-            for (int j = 0 ; j < 4; ++j) {
+			for (int j = 0; j < 4; ++j) {
 
-                std::cerr << "mat[i][j]" << mat.m[i][j] << std::endl;
+				std::cerr << "mat[i][j]" << mat.m[i][j] << std::endl;
 
-            }
+			}
 
-        }
-    }
-
-
-    // helper function for computing the transformation from projection space to world space
-    static void computeProjectionToWorld(RadeonRays::matrix& mat, RadeonRays::matrix& invmat) {
+		}
+	}
 
 
-        // TODO: compute the correct form
+	// helper function for computing the transformation from projection space to world space
+	static void computeProjectionToWorld(RadeonRays::matrix& mat, RadeonRays::matrix& invmat) {
 
-        
 
-
-    }
+		// TODO: compute the correct form
 
 
 
-	SceneTracker::SceneTracker(RadeonRays::IntersectionApi* intersectApi) : api{ intersectApi } {
+
+	}
+
+
+	SceneTracker::SceneTracker(RadeonRays::IntersectionApi* intersectApi) : api { intersectApi } {
 
 
 	}
@@ -77,18 +76,17 @@ namespace SP {
 
 				// get mesh ?
 
-				const auto * mesh { static_cast<const Mesh*>(shapeIterator->nextItem())};
+				const auto* mesh { static_cast<const Mesh*>(shapeIterator->nextItem()) };
 
 				RadeonRays::Shape* shape = api->CreateMesh(
-					reinterpret_cast<const float*>(mesh->getVertices()),			// check this one !!!
-					static_cast<int>(mesh->getNumVertices()),
-					sizeof(RadeonRays::float3),
-					reinterpret_cast<const int*>(mesh->getIndices()),
-					0,
-					nullptr,
-					static_cast<int>(mesh->getNumIndices() / 3)
+						reinterpret_cast<const float*>(mesh->getVertices()),            // check this one !!!
+						static_cast<int>(mesh->getNumVertices()),
+						sizeof(RadeonRays::float3),
+						reinterpret_cast<const int*>(mesh->getIndices()),
+						0,
+						nullptr,
+						static_cast<int>(mesh->getNumIndices() / 3)
 				);
-
 
 
 				shape->SetId(shapeID);
@@ -131,7 +129,7 @@ namespace SP {
 		return internalMeshPtrs;
 	}
 
-	const Scene * SceneTracker::getCurrentScenePtr() const {
+	const Scene* SceneTracker::getCurrentScenePtr() const {
 		return currentScenePtr;
 	}
 
@@ -143,7 +141,7 @@ namespace SP {
 		if (!internalShapes.empty()) {
 
 
-			RadeonRays::Shape* delShape {internalShapes.back()};
+			RadeonRays::Shape* delShape { internalShapes.back() };
 			internalShapes.pop_back();
 
 			size_t sz = internalShapes.size();
@@ -153,7 +151,7 @@ namespace SP {
 			if (sz > 0) {
 
 				// tests
-				if (!internalMeshPtrs[sz-1]->getMaterial()->hasEmission()) {
+				if (!internalMeshPtrs[sz - 1]->getMaterial()->hasEmission()) {
 					api->DetachShape(delShape);
 					api->DeleteShape(delShape);
 
@@ -182,50 +180,48 @@ namespace SP {
 
 		if (!internalShapes.empty()) {
 
-            // get the reference
-            RadeonRays::Shape* refShape {internalShapes.front()};
+			// get the reference
+			RadeonRays::Shape* refShape { internalShapes.front() };
 
-            // create mesh or instantiate ?
-            RadeonRays::Shape* newShape {api->CreateInstance(refShape)};      // Note: blocking call
-
-
-            // get matrix  (for debug only)
-            RadeonRays::matrix matRef;
-            RadeonRays::matrix invmatRef;
-
-            refShape->GetTransform(matRef, invmatRef);
-
-            // print out for debugging
-            printMat(matRef);
+			// create mesh or instantiate ?
+			RadeonRays::Shape* newShape { api->CreateInstance(refShape) };      // Note: blocking call
 
 
-            // create the matrix
-            RadeonRays::matrix matNew;
-            RadeonRays::matrix invmatNew;
+			// get matrix  (for debug only)
+			RadeonRays::matrix matRef;
+			RadeonRays::matrix invmatRef;
 
-            // compute transformation
-            computeProjectionToWorld(matNew, invmatNew);
+			refShape->GetTransform(matRef, invmatRef);
 
-            // print out for debugging
-            printMat(matNew);
+			// print out for debugging
+			printMat(matRef);
 
-            // apply transformation to shape
-            newShape->SetTransform(matNew, invmatNew);
 
-            // push to vector
-            internalShapes.push_back(newShape);
+			// create the matrix
+			RadeonRays::matrix matNew;
+			RadeonRays::matrix invmatNew;
 
-            // add shape
-            api->AttachShape(newShape);
+			// compute transformation
+			computeProjectionToWorld(matNew, invmatNew);
 
-            // commit
-            api->Commit();
+			// print out for debugging
+			printMat(matNew);
 
-            std::cerr << "Commit shape " << std::endl;
+			// apply transformation to shape
+			newShape->SetTransform(matNew, invmatNew);
 
-        }
+			// push to vector
+			internalShapes.push_back(newShape);
 
-		
+			// add shape
+			api->AttachShape(newShape);
+
+			// commit
+			api->Commit();
+
+			std::cerr << "Commit shape " << std::endl;
+
+		}
 
 
 		std::cerr << "add shape ends !" << std::endl;

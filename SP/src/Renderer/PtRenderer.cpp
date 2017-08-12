@@ -33,7 +33,8 @@ namespace SP {
 	PtRenderer::~PtRenderer() = default;
 
 
-	PtRenderer::PtRenderer(unsigned num_bounces, ApiEngine& engine) : numOfBounces{ num_bounces }, mEngineRef{ engine } {
+	PtRenderer::PtRenderer(unsigned num_bounces, ApiEngine& engine) :
+			numOfBounces { num_bounces }, mEngineRef { engine } {
 
 	}
 
@@ -45,10 +46,10 @@ namespace SP {
 	//	delete output;
 	//}
 
-	void PtRenderer::clear(RadeonRays::float3 const & val, Output & output) const {
+	void PtRenderer::clear(RadeonRays::float3 const& val, Output& output) const {
 		//throw std::runtime_error("Yet to be done");
 
-		RenderOutput& rendOutRef{ dynamic_cast<RenderOutput&>(output) }; 		// test it !
+		RenderOutput& rendOutRef { dynamic_cast<RenderOutput&>(output) };        // test it !
 
 		auto& storedData = rendOutRef.getInternalStorage();
 
@@ -58,24 +59,24 @@ namespace SP {
 
 	}
 
-	void PtRenderer::preprocess(Scene const & scene) {
+	void PtRenderer::preprocess(Scene const& scene) {
 	}
 
 	// this is the entry point of the main path tracing algorithm
-	void PtRenderer::render(Scene const & scene, size_t configIdx) {
+	void PtRenderer::render(Scene const& scene, size_t configIdx) {
 
 		//auto api = sceneTracker.getIntersectionApi();
 		//sceneTracker.compileSceneTest(scene);
 
 		//mEngineRef->compileScene(scene);
-		
+
 
 		// ray gen ?
 		generatePrimaryRays(scene, configIdx);
 
 		std::copy(renderData.host_iota.begin(), renderData.host_iota.end(), renderData.host_pixelIndex[0].begin());
 		std::copy(renderData.host_iota.begin(), renderData.host_iota.end(), renderData.host_pixelIndex[1].begin());
-	
+
 		// Number of rays 
 		int maxrays = renderOutPtr->getWidth() * renderOutPtr->getHeight();
 		renderData.host_hitcount = maxrays;
@@ -142,7 +143,7 @@ namespace SP {
 			gatherLightSamples(pass);
 
 		}
-		
+
 		//std::cerr << "Frame: " << frameCount << '\n';
 
 		++mFrameCount;
@@ -158,7 +159,6 @@ namespace SP {
 	}
 
 
-
 	void PtRenderer::generatePrimaryRays(const Scene& scene, size_t camIdx) {
 
 
@@ -168,7 +168,7 @@ namespace SP {
 		uint32_t rngseed = RadeonRays::rand_uint();
 
 		for (uint32_t y = 0; y < imageHeight; ++y) {
-			for (uint32_t x = 0; x < imageWidth; ++x) {			// check this !
+			for (uint32_t x = 0; x < imageWidth; ++x) {            // check this !
 
 
 
@@ -191,25 +191,26 @@ namespace SP {
 
 
 				RadeonRays::float2 imageSample;
-				imageSample.x = (float)x / imageWidth + sampleBase.x / imageWidth;
-				imageSample.y = (float)y / imageHeight + sampleBase.y / imageHeight;
+				imageSample.x = (float) x / imageWidth + sampleBase.x / imageWidth;
+				imageSample.y = (float) y / imageHeight + sampleBase.y / imageHeight;
 
 				// Transform into [-0.5, 0.5]
 				RadeonRays::float2 hSample = imageSample - RadeonRays::float2(0.5f, 0.5f);
 
 				// Transform into [-dim/2, dim/2]		
-				const auto * cameraPtr = static_cast<const PerspectiveCamera*>(scene.getCamera(camIdx));  // check this
+				const auto* cameraPtr = static_cast<const PerspectiveCamera*>(scene.getCamera(camIdx));  // check this
 				RadeonRays::float2 cSample = hSample * cameraPtr->getSensorSize();
 
 
 				// set ray
 				RadeonRays::ray& currentRay = renderData.host_rays[0][y * imageWidth + x];
 
-				currentRay.d = RadeonRays::normalize(cameraPtr->getFocalLength() * cameraPtr->getForwardVector() + cSample.x * cameraPtr->getRightVector() + cSample.y * cameraPtr->getUpVector());
+				currentRay.d = RadeonRays::normalize(cameraPtr->getFocalLength() * cameraPtr->getForwardVector() + cSample.x * cameraPtr->getRightVector() +
+													 cSample.y * cameraPtr->getUpVector());
 				currentRay.o = cameraPtr->getPosition() + cameraPtr->getDepthRange().x * currentRay.d;
 
 				currentRay.o.w = cameraPtr->getDepthRange().y - cameraPtr->getDepthRange().x;
-				currentRay.d.w = sampleBase.x;		// check
+				currentRay.d.w = sampleBase.x;        // check
 
 
 				//currentRay.SetMask(0xFFFFFFFFF);
@@ -224,7 +225,7 @@ namespace SP {
 				// ...
 
 				// path ?
-				Path& path{ renderData.host_path[y * imageWidth + x] };
+				Path& path { renderData.host_path[y * imageWidth + x] };
 				path.initGen();
 			}
 		}
@@ -426,7 +427,7 @@ namespace SP {
 			float lightWeight = 1.f;
 
 			// sample BxDf
-			const RadeonRays::float3& bxdf = BxDFHelper::sample(diffGeo, wi, sampler->sample2D(), bxdfwo, bxdfPDF);		// value ?
+			const RadeonRays::float3& bxdf = BxDFHelper::sample(diffGeo, wi, sampler->sample2D(), bxdfwo, bxdfPDF);        // value ?
 
 			const auto currentScenePtr = mEngineRef.getCurrentScenePtr();
 
@@ -434,11 +435,11 @@ namespace SP {
 			RadeonRays::float3 radiance = 0.f;
 
 			// light ?
-			const Light* lightInst = currentScenePtr->getSampleLightPtr(sampler->sample1D() ,selectionPDF);		// check the light index !
+			const Light* lightInst = currentScenePtr->getSampleLightPtr(sampler->sample1D(), selectionPDF);        // check the light index !
 			if (lightInst != nullptr) {
 
 				RadeonRays::float3 currentLe = lightInst->sample(diffGeo, sampler->sample2D(), lightwo, lightPDF);
-				lightWeight = lightInst->isSingular() ? 1.f : 0.f;			// CHECK !
+				lightWeight = lightInst->isSingular() ? 1.f : 0.f;            // CHECK !
 
 				if (currentLe.sqnorm() > 0 && lightPDF > 0.0f && !BxDFHelper::isSingular(diffGeo.getMaterialPtr())) {
 					wo = lightwo;
@@ -446,7 +447,9 @@ namespace SP {
 
 
 					// times light weight ?
-					radiance = currentLe * BxDFHelper::evaluate(diffGeo, wi, RadeonRays::normalize(wo)) *  currentPath.getThroughput() * n_dot_wo * (1 / lightPDF) * (1 / selectionPDF);
+					radiance =
+							currentLe * BxDFHelper::evaluate(diffGeo, wi, RadeonRays::normalize(wo)) * currentPath.getThroughput() * n_dot_wo * (1 / lightPDF) *
+							(1 / selectionPDF);
 
 					//std::cerr << "Radiance : " << radiance.x << " " << radiance.y << " " << radiance.z << "\n";
 				}
@@ -474,10 +477,11 @@ namespace SP {
 
 			// Apply Russian roulette
 			float qq = std::max(std::min(0.5f,
-				// Luminance
-				0.2126f *  currentPath.getThroughput().x + 0.7152f * currentPath.getThroughput().y + 0.0722f * currentPath.getThroughput().z), 0.01f);
+					// Luminance
+										 0.2126f * currentPath.getThroughput().x + 0.7152f * currentPath.getThroughput().y +
+										 0.0722f * currentPath.getThroughput().z), 0.01f);
 			bool rrApplyFlag = pass > 3;
-			bool rrStopFlag  = (sampler->sample1D() > qq) && rrApplyFlag;		// value ?		// wrong !
+			bool rrStopFlag = (sampler->sample1D() > qq) && rrApplyFlag;        // value ?		// wrong !
 
 			//Sampler_Sample1D(&randomSampler) > qq
 			// ...
@@ -494,7 +498,7 @@ namespace SP {
 
 			// handle indirectrays
 			bxdfwo = normalize(bxdfwo);
-			const RadeonRays::float3& t = bxdf * std::abs(RadeonRays::dot(diffGeo.getNormal(), bxdfwo));		// value ?
+			const RadeonRays::float3& t = bxdf * std::abs(RadeonRays::dot(diffGeo.getNormal(), bxdfwo));        // value ?
 
 			//std::cerr << "T: " << t.sqnorm()  << " bxdfPDF: " << bxdfPDF << std::endl;
 
@@ -542,7 +546,7 @@ namespace SP {
 
 
 				//Sampler rendomSampler;
-				uint32_t rngseed = RadeonRays::rand_uint();			// check this !
+				uint32_t rngseed = RadeonRays::rand_uint();            // check this !
 				uint32_t seed = pixelIndex * rngseed;
 				//Sampler randomSampler;
 				//randomSampler.index = seed;
@@ -586,7 +590,7 @@ namespace SP {
 
 		const std::vector<int>& pixelIndexArrayRef = renderData.host_pixelIndex[(pass + 1) & 0x1];
 
-		const size_t maxSize = renderOutPtr->getWidth() * renderOutPtr->getHeight();		// check the size !!
+		const size_t maxSize = renderOutPtr->getWidth() * renderOutPtr->getHeight();        // check the size !!
 		for (size_t i = 0; i < maxSize; ++i) {
 
 			int pixelIndex = pixelIndexArrayRef[i];
@@ -631,7 +635,7 @@ namespace SP {
 		const auto& lightSamplesArrayRef = renderData.host_lightSamples;
 		std::vector<RadeonRays::float3>& outRef = renderOutPtr->getInternalStorage();
 
-		for (size_t i = 0; i < renderData.host_hitcount; ++i) {		// check upper bound !
+		for (size_t i = 0; i < renderData.host_hitcount; ++i) {        // check upper bound !
 			int pixelIndex = pixelIndexArrayRef[i];
 
 			RadeonRays::float3 radiance = RadeonRays::float3(0.f, 0.f, 0.f);
@@ -642,7 +646,7 @@ namespace SP {
 
 				radiance += lightSamplesArrayRef[i];// TEST !!!!!!!!
 			}
-			
+
 
 			outRef[pixelIndex] += radiance;
 		}
@@ -653,13 +657,12 @@ namespace SP {
 	}
 
 
-
 	void PtRenderer::restorePixelIndices(unsigned pass) {
 
 		const std::vector<int>& previousPixelIndexArrayRef = renderData.host_pixelIndex[(pass + 1) & 0x1];
 		std::vector<int>& newPixelIndexArrayRef = renderData.host_pixelIndex[(pass) & 0x1];
 
-		for (size_t i = 0; i < renderData.host_hitcount; ++i) {		// check upper bound ?
+		for (size_t i = 0; i < renderData.host_hitcount; ++i) {        // check upper bound ?
 			newPixelIndexArrayRef[i] = previousPixelIndexArrayRef[renderData.host_compactedIndex[i]];
 		}
 
@@ -670,7 +673,7 @@ namespace SP {
 
 		const std::vector<int>& pixelIndexArrayRef = renderData.host_pixelIndex[(pass + 1) & 0x1];
 
-		for (size_t i = 0; i < renderData.host_hitcount; ++i) {		// check the upper limit
+		for (size_t i = 0; i < renderData.host_hitcount; ++i) {        // check the upper limit
 
 			int pixelIndex = pixelIndexArrayRef[i];
 			Path& path = renderData.host_path[pixelIndex];
@@ -700,7 +703,7 @@ namespace SP {
 
 	void PtRenderer::compactIndex() {
 
-		const size_t  maxSize = renderData.host_hits.size();
+		const size_t maxSize = renderData.host_hits.size();
 
 		//Exclusive scan add 
 		// ...
