@@ -213,7 +213,7 @@ namespace SP {
 		resume();
 	}
 
-	void RenderingManager::recompileScene() {
+	void RenderingManager::changeSceneWithCoordinates(float x, float y) {
 
 		pause();
 
@@ -223,7 +223,7 @@ namespace SP {
 		std::cerr << "recompile Pause ... " << std::endl;
 
 
-		// clear output?		
+		// TODO: check if we need to clear output?
 		//for (size_t i = 0; i < renderFarm.size(); ++i) {
 		//	renderFarm[i]->clear(0, *renderOutputData[i]);
 		//}

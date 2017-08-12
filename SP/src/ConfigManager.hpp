@@ -95,7 +95,7 @@ namespace SP {
 		void enterState(State state);
 
 
-		void recompileScene();
+		void changeSceneWithCoordinates(float x, float y);
 
 	private:
 

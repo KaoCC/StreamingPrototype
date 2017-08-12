@@ -28,14 +28,26 @@ namespace SP {
 
 
 	// helper function for computing the transformation from projection space to world space
-	static void computeProjectionToWorld(RadeonRays::matrix& mat, RadeonRays::matrix& invmat) {
+	static RadeonRays::float3 computeProjectionToWorld() {
+
+		RadeonRays::float3 worldPosition;
 
 
 		// TODO: compute the correct form
 
 
+		return worldPosition;
+
+	}
 
 
+	static RadeonRays::matrix computeTransformation(RadeonRays::float3& vector) {
+
+		RadeonRays::matrix mat;
+
+		//TODO: compute the correct form
+
+		return mat;
 	}
 
 
@@ -197,12 +209,15 @@ namespace SP {
 			printMat(matRef);
 
 
-			// create the matrix
+			// compute world space position from ST coordinates (world space coordinate = inv Projection Matrix (with depth info) * ST coordinate )
+			RadeonRays::float3 worldPosition = computeProjectionToWorld();
+
+
+			// compute translation matrix
 			RadeonRays::matrix matNew;
 			RadeonRays::matrix invmatNew;
 
-			// compute transformation
-			computeProjectionToWorld(matNew, invmatNew);
+
 
 			// print out for debugging
 			printMat(matNew);

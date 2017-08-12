@@ -50,7 +50,7 @@ namespace SP {
 
 
 		// KAOCC: tmp testing
-		void recompileScene();
+		void changeSceneWithCoordinates(float x, float y);
 
 	private:
 

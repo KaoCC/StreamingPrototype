@@ -191,15 +191,11 @@ namespace SP {
 		renderManagerPtr->reset(state);
 	}
 
-	void ConfigManager::recompileScene() {
 
-		std::cerr << "recompile Scene test" << std::endl;
-		renderManagerPtr->recompileScene();
-
-
+	void ConfigManager::changeSceneWithCoordinates(float x, float y) {
+		std::cerr << "recompile Scene with ST Plane coordinate" << std::endl;
+		renderManagerPtr->changeSceneWithCoordinates(x, y);
 	}
-
-
 
 
 }

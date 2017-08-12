@@ -58,7 +58,7 @@ namespace SP {
 
 		if (!error) {
 
-			// KAOCC: TODO: Yet to be done !!!!!!!
+			// KAOCC: TODO: need to be reviewed !!!!
 
 			// KAOCC: throw exception here if null ?
 			Packet::MessagePointer msgPtr = resolvePacket();
@@ -201,7 +201,7 @@ namespace SP {
 			//}
 
 
-			// KAOCC: check if we need locks
+			// TODO: check if we need locks
 
 			// position
 			//mCfgManagerRef.setPositionDelta(dx, dy, dz);
@@ -317,8 +317,7 @@ namespace SP {
 			responsePtr->set_type(StreamingFormat::MessageType::MsgEnding);
 			responseVector.push_back(responsePtr);
 
-			// TODO:
-			// Close the connection !
+			// TODO: Close the connection ?
 
 			break;
 		}
@@ -361,9 +360,10 @@ namespace SP {
 				case StreamingFormat::EditOperation::UPDATE:
 					std::cerr << "Editing UPDATE:" << editingMsg.op() << ", screen X: " << editingMsg.screen_x() << ", screen Y: " << editingMsg.screen_y()
 							  << std::endl;
-					mCfgManagerRef.recompileScene();
+					mCfgManagerRef.changeSceneWithCoordinates(editingMsg.screen_x(), editingMsg.screen_y());
 					break;
 				default:
+					std::cerr << "Unsupported control message" << std::endl;
 					break;
 
 				}
