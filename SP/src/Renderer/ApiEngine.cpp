@@ -169,7 +169,11 @@ namespace SP {
 	// test
 	void ApiEngine::changeShape_test() {
 		for (auto& backend : mBackends) {
-			backend.tracker.removeShapesInScene_test();
+			//backend.tracker.removeShapesInScene_test();
+
+            // change to add shape
+            backend.tracker.addShapesInScene_test();
+
 		}
 	}
 

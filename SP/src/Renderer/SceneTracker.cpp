@@ -31,6 +31,9 @@ namespace SP {
     static void computeProjectionToWorld(RadeonRays::matrix& mat, RadeonRays::matrix& invmat) {
 
 
+        // TODO: compute the correct form
+
+        
 
 
     }
@@ -201,8 +204,10 @@ namespace SP {
             RadeonRays::matrix invmatNew;
 
             // compute transformation
-
             computeProjectionToWorld(matNew, invmatNew);
+
+            // print out for debugging
+            printMat(matNew);
 
             // apply transformation to shape
             newShape->SetTransform(matNew, invmatNew);
@@ -218,14 +223,12 @@ namespace SP {
 
             std::cerr << "Commit shape " << std::endl;
 
-
         }
 
 		
 
 
 		std::cerr << "add shape ends !" << std::endl;
-
 
 	}
 
