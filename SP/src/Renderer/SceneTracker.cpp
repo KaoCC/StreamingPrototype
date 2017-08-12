@@ -10,6 +10,33 @@
 
 namespace SP {
 
+
+    // helper function for matrix debugging
+    static void printMat(const RadeonRays::matrix& mat) {
+
+        // its a 4*4 matrix
+        for (int i = 0 ; i < 4; ++i) {
+
+            for (int j = 0 ; j < 4; ++j) {
+
+                std::cerr << "mat[i][j]" << mat.m[i][j] << std::endl;
+
+            }
+
+        }
+    }
+
+
+    // helper function for computing the transformation from projection space to world space
+    static void computeProjectionToWorld(RadeonRays::matrix& mat, RadeonRays::matrix& invmat) {
+
+
+
+
+    }
+
+
+
 	SceneTracker::SceneTracker(RadeonRays::IntersectionApi* intersectApi) : api{ intersectApi } {
 
 
@@ -139,7 +166,66 @@ namespace SP {
 			std::cerr << " >>>>>>>>>>> Empty Scene ......" << std::endl;
 		}
 
-		std::cerr << "change Shapes Commit" << std::endl;
+		std::cerr << "remove Shapes Commit" << std::endl;
+
+	}
+
+	// test
+	void SceneTracker::addShapesInScene_test() {
+
+
+		std::cerr << "add Shape starts !" << std::endl;
+
+
+		if (!internalShapes.empty()) {
+
+            // get the reference
+            RadeonRays::Shape* refShape {internalShapes.front()};
+
+            // create mesh or instantiate ?
+            RadeonRays::Shape* newShape {api->CreateInstance(refShape)};      // Note: blocking call
+
+
+            // get matrix  (for debug only)
+            RadeonRays::matrix matRef;
+            RadeonRays::matrix invmatRef;
+
+            refShape->GetTransform(matRef, invmatRef);
+
+            // print out for debugging
+            printMat(matRef);
+
+
+            // create the matrix
+            RadeonRays::matrix matNew;
+            RadeonRays::matrix invmatNew;
+
+            // compute transformation
+
+            computeProjectionToWorld(matNew, invmatNew);
+
+            // apply transformation to shape
+            newShape->SetTransform(matNew, invmatNew);
+
+            // push to vector
+            internalShapes.push_back(newShape);
+
+            // add shape
+            api->AttachShape(newShape);
+
+            // commit
+            api->Commit();
+
+            std::cerr << "Commit shape " << std::endl;
+
+
+        }
+
+		
+
+
+		std::cerr << "add shape ends !" << std::endl;
+
 
 	}
 

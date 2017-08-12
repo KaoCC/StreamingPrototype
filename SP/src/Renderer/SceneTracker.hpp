@@ -35,6 +35,9 @@ namespace SP {
 		// test
 		void removeShapesInScene_test();
 
+		// test
+		void addShapesInScene_test();
+
 
 	private:
 
