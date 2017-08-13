@@ -28,7 +28,7 @@ namespace SP {
 
 
 	// helper function for computing the transformation from projection space to world space
-	static RadeonRays::float3 computeProjectionToWorld() {
+	static RadeonRays::float3 computeProjectionToWorld(float x, float y) {
 
 		RadeonRays::float3 worldPosition;
 
@@ -41,13 +41,12 @@ namespace SP {
 	}
 
 
-	static RadeonRays::matrix computeTransformation(RadeonRays::float3& vector) {
+	static void computeTransformation(const RadeonRays::float3& vector, RadeonRays::matrix& mat, RadeonRays::matrix& matinv) {
 
-		RadeonRays::matrix mat;
 
 		//TODO: compute the correct form
 
-		return mat;
+
 	}
 
 
@@ -184,7 +183,7 @@ namespace SP {
 	}
 
 	// test
-	void SceneTracker::addShapesInScene_test() {
+	void SceneTracker::addShapesInScene_test(float x, float y) {
 
 
 		std::cerr << "add Shape starts !" << std::endl;
@@ -210,13 +209,14 @@ namespace SP {
 
 
 			// compute world space position from ST coordinates (world space coordinate = inv Projection Matrix (with depth info) * ST coordinate )
-			RadeonRays::float3 worldPosition = computeProjectionToWorld();
+			//RadeonRays::float3 worldPosition = computeProjectionToWorld();
 
 
 			// compute translation matrix
 			RadeonRays::matrix matNew;
 			RadeonRays::matrix invmatNew;
 
+			computeTransformation(computeProjectionToWorld(x, y), matNew, invmatNew);
 
 
 			// print out for debugging

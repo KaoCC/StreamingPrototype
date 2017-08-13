@@ -38,7 +38,7 @@ namespace SP {
 		void removeShapesInScene_test();
 
 		// test
-		void addShapesInScene_test();
+		void addShapesInScene_test(float x, float y);
 
 
 	private:

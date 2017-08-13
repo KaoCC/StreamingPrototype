@@ -232,7 +232,7 @@ namespace SP {
 		// add new shapes
 		// API commit 
 		// rebuild BVH
-		mEnginePtr->changeShape_test();
+		mEnginePtr->changeShape_test(x, y);
 
 		std::cerr << "recompile Resume ..." << std::endl;
 

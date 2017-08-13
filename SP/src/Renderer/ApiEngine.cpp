@@ -169,12 +169,12 @@ namespace SP {
 	}
 
 	// test
-	void ApiEngine::changeShape_test() {
+	void ApiEngine::changeShape_test(float x, float y) {
 		for (auto& backend : mBackends) {
 			//backend.tracker.removeShapesInScene_test();
 
 			// change to add shape
-			backend.tracker.addShapesInScene_test();
+			backend.tracker.addShapesInScene_test(0, 0);
 
 		}
 	}
