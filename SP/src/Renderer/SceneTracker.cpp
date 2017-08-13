@@ -27,13 +27,19 @@ namespace SP {
 	}
 
 
-	// helper function for computing the transformation from projection space to world space
+	// helper function for computing the corresponding position from projection space to world space
+	// world space coordinate = inv Projection Matrix (with depth info) * ST coordinate
 	static RadeonRays::float3 computeProjectionToWorld(float x, float y) {
 
 		RadeonRays::float3 worldPosition;
 
 
 		// TODO: compute the correct form
+
+		float depth = 1.0f;
+		RadeonRays::float3 vec {x, y, depth};
+
+		// matrix ?
 
 
 		return worldPosition;
