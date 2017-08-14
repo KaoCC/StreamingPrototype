@@ -349,10 +349,13 @@ namespace SP {
 				// op is enum
 				// StreamingFormat::EditOperation.START(0)/FINISH(1)/UPDATE(2)
 
+
+				
 				// reset test
 				switch (editingMsg.op()) {
 				case StreamingFormat::EditOperation::START:
 					std::cerr << "Editing START:" << std::endl;
+					writeModelIdList();
 					mCfgManagerRef.resetRenderer();
 					break;
 				case StreamingFormat::EditOperation::FINISH:
@@ -361,6 +364,9 @@ namespace SP {
 				case StreamingFormat::EditOperation::UPDATE:
 					std::cerr << "Editing UPDATE:" << editingMsg.op() << ", screen X: " << editingMsg.screen_x() << ", screen Y: " << editingMsg.screen_y() << std::endl;
 					mCfgManagerRef.recompileScene();
+					break;
+				case StreamingFormat::EditOperation::SET_MODEL_ID:
+					std::cerr << "Change Model ID:"  << editingMsg.model_id() << std::endl;
 					break;
 				}
 
@@ -384,6 +390,30 @@ namespace SP {
 
 
 		return responseVector;
+	}
+
+	void Connection::writeModelIdList() {
+		Packet::MessagePointer responsePtr{ new StreamingFormat::StreamingMessage };
+		StreamingFormat::Control* controlPtr{ new StreamingFormat::Control };
+		StreamingFormat::Editing* editPtr{ new StreamingFormat::Editing };
+
+		editPtr->set_op(StreamingFormat::EditOperation::MODEL_LIST);
+		
+		// TODO: for test only
+		
+		int nModels = rand() % 15 + 1;
+		for (int i = 0;i < nModels;i++) {
+			editPtr->add_model_ids(i);
+		}
+
+
+		controlPtr->set_allocated_editingmsg(editPtr);
+
+		responsePtr->set_type(StreamingFormat::MessageType::MsgControl);
+		responsePtr->set_allocated_controlmsg(controlPtr);
+
+
+		writeResponse(responsePtr);
 	}
 
 	void Connection::writeResponse(Packet::MessagePointer msgPtr) {

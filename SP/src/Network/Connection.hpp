@@ -49,7 +49,7 @@ namespace SP {
 
 		void appendImage(Packet::DataBuffer& buffer, const ImageConfig::ImageBuffer& encodedData);
 
-
+		void writeModelIdList();
 
 		// data members 
 
