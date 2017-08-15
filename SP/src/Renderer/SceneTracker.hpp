@@ -14,6 +14,7 @@ namespace SP {
 	public:
 
 		SceneTracker(RadeonRays::IntersectionApi* intersectApi);
+
 		SceneTracker(const SceneTracker&) = delete;
 
 		//allow move
@@ -29,11 +30,15 @@ namespace SP {
 
 		// test
 		const std::vector<const Mesh*>& getInternalMeshPtrs() const;
+
 		// tmp
 		const Scene* getCurrentScenePtr() const;
 
 		// test
-		void changeShapesInScene_test();
+		void removeShapesInScene_test();
+
+		// test
+		void addShapesInScene_test(float x, float y);
 
 
 	private:
@@ -61,25 +66,7 @@ namespace SP {
 	};
 
 
-
-
-
-
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 #endif

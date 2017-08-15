@@ -215,18 +215,20 @@ namespace SP {
 	std::uint32_t ImageConfig::getWidth() const {
 		if (radiancePtr != nullptr) {
 			return radiancePtr->getWidth();
-		} else {
-			return 0;
 		}
-	}
+
+        return 0;
+
+    }
 
 	std::uint32_t ImageConfig::getHeight() const {
 		if (radiancePtr != nullptr) {
 			return radiancePtr->getHeight();
-		} else {
-			return 0;
 		}
-	}
+
+        return 0;
+
+    }
 
 
 }

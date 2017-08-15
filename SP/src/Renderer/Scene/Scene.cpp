@@ -47,7 +47,7 @@ namespace SP {
 	void Scene::attachLight(Light const * light) {
 
 		// find the light !
-		LightList::const_iterator citer = std::find(scenePtr->lights.cbegin(), scenePtr->lights.cend(), light);
+		auto citer = std::find(scenePtr->lights.cbegin(), scenePtr->lights.cend(), light);
 
 		// insert if not found
 		if (citer == scenePtr->lights.cend()) {
@@ -67,7 +67,7 @@ namespace SP {
 
 	void Scene::attachAutoreleaseObject(SceneObject const * object) {
 		// Check if the light is already in the scene
-		AutoreleasePool::const_iterator citer = std::find(scenePtr->autoreleasePool.cbegin(), scenePtr->autoreleasePool.cend(), object);
+		auto citer = std::find(scenePtr->autoreleasePool.cbegin(), scenePtr->autoreleasePool.cend(), object);
 
 		// And insert only if not
 		if (citer == scenePtr->autoreleasePool.cend()) {
@@ -84,11 +84,12 @@ namespace SP {
 
 		if (numLight == 0) {
 			return nullptr;
-		} else {
-			int lightIdx = static_cast<int>(RadeonRays::clamp((sample * numLight), 0, numLight - 1));
+		}
+
+		auto lightIdx = static_cast<int>(RadeonRays::clamp((sample * numLight), 0, numLight - 1));
 			pdf = 1.f / numLight;
 			return scenePtr->lights[lightIdx];
-		}
+
 	}
 
 	//RadeonRays::float3 Scene::sampleLight(size_t lightIndex, const DifferentialGeometry & diffGeo, RadeonRays::float2 sample, RadeonRays::float3 & wo, float & pdf) const {
@@ -100,7 +101,7 @@ namespace SP {
 
 	void Scene::attachShape(Shape const * shape) {
 		// Check if the shape is already in the scene
-		ShapeList::const_iterator citer = std::find(scenePtr->shapes.cbegin(), scenePtr->shapes.cend(), shape);
+		auto citer = std::find(scenePtr->shapes.cbegin(), scenePtr->shapes.cend(), shape);
 
 		// And attach it if not
 		if (citer == scenePtr->shapes.cend()) {
@@ -126,15 +127,15 @@ namespace SP {
 		setDirtyFlag(kCamera);
 	}
 
-	Camera const * Scene::getCamera(size_t camIdx) const {
+	const Camera& Scene::getCamera(size_t camIdx) const {
 
 		if (camIdx < scenePtr->cameras.size()) {
 
-			return scenePtr->cameras[camIdx];
-
-		} else {
-			throw std::runtime_error("Camera: array index out of bound");
+			return *scenePtr->cameras[camIdx];
 		}
+
+		throw std::runtime_error("Camera: array index out of bound");
+
 
 		//return scenePtr->camera;
 	}

@@ -65,7 +65,7 @@ namespace SP {
 
 		// Set and get camera
 		void attachCamera(Camera const* camera);
-		Camera const* getCamera(size_t camIdx) const;
+		const Camera& getCamera(size_t camIdx) const;
 
 		// Get state change since last clear
 		DirtyFlags getDirtyFlags() const;

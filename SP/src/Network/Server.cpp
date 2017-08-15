@@ -4,7 +4,6 @@
 
 #include <iostream>
 
-#include <boost/bind.hpp>
 
 
 

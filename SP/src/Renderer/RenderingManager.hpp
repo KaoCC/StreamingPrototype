@@ -46,10 +46,14 @@ namespace SP {
 		void resume();
 
 		// reset the data
-		void reset();
+		void reset(ConfigManager::State state);
+
 
 		// KAOCC: tmp testing
-		void recompileScene();
+		void changeSceneWithCoordinates(float x, float y);
+
+		// testing 
+		const PerspectiveCamera& getPerspectiveCamera(size_t index) const;
 
 	private:
 

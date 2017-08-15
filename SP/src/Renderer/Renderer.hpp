@@ -66,7 +66,7 @@ namespace SP {
 
 		\param output The output to render into.
 		*/
-		virtual void setOutput(std::shared_ptr<Output> output) = 0;
+		virtual void setOutput(std::shared_ptr<Output> output) = 0;		// TODO : review this API design !
 
 
 		/**
@@ -82,7 +82,7 @@ namespace SP {
 
 
 	// helper function
-	void generateRandomRay(uint32_t rngseed, uint32_t x, uint32_t y, uint32_t imageWidth, uint32_t imageHeight, RadeonRays::ray& currentRay, const PerspectiveCamera* cameraPtr);
+	void generateRandomRay(uint32_t rngseed, uint32_t x, uint32_t y, uint32_t imageWidth, uint32_t imageHeight, RadeonRays::ray& currentRay, const PerspectiveCamera& cameraPtr);
 
 
 }

@@ -12,7 +12,7 @@ namespace SP {
 
 		throughput = RadeonRays::float3(1.f, 1.f, 1.f);
 		volume = -1;
-		flags = 0;
+		flags = kNone;
 		active = 0xFF;
 
 	}

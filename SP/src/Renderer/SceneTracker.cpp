@@ -10,7 +10,17 @@
 
 namespace SP {
 
-	SceneTracker::SceneTracker(RadeonRays::IntersectionApi* intersectApi) : api{ intersectApi } {
+
+
+	// ---------------------- Testing Area !!! Unformatted Code !!! -------------------------------
+
+
+
+
+	// ---------------------------- End of Testing Area ---------------------------------------------------
+
+
+	SceneTracker::SceneTracker(RadeonRays::IntersectionApi* intersectApi) : api { intersectApi } {
 
 
 	}
@@ -47,18 +57,17 @@ namespace SP {
 
 				// get mesh ?
 
-				const Mesh* mesh = static_cast<const Mesh*>(shapeIterator->nextItem());
+				const auto* mesh { static_cast<const Mesh*>(shapeIterator->nextItem()) };
 
 				RadeonRays::Shape* shape = api->CreateMesh(
-					reinterpret_cast<const float*>(mesh->getVertices()),			// check this one !!!
-					static_cast<int>(mesh->getNumVertices()),
-					sizeof(RadeonRays::float3),
-					reinterpret_cast<const int*>(mesh->getIndices()),
-					0,
-					nullptr,
-					static_cast<int>(mesh->getNumIndices() / 3)
+						reinterpret_cast<const float*>(mesh->getVertices()),            // check this one !!!
+						static_cast<int>(mesh->getNumVertices()),
+						sizeof(RadeonRays::float3),
+						reinterpret_cast<const int*>(mesh->getIndices()),
+						0,
+						nullptr,
+						static_cast<int>(mesh->getNumIndices() / 3)
 				);
-
 
 
 				shape->SetId(shapeID);
@@ -101,19 +110,19 @@ namespace SP {
 		return internalMeshPtrs;
 	}
 
-	const Scene * SceneTracker::getCurrentScenePtr() const {
+	const Scene* SceneTracker::getCurrentScenePtr() const {
 		return currentScenePtr;
 	}
 
 	// for testing only
-	void SceneTracker::changeShapesInScene_test() {
+	void SceneTracker::removeShapesInScene_test() {
 
-		std::cerr << "change shape start !" << std::endl;
+		std::cerr << "remove shape start !" << std::endl;
 
 		if (!internalShapes.empty()) {
 
 
-			auto delShape = internalShapes.back();
+			RadeonRays::Shape* delShape { internalShapes.back() };
 			internalShapes.pop_back();
 
 			size_t sz = internalShapes.size();
@@ -123,7 +132,7 @@ namespace SP {
 			if (sz > 0) {
 
 				// tests
-				if (!internalMeshPtrs[sz-1]->getMaterial()->hasEmission()) {
+				if (!internalMeshPtrs[sz - 1]->getMaterial()->hasEmission()) {
 					api->DetachShape(delShape);
 					api->DeleteShape(delShape);
 
@@ -139,7 +148,68 @@ namespace SP {
 			std::cerr << " >>>>>>>>>>> Empty Scene ......" << std::endl;
 		}
 
-		std::cerr << "change Shapes Commit" << std::endl;
+		std::cerr << "remove Shapes Commit" << std::endl;
+
+	}
+
+	// test
+	void SceneTracker::addShapesInScene_test(float x, float y) {
+
+
+		std::cerr << "add Shape starts !" << std::endl;
+
+
+		if (!internalShapes.empty()) {
+
+			// get the reference
+			RadeonRays::Shape* refShape { internalShapes.front() };
+
+			// create mesh or instantiate ?
+			RadeonRays::Shape* newShape { api->CreateInstance(refShape) };      // Note: blocking call
+
+
+			// get matrix  (for debug only)
+			RadeonRays::matrix matRef;
+			RadeonRays::matrix invmatRef;
+
+			refShape->GetTransform(matRef, invmatRef);
+
+			// print out for debugging
+			//printMat(matRef);
+
+
+			// compute world space position from ST coordinates (world space coordinate = inv Projection Matrix (with depth info) * ST coordinate )
+			//RadeonRays::float3 worldPosition = computeProjectionToWorld();
+
+
+			// compute translation matrix
+			RadeonRays::matrix matNew;
+			RadeonRays::matrix invmatNew;
+
+			//computeTransformation(computeProjectionToWorld(x, y), matNew, invmatNew);
+
+
+			// print out for debugging
+			//printMat(matNew);
+
+			// apply transformation to shape
+			newShape->SetTransform(matNew, invmatNew);
+
+			// push to vector
+			internalShapes.push_back(newShape);
+
+			// add shape
+			api->AttachShape(newShape);
+
+			// commit
+			api->Commit();
+
+			std::cerr << "Commit shape " << std::endl;
+
+		}
+
+
+		std::cerr << "add shape ends !" << std::endl;
 
 	}
 

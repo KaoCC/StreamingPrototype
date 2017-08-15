@@ -2,13 +2,13 @@
 
 #include "Scene/Camera.hpp"
 #include "RandomSampler.hpp"
-#include "radeon_rays.h"
+
 #include <memory>
 
 
 namespace SP {
 
-	void generateRandomRay(uint32_t rngseed, uint32_t x, uint32_t y, uint32_t imageWidth, uint32_t imageHeight, RadeonRays::ray & currentRay, const PerspectiveCamera* cameraPtr) {
+	void generateRandomRay(uint32_t rngseed, uint32_t x, uint32_t y, uint32_t imageWidth, uint32_t imageHeight, RadeonRays::ray & currentRay, const PerspectiveCamera& cameraRef) {
 
 
 		uint32_t seed = x + imageWidth * y * rngseed;
@@ -30,16 +30,16 @@ namespace SP {
 
 		// Transform into [-dim/2, dim/2]		
 		//const PerspectiveCamera* cameraPtr = static_cast<const PerspectiveCamera*>(scene.getCamera(camIdx));  // check this 
-		RadeonRays::float2 cSample = hSample * cameraPtr->getSensorSize();
+		RadeonRays::float2 cSample = hSample * cameraRef.getSensorSize();
 
 
 		// set ray
 		//RadeonRays::ray& currentRay = renderData->host_rays[0][y * imageWidth + x];
 
-		currentRay.d = RadeonRays::normalize(cameraPtr->getFocalLength() * cameraPtr->getForwardVector() + cSample.x * cameraPtr->getRightVector() + cSample.y * cameraPtr->getUpVector());
-		currentRay.o = cameraPtr->getPosition() + cameraPtr->getDepthRange().x * currentRay.d;
+		currentRay.d = RadeonRays::normalize(cameraRef.getFocalLength() * cameraRef.getForwardVector() + cSample.x * cameraRef.getRightVector() + cSample.y * cameraRef.getUpVector());
+		currentRay.o = cameraRef.getPosition() + cameraRef.getDepthRange().x * currentRay.d;
 
-		currentRay.o.w = cameraPtr->getDepthRange().y - cameraPtr->getDepthRange().x;
+		currentRay.o.w = cameraRef.getDepthRange().y - cameraRef.getDepthRange().x;
 		currentRay.d.w = sampleBase.x;		// check
 	}
 

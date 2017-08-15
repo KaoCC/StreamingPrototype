@@ -7,14 +7,12 @@
 namespace SP {
 
 
-
-
-	SimpleRenderer::SimpleRenderer(ApiEngine& engine) : mEngineRef{ engine } {
+	SimpleRenderer::SimpleRenderer(ApiEngine& engine) : mEngineRef { engine } {
 	}
 
 
-	std::shared_ptr<Output>  SimpleRenderer::createOutput(std::uint32_t w, std::uint32_t h) const {
-		return std::shared_ptr<RenderOutput>(new RenderOutput(w, h));
+	std::shared_ptr<Output> SimpleRenderer::createOutput(std::uint32_t w, std::uint32_t h) const {
+		return std::make_shared<RenderOutput>(w, h);
 	}
 
 	//void SimpleRenderer::deleteOutput(Output * output) const {
@@ -23,8 +21,8 @@ namespace SP {
 
 
 	// KAOCC: tmp ! not an accurate approach
-	void SimpleRenderer::clear(RadeonRays::float3 const & val, Output & output) const {
-		RenderOutput& rendOutRef = dynamic_cast<RenderOutput&>(output); 		// test it !
+	void SimpleRenderer::clear(RadeonRays::float3 const& val, Output& output) const {
+		auto& rendOutRef = dynamic_cast<RenderOutput&>(output);        // test it !
 
 		auto& storedData = rendOutRef.getInternalStorage();
 
@@ -33,11 +31,11 @@ namespace SP {
 		}
 	}
 
-	void SimpleRenderer::preprocess(Scene const & scene) {
+	void SimpleRenderer::preprocess(Scene const& scene) {
 	}
 
 	// OBJ viewer
-	void SimpleRenderer::render(Scene const & scene, size_t configIdx) {
+	void SimpleRenderer::render(Scene const& scene, size_t configIdx) {
 
 
 		generatePrimaryRays(scene, configIdx);
@@ -63,7 +61,7 @@ namespace SP {
 
 	SimpleRenderer::~SimpleRenderer() = default;
 
-	void SimpleRenderer::generatePrimaryRays(const Scene & scene, size_t camIdx) {
+	void SimpleRenderer::generatePrimaryRays(const Scene& scene, size_t camIdx) {
 
 		const uint32_t imageWidth = mRenderOutPtr->getWidth();
 		const uint32_t imageHeight = mRenderOutPtr->getHeight();
@@ -74,9 +72,9 @@ namespace SP {
 		for (uint32_t y = 0; y < imageHeight; ++y) {
 			for (uint32_t x = 0; x < imageWidth; ++x) {
 
-				const PerspectiveCamera* cameraPtr{ static_cast<const PerspectiveCamera*>(scene.getCamera(camIdx)) };
+				const PerspectiveCamera& cameraRef { static_cast<const PerspectiveCamera&>(scene.getCamera(camIdx)) };
 				RadeonRays::ray& currentRay = mSimpleRenderDataPtr.host_rays[0][y * imageWidth + x];
-				generateRandomRay(rngseed, x, y, imageWidth, imageHeight, currentRay,cameraPtr);
+				generateRandomRay(rngseed, x, y, imageWidth, imageHeight, currentRay, cameraRef);
 
 			}
 		}
@@ -84,7 +82,7 @@ namespace SP {
 
 	}
 
-	void SimpleRenderer::resizeWorkingSet(const Output & out) {
+	void SimpleRenderer::resizeWorkingSet(const Output& out) {
 
 		mSimpleRenderDataPtr.host_rays[0].clear();
 		mSimpleRenderDataPtr.host_rays[0].resize(out.getWidth() * out.getHeight());
@@ -104,7 +102,6 @@ namespace SP {
 
 		const std::vector<const Mesh*>& meshPtrs = mEngineRef.getInternalMeshPtrs();
 
-		
 
 		for (size_t i = 0; i < mSimpleRenderDataPtr.host_hitcount; ++i) {
 
@@ -127,7 +124,7 @@ namespace SP {
 
 				int primId = isectRef.primid;
 
-				const uint32_t& i0 = indexArray[3 * primId];								// CHECK ?
+				const uint32_t& i0 = indexArray[3 * primId];                                // CHECK ?
 				const uint32_t& i1 = indexArray[3 * primId + 1];
 				const uint32_t& i2 = indexArray[3 * primId + 2];
 
@@ -151,17 +148,18 @@ namespace SP {
 
 				//auto normalGeo = RadeonRays::normalize(RadeonRays::cross(v1 - v0, v2 - v0));
 
-				RadeonRays::float2 localUV;						// check this !
+				RadeonRays::float2 localUV;                        // check this !
 				localUV.x = isectRef.uvwt.x;
 				localUV.y = isectRef.uvwt.y;
 
-				auto normal = RadeonRays::normalize(RadeonRays::transform_vector((1.f - localUV.x - localUV.y) * n0 + localUV.x * n1 + localUV.y * n2, matrixI));  //CHECK THIS !
+				auto normal = RadeonRays::normalize(
+						RadeonRays::transform_vector((1.f - localUV.x - localUV.y) * n0 + localUV.x * n1 + localUV.y * n2, matrixI));  //CHECK THIS !
 
 				if (RadeonRays::dot(normal, -rayArrayRef[i].d) < 0) {
 					normal = -normal;
 				}
 
-				outRef[i] = matPtr->getInputValue("albedo").floatValue * RadeonRays::dot(-rayArrayRef[i].d, normal);		// check ray direction
+				outRef[i] = matPtr->getInputValue("albedo").floatValue * RadeonRays::dot(-rayArrayRef[i].d, normal);        // check ray direction
 
 			}
 
@@ -170,8 +168,6 @@ namespace SP {
 		}
 
 	}
-
-
 
 
 }
