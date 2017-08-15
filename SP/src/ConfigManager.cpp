@@ -10,13 +10,13 @@
 #include "math/float3.h"
 
 
-
+#include <opencv2/opencv.hpp>
 
 namespace SP {
 
-	const RadeonRays::float3 ConfigManager::kCameraPos{ -2.f, 1.8f, 0.f };
-	const RadeonRays::float3 ConfigManager::kCameraAt{ 2.f, 1.8f, 0.f };
-	const RadeonRays::float3 ConfigManager::kCameraUp{ 0.f, -1.f, 0.f };
+	const RadeonRays::float3 ConfigManager::kCameraPos { -2.f, 1.8f, 0.f };
+	const RadeonRays::float3 ConfigManager::kCameraAt { 2.f, 1.8f, 0.f };
+	const RadeonRays::float3 ConfigManager::kCameraUp { 0.f, -1.f, 0.f };
 
 	ConfigManager::ConfigManager() : mImageLightField { kNumOfLFs, kNumOfSubLFImgs }, mCameraConfig { kCameraPos, kCameraAt, kCameraUp } {
 
@@ -123,21 +123,76 @@ namespace SP {
 
 
 	// inverted camera world matrix
-	static RadeonRays::matrix computeViewMatrix(const PerspectiveCamera& camera) {
+	static cv::Mat computeViewMatrix(const PerspectiveCamera& camera) {
 
 		const auto& v = camera.getForwardVector();
 		const auto& r = camera.getRightVector();
 		const auto& u = camera.getUpVector();
 		const auto& pos = camera.getPosition();
-		
-		const RadeonRays::float3 ip { -dot(r,pos), -dot(u,pos), -dot(v,pos) };
 
-		return RadeonRays::matrix { 
+		const RadeonRays::float3 ip { -dot(r, pos), -dot(u, pos), -dot(v, pos) };
+
+
+		// convert to OpenCV Mat
+
+
+		float data[] = {
+				r.x, r.y, r.z, ip.x,
+				u.x, u.y, u.z, ip.y,
+				v.x, v.y, v.z, ip.z,
+				0, 0, 0, 1
+		};
+
+
+		//cv::Mat viewMatrix(4, 4, CV_32F);
+
+
+		/*for (int i = 0; i < 3; ++i) {
+			viewMatrix.at<float>(0, i) = r[i];
+			viewMatrix.at<float>(1, i) = u[i];
+			viewMatrix.at<float>(2, i) = v[i];
+			viewMatrix.at<float>(3, i) = 0;
+
+			viewMatrix.at<float>(i, 3) = ip[i];
+		}
+
+		viewMatrix.at<float>(3, 3) = 1; */
+
+
+		//std::cerr << "View Mat" << viewMatrix << std::endl;
+
+		return cv::Mat (4, 4, CV_32F, data);
+
+		// reference:
+		/* RadeonRays::matrix {
 			r.x, r.y, r.z, ip.x,
 			u.x, u.y, u.z, ip.y,
 			v.x, v.y, v.z, ip.z,
-			0, 0, 0, 1 };
+			0, 0, 0, 1 }; */
 	}
+
+	static cv::Mat computeProjectionMatrix(float l, float r, float b, float t, float n, float f) {
+
+
+		float data[] = {
+				2 * n / (r - l), 0, (r + l) / (r - l), 0,
+				0, 2 * n / (t - b), (t + b) / (t - b), 0,
+				0, 0, (n + f) / (n - f), 2 * f * n / (n - f),
+				0, 0, -1, 0
+		};
+
+
+		return cv::Mat(4, 4, CV_32F, data);
+
+
+		//Reference
+		/*return matrix(2*n/(r-l), 0, (r+l)/(r-l), 0,
+					  0, 2*n/(t-b), (t+b) / (t-b), 0,
+					  0, 0, (n+f)/(n-f), 2*f*n/(n - f),
+					  0, 0, -1, 0).transpose(); */
+
+	}
+
 
 
 
@@ -222,11 +277,11 @@ namespace SP {
 		}
 	}
 
-	const LightField & ConfigManager::getLightField() const {
+	const LightField& ConfigManager::getLightField() const {
 		return mImageLightField;
 	}
 
-	LightField & ConfigManager::getLightField() {
+	LightField& ConfigManager::getLightField() {
 		return mImageLightField;
 	}
 
@@ -259,7 +314,7 @@ namespace SP {
 		return kWriteBufferSize;
 	}
 
-	void ConfigManager::setRenderManagerPtr(RenderingManager * renManPtr) {
+	void ConfigManager::setRenderManagerPtr(RenderingManager* renManPtr) {
 		renderManagerPtr = renManPtr;
 	}
 
@@ -284,35 +339,68 @@ namespace SP {
 
 		// workaround !
 		for (size_t i = 0; i < getNumberOfCameras(); ++i) {
-			const auto& camData = renderManagerPtr->getPerspectiveCamera(i);		// check this !!!
+			const auto& camData = renderManagerPtr->getPerspectiveCamera(i);        // check this !!!
 
 
-			const RadeonRays::matrix viewMat { computeViewMatrix(camData) };
 
-			matrixRecords[i] = RadeonRays::inverse(
-				RadeonRays::perspective_proj_lh_gl(
-				-camData.getSensorSize().x / 2, 
-				camData.getSensorSize().x / 2, 
-				-camData.getSensorSize().y / 2, 
-				camData.getSensorSize().y / 2,
-				camData.getFocusDistance(), 
-				camData.getDepthRange().y) * viewMat);
+			// TODO : remember to change to an optimal allocation method
 
-			
+			const cv::Mat& viewMat { computeViewMatrix(camData) };
+
+			const cv::Mat& projMat { computeProjectionMatrix(-camData.getSensorSize().x / 2, camData.getSensorSize().x / 2, -camData.getSensorSize().y / 2,
+															 camData.getSensorSize().y / 2, camData.getFocusDistance(), camData.getDepthRange().y) };
+
+
+			std::cerr << "view Mat" << viewMat << std::endl;
+			std::cerr << "proj Mat" << projMat << std::endl;
+
+			/* matrixRecords[i] = RadeonRays::inverse(
+			   RadeonRays::perspective_proj_lh_gl(
+			   -camData.getSensorSize().x / 2,
+			   camData.getSensorSize().x / 2,
+			   -camData.getSensorSize().y / 2,
+			   camData.getSensorSize().y / 2,
+			   camData.getFocusDistance(),
+			   camData.getDepthRange().y) * viewMat); */
+
+
 			//RadeonRays::float3 camNewCoord = viewMat *   camData.getPosition();
 			//std::cerr << "Get Pos: " << camData.getPosition().x << " " << camData.getPosition().y << std::endl;
 			//std::cerr << "camNewCoord:" << i << " : " << camNewCoord.x << " " << camNewCoord.y << " " << camNewCoord.z << std::endl;
 
 
-			RadeonRays::float4 input { x / kWidth, y / kHeight, 0, 1 };
 
-			RadeonRays::float4 result = matrixRecords[i] * input;
+			// ---- for testing only ----
 
-			std::cerr << "cam: " << i << " : " <<result.x << ' ' << result.y << ' ' << result.z << std::endl;
+			float origin[] = {
+					kCameraPos.x, kCameraPos.y, kCameraPos.z, 1
+			};
+
+			cv::Mat origMat(4, 1, CV_32F, origin);
+
+			std::cerr << "pos to cam coord: " << viewMat * origMat << std::endl;
+			std::cerr << "pos to cam coord to screen projection" << projMat * viewMat * origMat << std::endl;
+
+			//  ---- end of test ----
+
+
+			float inputData [] = {
+					x / kWidth, y / kHeight, 0, 1
+			};
+
+			cv::Mat inputMat (4, 1, CV_32F ,inputData);
+
+			cv::Mat transMat = (projMat * viewMat).inv();
+
+			cv::Mat result = transMat * inputMat;
+
+			std::cerr << "test result: " << result << std::endl;
+
+			//std::cerr << "cam: " << i << " : " << result.x << ' ' << result.y << ' ' << result.z << std::endl;
 		}
 
 
-		
+
 
 		//RadeonRays::perspective_proj_fovy_lh_gl();
 
