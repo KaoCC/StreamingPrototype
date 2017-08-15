@@ -198,18 +198,18 @@ namespace SP {
 				RadeonRays::float2 hSample = imageSample - RadeonRays::float2(0.5f, 0.5f);
 
 				// Transform into [-dim/2, dim/2]		
-				const auto* cameraPtr = static_cast<const PerspectiveCamera*>(scene.getCamera(camIdx));  // check this
-				RadeonRays::float2 cSample = hSample * cameraPtr->getSensorSize();
+				const PerspectiveCamera& cameraRef { static_cast<const PerspectiveCamera&>(scene.getCamera(camIdx)) };  // check this
+				RadeonRays::float2 cSample = hSample * cameraRef.getSensorSize();
 
 
 				// set ray
 				RadeonRays::ray& currentRay = renderData.host_rays[0][y * imageWidth + x];
 
-				currentRay.d = RadeonRays::normalize(cameraPtr->getFocalLength() * cameraPtr->getForwardVector() + cSample.x * cameraPtr->getRightVector() +
-													 cSample.y * cameraPtr->getUpVector());
-				currentRay.o = cameraPtr->getPosition() + cameraPtr->getDepthRange().x * currentRay.d;
+				currentRay.d = RadeonRays::normalize(cameraRef.getFocalLength() * cameraRef.getForwardVector() + cSample.x * cameraRef.getRightVector() +
+													 cSample.y * cameraRef.getUpVector());
+				currentRay.o = cameraRef.getPosition() + cameraRef.getDepthRange().x * currentRay.d;
 
-				currentRay.o.w = cameraPtr->getDepthRange().y - cameraPtr->getDepthRange().x;
+				currentRay.o.w = cameraRef.getDepthRange().y - cameraRef.getDepthRange().x;
 				currentRay.d.w = sampleBase.x;        // check
 
 

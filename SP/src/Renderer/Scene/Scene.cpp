@@ -127,12 +127,11 @@ namespace SP {
 		setDirtyFlag(kCamera);
 	}
 
-	Camera const * Scene::getCamera(size_t camIdx) const {
+	const Camera& Scene::getCamera(size_t camIdx) const {
 
 		if (camIdx < scenePtr->cameras.size()) {
 
-			return scenePtr->cameras[camIdx];
-
+			return *scenePtr->cameras[camIdx];
 		}
 
 		throw std::runtime_error("Camera: array index out of bound");

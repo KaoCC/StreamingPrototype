@@ -72,9 +72,9 @@ namespace SP {
 		for (uint32_t y = 0; y < imageHeight; ++y) {
 			for (uint32_t x = 0; x < imageWidth; ++x) {
 
-				const PerspectiveCamera* cameraPtr { static_cast<const PerspectiveCamera*>(scene.getCamera(camIdx)) };
+				const PerspectiveCamera& cameraRef { static_cast<const PerspectiveCamera&>(scene.getCamera(camIdx)) };
 				RadeonRays::ray& currentRay = mSimpleRenderDataPtr.host_rays[0][y * imageWidth + x];
-				generateRandomRay(rngseed, x, y, imageWidth, imageHeight, currentRay, cameraPtr);
+				generateRandomRay(rngseed, x, y, imageWidth, imageHeight, currentRay, cameraRef);
 
 			}
 		}
