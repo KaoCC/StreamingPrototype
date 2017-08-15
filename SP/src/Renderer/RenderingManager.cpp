@@ -241,6 +241,12 @@ namespace SP {
 
 	}
 
+	const PerspectiveCamera & RenderingManager::getPerspectiveCamera(size_t index) const {
+
+		return dynamic_cast<const PerspectiveCamera&>(sceneDataPtr->getCamera(index));
+
+	}
+
 
 	void RenderingManager::initData(bool loadRadianceFlag) {
 
@@ -457,8 +463,8 @@ namespace SP {
 
 			// test
 			if (farmIdx == 0) {
-				std::cerr << "FarmIndex: " << farmIdx << " Update time: " << std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1).count()
-						  << std::endl;
+				std::cerr << "FarmIndex: " << farmIdx << " Update time: " 
+					<< std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1).count() << std::endl;
 			}
 
 
@@ -480,6 +486,9 @@ namespace SP {
 			{
 				std::lock_guard<std::mutex> queueLock { mQueueMutex };
 				mTaskQueue.push(std::move(taskIndex));
+
+				// TODO : Two tasks with the same ID can not be in the queue at the same time ! Need a fix.
+
 			}
 			mQueueCV.notify_one();
 
