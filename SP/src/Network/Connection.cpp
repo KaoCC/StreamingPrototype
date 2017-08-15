@@ -357,11 +357,36 @@ namespace SP {
 					std::cerr << "Editing FINISH:" << std::endl;
 					mCfgManagerRef.enterState(ConfigManager::State::kPathTracing);
 					break;
-				case StreamingFormat::EditOperation::UPDATE:
+				case StreamingFormat::EditOperation::UPDATE: {
 					std::cerr << "Editing UPDATE:" << editingMsg.op() << ", screen X: " << editingMsg.screen_x() << ", screen Y: " << editingMsg.screen_y()
-							  << std::endl;
+						<< std::endl;
+
+					// TODO : enable when done 
 					mCfgManagerRef.changeSceneWithCoordinates(editingMsg.screen_x(), editingMsg.screen_y());
+
+
+					// ------ for testing -----
+
+					Packet::MessagePointer responsePtr { new StreamingFormat::StreamingMessage };
+					responsePtr->set_type(StreamingFormat::MessageType::MsgControl);
+
+					StreamingFormat::Control* controlMsg { new StreamingFormat::Control};
+					StreamingFormat::Editing* editMsg { new StreamingFormat::Editing };
+
+					editMsg->set_op(StreamingFormat::EditOperation::UPDATE);
+					editMsg->set_screen_x(128);
+					editMsg->set_screen_y(128);
+
+					controlMsg->set_allocated_editingmsg(editMsg);
+					responsePtr->set_allocated_controlmsg(controlMsg);
+
+					responseVector.push_back(responsePtr);
+
+
+					// --------------- end of testing -----------------
+
 					break;
+				}
 				default:
 					std::cerr << "Unsupported control message" << std::endl;
 					break;

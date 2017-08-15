@@ -11,49 +11,13 @@
 namespace SP {
 
 
-	// helper function for matrix debugging
-	static void printMat(const RadeonRays::matrix& mat) {
 
-		// its a 4*4 matrix
-		for (int i = 0; i < 4; ++i) {
-
-			for (int j = 0; j < 4; ++j) {
-
-				std::cerr << "mat[i][j]" << mat.m[i][j] << std::endl;
-
-			}
-
-		}
-	}
+	// ---------------------- Testing Area !!! Unformatted Code !!! -------------------------------
 
 
-	// helper function for computing the corresponding position from projection space to world space
-	// world space coordinate = inv Projection Matrix (with depth info) * ST coordinate
-	static RadeonRays::float3 computeProjectionToWorld(float x, float y) {
-
-		RadeonRays::float3 worldPosition;
 
 
-		// TODO: compute the correct form
-
-		float depth = 1.0f;
-		RadeonRays::float3 vec {x, y, depth};
-
-		// matrix ?
-
-
-		return worldPosition;
-
-	}
-
-
-	static void computeTransformation(const RadeonRays::float3& vector, RadeonRays::matrix& mat, RadeonRays::matrix& matinv) {
-
-
-		//TODO: compute the correct form
-
-
-	}
+	// ---------------------------- End of Testing Area ---------------------------------------------------
 
 
 	SceneTracker::SceneTracker(RadeonRays::IntersectionApi* intersectApi) : api { intersectApi } {
@@ -211,7 +175,7 @@ namespace SP {
 			refShape->GetTransform(matRef, invmatRef);
 
 			// print out for debugging
-			printMat(matRef);
+			//printMat(matRef);
 
 
 			// compute world space position from ST coordinates (world space coordinate = inv Projection Matrix (with depth info) * ST coordinate )
@@ -222,11 +186,11 @@ namespace SP {
 			RadeonRays::matrix matNew;
 			RadeonRays::matrix invmatNew;
 
-			computeTransformation(computeProjectionToWorld(x, y), matNew, invmatNew);
+			//computeTransformation(computeProjectionToWorld(x, y), matNew, invmatNew);
 
 
 			// print out for debugging
-			printMat(matNew);
+			//printMat(matNew);
 
 			// apply transformation to shape
 			newShape->SetTransform(matNew, invmatNew);
