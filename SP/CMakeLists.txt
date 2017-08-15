@@ -143,7 +143,7 @@ message("VARS :  ${Protobuf_INCLUDE_DIR}, ${Protobuf_VERSION}, ${Boost_LIBRARIES
 
 
 
-target_link_libraries(Radiance ${Boost_LIBRARIES} ${RR_LIBRARIES} ${X264_LIBRARIES} ${OPENIMAGEIO_LIBRARIES} ${Protobuf_LIBRARIES})
+target_link_libraries(Radiance ${Boost_LIBRARIES} ${RR_LIBRARIES} ${X264_LIBRARIES} ${OPENIMAGEIO_LIBRARIES} ${Protobuf_LIBRARIES} ${OpenCV_INCLUDE_DIRS})
 
 
 add_custom_command(TARGET Radiance POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory
