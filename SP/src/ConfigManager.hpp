@@ -94,7 +94,7 @@ namespace SP {
 
 		void enterState(State state);
 
-
+		// test
 		void changeSceneWithCoordinates(float x, float y);
 
 	private:
@@ -117,7 +117,7 @@ namespace SP {
 
 		LightField mImageLightField;
 
-		CameraConfig mCamera;
+		CameraConfig mCameraConfig;
 
 
 		// Defaults !

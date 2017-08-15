@@ -4,13 +4,21 @@
 
 #include "Renderer/RenderingManager.hpp"
 
+#include "math/matrix.h"
+#include "math/mathutils.h"
+
+#include "math/float3.h"
+
+
+
+
 namespace SP {
 
 	const RadeonRays::float3 ConfigManager::kCameraPos{ -2.f, 1.8f, 0.f };
 	const RadeonRays::float3 ConfigManager::kCameraAt{ 2.f, 1.8f, 0.f };
 	const RadeonRays::float3 ConfigManager::kCameraUp{ 0.f, 1.1f, 0.f };
 
-	ConfigManager::ConfigManager() : mImageLightField(kNumOfLFs, kNumOfSubLFImgs), mCamera(kCameraPos, kCameraAt, kCameraUp) {
+	ConfigManager::ConfigManager() : mImageLightField { kNumOfLFs, kNumOfSubLFImgs }, mCameraConfig { kCameraPos, kCameraAt, kCameraUp } {
 
 		mChangeSceneFlags.resize(kNumOfLFs * kNumOfSubLFImgs);
 		for (size_t i = 0; i < mChangeSceneFlags.size(); ++i) {
@@ -170,7 +178,7 @@ namespace SP {
 	}
 
 	CameraConfig ConfigManager::getCameraConfig() const {
-		return mCamera;
+		return mCameraConfig;
 	}
 
 	std::size_t ConfigManager::getWriteBufferSize() const {
