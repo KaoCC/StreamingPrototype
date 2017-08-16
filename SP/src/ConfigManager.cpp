@@ -123,7 +123,7 @@ namespace SP {
 
 
 	// inverted camera world matrix
-	static cv::Mat computeViewMatrix(const PerspectiveCamera& camera) {
+	static cv::Matx44f computeViewMatrix(const PerspectiveCamera& camera) {
 
 		const auto& v = camera.getForwardVector();
 		const auto& r = camera.getRightVector();
@@ -136,12 +136,12 @@ namespace SP {
 		// convert to OpenCV Mat
 
 
-		float data[] = {
+		/*float data[] = {
 				r.x, r.y, r.z, ip.x,
 				u.x, u.y, u.z, ip.y,
 				v.x, v.y, v.z, ip.z,
 				0, 0, 0, 1
-		};
+		}; */
 
 
 		//cv::Mat viewMatrix(4, 4, CV_32F);
@@ -161,7 +161,12 @@ namespace SP {
 
 		//std::cerr << "View Mat" << viewMatrix << std::endl;
 
-		return cv::Mat (4, 4, CV_32F, data);
+		return cv::Matx44f { r.x, r.y, r.z, ip.x,
+							 u.x, u.y, u.z, ip.y,
+							 v.x, v.y, v.z, ip.z,
+							 0, 0, 0, 1 };
+
+		//return cv::Mat (4, 4, CV_32F, data);
 
 		// reference:
 		/* RadeonRays::matrix {
@@ -171,10 +176,17 @@ namespace SP {
 			0, 0, 0, 1 }; */
 	}
 
-	static cv::Mat computeProjectionMatrix(float l, float r, float b, float t, float n, float f) {
+	static cv::Matx44f computeProjectionMatrix(float l, float r, float b, float t, float n, float f) {
 
 
-		float data[] = {
+		/*float data[] = {
+				2 * n / (r - l), 0, (r + l) / (r - l), 0,
+				0, 2 * n / (t - b), (t + b) / (t - b), 0,
+				0, 0, (n + f) / (n - f), 2 * f * n / (n - f),
+				0, 0, -1, 0
+		}; */
+
+		return cv::Matx44f {
 				2 * n / (r - l), 0, (r + l) / (r - l), 0,
 				0, 2 * n / (t - b), (t + b) / (t - b), 0,
 				0, 0, (n + f) / (n - f), 2 * f * n / (n - f),
@@ -182,7 +194,7 @@ namespace SP {
 		};
 
 
-		return cv::Mat(4, 4, CV_32F, data);
+		//return cv::Mat(4, 4, CV_32F, data);
 
 
 		//Reference
@@ -345,10 +357,10 @@ namespace SP {
 
 			// TODO : remember to change to an optimal allocation method
 
-			const cv::Mat& viewMat { computeViewMatrix(camData) };
+			const cv::Matx44f& viewMat = computeViewMatrix(camData) ;
 
-			const cv::Mat& projMat { computeProjectionMatrix(-camData.getSensorSize().x / 2, camData.getSensorSize().x / 2, -camData.getSensorSize().y / 2,
-															 camData.getSensorSize().y / 2, camData.getFocusDistance(), camData.getDepthRange().y) };
+			const cv::Matx44f& projMat = computeProjectionMatrix(-camData.getSensorSize().x / 2, camData.getSensorSize().x / 2, -camData.getSensorSize().y / 2,
+															 camData.getSensorSize().y / 2, camData.getFocusDistance(), camData.getDepthRange().y) ;
 
 
 			std::cerr << "view Mat" << viewMat << std::endl;
@@ -372,11 +384,11 @@ namespace SP {
 
 			// ---- for testing only ----
 
-			float origin[] = {
+			/*float origin[] = {
 					kCameraPos.x, kCameraPos.y, kCameraPos.z, 1
-			};
+			}; */
 
-			cv::Mat origMat(4, 1, CV_32F, origin);
+			cv::Matx41f origMat {kCameraPos.x, kCameraPos.y, kCameraPos.z, 1};
 
 			std::cerr << "pos to cam coord: " << viewMat * origMat << std::endl;
 			std::cerr << "pos to cam coord to screen projection" << projMat * viewMat * origMat << std::endl;
@@ -384,15 +396,18 @@ namespace SP {
 			//  ---- end of test ----
 
 
-			float inputData [] = {
+			/* float inputData[] = {
 					x / kWidth, y / kHeight, 0, 1
-			};
+			}; */
 
-			cv::Mat inputMat (4, 1, CV_32F ,inputData);
+			cv::Matx41f inputMat {x / kWidth, y / kHeight, 0, 1};
+			cv::Matx44f transMat = (projMat * viewMat).inv();
 
-			cv::Mat transMat = (projMat * viewMat).inv();
+			//cv::Mat inputMat(4, 1, CV_32F, inputData);
 
-			cv::Mat result = transMat * inputMat;
+			//cv::Mat transMat = (projMat * viewMat).inv();
+
+			cv::Matx41f result = transMat * inputMat;
 
 			std::cerr << "test result: " << result << std::endl;
 
