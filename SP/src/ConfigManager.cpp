@@ -72,54 +72,6 @@ namespace SP {
 	// ----------------------------- Test Area ------------------------------
 
 
-	// helper function for matrix debugging
-	static void printMat(const RadeonRays::matrix& mat) {
-
-		// its a 4*4 matrix
-		for (int i = 0; i < 4; ++i) {
-
-			for (int j = 0; j < 4; ++j) {
-
-				std::cerr << "mat[i][j]" << mat.m[i][j] << std::endl;
-
-			}
-
-		}
-	}
-
-
-	//static const RadeonRays::matrix kViewMatrix {1, 0, 0, -1, 0, 1, 0, -2, 0, 0, 1, -3, 0, 0, 0, 1 };
-
-
-	// helper function for computing the corresponding position from projection space to world space
-	// world space coordinate = inv Projection Matrix (with depth info) * ST coordinate
-	static RadeonRays::float3 computeProjectionToWorld(float x, float y) {
-
-		RadeonRays::float3 worldPosition;
-
-
-		// TODO: compute the correct form
-
-		// tmp
-		float depth = 0.5f;
-		RadeonRays::float3 vec { x, y, depth };
-
-		// matrix ?
-
-
-
-		return worldPosition;
-
-	}
-
-
-	static void computeTransformation(const RadeonRays::float3& vector, RadeonRays::matrix& mat, RadeonRays::matrix& matinv) {
-
-
-		//TODO: compute the correct form
-
-
-	}
 
 
 	// inverted camera world matrix
@@ -130,61 +82,23 @@ namespace SP {
 		const auto& u = camera.getUpVector();
 		const auto& pos = camera.getPosition();
 
+
 		const RadeonRays::float3 ip { -dot(r, pos), -dot(u, pos), -dot(v, pos) };
 
+		std::cerr << "In POS: " << pos.x << " " << pos.y << " " << pos.z << std::endl;
+		std::cerr << "ip: " << ip.x << " " << ip.y << " " << ip.z << std::endl;
 
-		// convert to OpenCV Mat
-
-
-		/*float data[] = {
-				r.x, r.y, r.z, ip.x,
-				u.x, u.y, u.z, ip.y,
-				v.x, v.y, v.z, ip.z,
-				0, 0, 0, 1
-		}; */
-
-
-		//cv::Mat viewMatrix(4, 4, CV_32F);
-
-
-		/*for (int i = 0; i < 3; ++i) {
-			viewMatrix.at<float>(0, i) = r[i];
-			viewMatrix.at<float>(1, i) = u[i];
-			viewMatrix.at<float>(2, i) = v[i];
-			viewMatrix.at<float>(3, i) = 0;
-
-			viewMatrix.at<float>(i, 3) = ip[i];
-		}
-
-		viewMatrix.at<float>(3, 3) = 1; */
-
-
-		//std::cerr << "View Mat" << viewMatrix << std::endl;
 
 		return cv::Matx44f { r.x, r.y, r.z, ip.x,
 							 u.x, u.y, u.z, ip.y,
 							 v.x, v.y, v.z, ip.z,
 							 0, 0, 0, 1 };
-
-		//return cv::Mat (4, 4, CV_32F, data);
-
-		// reference:
-		/* RadeonRays::matrix {
-			r.x, r.y, r.z, ip.x,
-			u.x, u.y, u.z, ip.y,
-			v.x, v.y, v.z, ip.z,
-			0, 0, 0, 1 }; */
 	}
 
 	static cv::Matx44f computeProjectionMatrix(float l, float r, float b, float t, float n, float f) {
 
 
-		/*float data[] = {
-				2 * n / (r - l), 0, (r + l) / (r - l), 0,
-				0, 2 * n / (t - b), (t + b) / (t - b), 0,
-				0, 0, (n + f) / (n - f), 2 * f * n / (n - f),
-				0, 0, -1, 0
-		}; */
+		std::cerr << "l, r, n" << l << " "<< r << " " << n << std::endl;
 
 		return cv::Matx44f {
 				2 * n / (r - l), 0, (r + l) / (r - l), 0,
@@ -194,20 +108,7 @@ namespace SP {
 		};
 
 
-		//return cv::Mat(4, 4, CV_32F, data);
-
-
-		//Reference
-		/*return matrix(2*n/(r-l), 0, (r+l)/(r-l), 0,
-					  0, 2*n/(t-b), (t+b) / (t-b), 0,
-					  0, 0, (n+f)/(n-f), 2*f*n/(n - f),
-					  0, 0, -1, 0).transpose(); */
-
 	}
-
-
-
-
 
 
 	// --------------------------------- End of Test Area ------------------
@@ -346,8 +247,8 @@ namespace SP {
 		std::cerr << "recompile Scene with ST Plane coordinate" << std::endl;
 
 
-		std::vector<RadeonRays::matrix> matrixRecords;
-		matrixRecords.resize(getNumberOfCameras());
+		//std::vector<RadeonRays::matrix> matrixRecords;
+		//matrixRecords.resize(getNumberOfCameras());
 
 		// workaround !
 		for (size_t i = 0; i < getNumberOfCameras(); ++i) {
@@ -362,45 +263,42 @@ namespace SP {
 			const cv::Matx44f& projMat = computeProjectionMatrix(-camData.getSensorSize().x / 2, camData.getSensorSize().x / 2, -camData.getSensorSize().y / 2,
 															 camData.getSensorSize().y / 2, camData.getFocusDistance(), camData.getDepthRange().y) ;
 
-
+			std::cerr << "Pos:" << camData.getPosition().x << " " << camData.getPosition().y << " " << camData.getPosition().z << std::endl;
 			std::cerr << "view Mat" << viewMat << std::endl;
 			std::cerr << "proj Mat" << projMat << std::endl;
-
-			/* matrixRecords[i] = RadeonRays::inverse(
-			   RadeonRays::perspective_proj_lh_gl(
-			   -camData.getSensorSize().x / 2,
-			   camData.getSensorSize().x / 2,
-			   -camData.getSensorSize().y / 2,
-			   camData.getSensorSize().y / 2,
-			   camData.getFocusDistance(),
-			   camData.getDepthRange().y) * viewMat); */
-
-
-			//RadeonRays::float3 camNewCoord = viewMat *   camData.getPosition();
-			//std::cerr << "Get Pos: " << camData.getPosition().x << " " << camData.getPosition().y << std::endl;
-			//std::cerr << "camNewCoord:" << i << " : " << camNewCoord.x << " " << camNewCoord.y << " " << camNewCoord.z << std::endl;
 
 
 
 			// ---- for testing only ----
 
-			/*float origin[] = {
-					kCameraPos.x, kCameraPos.y, kCameraPos.z, 1
-			}; */
 
-			cv::Matx41f origMat {kCameraPos.x, kCameraPos.y, kCameraPos.z, 1};
+			const auto& camPos = camData.getPosition();
 
-			std::cerr << "pos to cam coord: " << viewMat * origMat << std::endl;
-			std::cerr << "pos to cam coord to screen projection" << projMat * viewMat * origMat << std::endl;
+			cv::Matx41f origMat { camPos.x, camPos.y, camPos.z, 1 };
+
+			std::cerr << "orig mat: " << origMat << std::endl;
+
+
+			// (0, 0, -2) in camera space
+			cv::Matx41f newPosMat = viewMat * origMat;
+			newPosMat(2, 0) += -2;
+
+			std::cerr << "pos to cam coord: " << newPosMat << std::endl;
+
+
+			std::cerr << "pos to cam coord to screen projection" << projMat * newPosMat << std::endl;
 
 			//  ---- end of test ----
 
 
-			/* float inputData[] = {
-					x / kWidth, y / kHeight, 0, 1
-			}; */
 
-			cv::Matx41f inputMat {x / kWidth, y / kHeight, 0, 1};
+			std::cerr << "X, Y: " << x << " " << y << " " << std::endl;
+
+			// NDC coord
+			float xNDC = 2 * (x / kWidth) - 1;
+			float yNDC = 2 * (y / kHeight) - 1;
+			std::cerr << "NDC: " << xNDC << " " << yNDC << " " << std::endl;
+			cv::Matx41f inputMat { xNDC, yNDC, 0, 1};
 			cv::Matx44f transMat = (projMat * viewMat).inv();
 
 			//cv::Mat inputMat(4, 1, CV_32F, inputData);
@@ -409,7 +307,7 @@ namespace SP {
 
 			cv::Matx41f result = transMat * inputMat;
 
-			std::cerr << "test result: " << result << std::endl;
+			std::cerr << "test result - world coord : " << result << std::endl;
 
 			//std::cerr << "cam: " << i << " : " << result.x << ' ' << result.y << ' ' << result.z << std::endl;
 		}
