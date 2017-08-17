@@ -50,7 +50,7 @@ namespace SP {
 
 
 		// KAOCC: tmp testing
-		void changeSceneWithCoordinates(float x, float y);
+		void changeSceneWithCoordinates(float worldX, float worldY, float worldZ);
 
 		// testing 
 		const PerspectiveCamera& getPerspectiveCamera(size_t index) const;

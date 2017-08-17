@@ -213,7 +213,7 @@ namespace SP {
 		resume();
 	}
 
-	void RenderingManager::changeSceneWithCoordinates(float x, float y) {
+	void RenderingManager::changeSceneWithCoordinates(float worldX, float worldY, float worldZ) {
 
 		pause();
 
@@ -232,7 +232,7 @@ namespace SP {
 		// add new shapes
 		// API commit 
 		// rebuild BVH
-		mEnginePtr->changeShape_test(x, y);
+		mEnginePtr->changeShape_test(worldX, worldY, worldZ);
 
 		std::cerr << "recompile Resume ..." << std::endl;
 

@@ -10,14 +10,27 @@
 
 namespace SP {
 
+	// ------ test ------
+
+	// helper function for matrix debugging 
+	static void printMat(const RadeonRays::matrix& mat) {
+
+		// its a 4*4 matrix 
+		for (int i = 0; i < 4; ++i) {
+
+			for (int j = 0; j < 4; ++j) {
+
+				//std::cerr << "mat[i][j]" << mat.m[i][j] << std::endl;
+
+				std::printf("mat[%d][%d]: %f \n", i, j, mat.m[i][j]);
+
+			}
+
+		}
+	}
 
 
-	// ---------------------- Testing Area !!! Unformatted Code !!! -------------------------------
-
-
-
-
-	// ---------------------------- End of Testing Area ---------------------------------------------------
+	// ------ end test ------
 
 
 	SceneTracker::SceneTracker(RadeonRays::IntersectionApi* intersectApi) : api { intersectApi } {
@@ -153,7 +166,7 @@ namespace SP {
 	}
 
 	// test
-	void SceneTracker::addShapesInScene_test(float x, float y) {
+	void SceneTracker::addShapesInScene_test(float worldX, float worldY, float worldZ) {
 
 
 		std::cerr << "add Shape starts !" << std::endl;
@@ -162,20 +175,22 @@ namespace SP {
 		if (!internalShapes.empty()) {
 
 			// get the reference
-			RadeonRays::Shape* refShape { internalShapes.front() };
+			RadeonRays::Shape& refShape { *internalShapes.front() };
+			const SP::Mesh& refMesh { *internalMeshPtrs.front() };
 
 			// create mesh or instantiate ?
-			RadeonRays::Shape* newShape { api->CreateInstance(refShape) };      // Note: blocking call
+			RadeonRays::Shape* newShape { api->CreateInstance(&refShape) };      // Note: blocking call
 
 
 			// get matrix  (for debug only)
 			RadeonRays::matrix matRef;
 			RadeonRays::matrix invmatRef;
 
-			refShape->GetTransform(matRef, invmatRef);
+			refShape.GetTransform(matRef, invmatRef);
 
 			// print out for debugging
-			//printMat(matRef);
+			std::cerr << "Mat Ref: \n";
+			printMat(matRef);
 
 
 			// compute world space position from ST coordinates (world space coordinate = inv Projection Matrix (with depth info) * ST coordinate )
@@ -183,20 +198,35 @@ namespace SP {
 
 
 			// compute translation matrix
-			RadeonRays::matrix matNew;
-			RadeonRays::matrix invmatNew;
+
+			std::printf("worldx, worldy, worldz: %f, %f, %f\n", worldX, worldY, worldZ);
+
+			RadeonRays::matrix matNew {
+				1, 0, 0, worldX,
+				0, 1, 0, worldY,
+				0, 0, 1, worldZ,
+				0, 0, 0, 1
+			};
+
+			RadeonRays::matrix invmatNew = RadeonRays::inverse(matNew);
 
 			//computeTransformation(computeProjectionToWorld(x, y), matNew, invmatNew);
 
 
+			std::cerr << "Mat New\n";
 			// print out for debugging
-			//printMat(matNew);
+			printMat(matNew);
 
 			// apply transformation to shape
 			newShape->SetTransform(matNew, invmatNew);
 
+
 			// push to vector
 			internalShapes.push_back(newShape);
+			internalMeshPtrs.push_back(&refMesh);
+
+			// be careful !
+			newShape->SetId(internalShapes.size());
 
 			// add shape
 			api->AttachShape(newShape);

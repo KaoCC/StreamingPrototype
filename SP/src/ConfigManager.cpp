@@ -310,6 +310,11 @@ namespace SP {
 			std::cerr << "test result - world coord : " << result << std::endl;
 
 			//std::cerr << "cam: " << i << " : " << result.x << ' ' << result.y << ' ' << result.z << std::endl;
+
+			std::cerr << "result[0][0] " << result(0, 0) << std::endl;
+
+			renderManagerPtr->changeSceneWithCoordinates(result(0, 0), result(1, 0), result(2, 0));
+
 		}
 
 
