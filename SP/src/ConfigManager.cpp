@@ -6,8 +6,8 @@
 
 namespace SP {
 
-	const RadeonRays::float3 ConfigManager::kCameraPos{ -2.f, 1.8f, 0.f };
-	const RadeonRays::float3 ConfigManager::kCameraAt{ 2.f, 1.8f, 0.f };
+	const RadeonRays::float3 ConfigManager::kCameraPos{ -2.f, 1.0f, 0.f };
+	const RadeonRays::float3 ConfigManager::kCameraAt{ 2.f, 1.0f, 0.f };
 	const RadeonRays::float3 ConfigManager::kCameraUp{ 0.f, -1.f, 0.f };
 
 	ConfigManager::ConfigManager() : mImageLightField(kNumOfLFs, kNumOfSubLFImgs), mCamera(kCameraPos, kCameraAt, kCameraUp) {
@@ -81,6 +81,10 @@ namespace SP {
 	std::vector<std::size_t> ConfigManager::getIndexArrayOfSubLightField(float dx) const {
 
 		std::vector<std::size_t> indexArray;
+		for (int i = 0;i < mImageLightField.getTotalSize();i++) {
+			indexArray.push_back(i);
+		}
+		/*
 
 		dx += 0.5;
 		const std::size_t totalSz = mImageLightField.getTotalSize();
@@ -113,6 +117,7 @@ namespace SP {
 			indexArray.push_back(index);
 			indexArray.push_back(indexR);
 		}
+		*/
 
 		return indexArray;
 	}

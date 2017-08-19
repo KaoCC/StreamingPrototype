@@ -218,7 +218,7 @@ namespace SP {
 
 			auto& lightFieldRef = mCfgManagerRef.getLightField();
 
-			const auto& indexArray{ mCfgManagerRef.getIndexArrayOfSubLightField(dx) };
+			const auto& indexArray{ mCfgManagerRef.getIndexArrayOfSubLightField(-dx) };
 
 			size_t subLFSz = mCfgManagerRef.getNumberOfSubLFImages();
 
@@ -242,10 +242,33 @@ namespace SP {
 
 				// test
 				//encodedDataVector.clear();
+				StreamingFormat::Image* imagePtr{ new StreamingFormat::Image };
 
 				ImageConfig::ImageBuffer encodedImageData;
 
-				for (size_t k = 0; k < subLFSz; ++k) {
+				// lctseng: adaptive: determine use odd or even
+				// need check camera field
+				
+				size_t subLfIndexOffset = 0;
+				size_t subLfIndexStep = 1;
+				if (msgPtr->cameramsg().imagequality() == StreamingFormat::ImageQuality::LOW) {
+					subLfIndexStep = 2;
+					if (subLFIndex % 2 != 0) {
+						subLfIndexOffset = 1; // 1, 3
+						imagePtr->set_imagetype(StreamingFormat::ImageType::ODD_INDEX);
+					}
+					// else, 0, 2
+					else {
+						imagePtr->set_imagetype(StreamingFormat::ImageType::EVEN_INDEX);
+
+					}
+				}
+				else {
+					imagePtr->set_imagetype(StreamingFormat::ImageType::FULL_INDEX);
+				}
+
+
+				for (size_t k = subLfIndexOffset; k < subLFSz; k+= subLfIndexStep) {
 
 					// need to optimize for copying !
 					//ImageConfig imageData{ cfgManager.getImage() };
@@ -273,7 +296,7 @@ namespace SP {
 				}
 
 
-				StreamingFormat::Image* imagePtr{ new StreamingFormat::Image };
+				
 
 				// for testing only
 				imagePtr->set_serialnumber(serialNumber);
@@ -361,10 +384,29 @@ namespace SP {
 				case StreamingFormat::EditOperation::FINISH:
 					std::cerr << "Editing FINISH:" << std::endl;
 					break;
-				case StreamingFormat::EditOperation::UPDATE:
+				case StreamingFormat::EditOperation::UPDATE: {
+					Packet::MessagePointer responsePtr{ new StreamingFormat::StreamingMessage };
+					StreamingFormat::Control* controlPtr{ new StreamingFormat::Control };
+					StreamingFormat::Editing* editPtr{ new StreamingFormat::Editing };
+
+					editPtr->set_op(StreamingFormat::EditOperation::UPDATE);
+					editPtr->set_screen_x(rand() % 256);
+					editPtr->set_screen_y(rand() % 256);
+
+					controlPtr->set_allocated_editingmsg(editPtr);
+
+					responsePtr->set_type(StreamingFormat::MessageType::MsgControl);
+					responsePtr->set_allocated_controlmsg(controlPtr);
+
+
+					writeResponse(responsePtr);
+
+
+
 					std::cerr << "Editing UPDATE:" << editingMsg.op() << ", screen X: " << editingMsg.screen_x() << ", screen Y: " << editingMsg.screen_y() << std::endl;
 					mCfgManagerRef.recompileScene();
 					break;
+				}
 				case StreamingFormat::EditOperation::SET_MODEL_ID:
 					std::cerr << "Change Model ID:"  << editingMsg.model_id() << std::endl;
 					break;

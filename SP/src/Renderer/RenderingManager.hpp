@@ -98,10 +98,10 @@ namespace SP {
 
 		// tmp
 		const std::string defaultPath = "Resources/Conf";
-		const std::string defaultModelName = "conf_room_2.objm";
+		const std::string defaultModelName = "conf_room_5.objm";
 
 		//tmp
-		const float kStep = 0.025f * 4;
+		const float kStep = 0.025f * 12;
 
 		// thread safe queue
 		const int kPauseTime = 100;
