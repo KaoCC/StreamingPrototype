@@ -77,11 +77,15 @@ namespace SP {
 	// inverted camera world matrix
 	static cv::Matx44f computeViewMatrix(const PerspectiveCamera& camera) {
 
-		const auto& v = camera.getForwardVector();
-		const auto& r = camera.getRightVector();
-		const auto& u = camera.getUpVector();
+		const auto& v = -camera.getForwardVector();
+		//const auto& r = camera.getRightVector();
+		//const auto& u = camera.getUpVector();
 		const auto& pos = camera.getPosition();
 
+		// Recalculate these since the forward vector is inverted !
+
+		const auto& r = RadeonRays::cross(v, RadeonRays::normalize(camera.getUpVector()));
+		const auto& u = RadeonRays::cross(r, v);
 
 		const RadeonRays::float3 ip { -dot(r, pos), -dot(u, pos), -dot(v, pos) };
 
@@ -264,8 +268,8 @@ namespace SP {
 															 camData.getSensorSize().y / 2, camData.getFocusDistance(), camData.getDepthRange().y) ;
 
 			std::cerr << "Pos:" << camData.getPosition().x << " " << camData.getPosition().y << " " << camData.getPosition().z << std::endl;
-			std::cerr << "view Mat" << viewMat << std::endl;
-			std::cerr << "proj Mat" << projMat << std::endl;
+			std::cerr << "view Mat: " << viewMat << std::endl;
+			std::cerr << "proj Mat: " << projMat << std::endl;
 
 
 
@@ -281,29 +285,40 @@ namespace SP {
 
 			// (0, 0, -2) in camera space
 			cv::Matx41f newPosMat = viewMat * origMat;
+
+			std::cerr << "origMat in Cam (0, 0, 0): " << newPosMat <<std::endl;
+
 			newPosMat(2, 0) += -2;
 
-			std::cerr << "pos to cam coord: " << newPosMat << std::endl;
+			std::cerr << "new Pos Mat in camera space : " << newPosMat << std::endl;
 
-
-			std::cerr << "pos to cam coord to screen projection" << projMat * newPosMat << std::endl;
+			cv::Matx41f screenPos = projMat * newPosMat;
+			std::cerr << "new Pos in cam space to screen projection" << screenPos << std::endl;
 
 			//  ---- end of test ----
 
-
+	
 
 			std::cerr << "X, Y: " << x << " " << y << " " << std::endl;
 
 			// NDC coord
 			float xNDC = 2 * (x / kWidth) - 1;
 			float yNDC = 2 * (y / kHeight) - 1;
-			std::cerr << "NDC: " << xNDC << " " << yNDC << " " << std::endl;
-			cv::Matx41f inputMat { xNDC, yNDC, 0, 1};
+			std::cerr << "NDC (x, y): " << xNDC << " " << yNDC << " " << std::endl;
+
+			const float kDefaultDepth = 0.5;
+
+			cv::Matx41f inputMat { xNDC, yNDC, kDefaultDepth, 1};
 			cv::Matx44f transMat = (projMat * viewMat).inv();
 
 			//cv::Mat inputMat(4, 1, CV_32F, inputData);
 
 			//cv::Mat transMat = (projMat * viewMat).inv();
+
+			std::cerr << ">>> TESTING !!!" << std::endl;
+
+			cv::Matx41f backPosTest = transMat * screenPos;
+			std::cerr << "backPosTest - world coord : " << backPosTest << std::endl;
 
 			cv::Matx41f result = transMat * inputMat;
 
@@ -311,9 +326,15 @@ namespace SP {
 
 			//std::cerr << "cam: " << i << " : " << result.x << ' ' << result.y << ' ' << result.z << std::endl;
 
-			std::cerr << "result[0][0] " << result(0, 0) << std::endl;
+			//std::cerr << "result[0][0] " << result(0, 0) << std::endl;
 
-			renderManagerPtr->changeSceneWithCoordinates(result(0, 0), result(1, 0), result(2, 0));
+			float wClip = result(3, 0);
+
+			// test
+			if (i == 0) {
+				renderManagerPtr->changeSceneWithCoordinates(result(0, 0) / wClip, result(1, 0) / wClip, result(2, 0) / wClip);
+				break;
+			}
 
 		}
 
