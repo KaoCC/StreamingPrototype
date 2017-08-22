@@ -45,8 +45,8 @@ namespace SP {
 
 		float vertices[] {
 			worldX, worldY, worldZ,
-			worldX, worldY + 5, worldZ,
-			worldX, worldY, worldZ + 5
+			worldX, worldY + 2, worldZ,
+			worldX, worldY, worldZ + 2
 		};
 
 		size_t numOfVertices = 3;
