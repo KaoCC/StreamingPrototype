@@ -125,7 +125,7 @@ namespace SP {
 	//--------------
 
 
-	SingleBxDF::SingleBxDF(BxDFType tp) : type (tp) {
+	SingleBxDF::SingleBxDF(BxDFType tp) : type { tp } {
 
 		registerInput("albedo", "Diffuse color", { InputType::kFloat4, InputType::kTexture });
 		registerInput("normal", "Normal map", { InputType::kTexture });
@@ -154,6 +154,36 @@ namespace SP {
 
 	bool SingleBxDF::hasEmission() const {
 		return type == BxDFType::kEmissive;
+	}
+
+
+	// ------------
+
+	MultiBxDF::MultiBxDF(MultiType t) : type {t} {
+		registerInput("base_material", "Base material", { InputType::kMaterial });
+		registerInput("top_material", "Top material", { InputType::kMaterial });
+		registerInput("ior", "Index of refraction", { InputType::kFloat4 });
+		registerInput("weight", "Blend weight", { InputType::kFloat4, InputType::kTexture });
+	}
+
+	MultiBxDF::MultiType MultiBxDF::getType() const {
+		return type;
+	}
+
+	void MultiBxDF::setType(MultiType t) {
+		type = t;
+	}
+
+	bool MultiBxDF::hasEmission() const {
+		InputValue base = getInputValue("base_material");
+		InputValue top = getInputValue("base_material");
+
+		if ((base.matValue != nullptr) && base.matValue->hasEmission())
+			return true;
+		if ((top.matValue != nullptr) && top.matValue->hasEmission())
+			return true;
+
+		return false;
 	}
 
 }
