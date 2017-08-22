@@ -262,38 +262,40 @@ namespace SP {
 
 			// TODO : remember to change to an optimal allocation method
 
+			const std::size_t kScale = 30;
+
 			const cv::Matx44f& viewMat = computeViewMatrix(camData) ;
 
-			const cv::Matx44f& projMat = computeProjectionMatrix(-camData.getSensorSize().x / 2, camData.getSensorSize().x / 2, -camData.getSensorSize().y / 2,
-															 camData.getSensorSize().y / 2, camData.getFocusDistance(), camData.getDepthRange().y) ;
+			const cv::Matx44f& projMat = computeProjectionMatrix(-camData.getSensorSize().x * kScale / 2, camData.getSensorSize().x * kScale / 2, -camData.getSensorSize().y * kScale / 2,
+															 camData.getSensorSize().y * kScale / 2, camData.getFocusDistance(), camData.getDepthRange().y) ;
 
 			std::cerr << "Pos:" << camData.getPosition().x << " " << camData.getPosition().y << " " << camData.getPosition().z << std::endl;
-			std::cerr << "view Mat: " << viewMat << std::endl;
-			std::cerr << "proj Mat: " << projMat << std::endl;
+			//std::cerr << "view Mat: " << viewMat << std::endl;
+			//std::cerr << "proj Mat: " << projMat << std::endl;
 
 
 
 			// ---- for testing only ----
 
 
-			const auto& camPos = camData.getPosition();
+			//const auto& camPos = camData.getPosition();
 
-			cv::Matx41f origMat { camPos.x, camPos.y, camPos.z, 1 };
+			//cv::Matx41f origMat { camPos.x, camPos.y, camPos.z, 1 };
 
-			std::cerr << "orig mat: " << origMat << std::endl;
+			//std::cerr << "orig mat: " << origMat << std::endl;
 
 
 			// (0, 0, -2) in camera space
-			cv::Matx41f newPosMat = viewMat * origMat;
+			//cv::Matx41f newPosMat = viewMat * origMat;
 
-			std::cerr << "origMat in Cam (0, 0, 0): " << newPosMat <<std::endl;
+			//std::cerr << "origMat in Cam (0, 0, 0): " << newPosMat <<std::endl;
 
-			newPosMat(2, 0) += -2;
+			//newPosMat(2, 0) += -2;
 
-			std::cerr << "new Pos Mat in camera space : " << newPosMat << std::endl;
+			//std::cerr << "new Pos Mat in camera space : " << newPosMat << std::endl;
 
-			cv::Matx41f screenPos = projMat * newPosMat;
-			std::cerr << "new Pos in cam space to screen projection" << screenPos << std::endl;
+			//cv::Matx41f screenPos = projMat * newPosMat;
+			//std::cerr << "new Pos in cam space to screen projection" << screenPos << std::endl;
 
 			//  ---- end of test ----
 
@@ -315,10 +317,10 @@ namespace SP {
 
 			//cv::Mat transMat = (projMat * viewMat).inv();
 
-			std::cerr << ">>> TESTING !!!" << std::endl;
+			//std::cerr << ">>> TESTING !!!" << std::endl;
 
-			cv::Matx41f backPosTest = transMat * screenPos;
-			std::cerr << "backPosTest - world coord : " << backPosTest << std::endl;
+			//cv::Matx41f backPosTest = transMat * screenPos;
+			//std::cerr << "backPosTest - world coord : " << backPosTest << std::endl;
 
 			cv::Matx41f result = transMat * inputMat;
 

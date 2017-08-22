@@ -462,10 +462,10 @@ namespace SP {
 			auto t2 = std::chrono::high_resolution_clock::now();
 
 			// test
-			if (farmIdx == 0) {
-				std::cerr << "FarmIndex: " << farmIdx << " Update time: " 
-					<< std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1).count() << std::endl;
-			}
+			//if (farmIdx == 0) {
+			//	std::cerr << "FarmIndex: " << farmIdx << " Update time: " 
+			//		<< std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1).count() << std::endl;
+			//}
 
 
 			// tmp, need lock , need interrupt-based method
