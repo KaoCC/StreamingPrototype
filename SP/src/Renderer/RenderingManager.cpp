@@ -213,7 +213,7 @@ namespace SP {
 		resume();
 	}
 
-	void RenderingManager::changeSceneWithCoordinates(float x, float y) {
+	void RenderingManager::changeSceneWithCoordinates(float worldX, float worldY, float worldZ) {
 
 		pause();
 
@@ -232,7 +232,7 @@ namespace SP {
 		// add new shapes
 		// API commit 
 		// rebuild BVH
-		mEnginePtr->changeShape_test(x, y);
+		mEnginePtr->changeShape_test(worldX, worldY, worldZ);
 
 		std::cerr << "recompile Resume ..." << std::endl;
 
@@ -462,10 +462,10 @@ namespace SP {
 			auto t2 = std::chrono::high_resolution_clock::now();
 
 			// test
-			if (farmIdx == 0) {
-				std::cerr << "FarmIndex: " << farmIdx << " Update time: " 
-					<< std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1).count() << std::endl;
-			}
+			//if (farmIdx == 0) {
+			//	std::cerr << "FarmIndex: " << farmIdx << " Update time: " 
+			//		<< std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1).count() << std::endl;
+			//}
 
 
 			// tmp, need lock , need interrupt-based method

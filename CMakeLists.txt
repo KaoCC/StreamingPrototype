@@ -23,17 +23,23 @@ project(StreamingPrototype)
 set(CMAKE_FIND_PACKAGE_SORT_ORDER NATURAL)
 set(CMAKE_FIND_PACKAGE_SORT_DIRECTION DEC)
 
-# find_package(OpenCL REQUIRED)
 
-find_package(Threads REQUIRED)
 
 if (WIN32)
     list(APPEND CMAKE_PREFIX_PATH ${3RDPARTY_DIR}/protobuf)
     list(APPEND CMAKE_PREFIX_PATH ${3RDPARTY_DIR}/x264)
     list(APPEND CMAKE_PREFIX_PATH ${3RDPARTY_DIR}/oiio)
+    list(APPEND CMAKE_PREFIX_PATH ${3RDPARTY_DIR}/opencv)
 endif ()
 
 list(APPEND CMAKE_PREFIX_PATH ${3RDPARTY_DIR}/RadeonRays)
+
+# find packages
+
+# find_package(OpenCL REQUIRED)
+
+find_package(Threads REQUIRED)
+find_package(OpenCV REQUIRED)
 
 # Google Protobuf
 # find_package(Protobuf REQUIRED HINTS ${CMAKE_SOURCE_DIR}/3rdparty/protobuf/cmake)

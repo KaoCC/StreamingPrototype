@@ -10,14 +10,83 @@
 
 namespace SP {
 
+	// ------ test ------
+
+	// helper function for matrix debugging 
+	static void printMat(const RadeonRays::matrix& mat) {
+
+		// its a 4*4 matrix 
+		for (int i = 0; i < 4; ++i) {
+
+			for (int j = 0; j < 4; ++j) {
+
+				//std::cerr << "mat[i][j]" << mat.m[i][j] << std::endl;
+
+				std::printf("mat[%d][%d]: %f ", i, j, mat.m[i][j]);
+
+			}
+
+			std::cerr << std::endl;
+
+		}
+	}
+
+	static SP::Mesh* createDefaultMesh(float worldX, float worldY, float worldZ) {
+
+		// TODO: fix this !! Who's gonna release the memory for this ?
+		SP::Mesh* mesh = new Mesh();
+
+		// original world space
+		//float vertices[] {
+		//	0.f, 0.f, 0.f,
+		//	0.f, 1.f, 0.f,
+		//	1.f, 0.f, 0.f
+		//};
+
+		float vertices[] {
+			worldX, worldY, worldZ,
+			worldX, worldY + 2, worldZ,
+			worldX, worldY, worldZ + 2
+		};
+
+		size_t numOfVertices = 3;
 
 
-	// ---------------------- Testing Area !!! Unformatted Code !!! -------------------------------
+		uint32_t indices[] { 0, 1, 2 };
+		size_t numOfIndices = 3;
+
+		float normals[] {
+			1, 0, 0,
+			1, 0, 0,
+			1, 0, 0
+		};
+		size_t numOfNormals = 3;
+
+
+		// set vertices
+		mesh->setVertices(vertices, numOfVertices);
+
+		// set indices
+		mesh->setIndices(indices, numOfIndices);
+
+		// set Normals
+		mesh->setNormals(normals, numOfNormals);
+
+		// Generate Zeros if we do not have UVs
+		std::vector<RadeonRays::float2> zero(numOfVertices);
+		std::fill(zero.begin(), zero.end(), RadeonRays::float2(0, 0));
+		mesh->setUVs(&zero[0], numOfVertices);
 
 
 
+		mesh->setName("Default");
 
-	// ---------------------------- End of Testing Area ---------------------------------------------------
+		// No material !
+
+		return mesh;
+	}
+
+	// ------ end test ------
 
 
 	SceneTracker::SceneTracker(RadeonRays::IntersectionApi* intersectApi) : api { intersectApi } {
@@ -153,7 +222,7 @@ namespace SP {
 	}
 
 	// test
-	void SceneTracker::addShapesInScene_test(float x, float y) {
+	void SceneTracker::addShapesInScene_test(float worldX, float worldY, float worldZ) {
 
 
 		std::cerr << "add Shape starts !" << std::endl;
@@ -162,19 +231,37 @@ namespace SP {
 		if (!internalShapes.empty()) {
 
 			// get the reference
-			RadeonRays::Shape* refShape { internalShapes.front() };
+			RadeonRays::Shape& refShape { *internalShapes.front() };
+			const SP::Mesh& refMesh { *internalMeshPtrs.front() };
+			const SP::Material& refMat{ *refMesh.getMaterial() };
+
+			// add default mesh !!
+			SP::Mesh* defaultMesh {createDefaultMesh(worldX, worldY, worldZ)};
+
+			// workaround
+			defaultMesh->setMaterial(&refMat);
+
+			RadeonRays::Shape* defaultShape = api->CreateMesh(
+				reinterpret_cast<const float*>(defaultMesh->getVertices()),            // check this one !!!
+				static_cast<int>(defaultMesh->getNumVertices()),
+				sizeof(RadeonRays::float3),
+				reinterpret_cast<const int*>(defaultMesh->getIndices()),
+				0,
+				nullptr,
+				static_cast<int>(defaultMesh->getNumIndices() / 3)
+			);
 
 			// create mesh or instantiate ?
-			RadeonRays::Shape* newShape { api->CreateInstance(refShape) };      // Note: blocking call
-
+			//RadeonRays::Shape* newShape { api->CreateInstance(&refShape) };      // Note: blocking call
 
 			// get matrix  (for debug only)
 			RadeonRays::matrix matRef;
 			RadeonRays::matrix invmatRef;
 
-			refShape->GetTransform(matRef, invmatRef);
+			refShape.GetTransform(matRef, invmatRef);
 
 			// print out for debugging
+			//std::cerr << "Mat Ref: \n";
 			//printMat(matRef);
 
 
@@ -183,23 +270,38 @@ namespace SP {
 
 
 			// compute translation matrix
-			RadeonRays::matrix matNew;
-			RadeonRays::matrix invmatNew;
+
+			std::printf("worldx, worldy, worldz: %f, %f, %f\n", worldX, worldY, worldZ);
+
+			//RadeonRays::matrix matNew {
+			//	1, 0, 0, worldX,
+			//	0, 1, 0, worldY,
+			//	0, 0, 1, worldZ,
+			//	0, 0, 0, 1
+			//};
+
+			//RadeonRays::matrix invmatNew = RadeonRays::inverse(matNew);
 
 			//computeTransformation(computeProjectionToWorld(x, y), matNew, invmatNew);
 
 
+			//std::cerr << "Mat New\n";
 			// print out for debugging
 			//printMat(matNew);
 
 			// apply transformation to shape
-			newShape->SetTransform(matNew, invmatNew);
+			//newShape->SetTransform(matNew, invmatNew);
+
 
 			// push to vector
-			internalShapes.push_back(newShape);
+			internalShapes.push_back(defaultShape);
+			internalMeshPtrs.push_back(defaultMesh);
+
+			// be careful !
+			defaultShape->SetId(internalShapes.size());
 
 			// add shape
-			api->AttachShape(newShape);
+			api->AttachShape(defaultShape);
 
 			// commit
 			api->Commit();

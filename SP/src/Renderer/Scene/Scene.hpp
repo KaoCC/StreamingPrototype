@@ -38,6 +38,8 @@ namespace SP {
 		// Destructor
 		~Scene();
 
+		
+
 		// Add or remove lights
 		void attachLight(Light const* light);
 		void detachLight(Light const* light);
@@ -89,6 +91,9 @@ namespace SP {
 	private:
 		struct SceneImpl;
 		std::unique_ptr<SceneImpl> scenePtr;
+
+
+
 	};
 
 

@@ -234,7 +234,7 @@ namespace SP {
 					continue;
 				}
 
-				std::cerr << "Get new: " << subLFIndex << "\n";
+				//std::cerr << "Get new: " << subLFIndex << "\n";
 
 
 				Packet::MessagePointer responsePtr { new StreamingFormat::StreamingMessage };
