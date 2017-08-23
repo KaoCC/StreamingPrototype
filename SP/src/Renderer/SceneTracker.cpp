@@ -43,10 +43,12 @@ namespace SP {
 		//	1.f, 0.f, 0.f
 		//};
 
+		const int unitLength = 1;
+
 		float vertices[] {
 			worldX, worldY, worldZ,
-			worldX, worldY + 2, worldZ,
-			worldX, worldY, worldZ + 2
+			worldX, worldY + unitLength, worldZ,
+			worldX, worldY, worldZ + unitLength
 		};
 
 		size_t numOfVertices = 3;
@@ -126,7 +128,7 @@ namespace SP {
 
 				// get mesh ?
 
-				const auto* mesh { static_cast<const Mesh*>(shapeIterator->nextItem()) };
+				const auto* mesh = static_cast<const Mesh*>(shapeIterator->nextItem());
 
 				RadeonRays::Shape* shape = api->CreateMesh(
 						reinterpret_cast<const float*>(mesh->getVertices()),            // check this one !!!
@@ -146,6 +148,10 @@ namespace SP {
 
 				//test
 				internalMeshPtrs.push_back(mesh);
+
+				//if (mesh->getName() != "") {
+					std::cerr << ">>>>>>>>>>>>>>" << mesh->getMaterial()->getName() << " : " <<internalMeshPtrs.size() << std::endl;
+				//}
 			}
 
 			std::cerr << "Num of internal Shapes: " << internalShapes.size() << std::endl;
@@ -221,9 +227,14 @@ namespace SP {
 
 	}
 
+	// test !!!
+
+
 	// test
 	void SceneTracker::addShapesInScene_test(float worldX, float worldY, float worldZ) {
 
+		// test !
+		static bool initFlag = true;
 
 		std::cerr << "add Shape starts !" << std::endl;
 
@@ -232,8 +243,8 @@ namespace SP {
 
 			// get the reference
 			RadeonRays::Shape& refShape { *internalShapes.front() };
-			const SP::Mesh& refMesh { *internalMeshPtrs.front() };
-			const SP::Material& refMat{ *refMesh.getMaterial() };
+			//const SP::Mesh& refMesh { *internalMeshPtrs.front() };
+			const SP::Material& refMat{ *(internalMeshPtrs[44]->getMaterial()) };
 
 			// add default mesh !!
 			SP::Mesh* defaultMesh {createDefaultMesh(worldX, worldY, worldZ)};
@@ -292,6 +303,20 @@ namespace SP {
 			// apply transformation to shape
 			//newShape->SetTransform(matNew, invmatNew);
 
+
+			if (!initFlag) {
+
+				// remove shape
+				auto currentShape = internalShapes.back();
+				internalShapes.pop_back();
+				api->DetachShape(currentShape);
+				api->DeleteShape(currentShape);
+
+				internalMeshPtrs.pop_back();
+
+			} else {
+				initFlag = false;
+			}
 
 			// push to vector
 			internalShapes.push_back(defaultShape);

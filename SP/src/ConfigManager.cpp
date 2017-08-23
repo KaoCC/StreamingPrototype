@@ -267,7 +267,7 @@ namespace SP {
 
 			// TODO : remember to change to an optimal allocation method
 
-			const std::size_t kScale = 30;
+			const std::size_t kScale = 100;
 
 			const cv::Matx44f& viewMat = computeViewMatrix(camData) ;
 
@@ -306,14 +306,14 @@ namespace SP {
 
 	
 
-			std::cerr << "X, Y: " << x << " " << y << " " << std::endl;
+			std::cerr << ">>>>>>>>>>>>>>>> X, Y: " << x << " " << y << " " << std::endl;
 
 			// NDC coord
 			float xNDC = 2 * (x / kWidth) - 1;
 			float yNDC = 2 * (y / kHeight) - 1;
 			std::cerr << "NDC (x, y): " << xNDC << " " << yNDC << " " << std::endl;
 
-			const float kDefaultDepth = 0.5;
+			const float kDefaultDepth = -0.1;
 
 			cv::Matx41f inputMat { xNDC, yNDC, kDefaultDepth, 1};
 			cv::Matx44f transMat = (projMat * viewMat).inv();
@@ -338,7 +338,7 @@ namespace SP {
 			float wClip = result(3, 0);
 
 			// test
-			if (i == 0) {
+			if (i == 32) {
 				renderManagerPtr->changeSceneWithCoordinates(result(0, 0) / wClip, result(1, 0) / wClip, result(2, 0) / wClip);
 				break;
 			}
