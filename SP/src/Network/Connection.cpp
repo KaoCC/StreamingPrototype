@@ -377,6 +377,7 @@ namespace SP {
 				case StreamingFormat::EditOperation::START:
 					std::cerr << "Editing START:" << std::endl;
 					mCfgManagerRef.resetRenderer();
+					writeModelIdList();
 					break;
 				case StreamingFormat::EditOperation::FINISH:
 					std::cerr << "Editing FINISH:" << std::endl;
