@@ -298,8 +298,6 @@ namespace SP {
 				}
 
 
-				StreamingFormat::Image* imagePtr{ new StreamingFormat::Image };
-
 				// for testing only
 				imagePtr->set_serialnumber(serialNumber);
 
@@ -389,16 +387,7 @@ namespace SP {
 					mCfgManagerRef.changeSceneWithCoordinates(editingMsg.screen_x(), editingMsg.screen_y());
 					break;
 				}
-
-				}
-
-
 			}
-
-
-
-
-
 
 			//responsePtr = nullptr;
 			break;
