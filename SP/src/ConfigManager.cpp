@@ -14,9 +14,9 @@
 
 namespace SP {
 
-	const RadeonRays::float3 ConfigManager::kCameraPos { -2.f, 1.8f, 0.f };
-	const RadeonRays::float3 ConfigManager::kCameraAt { 2.f, 1.8f, 0.f };
-	const RadeonRays::float3 ConfigManager::kCameraUp { 0.f, -1.f, 0.f };
+	const RadeonRays::float3 ConfigManager::kCameraPos{ -2.f, 1.0f, 0.f };
+	const RadeonRays::float3 ConfigManager::kCameraAt{ 2.f, 1.0f, 0.f };
+	const RadeonRays::float3 ConfigManager::kCameraUp{ 0.f, -1.f, 0.f };
 
 	ConfigManager::ConfigManager() : mImageLightField { kNumOfLFs, kNumOfSubLFImgs }, mCameraConfig { kCameraPos, kCameraAt, kCameraUp } {
 
@@ -135,6 +135,10 @@ namespace SP {
 	std::vector<std::size_t> ConfigManager::getIndexArrayOfSubLightField(float dx) const {
 
 		std::vector<std::size_t> indexArray;
+		for (int i = 0;i < mImageLightField.getTotalSize();i++) {
+			indexArray.push_back(i);
+		}
+		/*
 
 		dx += 0.5;
 		const std::size_t totalSz = mImageLightField.getTotalSize();
@@ -167,6 +171,7 @@ namespace SP {
 			indexArray.push_back(index);
 			indexArray.push_back(indexR);
 		}
+		*/
 
 		return indexArray;
 	}
@@ -262,7 +267,7 @@ namespace SP {
 
 			// TODO : remember to change to an optimal allocation method
 
-			const std::size_t kScale = 30;
+			const std::size_t kScale = 100;
 
 			const cv::Matx44f& viewMat = computeViewMatrix(camData) ;
 
@@ -301,14 +306,14 @@ namespace SP {
 
 	
 
-			std::cerr << "X, Y: " << x << " " << y << " " << std::endl;
+			std::cerr << ">>>>>>>>>>>>>>>> X, Y: " << x << " " << y << " " << std::endl;
 
 			// NDC coord
 			float xNDC = 2 * (x / kWidth) - 1;
 			float yNDC = 2 * (y / kHeight) - 1;
 			std::cerr << "NDC (x, y): " << xNDC << " " << yNDC << " " << std::endl;
 
-			const float kDefaultDepth = 0.5;
+			const float kDefaultDepth = -0.1;
 
 			cv::Matx41f inputMat { xNDC, yNDC, kDefaultDepth, 1};
 			cv::Matx44f transMat = (projMat * viewMat).inv();
@@ -333,7 +338,7 @@ namespace SP {
 			float wClip = result(3, 0);
 
 			// test
-			if (i == 0) {
+			if (i == 32) {
 				renderManagerPtr->changeSceneWithCoordinates(result(0, 0) / wClip, result(1, 0) / wClip, result(2, 0) / wClip);
 				break;
 			}
