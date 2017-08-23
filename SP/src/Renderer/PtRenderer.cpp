@@ -350,6 +350,7 @@ namespace SP {
 			// Select BxDF material ?
 			// Note: Mat select is broken ...
 
+			// TODO: select Material here ... !
 
 			if (BxDFHelper::isEmissive(diffGeo.getMaterialPtr())) {
 
@@ -447,9 +448,7 @@ namespace SP {
 
 
 					// times light weight ?
-					radiance =
-							currentLe * BxDFHelper::evaluate(diffGeo, wi, RadeonRays::normalize(wo)) * currentPath.getThroughput() * n_dot_wo * (1 / lightPDF) *
-							(1 / selectionPDF);
+					radiance = currentLe * BxDFHelper::evaluate(diffGeo, wi, RadeonRays::normalize(wo)) * currentPath.getThroughput() * n_dot_wo * (1 / lightPDF) * (1 / selectionPDF);
 
 					//std::cerr << "Radiance : " << radiance.x << " " << radiance.y << " " << radiance.z << "\n";
 				}
