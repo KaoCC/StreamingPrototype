@@ -244,10 +244,33 @@ namespace SP {
 
 				// test
 				//encodedDataVector.clear();
+				StreamingFormat::Image* imagePtr { new StreamingFormat::Image };
 
 				ImageConfig::ImageBuffer encodedImageData;
 
-				for (size_t k = 0; k < subLFSz; ++k) {
+				// lctseng: adaptive: determine use odd or even
+				// need check camera field
+				
+				size_t subLfIndexOffset = 0;
+				size_t subLfIndexStep = 1;
+				if (msgPtr->cameramsg().imagequality() == StreamingFormat::ImageQuality::LOW) {
+					subLfIndexStep = 2;
+					if (subLFIndex % 2 != 0) {
+						subLfIndexOffset = 1; // 1, 3
+						imagePtr->set_imagetype(StreamingFormat::ImageType::ODD_INDEX);
+					}
+					// else, 0, 2
+					else {
+						imagePtr->set_imagetype(StreamingFormat::ImageType::EVEN_INDEX);
+
+					}
+				}
+				else {
+					imagePtr->set_imagetype(StreamingFormat::ImageType::FULL_INDEX);
+				}
+
+
+				for (size_t k = subLfIndexOffset; k < subLFSz; k+= subLfIndexStep) {
 
 					// need to optimize for copying !
 					//ImageConfig imageData{ cfgManager.getImage() };
@@ -274,8 +297,6 @@ namespace SP {
 
 				}
 
-
-				StreamingFormat::Image* imagePtr { new StreamingFormat::Image };
 
 				// for testing only
 				imagePtr->set_serialnumber(serialNumber);
@@ -347,59 +368,26 @@ namespace SP {
 				// op is enum
 				// StreamingFormat::EditOperation.START(0)/FINISH(1)/UPDATE(2)
 
+
+				
 				// reset test
 				switch (editingMsg.op()) {
 				case StreamingFormat::EditOperation::START:
 					std::cerr << "Editing START:" << std::endl;
 					mCfgManagerRef.enterState(ConfigManager::State::kSimple);
+					writeModelIdList();
 					break;
 				case StreamingFormat::EditOperation::FINISH:
 					std::cerr << "Editing FINISH:" << std::endl;
 					mCfgManagerRef.enterState(ConfigManager::State::kPathTracing);
 					break;
-				case StreamingFormat::EditOperation::UPDATE: {
-					std::cerr << "Editing UPDATE:" << editingMsg.op() << ", screen X: " << editingMsg.screen_x() << ", screen Y: " << editingMsg.screen_y()
-						<< std::endl;
-
-					// TODO : enable when done 
+				case StreamingFormat::EditOperation::UPDATE:
+					std::cerr << "Editing UPDATE:" << editingMsg.op() << ", screen X: " << editingMsg.screen_x() << ", screen Y: " << editingMsg.screen_y() << std::endl;
+					// TODO : enable when done 		
 					mCfgManagerRef.changeSceneWithCoordinates(editingMsg.screen_x(), editingMsg.screen_y());
-
-
-					// ------ for testing -----
-
-					Packet::MessagePointer responsePtr { new StreamingFormat::StreamingMessage };
-					responsePtr->set_type(StreamingFormat::MessageType::MsgControl);
-
-					StreamingFormat::Control* controlMsg { new StreamingFormat::Control};
-					StreamingFormat::Editing* editMsg { new StreamingFormat::Editing };
-
-					editMsg->set_op(StreamingFormat::EditOperation::UPDATE);
-					editMsg->set_screen_x(128);
-					editMsg->set_screen_y(128);
-
-					controlMsg->set_allocated_editingmsg(editMsg);
-					responsePtr->set_allocated_controlmsg(controlMsg);
-
-					responseVector.push_back(responsePtr);
-
-
-					// --------------- end of testing -----------------
-
 					break;
 				}
-				default:
-					std::cerr << "Unsupported control message" << std::endl;
-					break;
-
-				}
-
-
 			}
-
-
-
-
-
 
 			//responsePtr = nullptr;
 			break;
@@ -413,6 +401,30 @@ namespace SP {
 
 
 		return responseVector;
+	}
+
+	void Connection::writeModelIdList() {
+		Packet::MessagePointer responsePtr{ new StreamingFormat::StreamingMessage };
+		StreamingFormat::Control* controlPtr{ new StreamingFormat::Control };
+		StreamingFormat::Editing* editPtr{ new StreamingFormat::Editing };
+
+		editPtr->set_op(StreamingFormat::EditOperation::MODEL_LIST);
+		
+		// TODO: for test only
+		
+		int nModels = rand() % 15 + 1;
+		for (int i = 0;i < nModels;i++) {
+			editPtr->add_model_ids(i);
+		}
+
+
+		controlPtr->set_allocated_editingmsg(editPtr);
+
+		responsePtr->set_type(StreamingFormat::MessageType::MsgControl);
+		responsePtr->set_allocated_controlmsg(controlPtr);
+
+
+		writeResponse(responsePtr);
 	}
 
 	void Connection::writeResponse(Packet::MessagePointer msgPtr) {
