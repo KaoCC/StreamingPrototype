@@ -62,9 +62,10 @@ namespace SP {
 		if (inputIter != inputTable.cend()) {
 
 			return inputIter->second.value;
-		} else {
-			throw std::runtime_error("Mat: input not found");
 		}
+
+		throw std::runtime_error("Mat: input not found");
+
 
 	}
 

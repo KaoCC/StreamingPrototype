@@ -3,7 +3,7 @@
 namespace SP {
 
 	PerspectiveCamera::PerspectiveCamera(RadeonRays::float3 const & eye, RadeonRays::float3 const & at, RadeonRays::float3 const & up)
-		: position(eye) {
+		: position { eye } {
 
 		forwardVec = normalize(at - eye);
 		rightVec = cross(forwardVec, normalize(up));

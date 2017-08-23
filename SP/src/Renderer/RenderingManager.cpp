@@ -9,20 +9,16 @@
 
 #include "math/mathutils.h"
 
-#include "../LightField.hpp"
 
 #include "SimpleRenderer.hpp"
 
 #include "OpenImageIO/imageio.h"
 
-#include <cstdio>
-
-
 
 namespace SP {
 
 
-	RenderingManager::RenderingManager(ConfigManager& cfgRef, bool loadRadianceFlag) : mConfigRef(cfgRef) {
+	RenderingManager::RenderingManager(ConfigManager& cfgRef, bool loadRadianceFlag) : mConfigRef { cfgRef } {
 
 
 		// Get device / backend info
@@ -40,8 +36,9 @@ namespace SP {
 
 			// KAOCC: device platform is bugged?
 			//std::printf("DeviceInfo: [%s] [%s] [%i] [%x]\n", devinfo.name, devinfo.vendor, devinfo.type, devinfo.platform);
-			
-			std::cerr << "Device Info:" << " [" <<devinfo.name << "][" <<devinfo.vendor << "][" <<devinfo.type << "][" <<devinfo.platform << "]" <<std::endl;
+
+			std::cerr << "Device Info:" << " [" << devinfo.name << "][" << devinfo.vendor << "][" << devinfo.type << "][" << devinfo.platform << "]"
+					  << std::endl;
 
 			//if (devinfo.type == RadeonRays::DeviceInfo::kCpu && cpuIdx == -1) {
 			//	cpuIdx = idx;
@@ -81,7 +78,7 @@ namespace SP {
 
 		//std::cerr << "Selected Device ID: " << nativeIdx << std::endl;
 
-		ScreenConfig screenCfg{ mConfigRef.getScreenWidth(), mConfigRef.getScreenHeight() };
+		ScreenConfig screenCfg { mConfigRef.getScreenWidth(), mConfigRef.getScreenHeight() };
 
 		mEnginePtr = std::make_unique<ApiEngine>(screenCfg, apiIndex);
 
@@ -89,8 +86,8 @@ namespace SP {
 		// change this
 		// allocate renderer
 		renderFarm.resize(cfgRef.getNumberOfCameras());
-		for (size_t i = 0; i < renderFarm.size(); ++i) {
-			renderFarm[i] = std::make_unique<PtRenderer>(kNumberOfBounce, *mEnginePtr);		// num_of_bounce
+		for (auto& renderItem : renderFarm) {
+			renderItem = std::make_unique<PtRenderer>(kNumberOfBounce, *mEnginePtr);        // num_of_bounce
 			//renderFarm[i] = std::make_unique<SimpleRenderer>(mEnginePtr);
 		}
 
@@ -119,7 +116,7 @@ namespace SP {
 
 
 		{
-			std::lock_guard<std::mutex> queueLock{ mQueueMutex };
+			std::lock_guard<std::mutex> queueLock { mQueueMutex };
 
 			for (size_t i = 0; i < mConfigRef.getNumberOfSubLFs(); ++i) {
 				for (size_t j = 0; j < mConfigRef.getNumberOfSubLFImages(); ++j) {
@@ -141,7 +138,6 @@ namespace SP {
 		mThreadCount = numOfThreads;
 
 
-
 		for (size_t i = 0; i < numOfThreads; ++i) {
 			renderThreads.push_back(std::thread(&RenderingManager::renderingWorker, this));
 		}
@@ -153,7 +149,7 @@ namespace SP {
 		std::cerr << "Enter Pause" << std::endl;
 
 		{
-			std::unique_lock<std::mutex> queueLock{ mQueueMutex };
+			std::unique_lock<std::mutex> queueLock { mQueueMutex };
 			mPauseFlag = true;
 
 			mCounterCV.wait(queueLock, [this] { return mWaitingCounter == mThreadCount; });
@@ -166,15 +162,14 @@ namespace SP {
 	void RenderingManager::resume() {
 
 		{
-			std::lock_guard<std::mutex> lock{ mQueueMutex };
+			std::lock_guard<std::mutex> lock { mQueueMutex };
 			mPauseFlag = false;
 		}
 
 		mQueueCV.notify_all();
 	}
 
-
-	void RenderingManager::reset() {
+	void RenderingManager::reset(ConfigManager::State state) {
 
 		// pause first
 		pause();
@@ -189,9 +184,21 @@ namespace SP {
 
 		std::cerr << "Resetting ... " << std::endl;
 
-		for (size_t i = 0; i < renderFarm.size(); ++i) {
-			renderFarm[i] = std::make_unique<SimpleRenderer>(*mEnginePtr);
+		if (state == ConfigManager::State::kSimple) {
+
+			for (auto& renderItem : renderFarm) {
+				renderItem = std::make_unique<SimpleRenderer>(*mEnginePtr);
+			}
+
+		} else if (state == ConfigManager::State::kPathTracing) {
+			for (auto& renderItem : renderFarm) {
+				renderItem = std::make_unique<PtRenderer>(kNumberOfBounce, *mEnginePtr);
+			}
+
+		} else {
+			throw std::runtime_error("Unsupported state");
 		}
+
 
 		for (size_t i = 0; i < renderFarm.size(); ++i) {
 			//renderOutputData[i] = renderFarm[i]->createOutput(mConfigRef.getScreenWidth(), mConfigRef.getScreenHeight());
@@ -206,7 +213,7 @@ namespace SP {
 		resume();
 	}
 
-	void RenderingManager::recompileScene() {
+	void RenderingManager::changeSceneWithCoordinates(float worldX, float worldY, float worldZ) {
 
 		pause();
 
@@ -216,21 +223,27 @@ namespace SP {
 		std::cerr << "recompile Pause ... " << std::endl;
 
 
-		// clear output?		
+		// TODO: check if we need to clear output?
 		//for (size_t i = 0; i < renderFarm.size(); ++i) {
 		//	renderFarm[i]->clear(0, *renderOutputData[i]);
 		//}
-		
+
 
 		// add new shapes
 		// API commit 
 		// rebuild BVH
-		mEnginePtr->changeShape_test();
+		mEnginePtr->changeShape_test(worldX, worldY, worldZ);
 
 		std::cerr << "recompile Resume ..." << std::endl;
 
 		mEnginePtr->resume();
 		resume();
+
+	}
+
+	const PerspectiveCamera & RenderingManager::getPerspectiveCamera(size_t index) const {
+
+		return dynamic_cast<const PerspectiveCamera&>(sceneDataPtr->getCamera(index));
 
 	}
 
@@ -271,20 +284,21 @@ namespace SP {
 		}
 
 
-		auto& fieldRef{ mConfigRef.getLightField() };
+		auto& fieldRef = mConfigRef.getLightField();
 
-		const auto& camDefault{ mConfigRef.getCameraConfig() };
+		const auto& camDefault = mConfigRef.getCameraConfig();
 
 		for (size_t i = 0; i < mConfigRef.getNumberOfSubLFs(); ++i) {
 
 			for (size_t j = 0; j < mConfigRef.getNumberOfSubLFImages(); ++j) {
 
 				// KAOCC: TODO: add camera config
-				auto* cameraPtr = new PerspectiveCamera(camDefault.mCameraPos + RadeonRays::float3(0, kStep * j, -kStep * i), camDefault.mCameraAt + RadeonRays::float3(0, kStep * j, -kStep * i), camDefault.mCameraUp);
+				auto* cameraPtr = new PerspectiveCamera(camDefault.mCameraPos + RadeonRays::float3(0, kStep * j, -kStep * i),
+														camDefault.mCameraAt + RadeonRays::float3(0, kStep * j, -kStep * i), camDefault.mCameraUp);
 				sceneDataPtr->attachCamera(cameraPtr);
 
 				// Adjust sensor size based on current aspect ratio
-				float aspect = (float)mConfigRef.getScreenWidth() / mConfigRef.getScreenHeight();
+				float aspect = (float) mConfigRef.getScreenWidth() / mConfigRef.getScreenHeight();
 				g_camera_sensor_size.y = g_camera_sensor_size.x / aspect;
 
 				cameraPtr->setSensorSize(g_camera_sensor_size);
@@ -293,7 +307,7 @@ namespace SP {
 				cameraPtr->setFocusDistance(g_camera_focus_distance);
 				cameraPtr->setAperture(g_camera_aperture);
 
-				std::cout << "Camera type: " << (cameraPtr->getAperture() > 0.f ? "Physical" : "Pinhole") << "\n";			// This might cause problems
+				std::cout << "Camera type: " << (cameraPtr->getAperture() > 0.f ? "Physical" : "Pinhole") << "\n";            // This might cause problems
 				std::cout << "Lens focal length: " << cameraPtr->getFocalLength() * 1000.f << "mm\n";
 				std::cout << "Lens focus distance: " << cameraPtr->getFocusDistance() << "m\n";
 				std::cout << "F-Stop: " << 1.f / (cameraPtr->getAperture() * 10.f) << "\n";
@@ -316,7 +330,6 @@ namespace SP {
 				if (loadRadianceFlag) {
 					loadRadianceOutput(i, j);
 				}
-
 
 
 			}
@@ -345,7 +358,7 @@ namespace SP {
 		OIIO_NAMESPACE_USING
 
 
-			const std::string& subFix = std::to_string(outputId);
+		const std::string& subFix = std::to_string(outputId);
 
 		std::string filename = "radiance" + subFix + '-' + subFix + ".exr";
 
@@ -353,21 +366,21 @@ namespace SP {
 
 		ImageInput* input = ImageInput::open(filename);
 
-		if (!input) {
+		if (input == nullptr) {
 			throw std::runtime_error("Failed to load image: " + filename);
 		}
 
 
-		const ImageSpec imgSpec{ input->spec() };
+		const ImageSpec imgSpec = input->spec();
 		int xRes = imgSpec.width;
 		int yRes = imgSpec.height;
 
-		int channels = imgSpec.nchannels;	// check
+		int channels = imgSpec.nchannels;    // check
 
-		const ParamValue* par{ imgSpec.find_attribute("gammarank", TypeDesc::FLOAT) };
+		const ParamValue* par { imgSpec.find_attribute("gammarank", TypeDesc::FLOAT) };
 
-		float wVal = 10.0f;		// tmp value
-		if (par) {
+		float wVal = 10.0f;        // tmp value
+		if (par != nullptr) {
 			wVal = *(static_cast<const float*>(par->data()));
 		} else {
 			std::cerr << "MetaData (gammarank) not found, roll back to the default" << std::endl;
@@ -382,7 +395,7 @@ namespace SP {
 
 
 		// create a tmp buffer 
-		float* tmpBuff{ new float[tmpSize] };
+		float* tmpBuff { new float[tmpSize] };
 
 		// copy to outputData
 		input->read_image(TypeDesc::FLOAT, tmpBuff);
@@ -403,7 +416,7 @@ namespace SP {
 
 	}
 
-	void RenderingManager::renderingWorker(void) {
+	void RenderingManager::renderingWorker() {
 
 		std::pair<int, int> taskIndex;
 
@@ -411,7 +424,7 @@ namespace SP {
 
 
 			{
-				std::unique_lock<std::mutex> queueLock{ mQueueMutex };
+				std::unique_lock<std::mutex> queueLock { mQueueMutex };
 
 				if (mTaskQueue.empty() || mPauseFlag) {
 
@@ -423,7 +436,7 @@ namespace SP {
 						queueLock.lock();
 					}
 
-					mQueueCV.wait(queueLock, [this] {return !(mTaskQueue.empty() || mPauseFlag); });
+					mQueueCV.wait(queueLock, [this] { return !(mTaskQueue.empty() || mPauseFlag); });
 					--mWaitingCounter;
 				}
 
@@ -449,9 +462,10 @@ namespace SP {
 			auto t2 = std::chrono::high_resolution_clock::now();
 
 			// test
-			if (farmIdx == 0) {
-				std::cerr << "FarmIndex: " << farmIdx << " Update time: " << std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1).count() << std::endl;
-			}
+			//if (farmIdx == 0) {
+			//	std::cerr << "FarmIndex: " << farmIdx << " Update time: " 
+			//		<< std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1).count() << std::endl;
+			//}
 
 
 			// tmp, need lock , need interrupt-based method
@@ -470,8 +484,11 @@ namespace SP {
 
 			// push back the task
 			{
-				std::lock_guard<std::mutex> queueLock{ mQueueMutex };
+				std::lock_guard<std::mutex> queueLock { mQueueMutex };
 				mTaskQueue.push(std::move(taskIndex));
+
+				// TODO : Two tasks with the same ID can not be in the queue at the same time ! Need a fix.
+
 			}
 			mQueueCV.notify_one();
 

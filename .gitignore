@@ -44,7 +44,8 @@ Generated/*
 # For Mac OS
 .DS_Store
 
-
+.vscode/
+3rdparty/
 
 
 # Created by https://www.gitignore.io/api/clion+all
@@ -73,6 +74,7 @@ Generated/*
 
 # CMake
 cmake-build-debug/
+cmake-build-release/
 
 # Mongo Explorer plugin:
 .idea/**/mongoSettings.xml

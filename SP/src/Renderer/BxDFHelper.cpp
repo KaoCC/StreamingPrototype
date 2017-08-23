@@ -14,32 +14,33 @@ namespace SP {
 
 	bool BxDFHelper::isSingular(const Material * matPtr) {
 
-		auto sinMatPtr{ dynamic_cast<const SingleBxDF*>(matPtr) };
+		auto sinMatPtr =  dynamic_cast<const SingleBxDF*>(matPtr);
 
-		if (sinMatPtr) {
+		if (sinMatPtr != nullptr) {
 
-			auto type{ sinMatPtr->getBxDFType() };
+			auto type = sinMatPtr->getBxDFType() ;
 			return type == SingleBxDF::BxDFType::kIdealReflect || type == SingleBxDF::BxDFType::kIdealRefract || type == SingleBxDF::BxDFType::kPassthrough;
 
-		} else {		// mixed
-			return false;
 		}
+		// mixed
+			return false;
 
 
 	}
 
 	bool BxDFHelper::isBTDF(const Material * matPtr) {
-		auto sinMatPtr{ dynamic_cast<const SingleBxDF*>(matPtr) };
+		auto sinMatPtr =  dynamic_cast<const SingleBxDF*>(matPtr);
 
-		if (sinMatPtr) {
+		if (sinMatPtr != nullptr) {
 
-			auto type{ sinMatPtr->getBxDFType() };
+			auto type = sinMatPtr->getBxDFType();
 			return type == SingleBxDF::BxDFType::kIdealRefract || type == SingleBxDF::BxDFType::kPassthrough || type == SingleBxDF::BxDFType::kTranslucent
 				|| type == SingleBxDF::BxDFType::kMicrofacetRefractionGGX || type == SingleBxDF::BxDFType::kMicrofacetRefractionBeckmann;
 
-		} else {	// mixed
-			return false;
 		}
+		// mixed
+			return false;
+
 	}
 
 
@@ -52,7 +53,7 @@ namespace SP {
 		const RadeonRays::float3& wi_tang = diffGeo.getWorldToTangentMatrix() * wi;
 		RadeonRays::float3 wo_tang;
 
-		if (singleBxDFPtr) {
+		if (singleBxDFPtr != nullptr) {
 
 			switch (singleBxDFPtr->getBxDFType()) {
 			case SingleBxDF::BxDFType::kLambert:
@@ -115,7 +116,7 @@ namespace SP {
 		const RadeonRays::float3& wi_tang = diffGeo.getWorldToTangentMatrix() * wi;
 		RadeonRays::float3 wo_tang = diffGeo.getWorldToTangentMatrix() * wo;
 
-		if (singleBxDFPtr) {
+		if (singleBxDFPtr != nullptr) {
 
 			switch (singleBxDFPtr->getBxDFType()) {
 			case SingleBxDF::BxDFType::kLambert:

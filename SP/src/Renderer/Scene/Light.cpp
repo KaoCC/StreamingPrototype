@@ -53,7 +53,7 @@ namespace SP {
 	RadeonRays::float3 AreaLight::sample(const DifferentialGeometry & diffGeo, RadeonRays::float2 sample, RadeonRays::float3 & wo, float & pdf) const {
 
 		size_t primId = getPrimitiveIndex();
-		const Mesh* meshDataPtr = dynamic_cast<const Mesh*>(getShape());
+		const auto * meshDataPtr = dynamic_cast<const Mesh*>(getShape());
 
 		const uint32_t* indexArray = meshDataPtr->getIndices();
 
@@ -112,10 +112,10 @@ namespace SP {
 		if (n_dot_v > 0.f) {
 			float denom = (std::sqrt(wo.sqnorm()) * std::sqrt(wo.sqnorm()));
 			return denom > 0.f ? (ke * n_dot_v * (1 / denom)) : 0.f;
-		} else {
-			pdf = 0.f;
-			return 0.f;
 		}
+
+		pdf = 0.f;
+			return 0.f;
 
 
 	}

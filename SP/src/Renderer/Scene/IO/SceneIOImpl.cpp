@@ -13,7 +13,6 @@
 
 #include "../Shape.hpp"
 #include "../Light.hpp"
-#include "../Material.hpp"
 
 #include <iostream>
 
@@ -79,7 +78,7 @@ namespace SP {
 
 		}
 
-		for (size_t s = 0; s < objShapes.size(); ++s) {
+		for (auto &objShape : objShapes) {
 
 			// KAOCC: design issue: unique_ptr or autorelease ?
 			Mesh* mesh = new Mesh();
@@ -87,17 +86,17 @@ namespace SP {
 			// Set vertex and index data
 
 			// KAOCC: need to verify the following 
-			size_t num_vertices = objShapes[s].mesh.positions.size() / 3;
-			mesh->setVertices(&objShapes[s].mesh.positions[0], num_vertices);
+			size_t num_vertices = objShape.mesh.positions.size() / 3;
+			mesh->setVertices(&objShape.mesh.positions[0], num_vertices);
 
-			size_t num_normals = objShapes[s].mesh.normals.size() / 3;
-			mesh->setNormals(&objShapes[s].mesh.normals[0], num_normals);
+			size_t num_normals = objShape.mesh.normals.size() / 3;
+			mesh->setNormals(&objShape.mesh.normals[0], num_normals);
 
 
-			size_t num_uvs = objShapes[s].mesh.texcoords.size() / 2;
+			size_t num_uvs = objShape.mesh.texcoords.size() / 2;
 
 			if (num_uvs) {
-				mesh->setUVs(&objShapes[s].mesh.texcoords[0], num_uvs);
+				mesh->setUVs(&objShape.mesh.texcoords[0], num_uvs);
 			} else {
 
 				// Generate Zeros if we do not have UVs
@@ -107,11 +106,11 @@ namespace SP {
 			}
 
 			// Set indices
-			size_t num_indices = objShapes[s].mesh.indices.size();
-			mesh->setIndices(reinterpret_cast<const std::uint32_t*>(&objShapes[s].mesh.indices[0]), num_indices);
+			size_t num_indices = objShape.mesh.indices.size();
+			mesh->setIndices(reinterpret_cast<const std::uint32_t*>(&objShape.mesh.indices[0]), num_indices);
 
 			// Set material
-			size_t idx = objShapes[s].mesh.material_ids[0];
+			size_t idx = objShape.mesh.material_ids[0];
 			mesh->setMaterial(materials[idx]);
 
 			// Attach to the scene

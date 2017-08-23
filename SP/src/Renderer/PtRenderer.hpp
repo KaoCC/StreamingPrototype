@@ -36,6 +36,7 @@ namespace SP {
 
 		virtual void render(Scene const & scene, size_t configIdx) override;
 
+		// TODO: review this design !
 		virtual void setOutput(std::shared_ptr<Output> output) override;
 
 

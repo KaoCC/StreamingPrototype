@@ -6,9 +6,9 @@
 
 #include "Packet.hpp"
 
-#include "../ConfigManager.hpp"
-#include "../SyncBuffer.hpp"
-#include "../LightField.hpp"
+#include "ConfigManager.hpp"
+#include "SyncBuffer.hpp"
+#include "LightField.hpp"
 
 #include <deque>
 
