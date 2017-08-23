@@ -40,9 +40,9 @@ namespace SP {
 			std::cerr << "Device Info:" << " [" << devinfo.name << "][" << devinfo.vendor << "][" << devinfo.type << "][" << devinfo.platform << "]"
 					  << std::endl;
 
-			//if (devinfo.type == RadeonRays::DeviceInfo::kCpu && cpuIdx == -1) {
-			//	cpuIdx = idx;
-			//}
+			if (devinfo.type == RadeonRays::DeviceInfo::kCpu && cpuIdx == -1) {
+				cpuIdx = idx;
+			}
 
 			if (devinfo.type == RadeonRays::DeviceInfo::kGpu && gpuIdx == -1) {
 				gpuIdx = idx;

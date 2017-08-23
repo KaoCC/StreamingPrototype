@@ -244,7 +244,7 @@ namespace SP {
 
 				// test
 				//encodedDataVector.clear();
-				StreamingFormat::Image* imagePtr{ new StreamingFormat::Image };
+				StreamingFormat::Image* imagePtr { new StreamingFormat::Image };
 
 				ImageConfig::ImageBuffer encodedImageData;
 
@@ -376,7 +376,7 @@ namespace SP {
 				switch (editingMsg.op()) {
 				case StreamingFormat::EditOperation::START:
 					std::cerr << "Editing START:" << std::endl;
-					mCfgManagerRef.resetRenderer();
+					mCfgManagerRef.enterState(ConfigManager::State::kSimple);
 					writeModelIdList();
 					break;
 				case StreamingFormat::EditOperation::FINISH:
@@ -385,7 +385,8 @@ namespace SP {
 					break;
 				case StreamingFormat::EditOperation::UPDATE:
 					std::cerr << "Editing UPDATE:" << editingMsg.op() << ", screen X: " << editingMsg.screen_x() << ", screen Y: " << editingMsg.screen_y() << std::endl;
-					mCfgManagerRef.recompileScene();
+					// TODO : enable when done 		
+					mCfgManagerRef.changeSceneWithCoordinates(editingMsg.screen_x(), editingMsg.screen_y());
 					break;
 				}
 
