@@ -44,7 +44,7 @@ namespace SP {
 	}
 
 
-	RadeonRays::float3 BxDFHelper::sample(const DifferentialGeometry & diffGeo, RadeonRays::float3 wi, RadeonRays::float2 sample, RadeonRays::float3 & wo, float & pdf) {
+	RadeonRays::float3 BxDFHelper::sample(const DifferentialGeometry & diffGeo, const RadeonRays::float3& wi, RadeonRays::float2 sample, RadeonRays::float3 & wo, float & pdf) {
 
 		RadeonRays::float3 result = 0.f;
 
@@ -59,8 +59,14 @@ namespace SP {
 			case SingleBxDF::BxDFType::kLambert:
 				result = sampleLambert(diffGeo, wi_tang, sample, wo_tang, pdf);
 				break;
+			case SingleBxDF::BxDFType::kIdealReflect:
+				result = sampleIdealReflect(diffGeo, wi_tang, sample, wo_tang, pdf);
+				break;
 			default:		// Error ?
 				pdf = 0.f;
+
+				throw std::runtime_error("sample: unsupported type");
+
 				break;
 			}
 
@@ -75,7 +81,7 @@ namespace SP {
 
 	}
 
-	RadeonRays::float3 BxDFHelper::sampleLambert(const DifferentialGeometry & diffGeo, RadeonRays::float3 wi, RadeonRays::float2 sample, RadeonRays::float3 & wo, float & pdf) {
+	RadeonRays::float3 BxDFHelper::sampleLambert(const DifferentialGeometry & diffGeo, const RadeonRays::float3& wi, RadeonRays::float2 sample, RadeonRays::float3 & wo, float & pdf) {
 
 
 		//const RadeonRays::float3 kd = Texture_GetValue3f(dg->mat.kx.xyz, dg->uv, TEXTURE_ARGS_IDX(dg->mat.kxmapidx));
@@ -97,6 +103,27 @@ namespace SP {
 
 		// check value
 		return F * kd * (1 / PI);
+	}
+
+	RadeonRays::float3 BxDFHelper::sampleIdealReflect(const DifferentialGeometry & diffGeo, const RadeonRays::float3 & wi, RadeonRays::float2 sample, RadeonRays::float3 & wo, float & pdf) {
+
+
+		// TMP !!
+		const RadeonRays::float3& ks = diffGeo.getMaterialPtr()->getInputValue("albedo").floatValue;
+
+		// Mirror reflect wi
+		wo = RadeonRays::normalize(RadeonRays::float3(-wi.x, wi.y, -wi.z));
+
+		// set pdf to 1 (pdf is infinite at that point, but deltas will cancel out while evaluating)
+		pdf = 1.f;
+
+		// check this value !
+		float F = 1;		// diffGeo.fresnel
+
+		float cosine_wo = std::abs(wo.y);
+		
+		// return reflectance value
+		return cosine_wo > 0.f ? (F * ks * (1.f / cosine_wo)) : 0.f;
 	}
 
 	RadeonRays::float3 BxDFHelper::getEmissiveLe(const DifferentialGeometry & diffGeo) {
@@ -124,6 +151,7 @@ namespace SP {
 				break;
 			default:		// Error ?
 				//pdf = 0.f;
+				throw std::runtime_error("Evaluate: unsupported type !");
 				break;
 			}
 
