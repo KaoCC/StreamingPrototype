@@ -30,6 +30,12 @@ namespace SP {
 	//};
 
 
+	// helper function
+	static constexpr float transformColorToLuminance(float x, float y, float z) {
+		return x * 0.2126f + y * 0.7152f + z * 0.0722f;
+	}
+
+
 	PtRenderer::~PtRenderer() = default;
 
 
@@ -428,7 +434,7 @@ namespace SP {
 			float lightWeight = 1.f;
 
 			// sample BxDf
-			const RadeonRays::float3& bxdf = BxDFHelper::sample(diffGeo, wi, sampler->sample2D(), bxdfwo, bxdfPDF);        // value ?
+			const RadeonRays::float3& bxdf = BxDFHelper::sample(diffGeo, wi, sampler->sample2D(), bxdfwo, bxdfPDF);        // retrun value not used ?
 
 			const auto currentScenePtr = mEngineRef.getCurrentScenePtr();
 
@@ -440,6 +446,9 @@ namespace SP {
 			if (lightInst != nullptr) {
 
 				RadeonRays::float3 currentLe = lightInst->sample(diffGeo, sampler->sample2D(), lightwo, lightPDF);
+
+				// getPDF is missing here
+
 				lightWeight = lightInst->isSingular() ? 1.f : 0.f;            // CHECK !
 
 				if (currentLe.sqnorm() > 0 && lightPDF > 0.0f && !BxDFHelper::isSingular(diffGeo.getMaterialPtr())) {
@@ -475,10 +484,8 @@ namespace SP {
 
 
 			// Apply Russian roulette
-			float qq = std::max(std::min(0.5f,
-					// Luminance
-										 0.2126f * currentPath.getThroughput().x + 0.7152f * currentPath.getThroughput().y +
-										 0.0722f * currentPath.getThroughput().z), 0.01f);
+			// Luminance
+			float qq = std::max(std::min(0.5f, transformColorToLuminance(currentPath.getThroughput().x, currentPath.getThroughput().y, currentPath.getThroughput().z)), 0.01f);
 			bool rrApplyFlag = pass > 3;
 			bool rrStopFlag = (sampler->sample1D() > qq) && rrApplyFlag;        // value ?		// wrong !
 
@@ -493,7 +500,6 @@ namespace SP {
 			if (BxDFHelper::isSingular(diffGeo.getMaterialPtr())) {
 				currentPath.setSpecularFlag();
 			}
-
 
 			// handle indirectrays
 			bxdfwo = normalize(bxdfwo);
