@@ -30,6 +30,49 @@ namespace SP {
 	//};
 
 
+	// helper function
+	static constexpr float transformColorToLuminance(float x, float y, float z) {
+		return x * 0.2126f + y * 0.7152f + z * 0.0722f;
+	}
+
+	// FIXME: move this part to proper class 
+	// helper function
+	static void selectMaterial(const RadeonRays::float3& wi, const Sampler& sampler, DifferentialGeometry& diffGeo) {
+
+		auto* mat = dynamic_cast<const MultiBxDF*>(diffGeo.getOriginalMaterial());
+
+		// handle MultiBxDF only
+		if (mat != nullptr) {
+
+
+			// TMP !!!
+			// FIXME: select the proper material
+
+			if (BxDFHelper::isEmissive(mat)) {
+
+				auto diffusePart = mat->getInputValue("base_material");
+				diffGeo.setCurrentMaterial(diffusePart.matValue);
+			} else {
+
+				// testing only
+				if (std::rand() % 10 == 0) {
+					auto specularPart = mat->getInputValue("top_material");
+					diffGeo.setCurrentMaterial(specularPart.matValue);
+				} else {
+					auto diffusePart = mat->getInputValue("base_material");
+					diffGeo.setCurrentMaterial(diffusePart.matValue);
+				}
+			}
+
+			// setting fresnel ?
+
+		}
+
+		// TODO: setup and calculate fresnel 
+
+	}
+
+
 	PtRenderer::~PtRenderer() = default;
 
 
@@ -329,8 +372,10 @@ namespace SP {
 			diffGeo.fill(currentIntersect, mEngineRef.getInternalMeshPtrs());
 
 
+
+
 			bool backfaced = (RadeonRays::dot(diffGeo.getNormal(), wi) < 0);
-			bool twosided = diffGeo.getMaterialPtr()->isTwoSided();
+			bool twosided = diffGeo.getCurrentMaterial()->isTwoSided();
 
 			if (backfaced && twosided) {
 				// invert normal
@@ -350,8 +395,12 @@ namespace SP {
 			// Select BxDF material ?
 			// Note: Mat select is broken ...
 
+			// TODO: select Material here ... !
+			selectMaterial(wi, *sampler, diffGeo);
 
-			if (BxDFHelper::isEmissive(diffGeo.getMaterialPtr())) {
+
+
+			if (BxDFHelper::isEmissive(diffGeo.getCurrentMaterial())) {
 
 				if (!backfaced) {
 
@@ -392,7 +441,7 @@ namespace SP {
 			//float n_dot_wi = RadeonRays::dot(diffGeo.getNormal(), wi);
 
 
-			if (!twosided && backfaced && !BxDFHelper::isBTDF(diffGeo.getMaterialPtr())) {
+			if (!twosided && backfaced && !BxDFHelper::isBTDF(diffGeo.getCurrentMaterial())) {
 				// invert normal
 				auto& normRef = diffGeo.getNormal();
 				normRef = -normRef;
@@ -427,7 +476,7 @@ namespace SP {
 			float lightWeight = 1.f;
 
 			// sample BxDf
-			const RadeonRays::float3& bxdf = BxDFHelper::sample(diffGeo, wi, sampler->sample2D(), bxdfwo, bxdfPDF);        // value ?
+			const RadeonRays::float3& bxdf = BxDFHelper::sample(diffGeo, wi, sampler->sample2D(), bxdfwo, bxdfPDF);        // retrun value not used ?
 
 			const auto currentScenePtr = mEngineRef.getCurrentScenePtr();
 
@@ -439,17 +488,18 @@ namespace SP {
 			if (lightInst != nullptr) {
 
 				RadeonRays::float3 currentLe = lightInst->sample(diffGeo, sampler->sample2D(), lightwo, lightPDF);
+
+				// getPDF is missing here
+
 				lightWeight = lightInst->isSingular() ? 1.f : 0.f;            // CHECK !
 
-				if (currentLe.sqnorm() > 0 && lightPDF > 0.0f && !BxDFHelper::isSingular(diffGeo.getMaterialPtr())) {
+				if (currentLe.sqnorm() > 0 && lightPDF > 0.0f && !BxDFHelper::isSingular(diffGeo.getCurrentMaterial())) {
 					wo = lightwo;
 					float n_dot_wo = std::abs(dot(diffGeo.getNormal(), normalize(wo)));
 
 
 					// times light weight ?
-					radiance =
-							currentLe * BxDFHelper::evaluate(diffGeo, wi, RadeonRays::normalize(wo)) * currentPath.getThroughput() * n_dot_wo * (1 / lightPDF) *
-							(1 / selectionPDF);
+					radiance = currentLe * BxDFHelper::evaluate(diffGeo, wi, RadeonRays::normalize(wo)) * currentPath.getThroughput() * n_dot_wo * (1 / lightPDF) * (1 / selectionPDF);
 
 					//std::cerr << "Radiance : " << radiance.x << " " << radiance.y << " " << radiance.z << "\n";
 				}
@@ -476,10 +526,8 @@ namespace SP {
 
 
 			// Apply Russian roulette
-			float qq = std::max(std::min(0.5f,
-					// Luminance
-										 0.2126f * currentPath.getThroughput().x + 0.7152f * currentPath.getThroughput().y +
-										 0.0722f * currentPath.getThroughput().z), 0.01f);
+			// Luminance
+			float qq = std::max(std::min(0.5f, transformColorToLuminance(currentPath.getThroughput().x, currentPath.getThroughput().y, currentPath.getThroughput().z)), 0.01f);
 			bool rrApplyFlag = pass > 3;
 			bool rrStopFlag = (sampler->sample1D() > qq) && rrApplyFlag;        // value ?		// wrong !
 
@@ -491,10 +539,9 @@ namespace SP {
 			}
 
 
-			if (BxDFHelper::isSingular(diffGeo.getMaterialPtr())) {
+			if (BxDFHelper::isSingular(diffGeo.getCurrentMaterial())) {
 				currentPath.setSpecularFlag();
 			}
-
 
 			// handle indirectrays
 			bxdfwo = normalize(bxdfwo);

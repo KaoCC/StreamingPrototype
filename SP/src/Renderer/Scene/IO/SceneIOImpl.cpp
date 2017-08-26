@@ -173,8 +173,32 @@ namespace SP {
 			if ((s.sqnorm() > 0 || !mat.specular_texname.empty())) {
 
 				// Yet to be done !
-				throw std::runtime_error("MultiBXDF: Yet to be done");
+				//throw std::runtime_error("MultiBXDF: Yet to be done");
 
+				material = new MultiBxDF(MultiBxDF::MultiType::kFresnelBlend);
+				material->setInputValue("ior", RadeonRays::float4(1.5f, 1.5f, 1.5f, 1.5f));
+
+				Material* diffusePart { new SingleBxDF(SingleBxDF::BxDFType::kLambert) };
+				Material* specularPart { new SingleBxDF(SingleBxDF::BxDFType::kIdealReflect) };		// for testing
+
+				specularPart->setInputValue("roughness", 0.01f);
+
+				// below are tmp impl.
+				// omit texname files ...
+				diffusePart->setInputValue("albedo", RadeonRays::float3(mat.diffuse[0], mat.diffuse[1], mat.diffuse[2]));
+				specularPart->setInputValue("albedo", s);
+
+				// omit normal from files for this tmp impl.
+
+				diffusePart->setName(mat.name + "-diffuse");
+				specularPart->setName(mat.name + "-specular");
+
+				material->setInputValue("base_material", diffusePart);
+				material->setInputValue("top_material", specularPart);
+
+				scene.attachAutoreleaseObject(diffusePart);
+				scene.attachAutoreleaseObject(specularPart);
+				
 			} else {
 				// Otherwise create lambert
 				Material* diffuse = new SingleBxDF(SingleBxDF::BxDFType::kLambert);
@@ -189,6 +213,7 @@ namespace SP {
 				}
 
 				// Set normal
+				// TODO: check the value ... this might be wrong !
 				if (!mat.specular_highlight_texname.empty()) {
 					Texture* texture{ imageIO.loadImage(basepath + "/" + mat.specular_highlight_texname) };
 					diffuse->setInputValue("normal", texture);
@@ -197,7 +222,6 @@ namespace SP {
 
 				material = diffuse;
 			}
-
 
 		}
 

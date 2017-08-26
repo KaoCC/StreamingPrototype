@@ -35,7 +35,14 @@ namespace SP {
 		RadeonRays::float3& getDpDv();
 
 		float getArea() const;
-		const Material* getMaterialPtr() const;
+
+		// tmp workaround
+		const Material* getOriginalMaterial() const;
+
+		const Material* getCurrentMaterial() const;
+
+		// tmp workaround
+		void setCurrentMaterial(const Material* mat);
 
 
 		const RadeonRays::matrix& getWorldToTangentMatrix() const;
@@ -69,6 +76,9 @@ namespace SP {
 
 		// Mat ?
 		const Material* matPtr = nullptr;
+		
+		// tmp workaroind for mat selection
+		const Material* currentMat = nullptr;
 
 		// tmp workaround
 		float tmpFresnel = 1.0f;
