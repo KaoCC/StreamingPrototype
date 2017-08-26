@@ -64,6 +64,8 @@ namespace SP {
 		// Material ?
 		matPtr = meshDataPtr->getMaterial();
 
+		//workaround
+		currentMat = matPtr;
 
 		//float du1 = uv0.x - uv2.x;
 		//float du2 = uv1.x - uv2.x;
@@ -141,8 +143,16 @@ namespace SP {
 		return area;
 	}
 
-	const Material* DifferentialGeometry::getMaterialPtr() const {
+	const Material * DifferentialGeometry::getOriginalMaterial() const {
 		return matPtr;
+	}
+
+	const Material* DifferentialGeometry::getCurrentMaterial() const {
+		return currentMat;
+	}
+
+	void DifferentialGeometry::setCurrentMaterial(const Material * mat) {
+		currentMat = mat;
 	}
 
 	const RadeonRays::matrix& DifferentialGeometry::getWorldToTangentMatrix() const {
