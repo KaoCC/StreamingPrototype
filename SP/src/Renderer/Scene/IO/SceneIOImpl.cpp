@@ -175,16 +175,13 @@ namespace SP {
 				// Yet to be done !
 				//throw std::runtime_error("MultiBXDF: Yet to be done");
 
-
 				material = new MultiBxDF(MultiBxDF::MultiType::kFresnelBlend);
 				material->setInputValue("ior", RadeonRays::float4(1.5f, 1.5f, 1.5f, 1.5f));
 
 				Material* diffusePart { new SingleBxDF(SingleBxDF::BxDFType::kLambert) };
-				Material* specularPart { new SingleBxDF(SingleBxDF::BxDFType::kMicrofacetGGX) };
-
+				Material* specularPart { new SingleBxDF(SingleBxDF::BxDFType::kIdealReflect) };		// for testing
 
 				specularPart->setInputValue("roughness", 0.01f);
-
 
 				// below are tmp impl.
 				// omit texname files ...
@@ -202,8 +199,6 @@ namespace SP {
 				scene.attachAutoreleaseObject(diffusePart);
 				scene.attachAutoreleaseObject(specularPart);
 				
-
-
 			} else {
 				// Otherwise create lambert
 				Material* diffuse = new SingleBxDF(SingleBxDF::BxDFType::kLambert);
@@ -227,7 +222,6 @@ namespace SP {
 
 				material = diffuse;
 			}
-
 
 		}
 
