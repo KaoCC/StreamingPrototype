@@ -52,19 +52,19 @@ namespace SP {
 		// Read RGB buffer
 
 		//try {
-		std::copy(std::istreambuf_iterator<char>(inputStream), std::istreambuf_iterator<char>(), std::back_inserter(imageData));
+		std::copy(std::istreambuf_iterator<char>(inputStream), std::istreambuf_iterator<char>(), std::back_inserter(imageDataCache));
 		//} catch (const std::ios_base::failure &fail) {
 		//std::cerr << fail.what() << '\n';
 		//}
 
 	}
 
-	const ImageConfig::ImageBuffer & ImageConfig::getImageData() {
+	const ImageConfig::ImageBuffer & ImageConfig::getImageCacheData() {
 		// get Radiance Map
 		// Note: will check the refresh flag
 		const auto& tmpRadiance = getRadianceMap();
 
-		if (cacheFlag) {
+		if (refreshCacheFlag) {
 
 			// convert
 			const size_t kStride = 3;
@@ -72,7 +72,7 @@ namespace SP {
 			const size_t screenWidth = getWidth();
 			const size_t screenHeight = getHeight();
 
-			imageData.resize(tmpRadiance.size() * kStride);
+			imageDataCache.resize(tmpRadiance.size() * kStride);
 
 			// tmp gamma
 			const float gamma = 2.2f;
@@ -84,19 +84,19 @@ namespace SP {
 
 					const RadeonRays::float3& val = tmpRadiance[(screenHeight - 1 - y) * screenWidth + x];
 
-					imageData[currentindex] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(val.x / val.w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
-					imageData[currentindex + 1] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(val.y / val.w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
-					imageData[currentindex + 2] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(val.z / val.w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
+					imageDataCache[currentindex] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(val.x / val.w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
+					imageDataCache[currentindex + 1] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(val.y / val.w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
+					imageDataCache[currentindex + 2] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(val.z / val.w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
 
 					currentindex += kStride;
 				}
 
 			}
 
-			cacheFlag = false;
+			refreshCacheFlag = false;
 		}
 
-		return imageData;
+		return imageDataCache;
 	}
 
 	const ImageConfig::RadianceMap & ImageConfig::getRadianceMap() {
@@ -104,7 +104,7 @@ namespace SP {
 			// save the Radiance
 			radiance = radiancePtr->copyData();
 
-			cacheFlag = true;
+			refreshCacheFlag = true;
 			setRefreshState(false);
 		}
 
@@ -131,11 +131,11 @@ namespace SP {
 		return tmpState;
 	}
 
-	void ImageConfig::storeToPPM(int serialNumber) const {
+	void ImageConfig::storeToPPM() {
 
-		if (serialNumber == -1) {
-			serialNumber = this->imageID;
-		}
+
+		int serialNumber = this->imageID;
+
 
 		const std::string fileName = "image" + std::to_string(imageID) + "-" + std::to_string(serialNumber) +".ppm";
 
@@ -143,14 +143,18 @@ namespace SP {
 		if (!file) {
 			//throw std::runtime_error("cannot open file " + fileName.str());
 
-			std::cerr << "Error !\n";
+			std::cerr << "Error: cannot open ppm file !\n";
 		}
+
+		// refresh the cache data
+		const auto& cacheData = getImageCacheData();
 
 		// tmp
 		std::fprintf(file, "P6\n%i %i\n255\n", getWidth(), getHeight());
 
-		for (size_t i = 0; i < imageData.size(); ++i) {
-			fputc(imageData[i], file);
+
+		for (size_t i = 0; i < cacheData.size(); ++i) {
+			fputc(cacheData[i], file);
 		}
 
 		fclose(file);
@@ -159,12 +163,11 @@ namespace SP {
 	}
 
 	// test
-	void ImageConfig::storeToHDR(int serialNumber) const {
+	void ImageConfig::storeToHDR() const {
 		OIIO_NAMESPACE_USING
 
-		if (serialNumber == -1) {
-			serialNumber = this->imageID;
-		}
+
+		int serialNumber = this->imageID;
 
 		const std::string fileName = "radiance" + std::to_string(imageID) + "-" + std::to_string(serialNumber) + ".exr";
 
@@ -207,7 +210,7 @@ namespace SP {
 	void ImageConfig::reset() {
 
 		// reset all data to 0
-		for (auto& data : imageData) {
+		for (auto& data : imageDataCache) {
 			data = 0;
 		}
 	}

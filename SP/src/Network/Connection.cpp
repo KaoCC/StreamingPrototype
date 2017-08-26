@@ -276,7 +276,7 @@ namespace SP {
 					//ImageConfig imageData{ cfgManager.getImage() };
 					//ImageConfig::ImageBuffer& imageBufferCache{ imageData.getImageData() };
 
-					const ImageConfig::ImageBuffer& imageBufferCache { lightFieldRef[subLFIndex][k].getImageData() };
+					const ImageConfig::ImageBuffer& imageBufferCache { lightFieldRef[subLFIndex][k].getImageCacheData() };
 
 					std::copy(imageBufferCache.cbegin(), imageBufferCache.cend(), rawPtr);
 
