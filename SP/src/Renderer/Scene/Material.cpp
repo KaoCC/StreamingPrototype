@@ -176,7 +176,7 @@ namespace SP {
 
 	bool MultiBxDF::hasEmission() const {
 		InputValue base = getInputValue("base_material");
-		InputValue top = getInputValue("base_material");
+		InputValue top = getInputValue("top_material");
 
 		if ((base.matValue != nullptr) && base.matValue->hasEmission())
 			return true;
