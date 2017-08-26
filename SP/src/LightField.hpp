@@ -61,7 +61,7 @@ namespace SP {
 		void clearAll();
 
 		// TEST
-		void saveAll() const;
+		void saveAll();
 
 	private:
 

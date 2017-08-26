@@ -58,11 +58,11 @@ namespace SP {
 
 		ImageConfig(int localId, const std::string& path);
 
-		size_t getByteSize() const {
-			return imageData.size() * sizeof(uint8_t);
-		}
+		//size_t getByteSize() const {
+		//	return imageDataCache.size() * sizeof(uint8_t);
+		//}
 
-		const ImageBuffer& getImageData();
+		const ImageBuffer& getImageCacheData();
 
 
 		// radiance 	
@@ -87,10 +87,10 @@ namespace SP {
 
 
 		// test code
-		void storeToPPM(int serialNumber) const;
+		void storeToPPM();
 
 		// test code
-		void storeToHDR(int serialNumber) const;
+		void storeToHDR() const;
 
 		// test code
 		void reset();
@@ -106,7 +106,7 @@ namespace SP {
 
 		// test
 		int imageID;
-		ImageBuffer imageData;
+		ImageBuffer imageDataCache;
 
 		// Renderer result cache
 		RadianceMap radiance;
@@ -114,7 +114,7 @@ namespace SP {
 		//need lock ?
 		volatile bool refreshFlag = false;
 		
-		bool cacheFlag = false;
+		bool refreshCacheFlag = false;
 
 		//workaround
 		std::unique_ptr<boost::shared_mutex> flagMutexPtr{new boost::shared_mutex()};
