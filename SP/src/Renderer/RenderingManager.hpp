@@ -102,7 +102,7 @@ namespace SP {
 
 		// tmp
 		const std::string defaultPath = "Resources/Conf";
-		const std::string defaultModelName = "conf_room_5.objm";
+		const std::string defaultModelName = "conf_room_6.objm";
 
 		//tmp
 		const float kStep = 0.025f * 12;
