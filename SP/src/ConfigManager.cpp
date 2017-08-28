@@ -267,7 +267,7 @@ namespace SP {
 
 			// TODO : remember to change to an optimal allocation method
 
-			const std::size_t kScale = 100;
+			const std::size_t kScale = camData.getFocusDistance() / camData.getFocalLength();
 
 			const cv::Matx44f& viewMat = computeViewMatrix(camData) ;
 
