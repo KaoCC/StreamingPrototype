@@ -159,7 +159,17 @@ namespace SP {
 					normal = -normal;
 				}
 
-				outRef[i] = matPtr->getInputValue("albedo").floatValue * RadeonRays::dot(-rayArrayRef[i].d, normal);        // check ray direction
+				// simple workaround
+
+				// bug here
+				auto singleBxDF = dynamic_cast<const SingleBxDF*>(matPtr);
+				if (singleBxDF != nullptr) {
+					outRef[i] = matPtr->getInputValue("albedo").floatValue * RadeonRays::dot(-rayArrayRef[i].d, normal);        // check ray direction
+				} else {
+					// tmp workaround
+					auto diffusePart = matPtr->getInputValue("base_material");
+					outRef[i] = diffusePart.matValue->getInputValue("albedo").floatValue * RadeonRays::dot(-rayArrayRef[i].d, normal);
+				}
 
 			}
 
