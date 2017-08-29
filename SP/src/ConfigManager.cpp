@@ -259,93 +259,88 @@ namespace SP {
 		//std::vector<RadeonRays::matrix> matrixRecords;
 		//matrixRecords.resize(getNumberOfCameras());
 
+
+		const int kCamIndex = 32;
+
 		// workaround !
-		for (size_t i = 0; i < getNumberOfCameras(); ++i) {
-			const auto& camData = renderManagerPtr->getPerspectiveCamera(i);        // check this !!!
+		const auto& camData = renderManagerPtr->getPerspectiveCamera(kCamIndex);        // check this !!!
 
 
 
-			// TODO : remember to change to an optimal allocation method
+		// TODO : remember to change to an optimal allocation method
 
-			const std::size_t kScale = camData.getFocusDistance() / camData.getFocalLength();
+		const std::size_t kScale = camData.getFocusDistance() / camData.getFocalLength();
 
-			const cv::Matx44f& viewMat = computeViewMatrix(camData) ;
+		const cv::Matx44f& viewMat = computeViewMatrix(camData) ;
 
-			const cv::Matx44f& projMat = computeProjectionMatrix(-camData.getSensorSize().x * kScale / 2, camData.getSensorSize().x * kScale / 2, -camData.getSensorSize().y * kScale / 2,
-															 camData.getSensorSize().y * kScale / 2, camData.getFocusDistance(), camData.getDepthRange().y) ;
+		const cv::Matx44f& projMat = computeProjectionMatrix(-camData.getSensorSize().x * kScale / 2, camData.getSensorSize().x * kScale / 2, -camData.getSensorSize().y * kScale / 2,
+															camData.getSensorSize().y * kScale / 2, camData.getFocusDistance(), camData.getDepthRange().y) ;
 
-			std::cerr << "Pos:" << camData.getPosition().x << " " << camData.getPosition().y << " " << camData.getPosition().z << std::endl;
-			//std::cerr << "view Mat: " << viewMat << std::endl;
-			//std::cerr << "proj Mat: " << projMat << std::endl;
-
-
-
-			// ---- for testing only ----
+		std::cerr << "Pos:" << camData.getPosition().x << " " << camData.getPosition().y << " " << camData.getPosition().z << std::endl;
+		//std::cerr << "view Mat: " << viewMat << std::endl;
+		//std::cerr << "proj Mat: " << projMat << std::endl;
 
 
-			//const auto& camPos = camData.getPosition();
 
-			//cv::Matx41f origMat { camPos.x, camPos.y, camPos.z, 1 };
-
-			//std::cerr << "orig mat: " << origMat << std::endl;
+		// ---- for testing only ----
 
 
-			// (0, 0, -2) in camera space
-			//cv::Matx41f newPosMat = viewMat * origMat;
+		//const auto& camPos = camData.getPosition();
 
-			//std::cerr << "origMat in Cam (0, 0, 0): " << newPosMat <<std::endl;
+		//cv::Matx41f origMat { camPos.x, camPos.y, camPos.z, 1 };
 
-			//newPosMat(2, 0) += -2;
+		//std::cerr << "orig mat: " << origMat << std::endl;
 
-			//std::cerr << "new Pos Mat in camera space : " << newPosMat << std::endl;
 
-			//cv::Matx41f screenPos = projMat * newPosMat;
-			//std::cerr << "new Pos in cam space to screen projection" << screenPos << std::endl;
+		// (0, 0, -2) in camera space
+		//cv::Matx41f newPosMat = viewMat * origMat;
 
-			//  ---- end of test ----
+		//std::cerr << "origMat in Cam (0, 0, 0): " << newPosMat <<std::endl;
+
+		//newPosMat(2, 0) += -2;
+
+		//std::cerr << "new Pos Mat in camera space : " << newPosMat << std::endl;
+
+		//cv::Matx41f screenPos = projMat * newPosMat;
+		//std::cerr << "new Pos in cam space to screen projection" << screenPos << std::endl;
+
+		//  ---- end of test ----
 
 	
 
-			std::cerr << ">>>>>>>>>>>>>>>> X, Y: " << x << " " << y << " " << std::endl;
+		std::cerr << ">>>>>>>>>>>>>>>> X, Y: " << x << " " << y << " " << std::endl;
 
-			// NDC coord
-			float xNDC = 2 * (x / kWidth) - 1;
-			float yNDC = 2 * (y / kHeight) - 1;
-			std::cerr << "NDC (x, y): " << xNDC << " " << yNDC << " " << std::endl;
+		// NDC coord
+		float xNDC = 2 * (x / kWidth) - 1;
+		float yNDC = 2 * (y / kHeight) - 1;
+		std::cerr << "NDC (x, y): " << xNDC << " " << yNDC << " " << std::endl;
 
-			const float kDefaultDepth = -0.1;
+		const float kDefaultDepth = -0.1;
 
-			cv::Matx41f inputMat { xNDC, yNDC, kDefaultDepth, 1};
-			cv::Matx44f transMat = (projMat * viewMat).inv();
+		cv::Matx41f inputMat { xNDC, yNDC, kDefaultDepth, 1};
+		cv::Matx44f transMat = (projMat * viewMat).inv();
 
-			//cv::Mat inputMat(4, 1, CV_32F, inputData);
+		//cv::Mat inputMat(4, 1, CV_32F, inputData);
 
-			//cv::Mat transMat = (projMat * viewMat).inv();
+		//cv::Mat transMat = (projMat * viewMat).inv();
 
-			//std::cerr << ">>> TESTING !!!" << std::endl;
+		//std::cerr << ">>> TESTING !!!" << std::endl;
 
-			//cv::Matx41f backPosTest = transMat * screenPos;
-			//std::cerr << "backPosTest - world coord : " << backPosTest << std::endl;
+		//cv::Matx41f backPosTest = transMat * screenPos;
+		//std::cerr << "backPosTest - world coord : " << backPosTest << std::endl;
 
-			cv::Matx41f result = transMat * inputMat;
+		cv::Matx41f result = transMat * inputMat;
 
-			std::cerr << "test result - world coord : " << result << std::endl;
+		std::cerr << "test result - world coord : " << result << std::endl;
 
-			//std::cerr << "cam: " << i << " : " << result.x << ' ' << result.y << ' ' << result.z << std::endl;
+		//std::cerr << "cam: " << i << " : " << result.x << ' ' << result.y << ' ' << result.z << std::endl;
 
-			//std::cerr << "result[0][0] " << result(0, 0) << std::endl;
+		//std::cerr << "result[0][0] " << result(0, 0) << std::endl;
 
-			float wClip = result(3, 0);
+		float wClip = result(3, 0);
 
-			// test
-			if (i == 32) {
-				renderManagerPtr->changeSceneWithCoordinates(result(0, 0) / wClip, result(1, 0) / wClip, result(2, 0) / wClip);
-				break;
-			}
-
-		}
-
-
+		// test
+		renderManagerPtr->changeSceneWithCoordinates(result(0, 0) / wClip, result(1, 0) / wClip, result(2, 0) / wClip);
 
 
 		//RadeonRays::perspective_proj_fovy_lh_gl();
