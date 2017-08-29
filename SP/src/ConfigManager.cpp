@@ -252,7 +252,7 @@ namespace SP {
 
 
 	// testing 
-	void ConfigManager::changeSceneWithCoordinates(float x, float y) {
+	void ConfigManager::changeSceneWithCoordinatesCV(float x, float y) {
 		std::cerr << "recompile Scene with ST Plane coordinate" << std::endl;
 
 
