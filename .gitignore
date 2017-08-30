@@ -45,10 +45,10 @@ Generated/*
 .DS_Store
 
 .vscode/
-3rdparty/opencv
+
 
 # workaround
-#!3rdparty/RadeonRays/**
+!3rdparty/**
 
 # Created by https://www.gitignore.io/api/clion+all
 
