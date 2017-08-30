@@ -242,7 +242,7 @@ namespace SP {
 		if (!internalShapes.empty()) {
 
 			// get the reference
-			RadeonRays::Shape& refShape { *internalShapes.front() };
+			//RadeonRays::Shape& refShape { *internalShapes.front() };
 			//const SP::Mesh& refMesh { *internalMeshPtrs.front() };
 			const SP::Material& refMat{ *(internalMeshPtrs[44]->getMaterial()) };
 
@@ -266,10 +266,10 @@ namespace SP {
 			//RadeonRays::Shape* newShape { api->CreateInstance(&refShape) };      // Note: blocking call
 
 			// get matrix  (for debug only)
-			RadeonRays::matrix matRef;
-			RadeonRays::matrix invmatRef;
+			//RadeonRays::matrix matRef;
+			//RadeonRays::matrix invmatRef;
 
-			refShape.GetTransform(matRef, invmatRef);
+			//refShape.GetTransform(matRef, invmatRef);
 
 			// print out for debugging
 			//std::cerr << "Mat Ref: \n";
