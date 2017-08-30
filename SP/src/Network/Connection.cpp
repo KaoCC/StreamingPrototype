@@ -384,7 +384,8 @@ namespace SP {
 				case StreamingFormat::EditOperation::UPDATE:
 					std::cerr << "Editing UPDATE:" << editingMsg.op() << ", screen X: " << editingMsg.screen_x() << ", screen Y: " << editingMsg.screen_y() << std::endl;
 					// TODO : enable when done 		
-					mCfgManagerRef.changeSceneWithCoordinatesCV(editingMsg.screen_x(), editingMsg.screen_y());
+					//mCfgManagerRef.changeSceneWithCoordinatesCV(editingMsg.screen_x(), editingMsg.screen_y());
+					mCfgManagerRef.changeSceneWithCoordinates(editingMsg.screen_x(), editingMsg.screen_y());
 					break;
 				}
 			}

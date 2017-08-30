@@ -10,7 +10,7 @@
 #include "math/float3.h"
 
 
-#include <opencv2/opencv.hpp>
+//#include <opencv2/opencv.hpp>
 
 namespace SP {
 
@@ -73,10 +73,7 @@ namespace SP {
 
 
 
-
-	// inverted camera world matrix
-	static cv::Matx44f computeViewMatrix(const PerspectiveCamera& camera) {
-
+	static RadeonRays::matrix createViewMatrix(const PerspectiveCamera& camera) {
 		const auto& v = -camera.getForwardVector();
 		//const auto& r = camera.getRightVector();
 		//const auto& u = camera.getUpVector();
@@ -93,26 +90,63 @@ namespace SP {
 		std::cerr << "ip: " << ip.x << " " << ip.y << " " << ip.z << std::endl;
 
 
-		return cv::Matx44f { r.x, r.y, r.z, ip.x,
-							 u.x, u.y, u.z, ip.y,
-							 v.x, v.y, v.z, ip.z,
-							 0, 0, 0, 1 };
+		return RadeonRays::matrix { r.x, r.y, r.z, ip.x,
+			u.x, u.y, u.z, ip.y,
+			v.x, v.y, v.z, ip.z,
+			0, 0, 0, 1 };
 	}
 
-	static cv::Matx44f computeProjectionMatrix(float l, float r, float b, float t, float n, float f) {
+
+	// inverted camera world matrix
+	//static cv::Matx44f computeViewMatrix(const PerspectiveCamera& camera) {
+
+	//	const auto& v = -camera.getForwardVector();
+	//	//const auto& r = camera.getRightVector();
+	//	//const auto& u = camera.getUpVector();
+	//	const auto& pos = camera.getPosition();
+
+	//	// Recalculate these since the forward vector is inverted !
+
+	//	const auto& r = RadeonRays::cross(v, RadeonRays::normalize(camera.getUpVector()));
+	//	const auto& u = RadeonRays::cross(r, v);
+
+	//	const RadeonRays::float3 ip { -dot(r, pos), -dot(u, pos), -dot(v, pos) };
+
+	//	std::cerr << "In POS: " << pos.x << " " << pos.y << " " << pos.z << std::endl;
+	//	std::cerr << "ip: " << ip.x << " " << ip.y << " " << ip.z << std::endl;
 
 
-		std::cerr << "l, r, n" << l << " "<< r << " " << n << std::endl;
+	//	return cv::Matx44f { r.x, r.y, r.z, ip.x,
+	//						 u.x, u.y, u.z, ip.y,
+	//						 v.x, v.y, v.z, ip.z,
+	//						 0, 0, 0, 1 };
+	//}
 
-		return cv::Matx44f {
-				2 * n / (r - l), 0, (r + l) / (r - l), 0,
-				0, 2 * n / (t - b), (t + b) / (t - b), 0,
-				0, 0, (n + f) / (n - f), 2 * f * n / (n - f),
-				0, 0, -1, 0
+
+	static RadeonRays::matrix createProjectionMatrix(float l, float r, float b, float t, float n, float f) {
+		return RadeonRays::matrix {
+			2 * n / (r - l), 0, (r + l) / (r - l), 0,
+			0, 2 * n / (t - b), (t + b) / (t - b), 0,
+			0, 0, (n + f) / (n - f), 2 * f * n / (n - f),
+			0, 0, -1, 0
 		};
-
-
 	}
+
+
+	//static cv::Matx44f computeProjectionMatrix(float l, float r, float b, float t, float n, float f) {
+
+
+	//	std::cerr << "l, r, n" << l << " "<< r << " " << n << std::endl;
+
+	//	return cv::Matx44f {
+	//			2 * n / (r - l), 0, (r + l) / (r - l), 0,
+	//			0, 2 * n / (t - b), (t + b) / (t - b), 0,
+	//			0, 0, (n + f) / (n - f), 2 * f * n / (n - f),
+	//			0, 0, -1, 0
+	//	};
+
+
+	//}
 
 
 	// --------------------------------- End of Test Area ------------------
@@ -252,61 +286,112 @@ namespace SP {
 
 
 	// testing 
-	void ConfigManager::changeSceneWithCoordinatesCV(float x, float y) {
+	//void ConfigManager::changeSceneWithCoordinatesCV(float x, float y) {
+	//	std::cerr << "recompile Scene with ST Plane coordinate" << std::endl;
+
+
+	//	//std::vector<RadeonRays::matrix> matrixRecords;
+	//	//matrixRecords.resize(getNumberOfCameras());
+
+	//	const int kCamIndex = 32;
+
+	//	// workaround !
+	//	const auto& camData = renderManagerPtr->getPerspectiveCamera(kCamIndex);        // check this !!!
+
+	//	// TODO : remember to change to an optimal allocation method
+
+	//	const std::size_t kScale = camData.getFocusDistance() / camData.getFocalLength();
+
+	//	const cv::Matx44f& viewMat = computeViewMatrix(camData) ;
+
+	//	const cv::Matx44f& projMat = computeProjectionMatrix(-camData.getSensorSize().x * kScale / 2, camData.getSensorSize().x * kScale / 2, -camData.getSensorSize().y * kScale / 2,
+	//														camData.getSensorSize().y * kScale / 2, camData.getFocusDistance(), camData.getDepthRange().y) ;
+
+	//	std::cerr << "Pos:" << camData.getPosition().x << " " << camData.getPosition().y << " " << camData.getPosition().z << std::endl;
+	//	//std::cerr << "view Mat: " << viewMat << std::endl;
+	//	//std::cerr << "proj Mat: " << projMat << std::endl;
+
+	//	// ---- for testing only ----
+
+
+	//	//const auto& camPos = camData.getPosition();
+
+	//	//cv::Matx41f origMat { camPos.x, camPos.y, camPos.z, 1 };
+
+	//	//std::cerr << "orig mat: " << origMat << std::endl;
+
+
+	//	// (0, 0, -2) in camera space
+	//	//cv::Matx41f newPosMat = viewMat * origMat;
+
+	//	//std::cerr << "origMat in Cam (0, 0, 0): " << newPosMat <<std::endl;
+
+	//	//newPosMat(2, 0) += -2;
+
+	//	//std::cerr << "new Pos Mat in camera space : " << newPosMat << std::endl;
+
+	//	//cv::Matx41f screenPos = projMat * newPosMat;
+	//	//std::cerr << "new Pos in cam space to screen projection" << screenPos << std::endl;
+
+	//	//  ---- end of test ----
+
+
+	//	std::cerr << ">>>>>>>>>>>>>>>> X, Y: " << x << " " << y << " " << std::endl;
+
+	//	// NDC coord
+	//	float xNDC = 2 * (x / kWidth) - 1;
+	//	float yNDC = 2 * (y / kHeight) - 1;
+	//	std::cerr << "NDC (x, y): " << xNDC << " " << yNDC << " " << std::endl;
+
+	//	const float kDefaultDepth = -0.1;
+
+	//	cv::Matx41f inputMat { xNDC, yNDC, kDefaultDepth, 1};
+	//	cv::Matx44f transMat = (projMat * viewMat).inv();
+
+	//	//cv::Mat inputMat(4, 1, CV_32F, inputData);
+
+	//	//cv::Mat transMat = (projMat * viewMat).inv();
+
+	//	//std::cerr << ">>> TESTING !!!" << std::endl;
+
+	//	//cv::Matx41f backPosTest = transMat * screenPos;
+	//	//std::cerr << "backPosTest - world coord : " << backPosTest << std::endl;
+
+	//	cv::Matx41f result = transMat * inputMat;
+
+	//	std::cerr << "test result - world coord : " << result << std::endl;
+
+	//	//std::cerr << "cam: " << i << " : " << result.x << ' ' << result.y << ' ' << result.z << std::endl;
+
+	//	//std::cerr << "result[0][0] " << result(0, 0) << std::endl;
+
+	//	float wClip = result(3, 0);
+
+	//	// test
+	//	renderManagerPtr->changeSceneWithCoordinates(result(0, 0) / wClip, result(1, 0) / wClip, result(2, 0) / wClip);
+
+	//	//RadeonRays::perspective_proj_fovy_lh_gl();
+
+	//	// for loop ?
+	//	//renderManagerPtr->changeSceneWithCoordinates(x, y);
+	//}
+
+	void ConfigManager::changeSceneWithCoordinates(float x, float y) {
 		std::cerr << "recompile Scene with ST Plane coordinate" << std::endl;
-
-
-		//std::vector<RadeonRays::matrix> matrixRecords;
-		//matrixRecords.resize(getNumberOfCameras());
-
 
 		const int kCamIndex = 32;
 
 		// workaround !
 		const auto& camData = renderManagerPtr->getPerspectiveCamera(kCamIndex);        // check this !!!
 
-
-
-		// TODO : remember to change to an optimal allocation method
-
 		const std::size_t kScale = camData.getFocusDistance() / camData.getFocalLength();
 
-		const cv::Matx44f& viewMat = computeViewMatrix(camData) ;
+		const auto& viewMat = createViewMatrix(camData);
 
-		const cv::Matx44f& projMat = computeProjectionMatrix(-camData.getSensorSize().x * kScale / 2, camData.getSensorSize().x * kScale / 2, -camData.getSensorSize().y * kScale / 2,
-															camData.getSensorSize().y * kScale / 2, camData.getFocusDistance(), camData.getDepthRange().y) ;
+		const auto& projMat = createProjectionMatrix(-camData.getSensorSize().x * kScale / 2,
+			camData.getSensorSize().x * kScale / 2, -camData.getSensorSize().y * kScale / 2,
+			camData.getSensorSize().y * kScale / 2, camData.getFocusDistance(), camData.getDepthRange().y);
 
-		std::cerr << "Pos:" << camData.getPosition().x << " " << camData.getPosition().y << " " << camData.getPosition().z << std::endl;
-		//std::cerr << "view Mat: " << viewMat << std::endl;
-		//std::cerr << "proj Mat: " << projMat << std::endl;
-
-
-
-		// ---- for testing only ----
-
-
-		//const auto& camPos = camData.getPosition();
-
-		//cv::Matx41f origMat { camPos.x, camPos.y, camPos.z, 1 };
-
-		//std::cerr << "orig mat: " << origMat << std::endl;
-
-
-		// (0, 0, -2) in camera space
-		//cv::Matx41f newPosMat = viewMat * origMat;
-
-		//std::cerr << "origMat in Cam (0, 0, 0): " << newPosMat <<std::endl;
-
-		//newPosMat(2, 0) += -2;
-
-		//std::cerr << "new Pos Mat in camera space : " << newPosMat << std::endl;
-
-		//cv::Matx41f screenPos = projMat * newPosMat;
-		//std::cerr << "new Pos in cam space to screen projection" << screenPos << std::endl;
-
-		//  ---- end of test ----
-
-	
 
 		std::cerr << ">>>>>>>>>>>>>>>> X, Y: " << x << " " << y << " " << std::endl;
 
@@ -317,36 +402,19 @@ namespace SP {
 
 		const float kDefaultDepth = -0.1;
 
-		cv::Matx41f inputMat { xNDC, yNDC, kDefaultDepth, 1};
-		cv::Matx44f transMat = (projMat * viewMat).inv();
+		RadeonRays::float4 inputMat { xNDC, yNDC, kDefaultDepth, 1 };
+		RadeonRays::matrix transMat { RadeonRays::inverse(projMat * viewMat) };
 
-		//cv::Mat inputMat(4, 1, CV_32F, inputData);
+		// final result
 
-		//cv::Mat transMat = (projMat * viewMat).inv();
+		const auto& result = transMat * inputMat;
 
-		//std::cerr << ">>> TESTING !!!" << std::endl;
+		std::cerr << "result: " << result.x << " " << result.y << " " << result.z << " " << result.w <<'\n';
 
-		//cv::Matx41f backPosTest = transMat * screenPos;
-		//std::cerr << "backPosTest - world coord : " << backPosTest << std::endl;
-
-		cv::Matx41f result = transMat * inputMat;
-
-		std::cerr << "test result - world coord : " << result << std::endl;
-
-		//std::cerr << "cam: " << i << " : " << result.x << ' ' << result.y << ' ' << result.z << std::endl;
-
-		//std::cerr << "result[0][0] " << result(0, 0) << std::endl;
-
-		float wClip = result(3, 0);
-
-		// test
-		renderManagerPtr->changeSceneWithCoordinates(result(0, 0) / wClip, result(1, 0) / wClip, result(2, 0) / wClip);
+		const float wClip = result.w;
+		renderManagerPtr->changeSceneWithCoordinates(result.x / wClip, result.y / wClip, result.z / wClip);
 
 
-		//RadeonRays::perspective_proj_fovy_lh_gl();
-
-		// for loop ?
-		//renderManagerPtr->changeSceneWithCoordinates(x, y);
 	}
 
 
