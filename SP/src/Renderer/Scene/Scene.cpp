@@ -57,6 +57,10 @@ namespace SP {
 		}
 	}
 
+	Scene::DirtyFlags Scene::getDirtyFlags() const {
+		return scenePtr->dirtyFlags;
+	}
+
 	void Scene::setDirtyFlag(DirtyFlags flag) const {
 		scenePtr->dirtyFlags = scenePtr->dirtyFlags | flag;
 	}
