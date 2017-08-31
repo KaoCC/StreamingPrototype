@@ -6,7 +6,7 @@
 
 namespace SP {
 
-	void DifferentialGeometry::fill(const RadeonRays::Intersection& isectRef, const Scene& scene) {
+	DifferentialGeometry::DifferentialGeometry(const RadeonRays::Intersection& isectRef, const Scene& scene) {
 
 		int shapeId = isectRef.shapeid - 1;            //CHECK !
 		int primId = isectRef.primid;                                // CHECK !!!
@@ -93,6 +93,8 @@ namespace SP {
 
 	}
 
+
+
 	void DifferentialGeometry::calculateTangentTransform() {
 
 		worldToTangent = matrix_from_rows3(dpdu, normal, dpdv);
@@ -115,7 +117,7 @@ namespace SP {
 		return pos;
 	}
 
-	RadeonRays::float3 DifferentialGeometry::getPosition() const {
+	const RadeonRays::float3& DifferentialGeometry::getPosition() const {
 		return pos;
 	}
 

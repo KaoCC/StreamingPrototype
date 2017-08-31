@@ -335,7 +335,7 @@ namespace SP {
 
 		uint32_t rngseed = RadeonRays::rand_uint();
 
-		DifferentialGeometry diffGeo;
+		//DifferentialGeometry diffGeo;
 
 		for (size_t i = 0; i < renderData.host_hitcount; ++i) {
 
@@ -369,7 +369,7 @@ namespace SP {
 
 			// KAOCC: how to change this ?
 			//DifferentialGeometry diffGeo;
-			diffGeo.fill(currentIntersect, scene);
+			DifferentialGeometry diffGeo { currentIntersect, scene };
 
 
 

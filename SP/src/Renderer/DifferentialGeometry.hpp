@@ -17,15 +17,15 @@ namespace SP {
 	class DifferentialGeometry {
 
 	public:
-	//	DifferentialGeometry();
+		DifferentialGeometry(const RadeonRays::Intersection& isectRef, const Scene& scene);
 
-		void fill(const RadeonRays::Intersection& isectRef, const Scene& scene);
+		//void fill(const RadeonRays::Intersection& isectRef, const Scene& scene);
 
 		void calculateTangentTransform();
 
 		//get Ref
 		RadeonRays::float3& getPosition();
-		RadeonRays::float3 getPosition() const;
+		const RadeonRays::float3& getPosition() const;
 
 		RadeonRays::float3& getNormal();
 		RadeonRays::float3& getNormalGeo();
