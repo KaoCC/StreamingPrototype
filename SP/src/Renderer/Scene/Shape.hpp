@@ -6,7 +6,9 @@
 #include "math/float3.h"
 #include "math/float2.h"
 
-#include <memory>
+//#include <memory>
+
+#include <vector>
 
 namespace SP {
 
@@ -71,16 +73,16 @@ namespace SP {
 
 	private:
 
-		std::unique_ptr<RadeonRays::float3[]> vertices;
-		std::unique_ptr<RadeonRays::float3[]> normals;
-		std::unique_ptr<RadeonRays::float2[]> uvs;
-		std::unique_ptr<std::uint32_t[]> indices;
+		std::vector<RadeonRays::float3> vertices;
+		std::vector<RadeonRays::float3> normals;
+		std::vector<RadeonRays::float2> uvs;
+		std::vector<std::uint32_t> indices;
 
 
-		std::size_t numVertices = 0;
-		std::size_t numNormals = 0;
-		std::size_t numUVs = 0;
-		std::size_t numIndices = 0;
+		//std::size_t numVertices = 0;
+		//std::size_t numNormals = 0;
+		//std::size_t numUVs = 0;
+		//std::size_t numIndices = 0;
 	};
 
 
