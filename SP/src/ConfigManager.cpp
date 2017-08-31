@@ -14,8 +14,13 @@
 
 namespace SP {
 
-	const RadeonRays::float3 ConfigManager::kCameraPos{ -2.f, 1.0f, 0.f };
-	const RadeonRays::float3 ConfigManager::kCameraAt{ 2.f, 1.0f, 0.f };
+	// For Conf
+	//const RadeonRays::float3 ConfigManager::kCameraPos{ 2.f, 1.8f, 3.f };
+	//const RadeonRays::float3 ConfigManager::kCameraAt{ 2.f, 1.8f, -1.f };
+	// For Sponza
+	const RadeonRays::float3 ConfigManager::kCameraPos{ 0.5f, 2.2f, 1.f };
+	const RadeonRays::float3 ConfigManager::kCameraAt{ 0.5f, 2.2f, -1.f };
+	// Common
 	const RadeonRays::float3 ConfigManager::kCameraUp{ 0.f, -1.f, 0.f };
 
 	ConfigManager::ConfigManager() : mImageLightField { kNumOfLFs, kNumOfSubLFImgs }, mCameraConfig { kCameraPos, kCameraAt, kCameraUp } {
