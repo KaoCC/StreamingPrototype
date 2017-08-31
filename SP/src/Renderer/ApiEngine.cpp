@@ -164,9 +164,9 @@ namespace SP {
 	}
 
 	// workaround !
-	const Scene* ApiEngine::getCurrentScenePtr() const {
-		return mBackends[0].tracker.getCurrentScenePtr();
-	}
+	//const Scene* ApiEngine::getCurrentScenePtr() const {
+	//	return mBackends[0].tracker.getCurrentScenePtr();
+	//}
 
 	// test
 	void ApiEngine::changeShape_test(float worldX, float worldY, float worldZ) {

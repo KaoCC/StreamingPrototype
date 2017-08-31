@@ -44,7 +44,7 @@ namespace SP {
 
 
 		//workaround !
-		const Scene* getCurrentScenePtr() const;
+		//const Scene* getCurrentScenePtr() const;
 
 		// test
 		void changeShape_test(float worldX, float worldY, float worldZ);
