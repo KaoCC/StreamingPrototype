@@ -149,7 +149,7 @@ namespace SP {
 			// Shade V		(X)
 
 			// Shade Surface			// the key of rendering !
-			shadeSurface(pass);
+			shadeSurface(scene, pass);
 
 			if (pass == 0) {
 				shadeMiss(pass);
@@ -321,7 +321,7 @@ namespace SP {
 	}
 
 
-	void PtRenderer::shadeSurface(unsigned pass) {
+	void PtRenderer::shadeSurface(const Scene& scene, unsigned pass) {
 
 
 		const std::vector<RadeonRays::ray>& rayArrayRef = renderData.host_rays[pass & 0x1];
@@ -478,7 +478,7 @@ namespace SP {
 			// sample BxDf
 			const RadeonRays::float3& bxdf = BxDFHelper::sample(diffGeo, wi, sampler->sample2D(), bxdfwo, bxdfPDF);        // retrun value not used ?
 
-			const auto currentScenePtr = mEngineRef.getCurrentScenePtr();
+			const auto currentScenePtr = &scene;
 
 			// Radiance
 			RadeonRays::float3 radiance = 0.f;
