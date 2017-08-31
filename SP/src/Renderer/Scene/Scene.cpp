@@ -115,8 +115,8 @@ namespace SP {
 		return scenePtr->shapes.size();
 	}
 
-	Iterator * Scene::createShapeIterator() const {
-		return new GenericIterator<ShapeList::const_iterator>(scenePtr->shapes.begin(), scenePtr->shapes.end());
+	std::unique_ptr<Iterator> Scene::createShapeIterator() const {
+		return std::make_unique<GenericIterator<ShapeList::const_iterator>>(scenePtr->shapes.begin(), scenePtr->shapes.end());
 	}
 
 	void Scene::attachCamera(Camera const * cam) {
