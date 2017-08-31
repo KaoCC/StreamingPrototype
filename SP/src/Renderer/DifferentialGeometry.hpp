@@ -19,7 +19,7 @@ namespace SP {
 	public:
 	//	DifferentialGeometry();
 
-		void fill(const RadeonRays::Intersection& isectRef, const std::vector<const Mesh*>& meshPtrs);
+		void fill(const RadeonRays::Intersection& isectRef, const Scene& scene);
 
 		void calculateTangentTransform();
 

@@ -65,6 +65,9 @@ namespace SP {
 		// Get shape iterator
 		std::unique_ptr<Iterator> createShapeIterator() const;
 
+		// Get shape reference
+		const Shape& getShape(size_t shapeIdx) const;
+
 		// Set and get camera
 		void attachCamera(Camera const* camera);
 		const Camera& getCamera(size_t camIdx) const;

@@ -369,7 +369,7 @@ namespace SP {
 
 			// KAOCC: how to change this ?
 			//DifferentialGeometry diffGeo;
-			diffGeo.fill(currentIntersect, mEngineRef.getInternalMeshPtrs());
+			diffGeo.fill(currentIntersect, scene);
 
 
 
