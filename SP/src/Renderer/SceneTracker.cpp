@@ -117,7 +117,7 @@ namespace SP {
 
 			internalMeshPtrs.clear();
 
-			std::unique_ptr<Iterator> shapeIterator(scene.createShapeIterator());
+			std::unique_ptr<Iterator> shapeIterator { scene.createShapeIterator() };
 
 			// create mesh
 
@@ -185,9 +185,9 @@ namespace SP {
 		return internalMeshPtrs;
 	}
 
-	const Scene* SceneTracker::getCurrentScenePtr() const {
-		return currentScenePtr;
-	}
+	//const Scene* SceneTracker::getCurrentScenePtr() const {
+	//	return currentScenePtr;
+	//}
 
 	// for testing only
 	void SceneTracker::removeShapesInScene_test() {
