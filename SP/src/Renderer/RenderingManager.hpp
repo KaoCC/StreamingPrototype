@@ -133,6 +133,7 @@ namespace SP {
 		std::vector<std::shared_ptr<Output>> renderOutputData;
 
 		std::unique_ptr<ApiEngine> mEnginePtr;
+		std::unique_ptr<SceneTracker> mTracker;
 
 		// test
 		//std::queue<std::pair<int, int>> mTaskQueue;

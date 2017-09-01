@@ -149,19 +149,37 @@ namespace SP {
 		}
 	}
 
-	void ApiEngine::compileScene(const Scene& scene) {
-
-		for (auto& backend : mBackends) {
-			backend.tracker.compileSceneTest(scene);
+	std::vector<RadeonRays::IntersectionApi*> ApiEngine::getAPIs() const {
+		std::vector<RadeonRays::IntersectionApi*> apis;
+		for (const auto& backend : mBackends) {
+			apis.push_back(backend.api);
 		}
 
+		return apis;
 	}
+
+	//void ApiEngine::compileScene(Scene& scene) {
+
+
+	//	if (scene.getDirtyFlags() != Scene::kNone) {
+
+	//		std::cerr << "Scene is dirty\n";
+
+	//		for (auto& backend : mBackends) {
+	//			backend.tracker.compileSceneTest(scene);
+	//		}
+
+	//		scene.clearDirtyFlags();
+	//	}
+
+
+	//}
 
 
 	// workaround !
-	const std::vector<const Mesh*>& ApiEngine::getInternalMeshPtrs() const {
-		return mBackends[0].tracker.getInternalMeshPtrs();
-	}
+	//const std::vector<const Mesh*>& ApiEngine::getInternalMeshPtrs() const {
+	//	return mBackends[0].tracker.getInternalMeshPtrs();
+	//}
 
 	// workaround !
 	//const Scene* ApiEngine::getCurrentScenePtr() const {
@@ -169,15 +187,15 @@ namespace SP {
 	//}
 
 	// test
-	void ApiEngine::changeShape_test(float worldX, float worldY, float worldZ) {
-		for (auto& backend : mBackends) {
-			//backend.tracker.removeShapesInScene_test();
+	//void ApiEngine::changeShape_test(float worldX, float worldY, float worldZ) {
+	//	for (auto& backend : mBackends) {
+	//		//backend.tracker.removeShapesInScene_test();
 
-			// change to add shape
-			backend.tracker.addShapesInScene_test(worldX, worldY, worldZ);
+	//		// change to add shape
+	//		backend.tracker.addShapesInScene_test(worldX, worldY, worldZ);
 
-		}
-	}
+	//	}
+	//}
 
 
 	// for worker thread
@@ -310,7 +328,7 @@ namespace SP {
 
 
 	ApiEngine::BackendRecord::BackendRecord(RadeonRays::IntersectionApi* inputApi, ScreenConfig screenCfg) :
-			api { inputApi }, tracker { inputApi } {
+			api { inputApi } {
 
 		// disable this part ?
 		buffer.rays = api->CreateBuffer(screenCfg.width * screenCfg.height * sizeof(RadeonRays::ray), nullptr);

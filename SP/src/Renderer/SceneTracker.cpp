@@ -31,67 +31,12 @@ namespace SP {
 		}
 	}
 
-	static SP::Mesh* createDefaultMesh(float worldX, float worldY, float worldZ) {
 
-		// TODO: fix this !! Who's gonna release the memory for this ?
-		SP::Mesh* mesh = new Mesh();
-
-		// original world space
-		//float vertices[] {
-		//	0.f, 0.f, 0.f,
-		//	0.f, 1.f, 0.f,
-		//	1.f, 0.f, 0.f
-		//};
-
-		const int unitLength = 1;
-
-		float vertices[] {
-			worldX, worldY, worldZ,
-			worldX, worldY + unitLength, worldZ,
-			worldX, worldY, worldZ + unitLength
-		};
-
-		size_t numOfVertices = 3;
-
-
-		uint32_t indices[] { 0, 1, 2 };
-		size_t numOfIndices = 3;
-
-		float normals[] {
-			1, 0, 0,
-			1, 0, 0,
-			1, 0, 0
-		};
-		size_t numOfNormals = 3;
-
-
-		// set vertices
-		mesh->setVertices(vertices, numOfVertices);
-
-		// set indices
-		mesh->setIndices(indices, numOfIndices);
-
-		// set Normals
-		mesh->setNormals(normals, numOfNormals);
-
-		// Generate Zeros if we do not have UVs
-		std::vector<RadeonRays::float2> zero(numOfVertices);
-		std::fill(zero.begin(), zero.end(), RadeonRays::float2(0, 0));
-		mesh->setUVs(&zero[0], numOfVertices);
-
-
-
-		mesh->setName("Default");
-
-		// No material !
-
-		return mesh;
-	}
 
 	// ------ end test ------
 
 
-	SceneTracker::SceneTracker(RadeonRays::IntersectionApi* intersectApi) : api { intersectApi } {
+	SceneTracker::SceneTracker(const std::vector<RadeonRays::IntersectionApi*>& apis) : intersectAPIs { apis } {
 
 
 	}
@@ -115,56 +60,14 @@ namespace SP {
 			currentScenePtr = &scene;
 
 
-			internalMeshPtrs.clear();
+			//internalMeshPtrs.clear();
 
-			std::unique_ptr<Iterator> shapeIterator { scene.createShapeIterator() };
-
-			// create mesh
-
-			//std::cerr << "While" << std::endl;
-
-			int shapeID = 1;
-			while (shapeIterator->hasNext()) {
-
-				// get mesh ?
-
-				const auto* mesh = static_cast<const Mesh*>(shapeIterator->nextItem());
-
-				RadeonRays::Shape* shape = api->CreateMesh(
-						reinterpret_cast<const float*>(mesh->getVertices()),            // check this one !!!
-						static_cast<int>(mesh->getNumVertices()),
-						sizeof(RadeonRays::float3),
-						reinterpret_cast<const int*>(mesh->getIndices()),
-						0,
-						nullptr,
-						static_cast<int>(mesh->getNumIndices() / 3)
-				);
+			//std::unique_ptr<Iterator> shapeIterator { scene.createShapeIterator() };
 
 
-				shape->SetId(shapeID);
-				++shapeID;
-
-				internalShapes.push_back(shape);
-
-				//test
-				internalMeshPtrs.push_back(mesh);
-
-				//if (mesh->getName() != "") {
-					std::cerr << ">>>>>>>>>>>>>>" << mesh->getMaterial()->getName() << " : " <<internalMeshPtrs.size() << std::endl;
-				//}
-			}
-
-			std::cerr << "Num of internal Shapes: " << internalShapes.size() << std::endl;
+			createShapeRR(intersectAPIs, scene);
 
 
-			// TEST !!!!!
-			for (const auto& s : internalShapes) {
-				api->AttachShape(s);
-				std::cerr << "Add shape !" << std::endl;
-			}
-
-			api->Commit();
-			std::cerr << "Commit" << std::endl;
 
 		}
 
@@ -175,169 +78,232 @@ namespace SP {
 			std::cerr << "The scene has been changed !" << std::endl;
 		}
 
-		// can cause error !
-		// cannot commit twice ?
-		//api->Commit();
 
 	}
 
-	const std::vector<const Mesh*>& SceneTracker::getInternalMeshPtrs() const {
-		return internalMeshPtrs;
+	void SceneTracker::createShapeRR(const std::vector<RadeonRays::IntersectionApi *>& apis, const Scene& scene) {
+
+
+		//std::vector<RadeonRays::Shape*> internalShapes;		// check for memory leaks
+
+		std::unique_ptr<Iterator> shapeIterator { scene.createShapeIterator() };
+
+		int shapeID = 1;
+		while (shapeIterator->hasNext()) {
+
+			// get mesh ?
+			const auto* mesh = static_cast<const Mesh*>(shapeIterator->nextItem());
+
+			for (auto& api : apis) {
+
+				RadeonRays::Shape* shape = api->CreateMesh(
+					reinterpret_cast<const float*>(mesh->getVertices()),            // check this one !!!
+					static_cast<int>(mesh->getNumVertices()),
+					sizeof(RadeonRays::float3),
+					reinterpret_cast<const int*>(mesh->getIndices()),
+					0,
+					nullptr,
+					static_cast<int>(mesh->getNumIndices() / 3)
+				);
+
+
+				shape->SetId(shapeID);
+
+				//internalShapes.push_back(shape);
+				api->AttachShape(shape);
+				std::cerr << "Add shape !" << std::endl;
+			}
+
+			++shapeID;
+
+		}
+
+		std::cerr << "Num of internal Shapes: " << shapeID - 1 << std::endl;
+
+
+		// TEST !!!!!
+		//for (const auto& s : internalShapes) {
+		//	api->AttachShape(s);
+		//	std::cerr << "Add shape !" << std::endl;
+		//}
+		
+		for (auto& api: apis) {
+			api->Commit();
+			std::cerr << "Commit" << std::endl;
+		}
 	}
+
+
+
+	//const std::vector<const Mesh*>& SceneTracker::getInternalMeshPtrs() const {
+	//	return internalMeshPtrs;
+	//}
 
 	//const Scene* SceneTracker::getCurrentScenePtr() const {
 	//	return currentScenePtr;
 	//}
 
 	// for testing only
-	void SceneTracker::removeShapesInScene_test() {
+	//void SceneTracker::removeShapesInScene_test() {
 
-		std::cerr << "remove shape start !" << std::endl;
+	//	std::cerr << "remove shape start !" << std::endl;
 
-		if (!internalShapes.empty()) {
+	//	if (!internalShapes.empty()) {
 
 
-			RadeonRays::Shape* delShape { internalShapes.back() };
-			internalShapes.pop_back();
+	//		RadeonRays::Shape* delShape { internalShapes.back() };
+	//		internalShapes.pop_back();
 
-			size_t sz = internalShapes.size();
+	//		size_t sz = internalShapes.size();
 
-			std::cerr << "Number of shapes left:" << sz << std::endl;
+	//		std::cerr << "Number of shapes left:" << sz << std::endl;
 
-			if (sz > 0) {
+	//		if (sz > 0) {
 
-				// tests
-				if (!internalMeshPtrs[sz - 1]->getMaterial()->hasEmission()) {
-					api->DetachShape(delShape);
-					api->DeleteShape(delShape);
+	//			// tests
+	//			if (!internalMeshPtrs[sz - 1]->getMaterial()->hasEmission()) {
+	//				api->DetachShape(delShape);
+	//				api->DeleteShape(delShape);
 
-					api->Commit();
+	//				api->Commit();
 
-				} else {
-					std::cerr << "<<<<<< This is the Light ! ..." << std::endl;
-				}
+	//			} else {
+	//				std::cerr << "<<<<<< This is the Light ! ..." << std::endl;
+	//			}
 
-			}
+	//		}
 
-		} else {
-			std::cerr << " >>>>>>>>>>> Empty Scene ......" << std::endl;
-		}
+	//	} else {
+	//		std::cerr << " >>>>>>>>>>> Empty Scene ......" << std::endl;
+	//	}
 
-		std::cerr << "remove Shapes Commit" << std::endl;
+	//	std::cerr << "remove Shapes Commit" << std::endl;
 
-	}
+	//}
 
 	// test !!!
 
 
 	// test
-	void SceneTracker::addShapesInScene_test(float worldX, float worldY, float worldZ) {
+	//void SceneTracker::addShapesInScene_test(float worldX, float worldY, float worldZ) {
 
-		// test !
-		static bool initFlag = true;
+	//	// test !
+	//	//static bool initFlag = true;
 
-		std::cerr << "add Shape starts !" << std::endl;
-
-
-		if (!internalShapes.empty()) {
-
-			// get the reference
-			//RadeonRays::Shape& refShape { *internalShapes.front() };
-			//const SP::Mesh& refMesh { *internalMeshPtrs.front() };
-			const SP::Material& refMat{ *(internalMeshPtrs[44]->getMaterial()) };
-
-			// add default mesh !!
-			SP::Mesh* defaultMesh {createDefaultMesh(worldX, worldY, worldZ)};
-
-			// workaround
-			defaultMesh->setMaterial(&refMat);
-
-			RadeonRays::Shape* defaultShape = api->CreateMesh(
-				reinterpret_cast<const float*>(defaultMesh->getVertices()),            // check this one !!!
-				static_cast<int>(defaultMesh->getNumVertices()),
-				sizeof(RadeonRays::float3),
-				reinterpret_cast<const int*>(defaultMesh->getIndices()),
-				0,
-				nullptr,
-				static_cast<int>(defaultMesh->getNumIndices() / 3)
-			);
-
-			// create mesh or instantiate ?
-			//RadeonRays::Shape* newShape { api->CreateInstance(&refShape) };      // Note: blocking call
-
-			// get matrix  (for debug only)
-			//RadeonRays::matrix matRef;
-			//RadeonRays::matrix invmatRef;
-
-			//refShape.GetTransform(matRef, invmatRef);
-
-			// print out for debugging
-			//std::cerr << "Mat Ref: \n";
-			//printMat(matRef);
+	//	std::cerr << "add Shape starts !" << std::endl;
 
 
-			// compute world space position from ST coordinates (world space coordinate = inv Projection Matrix (with depth info) * ST coordinate )
-			//RadeonRays::float3 worldPosition = computeProjectionToWorld();
+	//	if (!internalShapes.empty()) {
+
+	//		// get the reference
+	//		//RadeonRays::Shape& refShape { *internalShapes.front() };
+	//		//const SP::Mesh& refMesh { *internalMeshPtrs.front() };
+	//		const SP::Material& refMat{ *(internalMeshPtrs[44]->getMaterial()) };
+
+	//		// add default mesh !!
+	//		SP::Mesh* defaultMesh {createDefaultMesh(worldX, worldY, worldZ)};
+
+	//		// workaround
+	//		defaultMesh->setMaterial(&refMat);
+
+	//		RadeonRays::Shape* defaultShape = api->CreateMesh(
+	//			reinterpret_cast<const float*>(defaultMesh->getVertices()),            // check this one !!!
+	//			static_cast<int>(defaultMesh->getNumVertices()),
+	//			sizeof(RadeonRays::float3),
+	//			reinterpret_cast<const int*>(defaultMesh->getIndices()),
+	//			0,
+	//			nullptr,
+	//			static_cast<int>(defaultMesh->getNumIndices() / 3)
+	//		);
+
+	//		// create mesh or instantiate ?
+	//		//RadeonRays::Shape* newShape { api->CreateInstance(&refShape) };      // Note: blocking call
+
+	//		// get matrix  (for debug only)
+	//		//RadeonRays::matrix matRef;
+	//		//RadeonRays::matrix invmatRef;
+
+	//		//refShape.GetTransform(matRef, invmatRef);
+
+	//		// print out for debugging
+	//		//std::cerr << "Mat Ref: \n";
+	//		//printMat(matRef);
 
 
-			// compute translation matrix
-
-			std::printf("worldx, worldy, worldz: %f, %f, %f\n", worldX, worldY, worldZ);
-
-			//RadeonRays::matrix matNew {
-			//	1, 0, 0, worldX,
-			//	0, 1, 0, worldY,
-			//	0, 0, 1, worldZ,
-			//	0, 0, 0, 1
-			//};
-
-			//RadeonRays::matrix invmatNew = RadeonRays::inverse(matNew);
-
-			//computeTransformation(computeProjectionToWorld(x, y), matNew, invmatNew);
+	//		// compute world space position from ST coordinates (world space coordinate = inv Projection Matrix (with depth info) * ST coordinate )
+	//		//RadeonRays::float3 worldPosition = computeProjectionToWorld();
 
 
-			//std::cerr << "Mat New\n";
-			// print out for debugging
-			//printMat(matNew);
+	//		// compute translation matrix
 
-			// apply transformation to shape
-			//newShape->SetTransform(matNew, invmatNew);
+	//		std::printf("worldx, worldy, worldz: %f, %f, %f\n", worldX, worldY, worldZ);
 
+	//		//RadeonRays::matrix matNew {
+	//		//	1, 0, 0, worldX,
+	//		//	0, 1, 0, worldY,
+	//		//	0, 0, 1, worldZ,
+	//		//	0, 0, 0, 1
+	//		//};
 
-			if (!initFlag) {
+	//		//RadeonRays::matrix invmatNew = RadeonRays::inverse(matNew);
 
-				// remove shape
-				auto currentShape = internalShapes.back();
-				internalShapes.pop_back();
-				api->DetachShape(currentShape);
-				api->DeleteShape(currentShape);
-
-				internalMeshPtrs.pop_back();
-
-			} else {
-				initFlag = false;
-			}
-
-			// push to vector
-			internalShapes.push_back(defaultShape);
-			internalMeshPtrs.push_back(defaultMesh);
-
-			// be careful !
-			defaultShape->SetId(internalShapes.size());
-
-			// add shape
-			api->AttachShape(defaultShape);
-
-			// commit
-			api->Commit();
-
-			std::cerr << "Commit shape " << std::endl;
-
-		}
+	//		//computeTransformation(computeProjectionToWorld(x, y), matNew, invmatNew);
 
 
-		std::cerr << "add shape ends !" << std::endl;
+	//		//std::cerr << "Mat New\n";
+	//		// print out for debugging
+	//		//printMat(matNew);
 
-	}
+	//		// apply transformation to shape
+	//		//newShape->SetTransform(matNew, invmatNew);
+
+
+	//		//if (!initFlag) {
+
+	//		//	// remove shape
+	//		//	auto currentShape = internalShapes.back();
+	//		//	internalShapes.pop_back();
+	//		//	api->DetachShape(currentShape);
+	//		//	api->DeleteShape(currentShape);
+
+	//		//	internalMeshPtrs.pop_back();
+
+	//		//} else {
+	//		//	initFlag = false;
+	//		//}
+
+	//		// push to vector
+	//		internalShapes.push_back(defaultShape);
+	//		//internalMeshPtrs.push_back(defaultMesh);
+
+	//		// be careful !
+	//		defaultShape->SetId(internalShapes.size());
+
+	//		// add shape
+	//		api->AttachShape(defaultShape);
+
+	//		// commit
+	//		api->Commit();
+
+	//		std::cerr << "Commit shape " << std::endl;
+
+	//	}
+
+
+	//	std::cerr << "add shape ends !" << std::endl;
+
+	//}
+
+	//void SceneTracker::addShapeTransform_test(float worldX, float worldY, float worldZ) {
+
+
+
+
+
+	//}
+
+
+
+
 
 }
