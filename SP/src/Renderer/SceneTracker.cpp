@@ -36,8 +36,13 @@ namespace SP {
 	// ------ end test ------
 
 
-	SceneTracker::SceneTracker(const std::vector<RadeonRays::IntersectionApi*>& apis) : intersectAPIs { apis } {
+	SceneTracker::SceneTracker(const std::vector<RadeonRays::IntersectionApi*>& apis)  {
 
+		for (const auto& api : apis) {
+			Attribute attr;
+			attr.api = api;
+			mAttributes.push_back(std::move(attr));
+		}
 
 	}
 
@@ -65,9 +70,19 @@ namespace SP {
 			//std::unique_ptr<Iterator> shapeIterator { scene.createShapeIterator() };
 
 
-			createShapeRR(intersectAPIs, scene);
+			createShapeRR(scene);
 
 
+
+		} else {
+
+			// update shape
+			if (scene.getDirtyFlags() == Scene::kShapes) {
+
+
+				updateShapes(scene);
+
+			}
 
 		}
 
@@ -81,7 +96,26 @@ namespace SP {
 
 	}
 
-	void SceneTracker::createShapeRR(const std::vector<RadeonRays::IntersectionApi *>& apis, const Scene& scene) {
+	void SceneTracker::updateShapes(const Scene & scene) {
+
+		for (auto& attribute : mAttributes) {
+			// loop over lookup table (map)
+			for (auto& val : attribute.lookupTable) {
+
+				// check if dirty
+				if (val.first->isDirty()) {
+					// modify the RR shape accordingly
+
+
+				}
+			}
+
+		}
+
+
+	}
+
+	void SceneTracker::createShapeRR(const Scene& scene) {
 
 
 		//std::vector<RadeonRays::Shape*> internalShapes;		// check for memory leaks
@@ -94,9 +128,9 @@ namespace SP {
 			// get mesh ?
 			const auto* mesh = static_cast<const Mesh*>(shapeIterator->nextItem());
 
-			for (auto& api : apis) {
+			for (auto& attribute : mAttributes) {
 
-				RadeonRays::Shape* shape = api->CreateMesh(
+				RadeonRays::Shape* shape = attribute.api->CreateMesh(
 					reinterpret_cast<const float*>(mesh->getVertices()),            // check this one !!!
 					static_cast<int>(mesh->getNumVertices()),
 					sizeof(RadeonRays::float3),
@@ -110,8 +144,12 @@ namespace SP {
 				shape->SetId(shapeID);
 
 				//internalShapes.push_back(shape);
-				api->AttachShape(shape);
+				attribute.api->AttachShape(shape);
 				std::cerr << "Add shape !" << std::endl;
+
+				// add to map
+				attribute.lookupTable[mesh] = shape;
+
 			}
 
 			++shapeID;
@@ -127,8 +165,8 @@ namespace SP {
 		//	std::cerr << "Add shape !" << std::endl;
 		//}
 		
-		for (auto& api: apis) {
-			api->Commit();
+		for (auto& attribute: mAttributes) {
+			attribute.api->Commit();
 			std::cerr << "Commit" << std::endl;
 		}
 	}

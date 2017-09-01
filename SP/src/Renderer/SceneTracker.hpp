@@ -7,6 +7,8 @@
 
 #include "Scene/Shape.hpp"
 
+#include <map>
+
 namespace SP {
 
 	class SceneTracker {
@@ -48,18 +50,24 @@ namespace SP {
 
 	private:
 
+
+		struct Attribute {
+			RadeonRays::IntersectionApi* api;
+			std::map<const Mesh*, RadeonRays::Shape*> lookupTable;
+		};
+
 		//void updateMaterials();
 
-		void updateShapes();
+		void updateShapes(const Scene& scene);
 
 
 		// helper function
-		static void createShapeRR(const std::vector<RadeonRays::IntersectionApi *>& apis, const Scene& scene);
+		void createShapeRR(const Scene& scene);
 
 		// index of the device ?
 
 		// Intersection API for RR
-		std::vector<RadeonRays::IntersectionApi*> intersectAPIs;
+		std::vector<Attribute> mAttributes;
 
 		// track curent scene
 		const Scene* currentScenePtr = nullptr;
@@ -71,6 +79,8 @@ namespace SP {
 		// tmp
 		// For Back Tracking Mesh (Shape) Data
 		//std::vector<const Mesh*> internalMeshPtrs;
+
+
 
 
 	};
