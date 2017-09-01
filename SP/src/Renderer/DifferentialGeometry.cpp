@@ -6,6 +6,8 @@
 
 namespace SP {
 
+	const RadeonRays::matrix  DifferentialGeometry::matrixI {};
+
 	DifferentialGeometry::DifferentialGeometry(const RadeonRays::Intersection& isectRef, const Scene& scene) {
 
 		int shapeId = isectRef.shapeid - 1;            //CHECK !

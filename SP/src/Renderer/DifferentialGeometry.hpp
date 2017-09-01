@@ -83,7 +83,7 @@ namespace SP {
 		// tmp workaround
 		float tmpFresnel = 1.0f;
 
-		const RadeonRays::matrix matrixI;
+		static const RadeonRays::matrix matrixI;
 
 	};
 
