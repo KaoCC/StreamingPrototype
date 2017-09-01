@@ -22,7 +22,6 @@ namespace SP {
 
 		std::copy(ind, ind + num_indices, indices.data());
 
-		//numIndices = num_indices;
 		setDirty(true);
 	}
 
@@ -46,7 +45,6 @@ namespace SP {
 			vertices[i].w = 1;
 		}
 
-		//numVertices = num_vertices;
 		setDirty(true);
 	}
 
@@ -70,7 +68,6 @@ namespace SP {
 			normals[i].w = 0;
 		}
 
-		//numNormals = num_normals;
 
 		setDirty(true);
 	}
@@ -89,7 +86,6 @@ namespace SP {
 		uvs.resize(num_uvs);
 
 		std::copy(local_uvs, local_uvs + num_uvs, uvs.data());
-		//numUVs = num_uvs;
 
 		setDirty(true);
 	}
@@ -104,7 +100,6 @@ namespace SP {
 			uvs[i].y = local_uvs[2 * i + 1];
 		}
 
-		//numUVs = num_uvs;
 
 		setDirty(true);
 	}

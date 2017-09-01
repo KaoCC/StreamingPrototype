@@ -32,7 +32,7 @@ namespace SP {
 		AutoreleasePool autoreleasePool;
 	};
 
-	Scene::Scene() : scenePtr(new SceneImpl) {
+	Scene::Scene() : scenePtr { new SceneImpl } {
 
 		//scenePtr->camera = nullptr;
 		clearDirtyFlags();

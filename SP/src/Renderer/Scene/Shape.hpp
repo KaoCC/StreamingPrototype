@@ -78,11 +78,6 @@ namespace SP {
 		std::vector<RadeonRays::float2> uvs;
 		std::vector<std::uint32_t> indices;
 
-
-		//std::size_t numVertices = 0;
-		//std::size_t numNormals = 0;
-		//std::size_t numUVs = 0;
-		//std::size_t numIndices = 0;
 	};
 
 
