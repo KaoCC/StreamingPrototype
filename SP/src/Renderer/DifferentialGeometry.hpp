@@ -24,15 +24,23 @@ namespace SP {
 		void calculateTangentTransform();
 
 		//get Ref
-		RadeonRays::float3& getPosition();
+		//RadeonRays::float3& getPosition();
 		const RadeonRays::float3& getPosition() const;
 
-		RadeonRays::float3& getNormal();
-		RadeonRays::float3& getNormalGeo();
-		RadeonRays::float2& getUV();
+		const RadeonRays::float3& getNormal() const;
+		void setNormal(const RadeonRays::float3&);
 
-		RadeonRays::float3& getDpDu();
-		RadeonRays::float3& getDpDv();
+		const RadeonRays::float3& getNormalGeo() const;
+		void setNormalGeo(const RadeonRays::float3&);
+
+		const RadeonRays::float2& getUV() const;
+		void setUV(const RadeonRays::float2&);
+
+		const RadeonRays::float3& getDpDu() const;
+		void setDpDu(RadeonRays::float3&);
+
+		const RadeonRays::float3& getDpDv() const;
+		void setDpDv(RadeonRays::float3&);
 
 		float getArea() const;
 
