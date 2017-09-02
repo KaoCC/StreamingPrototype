@@ -33,8 +33,8 @@ namespace SP {
 	bool LightField::SubLightField::getRefreshState() const {
 		bool status = false;
 
-		for (int i = 0; i < images.size(); ++i) {
-			if (images[i].getRefreshState()) {
+		for (const auto &image : images) {
+			if (image.getRefreshState()) {
 				status = true;
 				break;
 			}
@@ -156,12 +156,12 @@ namespace SP {
 
 	}
 
-	void LightField::saveAll() const {
+	void LightField::saveAll() {
 
-		for (const auto& subLF : subLFs) {
+		for (auto& subLF : subLFs) {
 			for (size_t i = 0; i < subLF.getNumOfImage(); ++i) {
-				subLF[i].storeToPPM(-1);
-				subLF[i].storeToHDR(-1);
+				subLF[i].storeToPPM();
+				subLF[i].storeToHDR();
 			}
 		}
 

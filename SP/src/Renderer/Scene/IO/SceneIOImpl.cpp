@@ -13,7 +13,6 @@
 
 #include "../Shape.hpp"
 #include "../Light.hpp"
-#include "../Material.hpp"
 
 #include <iostream>
 
@@ -79,7 +78,7 @@ namespace SP {
 
 		}
 
-		for (size_t s = 0; s < objShapes.size(); ++s) {
+		for (auto &objShape : objShapes) {
 
 			// KAOCC: design issue: unique_ptr or autorelease ?
 			Mesh* mesh = new Mesh();
@@ -87,17 +86,17 @@ namespace SP {
 			// Set vertex and index data
 
 			// KAOCC: need to verify the following 
-			size_t num_vertices = objShapes[s].mesh.positions.size() / 3;
-			mesh->setVertices(&objShapes[s].mesh.positions[0], num_vertices);
+			size_t num_vertices = objShape.mesh.positions.size() / 3;
+			mesh->setVertices(&objShape.mesh.positions[0], num_vertices);
 
-			size_t num_normals = objShapes[s].mesh.normals.size() / 3;
-			mesh->setNormals(&objShapes[s].mesh.normals[0], num_normals);
+			size_t num_normals = objShape.mesh.normals.size() / 3;
+			mesh->setNormals(&objShape.mesh.normals[0], num_normals);
 
 
-			size_t num_uvs = objShapes[s].mesh.texcoords.size() / 2;
+			size_t num_uvs = objShape.mesh.texcoords.size() / 2;
 
 			if (num_uvs) {
-				mesh->setUVs(&objShapes[s].mesh.texcoords[0], num_uvs);
+				mesh->setUVs(&objShape.mesh.texcoords[0], num_uvs);
 			} else {
 
 				// Generate Zeros if we do not have UVs
@@ -107,11 +106,11 @@ namespace SP {
 			}
 
 			// Set indices
-			size_t num_indices = objShapes[s].mesh.indices.size();
-			mesh->setIndices(reinterpret_cast<const std::uint32_t*>(&objShapes[s].mesh.indices[0]), num_indices);
+			size_t num_indices = objShape.mesh.indices.size();
+			mesh->setIndices(reinterpret_cast<const std::uint32_t*>(&objShape.mesh.indices[0]), num_indices);
 
 			// Set material
-			size_t idx = objShapes[s].mesh.material_ids[0];
+			size_t idx = objShape.mesh.material_ids[0];
 			mesh->setMaterial(materials[idx]);
 
 			// Attach to the scene
@@ -174,8 +173,32 @@ namespace SP {
 			if ((s.sqnorm() > 0 || !mat.specular_texname.empty())) {
 
 				// Yet to be done !
-				throw std::runtime_error("MultiBXDF: Yet to be done");
+				//throw std::runtime_error("MultiBXDF: Yet to be done");
 
+				material = new MultiBxDF(MultiBxDF::MultiType::kFresnelBlend);
+				material->setInputValue("ior", RadeonRays::float4(1.5f, 1.5f, 1.5f, 1.5f));
+
+				Material* diffusePart { new SingleBxDF(SingleBxDF::BxDFType::kLambert) };
+				Material* specularPart { new SingleBxDF(SingleBxDF::BxDFType::kIdealReflect) };		// for testing
+
+				specularPart->setInputValue("roughness", 0.01f);
+
+				// below are tmp impl.
+				// omit texname files ...
+				diffusePart->setInputValue("albedo", RadeonRays::float3(mat.diffuse[0], mat.diffuse[1], mat.diffuse[2]));
+				specularPart->setInputValue("albedo", s);
+
+				// omit normal from files for this tmp impl.
+
+				diffusePart->setName(mat.name + "-diffuse");
+				specularPart->setName(mat.name + "-specular");
+
+				material->setInputValue("base_material", diffusePart);
+				material->setInputValue("top_material", specularPart);
+
+				scene.attachAutoreleaseObject(diffusePart);
+				scene.attachAutoreleaseObject(specularPart);
+				
 			} else {
 				// Otherwise create lambert
 				Material* diffuse = new SingleBxDF(SingleBxDF::BxDFType::kLambert);
@@ -190,6 +213,7 @@ namespace SP {
 				}
 
 				// Set normal
+				// TODO: check the value ... this might be wrong !
 				if (!mat.specular_highlight_texname.empty()) {
 					Texture* texture{ imageIO.loadImage(basepath + "/" + mat.specular_highlight_texname) };
 					diffuse->setInputValue("normal", texture);
@@ -198,7 +222,6 @@ namespace SP {
 
 				material = diffuse;
 			}
-
 
 		}
 

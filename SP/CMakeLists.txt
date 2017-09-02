@@ -14,6 +14,7 @@ include_directories(${OPENIMAGEIO_INCLUDE_DIRS})
 include_directories(${X264_INCLUDE_DIRS})
 include_directories(${Protobuf_INCLUDE_DIRS})
 include_directories(${CMAKE_CURRENT_BINARY_DIR}) # for auto generated files
+# include_directories(${OpenCV_INCLUDE_DIRS})
 
 include_directories(${CMAKE_SOURCE_DIR}/3rdparty/RadeonRays/include)
 
@@ -152,5 +153,5 @@ add_custom_command(TARGET Radiance POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_d
 
 if (WIN32)
     set(WK_DIR "$<TARGET_FILE_DIR:Radiance>")
-    set_target_properties(Radiance PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE})
+    set_target_properties(Radiance PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/bin/${CMAKE_CFG_INTDIR})
 endif()

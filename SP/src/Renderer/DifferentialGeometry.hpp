@@ -17,15 +17,15 @@ namespace SP {
 	class DifferentialGeometry {
 
 	public:
-	//	DifferentialGeometry();
+		DifferentialGeometry(const RadeonRays::Intersection& isectRef, const Scene& scene);
 
-		void fill(const RadeonRays::Intersection& isectRef, const std::vector<const Mesh*>& meshPtrs);
+		//void fill(const RadeonRays::Intersection& isectRef, const Scene& scene);
 
 		void calculateTangentTransform();
 
 		//get Ref
 		RadeonRays::float3& getPosition();
-		RadeonRays::float3 getPosition() const;
+		const RadeonRays::float3& getPosition() const;
 
 		RadeonRays::float3& getNormal();
 		RadeonRays::float3& getNormalGeo();
@@ -35,7 +35,14 @@ namespace SP {
 		RadeonRays::float3& getDpDv();
 
 		float getArea() const;
-		const Material* getMaterialPtr() const;
+
+		// tmp workaround
+		const Material* getOriginalMaterial() const;
+
+		const Material* getCurrentMaterial() const;
+
+		// tmp workaround
+		void setCurrentMaterial(const Material* mat);
 
 
 		const RadeonRays::matrix& getWorldToTangentMatrix() const;
@@ -69,11 +76,14 @@ namespace SP {
 
 		// Mat ?
 		const Material* matPtr = nullptr;
+		
+		// tmp workaroind for mat selection
+		const Material* currentMat = nullptr;
 
 		// tmp workaround
 		float tmpFresnel = 1.0f;
 
-		const RadeonRays::matrix matrixI;
+		static const RadeonRays::matrix matrixI;
 
 	};
 

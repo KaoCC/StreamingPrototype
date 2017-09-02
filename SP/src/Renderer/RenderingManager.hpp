@@ -46,10 +46,19 @@ namespace SP {
 		void resume();
 
 		// reset the data
-		void reset();
+		void reset(ConfigManager::State state);
+
 
 		// KAOCC: tmp testing
-		void recompileScene();
+		void changeSceneWithCoordinates(float worldX, float worldY, float worldZ);
+
+		// testing 
+		const PerspectiveCamera& getPerspectiveCamera(size_t index) const;
+
+
+		// tmp
+		//void compileScene();
+
 
 	private:
 
@@ -87,8 +96,8 @@ namespace SP {
 		//const RadeonRays::float3 kCameraUp = RadeonRays::float3(0.f, 1.f, 0.f);
 
 		RadeonRays::float2 g_camera_sensor_size = RadeonRays::float2(0.036f, 0.024f);  // default full frame sensor 36x24 mm
-		RadeonRays::float2 g_camera_zcap = RadeonRays::float2(0.0f, 100000.f);
-		float g_camera_focal_length = 0.020f; // 35mm lens
+		RadeonRays::float2 g_camera_zcap = RadeonRays::float2(0.0f, 30.f);
+		float g_camera_focal_length = 0.010f; // 35mm lens
 		float g_camera_focus_distance = 1.f;
 		float g_camera_aperture = 0.f;
 
@@ -98,10 +107,10 @@ namespace SP {
 
 		// tmp
 		const std::string defaultPath = "Resources/Conf";
-		const std::string defaultModelName = "conf_room_2.objm";
+		const std::string defaultModelName = "conf_room_6.objm";
 
 		//tmp
-		const float kStep = 0.025f * 4;
+		const float kStep = 0.025f * 12;
 
 		// thread safe queue
 		const int kPauseTime = 100;
@@ -129,6 +138,7 @@ namespace SP {
 		std::vector<std::shared_ptr<Output>> renderOutputData;
 
 		std::unique_ptr<ApiEngine> mEnginePtr;
+		std::unique_ptr<SceneTracker> mTracker;
 
 		// test
 		//std::queue<std::pair<int, int>> mTaskQueue;

@@ -86,9 +86,18 @@ namespace SP {
 		// workaround
 		void setRenderManagerPtr(RenderingManager* renManPtr);
 
-		void resetRenderer();
+		// reset states
+		enum class State {
+			kSimple,
+			kPathTracing
+		};
 
-		void recompileScene();
+		void enterState(State state);
+
+		// test
+		//void changeSceneWithCoordinatesCV(float x, float y);
+
+		void changeSceneWithCoordinates(float x, float y);
 
 	private:
 
@@ -110,7 +119,7 @@ namespace SP {
 
 		LightField mImageLightField;
 
-		CameraConfig mCamera;
+		CameraConfig mCameraConfig;
 
 
 		// Defaults !

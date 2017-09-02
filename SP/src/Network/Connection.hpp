@@ -6,9 +6,9 @@
 
 #include "Packet.hpp"
 
-#include "../ConfigManager.hpp"
-#include "../SyncBuffer.hpp"
-#include "../LightField.hpp"
+#include "ConfigManager.hpp"
+#include "SyncBuffer.hpp"
+#include "LightField.hpp"
 
 #include <deque>
 
@@ -49,7 +49,7 @@ namespace SP {
 
 		void appendImage(Packet::DataBuffer& buffer, const ImageConfig::ImageBuffer& encodedData);
 
-
+		void writeModelIdList();
 
 		// data members 
 

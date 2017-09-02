@@ -38,6 +38,8 @@ namespace SP {
 		// Destructor
 		~Scene();
 
+		
+
 		// Add or remove lights
 		void attachLight(Light const* light);
 		void detachLight(Light const* light);
@@ -61,11 +63,14 @@ namespace SP {
 		// Get number of shapes in the scene
 		std::size_t getNumShapes() const;
 		// Get shape iterator
-		Iterator* createShapeIterator() const;
+		std::unique_ptr<Iterator> createShapeIterator() const;
+
+		// Get shape reference
+		const Shape& getShape(size_t shapeIdx) const;
 
 		// Set and get camera
 		void attachCamera(Camera const* camera);
-		Camera const* getCamera(size_t camIdx) const;
+		const Camera& getCamera(size_t camIdx) const;
 
 		// Get state change since last clear
 		DirtyFlags getDirtyFlags() const;
@@ -89,6 +94,9 @@ namespace SP {
 	private:
 		struct SceneImpl;
 		std::unique_ptr<SceneImpl> scenePtr;
+
+
+
 	};
 
 

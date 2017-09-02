@@ -26,6 +26,7 @@ namespace SP {
 
 		virtual void render(Scene const & scene, size_t configIdx) override;
 
+		// TODO : review this design !
 		virtual void setOutput(std::shared_ptr<Output>  output) override;
 
 		~SimpleRenderer();
@@ -42,7 +43,7 @@ namespace SP {
 		void generatePrimaryRays(const Scene& scene, size_t camIdx);
 		void resizeWorkingSet(const Output& out);
 
-		void simpleShading();
+		void simpleShading(const Scene& scene);
 
 		ApiEngine& mEngineRef;
 		SimpleRenderData mSimpleRenderDataPtr;

@@ -1,7 +1,6 @@
 
 
 #include <iostream>
-#include <memory>
 #include <vector>
 #include <chrono>
 #include <thread>
@@ -14,9 +13,6 @@
 #include "Renderer/RenderingManager.hpp"
 
 
-#include "SyncBuffer.hpp"
-
-#include "LightField.hpp"
 
 
 

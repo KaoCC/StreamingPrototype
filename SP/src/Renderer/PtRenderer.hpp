@@ -36,6 +36,7 @@ namespace SP {
 
 		virtual void render(Scene const & scene, size_t configIdx) override;
 
+		// TODO: review this design !
 		virtual void setOutput(std::shared_ptr<Output> output) override;
 
 
@@ -79,7 +80,7 @@ namespace SP {
 
 
 		// Shade first hit
-		void shadeSurface(unsigned pass);
+		void shadeSurface(const Scene& scene, unsigned pass);
 		// Evaluate volume
 		void evaluateVolume(unsigned pass);
 		// Handle missing rays

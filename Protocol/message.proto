@@ -32,6 +32,11 @@ message DefaultPos {
   float vz = 7;
 }
 
+enum ImageQuality{
+  LOW = 0;
+  HIGH = 1;
+}
+
 message Camera {
   uint32 serialNumber = 2;
   float delta_x = 3;
@@ -40,12 +45,17 @@ message Camera {
   float delta_vx = 6;
   float delta_vy = 7;
   float delta_vz = 8;
+  ImageQuality imageQuality = 9;
+
+
 }
 
 enum EditOperation {
   START = 0;
   FINISH = 1;
   UPDATE = 2;
+  MODEL_LIST = 3;
+  SET_MODEL_ID = 4;
 }
 
 message Editing {
@@ -53,7 +63,10 @@ message Editing {
   // screen x are only valid in UPDATE op
   float screen_x = 2;
   float screen_y = 3;
-
+  // model_ids is only valid in MODEL_LIST op
+  repeated int32 model_ids = 4;
+  // model_id is only valid in SET_MODEL_ID op
+  int32 model_id = 5;
 }
 
 message Control {
@@ -65,6 +78,12 @@ message Control {
 }
 
 
+enum ImageType {
+  FULL_INDEX = 0;
+  ODD_INDEX = 1;
+  EVEN_INDEX = 2;
+}
+
 message Image {
 
   uint32 serialNumber = 2;
@@ -72,6 +91,8 @@ message Image {
   // time ?
   uint32 byteSize = 4;
   bytes imageData = 5;
+
+  ImageType imageType = 6;
 }
 
 message Ending {

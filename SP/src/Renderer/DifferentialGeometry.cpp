@@ -1,50 +1,49 @@
 #include "DifferentialGeometry.hpp"
 
-#include "Scene/Shape.hpp"
 
 #include "MathUtility.hpp"
 
-#include "math/matrix.h"
-#include "math/mathutils.h"
 
 namespace SP {
 
-	void DifferentialGeometry::fill(const RadeonRays::Intersection & isectRef, const std::vector<const Mesh*>& meshPtrs) {
+	const RadeonRays::matrix  DifferentialGeometry::matrixI {};
 
-		int shapeId = isectRef.shapeid - 1;			//CHECK !
-		int primId = isectRef.primid;								// CHECK !!!
+	DifferentialGeometry::DifferentialGeometry(const RadeonRays::Intersection& isectRef, const Scene& scene) {
 
-		RadeonRays::float2 localUV;						// check this !
+		int shapeId = isectRef.shapeid - 1;            //CHECK !
+		int primId = isectRef.primid;                                // CHECK !!!
+
+		RadeonRays::float2 localUV;                        // check this !
 		localUV.x = isectRef.uvwt.x;
 		localUV.y = isectRef.uvwt.y;
 
 
 		// shape (Mesh)
-		const Mesh* meshDataPtr = meshPtrs[shapeId];
+		const Mesh& meshData = dynamic_cast<const Mesh&>(scene.getShape(shapeId));
 
-		const uint32_t* indexArray = meshDataPtr->getIndices();
+		const uint32_t* indexArray = meshData.getIndices();
 
 		// This is the core of this function !
 		// if this goes wrong then ... boom !
-		const uint32_t& i0 = indexArray[3 * primId];								// CHECK ?
+		const uint32_t& i0 = indexArray[3 * primId];                                // CHECK ?
 		const uint32_t& i1 = indexArray[3 * primId + 1];
 		const uint32_t& i2 = indexArray[3 * primId + 2];
 
-		const RadeonRays::float3* normalArray = meshDataPtr->getNormals();
+		const RadeonRays::float3* normalArray = meshData.getNormals();
 
 		const RadeonRays::float3& n0 = normalArray[i0];
 		const RadeonRays::float3& n1 = normalArray[i1];
 		const RadeonRays::float3& n2 = normalArray[i2];
 
 
-		const RadeonRays::float3* verticeArray = meshDataPtr->getVertices();
+		const RadeonRays::float3* verticeArray = meshData.getVertices();
 
 		const RadeonRays::float3& v0 = verticeArray[i0];
 		const RadeonRays::float3& v1 = verticeArray[i1];
 		const RadeonRays::float3& v2 = verticeArray[i2];
 
 
-		const RadeonRays::float2* uvArray = meshDataPtr->getUVs();
+		const RadeonRays::float2* uvArray = meshData.getUVs();
 
 		const RadeonRays::float2& uv0 = uvArray[i0];
 		const RadeonRays::float2& uv1 = uvArray[i1];
@@ -53,7 +52,8 @@ namespace SP {
 		//RadeonRays::matrix matrixI;			// I
 
 		// normal, position, uv, ng (barycentric)
-		normal = RadeonRays::normalize(RadeonRays::transform_vector((1.f - localUV.x - localUV.y) * n0 + localUV.x * n1 + localUV.y * n2, matrixI));  //CHECK THIS !
+		normal = RadeonRays::normalize(
+				RadeonRays::transform_vector((1.f - localUV.x - localUV.y) * n0 + localUV.x * n1 + localUV.y * n2, matrixI));  //CHECK THIS !
 		pos = RadeonRays::transform_point((1.f - localUV.x - localUV.y) * v0 + localUV.x * v1 + localUV.y * v2, matrixI);
 		uv = (1.f - localUV.x - localUV.y) * uv0 + localUV.x * uv1 + localUV.y * uv2;
 		normalGeo = RadeonRays::normalize(RadeonRays::cross(v1 - v0, v2 - v0));
@@ -64,8 +64,10 @@ namespace SP {
 		}
 
 		// Material ?
-		matPtr = meshDataPtr->getMaterial();
+		matPtr = meshData.getMaterial();
 
+		//workaround
+		currentMat = matPtr;
 
 		//float du1 = uv0.x - uv2.x;
 		//float du2 = uv1.x - uv2.x;
@@ -93,6 +95,8 @@ namespace SP {
 
 	}
 
+
+
 	void DifferentialGeometry::calculateTangentTransform() {
 
 		worldToTangent = matrix_from_rows3(dpdu, normal, dpdv);
@@ -115,7 +119,7 @@ namespace SP {
 		return pos;
 	}
 
-	RadeonRays::float3 DifferentialGeometry::getPosition() const {
+	const RadeonRays::float3& DifferentialGeometry::getPosition() const {
 		return pos;
 	}
 
@@ -131,11 +135,11 @@ namespace SP {
 		return uv;
 	}
 
-	RadeonRays::float3 & DifferentialGeometry::getDpDu() {
+	RadeonRays::float3& DifferentialGeometry::getDpDu() {
 		return dpdu;
 	}
 
-	RadeonRays::float3 & DifferentialGeometry::getDpDv() {
+	RadeonRays::float3& DifferentialGeometry::getDpDv() {
 		return dpdv;
 	}
 
@@ -143,15 +147,23 @@ namespace SP {
 		return area;
 	}
 
-	const Material * DifferentialGeometry::getMaterialPtr() const {
+	const Material * DifferentialGeometry::getOriginalMaterial() const {
 		return matPtr;
 	}
 
-	const RadeonRays::matrix & DifferentialGeometry::getWorldToTangentMatrix() const {
+	const Material* DifferentialGeometry::getCurrentMaterial() const {
+		return currentMat;
+	}
+
+	void DifferentialGeometry::setCurrentMaterial(const Material * mat) {
+		currentMat = mat;
+	}
+
+	const RadeonRays::matrix& DifferentialGeometry::getWorldToTangentMatrix() const {
 		return worldToTangent;
 	}
 
-	const RadeonRays::matrix & DifferentialGeometry::getTangentToWorldMatrix() const {
+	const RadeonRays::matrix& DifferentialGeometry::getTangentToWorldMatrix() const {
 		return tangentToWorld;
 	}
 
