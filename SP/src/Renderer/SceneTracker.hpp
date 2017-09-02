@@ -7,7 +7,8 @@
 
 #include "Scene/Shape.hpp"
 
-#include <map>
+//#include <map>
+#include <list>
 
 namespace SP {
 
@@ -53,13 +54,21 @@ namespace SP {
 
 		struct Attribute {
 			RadeonRays::IntersectionApi* api;
-			std::map<const Mesh*, RadeonRays::Shape*> lookupTable;
+			std::list<RadeonRays::Shape*> shapes;
+
+			// KAOCC: for the extension, other APIs or Data format / buffer can be added here
+
 		};
 
 		//void updateMaterials();
 
 		void updateShapes(const Scene& scene);
 
+		// test
+		void recompileShapes(const Scene& scene);
+
+		// test
+		void clearAll();
 
 		// helper function
 		void createShapeRR(const Scene& scene);

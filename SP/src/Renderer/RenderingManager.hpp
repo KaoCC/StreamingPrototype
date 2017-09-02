@@ -55,6 +55,11 @@ namespace SP {
 		// testing 
 		const PerspectiveCamera& getPerspectiveCamera(size_t index) const;
 
+
+		// tmp
+		//void compileScene();
+
+
 	private:
 
 
