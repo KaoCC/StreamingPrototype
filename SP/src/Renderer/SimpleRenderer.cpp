@@ -47,7 +47,7 @@ namespace SP {
 
 		mEngineRef.queryIntersection(mSimpleRenderDataPtr.host_rays[0], mSimpleRenderDataPtr.host_hitcount, mSimpleRenderDataPtr.host_intersections).wait();
 
-		simpleShading();
+		simpleShading(scene);
 	}
 
 	void SimpleRenderer::setOutput(std::shared_ptr<Output> output) {
@@ -94,13 +94,13 @@ namespace SP {
 
 	}
 
-	void SimpleRenderer::simpleShading() {
+	void SimpleRenderer::simpleShading(const Scene& scene) {
 
 		const std::vector<RadeonRays::ray>& rayArrayRef = mSimpleRenderDataPtr.host_rays[0];
 
 		std::vector<RadeonRays::float3>& outRef = mRenderOutPtr->getInternalStorage();
 
-		const std::vector<const Mesh*>& meshPtrs = mEngineRef.getInternalMeshPtrs();
+		//const std::vector<const Mesh*>& meshPtrs = mEngineRef.getInternalMeshPtrs();
 
 
 		for (size_t i = 0; i < mSimpleRenderDataPtr.host_hitcount; ++i) {
@@ -115,12 +115,12 @@ namespace SP {
 
 
 				int shapeId = isectRef.shapeid - 1;
-				const Mesh* meshDataPtr = meshPtrs[shapeId];
+				const Mesh& meshData = dynamic_cast<const Mesh&>(scene.getShape(shapeId));
 
-				const Material* matPtr = meshDataPtr->getMaterial();
+				const Material* matPtr = meshData.getMaterial();
 
 
-				const uint32_t* indexArray = meshDataPtr->getIndices();
+				const uint32_t* indexArray = meshData.getIndices();
 
 				int primId = isectRef.primid;
 
@@ -128,7 +128,7 @@ namespace SP {
 				const uint32_t& i1 = indexArray[3 * primId + 1];
 				const uint32_t& i2 = indexArray[3 * primId + 2];
 
-				const RadeonRays::float3* normalArray = meshDataPtr->getNormals();
+				const RadeonRays::float3* normalArray = meshData.getNormals();
 
 				const RadeonRays::float3& n0 = normalArray[i0];
 				const RadeonRays::float3& n1 = normalArray[i1];
@@ -159,6 +159,8 @@ namespace SP {
 					normal = -normal;
 				}
 
+
+				// FIXME: bug here for multi-bxdf
 				outRef[i] = matPtr->getInputValue("albedo").floatValue * RadeonRays::dot(-rayArrayRef[i].d, normal);        // check ray direction
 
 			}

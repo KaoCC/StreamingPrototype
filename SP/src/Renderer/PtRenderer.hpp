@@ -80,7 +80,7 @@ namespace SP {
 
 
 		// Shade first hit
-		void shadeSurface(unsigned pass);
+		void shadeSurface(const Scene& scene, unsigned pass);
 		// Evaluate volume
 		void evaluateVolume(unsigned pass);
 		// Handle missing rays

@@ -43,7 +43,7 @@ namespace SP {
 		void generatePrimaryRays(const Scene& scene, size_t camIdx);
 		void resizeWorkingSet(const Output& out);
 
-		void simpleShading();
+		void simpleShading(const Scene& scene);
 
 		ApiEngine& mEngineRef;
 		SimpleRenderData mSimpleRenderDataPtr;

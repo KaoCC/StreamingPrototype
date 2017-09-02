@@ -31,7 +31,7 @@
 # Vim
 *~
 
-!3rdparty/**
+
 
 Build/*
 Generated/*
@@ -45,8 +45,10 @@ Generated/*
 .DS_Store
 
 .vscode/
-3rdparty/
 
+
+# workaround
+!3rdparty/**
 
 # Created by https://www.gitignore.io/api/clion+all
 

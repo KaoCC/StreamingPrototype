@@ -37,17 +37,19 @@ namespace SP {
 		void resizeBuffers(ScreenConfig screenCfg);
 
 
-		void compileScene(const Scene& scene);
+		std::vector<RadeonRays::IntersectionApi*> getAPIs() const;
+
+		//void compileScene(Scene& scene);
 
 		//workaround
-		const std::vector<const Mesh*>& getInternalMeshPtrs() const;
+		//const std::vector<const Mesh*>& getInternalMeshPtrs() const;
 
 
 		//workaround !
-		const Scene* getCurrentScenePtr() const;
+		//const Scene* getCurrentScenePtr() const;
 
 		// test
-		void changeShape_test(float worldX, float worldY, float worldZ);
+		//void changeShape_test(float worldX, float worldY, float worldZ);
 
 	private:
 
@@ -90,7 +92,7 @@ namespace SP {
 
 			BackendBuffer buffer;
 			RadeonRays::IntersectionApi* api;
-			SceneTracker tracker;
+			//SceneTracker tracker;
 		};
 
 		// Buffer management

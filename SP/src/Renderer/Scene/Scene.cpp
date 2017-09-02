@@ -32,7 +32,7 @@ namespace SP {
 		AutoreleasePool autoreleasePool;
 	};
 
-	Scene::Scene() : scenePtr(new SceneImpl) {
+	Scene::Scene() : scenePtr { new SceneImpl } {
 
 		//scenePtr->camera = nullptr;
 		clearDirtyFlags();
@@ -55,6 +55,10 @@ namespace SP {
 
 			setDirtyFlag(kLights);
 		}
+	}
+
+	Scene::DirtyFlags Scene::getDirtyFlags() const {
+		return scenePtr->dirtyFlags;
 	}
 
 	void Scene::setDirtyFlag(DirtyFlags flag) const {
@@ -115,8 +119,12 @@ namespace SP {
 		return scenePtr->shapes.size();
 	}
 
-	Iterator * Scene::createShapeIterator() const {
-		return new GenericIterator<ShapeList::const_iterator>(scenePtr->shapes.begin(), scenePtr->shapes.end());
+	std::unique_ptr<Iterator> Scene::createShapeIterator() const {
+		return std::make_unique<GenericIterator<ShapeList::const_iterator>>(scenePtr->shapes.begin(), scenePtr->shapes.end());
+	}
+
+	const Shape& Scene::getShape(size_t shapeIdx) const {
+		return *scenePtr->shapes[shapeIdx];
 	}
 
 	void Scene::attachCamera(Camera const * cam) {

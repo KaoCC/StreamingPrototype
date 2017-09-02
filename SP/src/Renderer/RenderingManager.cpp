@@ -15,7 +15,72 @@
 #include "OpenImageIO/imageio.h"
 
 
+#include "Scene/Material.hpp"
+
 namespace SP {
+
+
+	// tmp
+	static SP::Mesh* createDefaultMesh(float worldX, float worldY, float worldZ) {
+
+		// TODO: fix this !! Who's gonna release the memory for this ?
+		SP::Mesh* mesh = new Mesh();
+
+		// original world space
+		//float vertices[] {
+		//	0.f, 0.f, 0.f,
+		//	0.f, 1.f, 0.f,
+		//	1.f, 0.f, 0.f
+		//};
+
+		const int unitLength = 1;
+
+		float vertices[] {
+			worldX, worldY, worldZ,
+			worldX, worldY + unitLength, worldZ,
+			worldX, worldY, worldZ + unitLength
+		};
+
+		size_t numOfVertices = 3;
+
+
+		uint32_t indices[] { 0, 1, 2 };
+		size_t numOfIndices = 3;
+
+		float normals[] {
+			1, 0, 0,
+			1, 0, 0,
+			1, 0, 0
+		};
+		size_t numOfNormals = 3;
+
+
+		// set vertices
+		mesh->setVertices(vertices, numOfVertices);
+
+		// set indices
+		mesh->setIndices(indices, numOfIndices);
+
+		// set Normals
+		mesh->setNormals(normals, numOfNormals);
+
+		// Generate Zeros if we do not have UVs
+		std::vector<RadeonRays::float2> zero(numOfVertices);
+		std::fill(zero.begin(), zero.end(), RadeonRays::float2(0, 0));
+		mesh->setUVs(&zero[0], numOfVertices);
+
+
+
+		mesh->setName("Default");
+
+		// memory leak !
+		Material* diffuse = new SingleBxDF(SingleBxDF::BxDFType::kLambert);
+		diffuse->setInputValue("albedo", RadeonRays::float3(10, 10, 10));
+
+		mesh->setMaterial(diffuse);
+
+		return mesh;
+	}
 
 
 	RenderingManager::RenderingManager(ConfigManager& cfgRef, bool loadRadianceFlag) : mConfigRef { cfgRef } {
@@ -80,8 +145,13 @@ namespace SP {
 
 		ScreenConfig screenCfg { mConfigRef.getScreenWidth(), mConfigRef.getScreenHeight() };
 
+
+		// API Engine
 		mEnginePtr = std::make_unique<ApiEngine>(screenCfg, apiIndex);
 
+
+		// Scene Tracker
+		mTracker = std::make_unique<SceneTracker>(mEnginePtr->getAPIs());
 
 		// change this
 		// allocate renderer
@@ -232,7 +302,15 @@ namespace SP {
 		// add new shapes
 		// API commit 
 		// rebuild BVH
-		mEnginePtr->changeShape_test(worldX, worldY, worldZ);
+
+		//mEnginePtr->changeShape_test(worldX, worldY, worldZ);
+
+
+		sceneDataPtr->attachShape(createDefaultMesh(worldX, worldY, worldZ));
+		//mEnginePtr->compileScene(*sceneDataPtr);
+
+		mTracker->compileSceneTest(*sceneDataPtr);
+		
 
 		std::cerr << "recompile Resume ..." << std::endl;
 
@@ -336,8 +414,8 @@ namespace SP {
 
 		}
 
-
-		mEnginePtr->compileScene(*sceneDataPtr);
+		mTracker->compileSceneTest(*sceneDataPtr);
+		//mEnginePtr->compileScene(*sceneDataPtr);
 
 	}
 

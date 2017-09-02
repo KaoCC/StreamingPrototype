@@ -95,6 +95,8 @@ namespace SP {
 		void enterState(State state);
 
 		// test
+		//void changeSceneWithCoordinatesCV(float x, float y);
+
 		void changeSceneWithCoordinates(float x, float y);
 
 	private:

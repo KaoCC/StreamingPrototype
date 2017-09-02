@@ -6,7 +6,9 @@
 
 namespace SP {
 
-	void DifferentialGeometry::fill(const RadeonRays::Intersection& isectRef, const std::vector<const Mesh*>& meshPtrs) {
+	const RadeonRays::matrix  DifferentialGeometry::matrixI {};
+
+	DifferentialGeometry::DifferentialGeometry(const RadeonRays::Intersection& isectRef, const Scene& scene) {
 
 		int shapeId = isectRef.shapeid - 1;            //CHECK !
 		int primId = isectRef.primid;                                // CHECK !!!
@@ -17,9 +19,9 @@ namespace SP {
 
 
 		// shape (Mesh)
-		const Mesh* meshDataPtr = meshPtrs[shapeId];
+		const Mesh& meshData = dynamic_cast<const Mesh&>(scene.getShape(shapeId));
 
-		const uint32_t* indexArray = meshDataPtr->getIndices();
+		const uint32_t* indexArray = meshData.getIndices();
 
 		// This is the core of this function !
 		// if this goes wrong then ... boom !
@@ -27,21 +29,21 @@ namespace SP {
 		const uint32_t& i1 = indexArray[3 * primId + 1];
 		const uint32_t& i2 = indexArray[3 * primId + 2];
 
-		const RadeonRays::float3* normalArray = meshDataPtr->getNormals();
+		const RadeonRays::float3* normalArray = meshData.getNormals();
 
 		const RadeonRays::float3& n0 = normalArray[i0];
 		const RadeonRays::float3& n1 = normalArray[i1];
 		const RadeonRays::float3& n2 = normalArray[i2];
 
 
-		const RadeonRays::float3* verticeArray = meshDataPtr->getVertices();
+		const RadeonRays::float3* verticeArray = meshData.getVertices();
 
 		const RadeonRays::float3& v0 = verticeArray[i0];
 		const RadeonRays::float3& v1 = verticeArray[i1];
 		const RadeonRays::float3& v2 = verticeArray[i2];
 
 
-		const RadeonRays::float2* uvArray = meshDataPtr->getUVs();
+		const RadeonRays::float2* uvArray = meshData.getUVs();
 
 		const RadeonRays::float2& uv0 = uvArray[i0];
 		const RadeonRays::float2& uv1 = uvArray[i1];
@@ -62,7 +64,7 @@ namespace SP {
 		}
 
 		// Material ?
-		matPtr = meshDataPtr->getMaterial();
+		matPtr = meshData.getMaterial();
 
 		//workaround
 		currentMat = matPtr;
@@ -93,6 +95,8 @@ namespace SP {
 
 	}
 
+
+
 	void DifferentialGeometry::calculateTangentTransform() {
 
 		worldToTangent = matrix_from_rows3(dpdu, normal, dpdv);
@@ -115,7 +119,7 @@ namespace SP {
 		return pos;
 	}
 
-	RadeonRays::float3 DifferentialGeometry::getPosition() const {
+	const RadeonRays::float3& DifferentialGeometry::getPosition() const {
 		return pos;
 	}
 

@@ -63,7 +63,10 @@ namespace SP {
 		// Get number of shapes in the scene
 		std::size_t getNumShapes() const;
 		// Get shape iterator
-		Iterator* createShapeIterator() const;
+		std::unique_ptr<Iterator> createShapeIterator() const;
+
+		// Get shape reference
+		const Shape& getShape(size_t shapeIdx) const;
 
 		// Set and get camera
 		void attachCamera(Camera const* camera);
