@@ -110,7 +110,7 @@ namespace SP {
 		const std::string defaultModelName = "conf_room_6.objm";
 
 		//tmp
-		const float kStep = 0.025f * 12;
+		const float kStep = 0.025f * 6;
 
 		// thread safe queue
 		const int kPauseTime = 100;
