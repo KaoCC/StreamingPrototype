@@ -15,6 +15,8 @@
 #include "OpenImageIO/imageio.h"
 
 
+#include "Scene/Material.hpp"
+
 namespace SP {
 
 
@@ -71,7 +73,11 @@ namespace SP {
 
 		mesh->setName("Default");
 
-		// No material !
+		// memory leak !
+		Material* diffuse = new SingleBxDF(SingleBxDF::BxDFType::kLambert);
+		diffuse->setInputValue("albedo", RadeonRays::float3(10, 10, 10));
+
+		mesh->setMaterial(diffuse);
 
 		return mesh;
 	}

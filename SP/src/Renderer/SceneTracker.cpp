@@ -13,31 +13,36 @@ namespace SP {
 	// ------ test ------
 
 	// helper function for matrix debugging 
-	static void printMat(const RadeonRays::matrix& mat) {
-
-		// its a 4*4 matrix 
-		for (int i = 0; i < 4; ++i) {
-
-			for (int j = 0; j < 4; ++j) {
-
-				//std::cerr << "mat[i][j]" << mat.m[i][j] << std::endl;
-
-				std::printf("mat[%d][%d]: %f ", i, j, mat.m[i][j]);
-
-			}
-
-			std::cerr << std::endl;
-
-		}
-	}
+//	static void printMat(const RadeonRays::matrix& mat) {
+//
+//		// its a 4*4 matrix 
+//		for (int i = 0; i < 4; ++i) {
+//
+//			for (int j = 0; j < 4; ++j) {
+//
+////std::cerr << "mat[i][j]" << mat.m[i][j] << std::endl;
+//
+//std::printf("mat[%d][%d]: %f ", i, j, mat.m[i][j]);
+//
+//			}
+//
+//			std::cerr << std::endl;
+//
+//		}
+//	}
 
 
 
 	// ------ end test ------
 
 
-	SceneTracker::SceneTracker(const std::vector<RadeonRays::IntersectionApi*>& apis) : intersectAPIs { apis } {
+	SceneTracker::SceneTracker(const std::vector<RadeonRays::IntersectionApi*>& apis) {
 
+		for (const auto& api : apis) {
+			Attribute attr;
+			attr.api = api;
+			mAttributes.push_back(std::move(attr));
+		}
 
 	}
 
@@ -64,12 +69,22 @@ namespace SP {
 
 			//std::unique_ptr<Iterator> shapeIterator { scene.createShapeIterator() };
 
+			createShapeRR(scene);
 
-			createShapeRR(intersectAPIs, scene);
+		} else {
+
+			// update shape
+			if (scene.getDirtyFlags() & Scene::kShapes) {
 
 
+				//updateShapes(scene);
+				recompileShapes(scene);
+
+			}
 
 		}
+
+		//KAOCC: clear dirty flag ?
 
 
 		// test
@@ -81,7 +96,34 @@ namespace SP {
 
 	}
 
-	void SceneTracker::createShapeRR(const std::vector<RadeonRays::IntersectionApi *>& apis, const Scene& scene) {
+	void SceneTracker::updateShapes(const Scene & scene) {
+
+		throw std::runtime_error("updateShapes: yet to be done !");
+	}
+
+	void SceneTracker::recompileShapes(const Scene & scene) {
+
+		std::cerr << ">>>>>>>>>>>>>>>>>>>> Recompile\n";
+
+		clearAll();
+		createShapeRR(scene);
+	}
+
+	// test
+	void SceneTracker::clearAll() {
+		for (auto& attr : mAttributes) {
+
+			for (auto& shape : attr.shapes) {
+				attr.api->DetachShape(shape);
+				attr.api->DeleteShape(shape);
+			}
+
+			// check for memory leak
+			attr.shapes.clear();
+		}
+	}
+
+	void SceneTracker::createShapeRR(const Scene& scene) {
 
 
 		//std::vector<RadeonRays::Shape*> internalShapes;		// check for memory leaks
@@ -94,9 +136,9 @@ namespace SP {
 			// get mesh ?
 			const auto* mesh = static_cast<const Mesh*>(shapeIterator->nextItem());
 
-			for (auto& api : apis) {
+			for (auto& attribute : mAttributes) {
 
-				RadeonRays::Shape* shape = api->CreateMesh(
+				RadeonRays::Shape* shape = attribute.api->CreateMesh(
 					reinterpret_cast<const float*>(mesh->getVertices()),            // check this one !!!
 					static_cast<int>(mesh->getNumVertices()),
 					sizeof(RadeonRays::float3),
@@ -110,8 +152,15 @@ namespace SP {
 				shape->SetId(shapeID);
 
 				//internalShapes.push_back(shape);
-				api->AttachShape(shape);
+				attribute.api->AttachShape(shape);
 				std::cerr << "Add shape !" << std::endl;
+
+				// add to map
+				//attribute.lookupTable[mesh] = shape;
+
+				// add to list
+				attribute.shapes.push_back(shape);
+
 			}
 
 			++shapeID;
@@ -127,8 +176,8 @@ namespace SP {
 		//	std::cerr << "Add shape !" << std::endl;
 		//}
 		
-		for (auto& api: apis) {
-			api->Commit();
+		for (auto& attribute: mAttributes) {
+			attribute.api->Commit();
 			std::cerr << "Commit" << std::endl;
 		}
 	}
