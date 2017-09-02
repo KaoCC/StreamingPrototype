@@ -7,6 +7,19 @@
 namespace SP {
 
 
+	// tmp , workaround
+	RadeonRays::float3 tmpGetValue(const Material* matPtr) {
+		auto single = dynamic_cast<const SingleBxDF*>(matPtr);
+
+		if (single) {
+			return single->getInputValue("albedo").floatValue;
+		} else {
+			// tmp
+			return RadeonRays::float3 {0.3f, 0.3f, 0.3f};
+		}
+
+	}
+
 	SimpleRenderer::SimpleRenderer(ApiEngine& engine) : mEngineRef { engine } {
 	}
 
@@ -161,7 +174,7 @@ namespace SP {
 
 
 				// FIXME: bug here for multi-bxdf
-				outRef[i] = matPtr->getInputValue("albedo").floatValue * RadeonRays::dot(-rayArrayRef[i].d, normal);        // check ray direction
+				outRef[i] = tmpGetValue(matPtr) * RadeonRays::dot(-rayArrayRef[i].d, normal);        // check ray direction
 
 			}
 

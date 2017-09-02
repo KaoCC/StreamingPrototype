@@ -8,10 +8,10 @@
 
 namespace SP {
 
+
 	static RadeonRays::float3 getValue(const DifferentialGeometry & diffGeo) {
 
 		const auto& matPtr = diffGeo.getCurrentMaterial();
-
 
 		// FIXME: check for single BxDF
 
