@@ -10,7 +10,7 @@ namespace SP {
 		return (RadeonRays::float2(std::floor(ff.x), std::floor(ff.y)));
 	}
 
-	Texture::Texture(const std::uint8_t* ptr, RadeonRays::int2 sz, Format fmt) : data(ptr), size(sz), format(fmt) {
+	Texture::Texture(std::vector<std::uint8_t> vec, RadeonRays::int2 sz, Format fmt) : texData { std::move(vec) }, size(sz), format(fmt) {
 	}
 
 	RadeonRays::float3 Texture::sampleEnvMap(RadeonRays::float3 d) {
@@ -30,7 +30,7 @@ namespace SP {
 		return sample2D(uv);
 	}
 
-	RadeonRays::float4 Texture::sample2D(RadeonRays::float2 uv) {
+	RadeonRays::float4 Texture::sample2D(RadeonRays::float2 uv) const {
 
 		int width = size.x;
 		int height = size.y;
@@ -44,7 +44,7 @@ namespace SP {
 		unsigned y0 = RadeonRays::clamp((unsigned)std::floor(uv.y * height), 0, height - 1);
 
 		// Calculate samples for linear filtering
-		unsigned  x1 = RadeonRays::clamp(x0 + 1, 0, width - 1);
+		unsigned x1 = RadeonRays::clamp(x0 + 1, 0, width - 1);
 		unsigned y1 = RadeonRays::clamp(y0 + 1, 0, height - 1);
 
 		// Calculate weights for linear filtering
@@ -55,7 +55,7 @@ namespace SP {
 
 		case Format::kRGBA32: {
 
-			RadeonRays::float4 const* mydataf = reinterpret_cast<RadeonRays::float4 const*>(data.get());		// check this conversion
+			RadeonRays::float4 const* mydataf = reinterpret_cast<RadeonRays::float4 const*>(texData.data());		// check this conversion
 
 			// Get 4 values for linear filtering
 			RadeonRays::float4 val00 = *(mydataf + width * y0 + x0);
@@ -78,7 +78,7 @@ namespace SP {
 				uint16_t w;
 			};
 
-			const uhalf4* mydatah = reinterpret_cast<uhalf4 const*>(data.get());
+			const uhalf4* mydatah = reinterpret_cast<uhalf4 const*>(texData.data());
 
 			// Get 4 values and convert to float
 			uhalf4 valu00 = *(mydatah + width * y0 + x0);
@@ -108,7 +108,7 @@ namespace SP {
 				unsigned char w;
 			};
 
-			const uchar4* mydatac = reinterpret_cast<uchar4 const*>(data.get());
+			const uchar4* mydatac = reinterpret_cast<uchar4 const*>(texData.data());
 
 			// Get 4 values and convert to float
 			uchar4 valu00 = *(mydatac + width * y0 + x0);
@@ -136,5 +136,7 @@ namespace SP {
 
 
 	}
+
+
 
 }

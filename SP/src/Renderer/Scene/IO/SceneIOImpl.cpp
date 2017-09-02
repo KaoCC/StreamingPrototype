@@ -161,6 +161,7 @@ namespace SP {
 				material->setInputValue("albedo", texture);
 				scene.attachAutoreleaseObject(texture);
 
+
 			} else {
 
 				material->setInputValue("albedo", emission);

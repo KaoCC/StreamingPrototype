@@ -8,6 +8,32 @@
 
 namespace SP {
 
+	static RadeonRays::float3 getValue(const DifferentialGeometry & diffGeo) {
+
+		const auto& matPtr = diffGeo.getCurrentMaterial();
+
+
+		// FIXME: check for single BxDF
+
+		const auto& val = matPtr->getInputValue("albedo");
+
+		if (val.type == Material::InputType::kFloat4) {
+
+			return val.floatValue;
+
+		} else if (val.type == Material::InputType::kTexture) {
+
+			// check value, might be wrong
+			return val.texValue->sample2D(diffGeo.getUV());
+
+		} else {
+			// error ?
+			throw std::runtime_error("getValue: unsupported input type");
+
+		}
+
+	}
+
 	bool BxDFHelper::isEmissive(const Material * matPtr) {
 		return matPtr->hasEmission();
 	}
@@ -23,7 +49,8 @@ namespace SP {
 
 		}
 		// mixed
-			return false;
+		
+		return false;
 
 
 	}
@@ -87,7 +114,9 @@ namespace SP {
 		//const RadeonRays::float3 kd = Texture_GetValue3f(dg->mat.kx.xyz, dg->uv, TEXTURE_ARGS_IDX(dg->mat.kxmapidx));
 
 		// TMP ! 
-		const RadeonRays::float3& kd = diffGeo.getCurrentMaterial()->getInputValue("albedo").floatValue;
+		//const RadeonRays::float3& kd = diffGeo.getCurrentMaterial()->getInputValue("albedo").floatValue;
+
+		const RadeonRays::float3& kd = getValue(diffGeo);
 
 //		std::cerr << "wo.y before: " << wo.y << std::endl;
 //		std::cerr << "Sample: " << sample.x << " " << sample.y << '\n';
@@ -165,7 +194,9 @@ namespace SP {
 		// tangent sapce
 
 		// tmp !
-		const RadeonRays::float3& kd = diffGeo.getCurrentMaterial()->getInputValue("albedo").floatValue;
+		//const RadeonRays::float3& kd = diffGeo.getCurrentMaterial()->getInputValue("albedo").floatValue;
+
+		const RadeonRays::float3& kd = getValue(diffGeo);
 
 		//float F = dg->mat.fresnel;
 		float F = 1.0;	// tmp

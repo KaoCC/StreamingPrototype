@@ -7,7 +7,7 @@
 
 #include "math/float3.h"
 
-#include <memory>
+#include <vector>
 
 namespace SP {
 
@@ -24,13 +24,13 @@ namespace SP {
 		};
 
 
-		Texture(const std::uint8_t* ptr, RadeonRays::int2 size, Format format);
+		Texture(std::vector<std::uint8_t> vec, RadeonRays::int2 size, Format format);
 		virtual ~Texture() = default;
 
 
 		RadeonRays::float3 sampleEnvMap(RadeonRays::float3 d);
 
-		RadeonRays::float4 sample2D(RadeonRays::float2 uv);
+		RadeonRays::float4 sample2D(RadeonRays::float2 uv) const;
 
 		// Disallow copying
 		Texture(Texture const&) = delete;
@@ -39,7 +39,10 @@ namespace SP {
 	private:
 
 		// data
-		std::unique_ptr<const std::uint8_t[]> data;
+		//std::unique_ptr<const std::uint8_t[]> data;
+
+		std::vector<std::uint8_t> texData;
+
 		// size
 		RadeonRays::int2 size;
 		//format

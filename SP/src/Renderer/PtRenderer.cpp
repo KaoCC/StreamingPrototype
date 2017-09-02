@@ -380,15 +380,15 @@ namespace SP {
 			if (backfaced && twosided) {
 				// invert normal
 				auto& normRef = diffGeo.getNormal();
-				normRef = -normRef;
+				diffGeo.setNormal(-normRef);
 
 				// dpdu ???
 				auto& dpduRef = diffGeo.getDpDu();
-				dpduRef = -dpduRef;
+				diffGeo.setDpDu(-dpduRef);
 
 				// dpdv ???
 				auto& dpdvRef = diffGeo.getDpDv();
-				dpdvRef = -dpdvRef;
+				diffGeo.setDpDu(-dpdvRef);
 			}
 
 
@@ -444,15 +444,15 @@ namespace SP {
 			if (!twosided && backfaced && !BxDFHelper::isBTDF(diffGeo.getCurrentMaterial())) {
 				// invert normal
 				auto& normRef = diffGeo.getNormal();
-				normRef = -normRef;
+				diffGeo.setNormal(-normRef);
 
 				// dpdu ???
 				auto& dpduRef = diffGeo.getDpDu();
-				dpduRef = -dpduRef;
+				diffGeo.setDpDu(-dpduRef);
 
 				// dpdv ???
 				auto& dpdvRef = diffGeo.getDpDv();
-				dpdvRef = -dpdvRef;
+				diffGeo.setDpDu(-dpdvRef);
 			}
 
 
