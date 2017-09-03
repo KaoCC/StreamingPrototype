@@ -36,4 +36,9 @@ We have recently changed from premake to cmake.
 
 ## Demo Video
 
-[Demo Video on Youtube](https://youtu.be/lMdvIzpLWpQ)
+[Basic Scene](https://youtu.be/lMdvIzpLWpQ)
+[Arbitrary viewpoint in Conference](https://youtu.be/RelNG831QU0)
+[Wide angle viewing in Conference ](https://youtu.be/JWcialjxyy4)
+[Projection to ST plane in Sponza](https://youtu.be/JtGV25Jj2x8)
+[Full screen rotation in Sponza](https://youtu.be/XTZMCKUFCxA)
+
