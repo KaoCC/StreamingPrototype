@@ -15,8 +15,56 @@
 
 #include <OpenImageIO/imageio.h>
 
+#include <boost/filesystem.hpp>
 
 namespace SP {
+
+	// helper function for adding path
+	static std::string addPrefixPath(const std::string& fileName) {
+
+		const boost::filesystem::path kDefaultConfigFile { "folder_config.txt" };
+
+		// current path
+		//const std::string kDefaultPrefix = "./";
+
+
+		if (!boost::filesystem::exists(kDefaultConfigFile)) {
+			std::cerr << "folder_config.txt does not exist, use default config\n";
+			return boost::filesystem::current_path().append(fileName).generic_string();
+		}
+
+		// read default config file for folder location
+		std::ifstream inputConfig { kDefaultConfigFile.generic_string() };
+
+		if (!inputConfig) {
+			throw std::runtime_error("Could not open file");
+		}
+
+		// check this
+		inputConfig.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+
+		std::string folderPath;
+		std::getline(inputConfig, folderPath);
+
+
+		// Create the folder if not exist
+		if (!boost::filesystem::exists(folderPath)) {
+			std::cerr << "Folder not exist, creating ...\n";
+			
+			if (!boost::filesystem::create_directories(folderPath)) {
+				std::cerr << "Fail to create dir, use dafault\n";
+				return boost::filesystem::current_path().append(fileName).generic_string();
+			}
+
+		} else if (!boost::filesystem::is_directory(folderPath)) {
+			// not a folder, use default
+			std::cerr << "Not a folder, use default path\n";
+			return boost::filesystem::current_path().append(fileName).generic_string();
+		}
+
+		return boost::filesystem::path(folderPath).append(fileName).generic_string();
+
+	}
 
 
 	//ImageConfig::ImageConfig(int localId, const std::string& path, Encoder* encoder, ImageBuffer& accBuffer) {
@@ -28,7 +76,7 @@ namespace SP {
 
 		// temp, should fix this
 		if (!inputStream) {
-			throw std::runtime_error("Could not open file");;
+			throw std::runtime_error("Could not open file");
 		}
 
 
@@ -137,7 +185,8 @@ namespace SP {
 		int serialNumber = this->imageID;
 
 
-		const std::string fileName = "image" + std::to_string(imageID) + "-" + std::to_string(serialNumber) +".ppm";
+		std::string fileName = "image" + std::to_string(imageID) + "-" + std::to_string(serialNumber) +".ppm";
+		fileName = addPrefixPath(fileName);
 
 		FILE* file = fopen(fileName.c_str(), "wb");
 		if (!file) {
@@ -169,7 +218,10 @@ namespace SP {
 
 		int serialNumber = this->imageID;
 
-		const std::string fileName = "radiance" + std::to_string(imageID) + "-" + std::to_string(serialNumber) + ".exr";
+		std::string fileName = "radiance" + std::to_string(imageID) + "-" + std::to_string(serialNumber) + ".exr";
+		fileName = addPrefixPath(fileName);
+
+		std::cerr << "FileName: " << fileName << '\n';
 
 		const std::uint32_t xres = getWidth();
 		const std::uint32_t yres = getHeight();
