@@ -17,10 +17,26 @@
 
 #include "Scene/Material.hpp"
 
+#include "DefaultList.hpp"
+
 namespace SP {
 
 
-	// tmp
+	// for testing
+	static SP::Mesh* createTransformedMesh(float worldX, float worldY, float worldZ, DefaultShapeType type) {
+
+		auto* defaultTriangle = createDefaultShape(type);
+
+		// Transform !!!
+		const RadeonRays::matrix& transMat = RadeonRays::translation({worldX, worldY, worldZ});
+		defaultTriangle->setTransform(transMat);
+
+
+		return defaultTriangle;
+	}
+
+
+	// tmp, for testing only
 	static SP::Mesh* createDefaultMesh(float worldX, float worldY, float worldZ) {
 
 		// TODO: fix this !! Who's gonna release the memory for this ?
@@ -68,8 +84,6 @@ namespace SP {
 		std::vector<RadeonRays::float2> zero(numOfVertices);
 		std::fill(zero.begin(), zero.end(), RadeonRays::float2(0, 0));
 		mesh->setUVs(&zero[0], numOfVertices);
-
-
 
 		mesh->setName("Default");
 
@@ -306,7 +320,10 @@ namespace SP {
 		//mEnginePtr->changeShape_test(worldX, worldY, worldZ);
 
 
-		sceneDataPtr->attachShape(createDefaultMesh(worldX, worldY, worldZ));
+		//sceneDataPtr->attachShape(createDefaultMesh(worldX, worldY, worldZ));
+
+		sceneDataPtr->attachShape(createTransformedMesh(worldX, worldY, worldZ, DefaultShapeType::kTriangle));
+
 		//mEnginePtr->compileScene(*sceneDataPtr);
 
 		mTracker->compileSceneTest(*sceneDataPtr);

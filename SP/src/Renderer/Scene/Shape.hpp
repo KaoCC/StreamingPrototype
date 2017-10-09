@@ -5,6 +5,7 @@
 
 #include "math/float3.h"
 #include "math/float2.h"
+#include "math/matrix.h"
 
 //#include <memory>
 
@@ -67,6 +68,9 @@ namespace SP {
 		void setUVs(float const* uvs, std::size_t num_uvs);
 		std::size_t getNumUVs() const;
 		RadeonRays::float2 const* getUVs() const;
+
+
+		void setTransform(const RadeonRays::matrix& transMat);
 
 		// disallow copying
 		Mesh(Mesh const&) = delete;
