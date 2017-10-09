@@ -50,6 +50,7 @@ namespace SP {
 		std::uint32_t const* getIndices() const;
 
 		// Set and get vertex array
+		void setVertices(const std::vector<RadeonRays::float3>& inputVertices);
 		void setVertices(const RadeonRays::float3* local_vertices, std::size_t num_vertices);
 		void setVertices(float const* vertices, std::size_t num_vertices);
 		std::size_t getNumVertices() const;
