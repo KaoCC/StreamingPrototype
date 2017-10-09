@@ -17,87 +17,26 @@
 
 #include "Scene/Material.hpp"
 
+#include "DefaultList.hpp"
+
 namespace SP {
 
 
 	// for testing
+	static SP::Mesh* createTransformedMesh(float worldX, float worldY, float worldZ, DefaultShapeType type) {
 
-	static SP::Mesh* createTransformedTriagle(float worldX, float worldY, float worldZ) {
-
-		// leak !
-		SP::Mesh* mesh = new Mesh();
-
-		// create a triangle
-
-		//float verticesTmp[] {
-		//	0.f, 0.f, 0.f,
-		//	0.f, 1.f, 0.f,
-		//	1.f, 0.f, 0.f
-		//};
-
-
-		RadeonRays::float4 vertices[] {
-			{0.f, 0.f, 0.f, 1.0f},
-			{0.f, 1.f, 0.f, 1.0f},
-			{1.f, 0.f, 0.f, 1.0f}
-		};
-
-		const unsigned int unitLength = 1;
-
-		size_t numOfVertices = 3;
-
-		uint32_t indices[] { 0, 1, 2 };
-		size_t numOfIndices = 3;
-
-		float normals[] {
-			1, 0, 0,
-			1, 0, 0,
-			1, 0, 0
-		};
-		size_t numOfNormals = 3;
-
+		auto* defaultTriangle = createDefaultShape(type);
 
 		// Transform !!!
-
 		const RadeonRays::matrix& transMat = RadeonRays::translation({worldX, worldY, worldZ});
-
-		for (auto i = 0; i < numOfVertices; ++i) {
-			vertices[i] = transMat * vertices[i];
-
-			std::cerr << "i: " << i << ' ' << vertices[i].x << std::endl;
-			std::cerr << "i: " << i << ' ' << vertices[i].y << std::endl;
-			std::cerr << "i: " << i << ' ' << vertices[i].z << std::endl;
-			std::cerr << std::endl;
-		}
+		defaultTriangle->setTransform(transMat);
 
 
-		// set vertices
-		mesh->setVertices(vertices, numOfVertices);
-
-		// set indices
-		mesh->setIndices(indices, numOfIndices);
-
-		// set Normals
-		mesh->setNormals(normals, numOfNormals);
-
-		// Generate Zeros if we do not have UVs
-		std::vector<RadeonRays::float2> zero(numOfVertices);
-		std::fill(zero.begin(), zero.end(), RadeonRays::float2(0, 0));
-		mesh->setUVs(&zero[0], numOfVertices);
-
-		mesh->setName("Default");
-
-		// memory leak !
-		Material* diffuse = new SingleBxDF(SingleBxDF::BxDFType::kLambert);
-		diffuse->setInputValue("albedo", RadeonRays::float3(10, 10, 10));
-
-		mesh->setMaterial(diffuse);
-
-		return mesh;
+		return defaultTriangle;
 	}
 
 
-	// tmp
+	// tmp, for testing only
 	static SP::Mesh* createDefaultMesh(float worldX, float worldY, float worldZ) {
 
 		// TODO: fix this !! Who's gonna release the memory for this ?
@@ -145,8 +84,6 @@ namespace SP {
 		std::vector<RadeonRays::float2> zero(numOfVertices);
 		std::fill(zero.begin(), zero.end(), RadeonRays::float2(0, 0));
 		mesh->setUVs(&zero[0], numOfVertices);
-
-
 
 		mesh->setName("Default");
 
@@ -383,7 +320,10 @@ namespace SP {
 		//mEnginePtr->changeShape_test(worldX, worldY, worldZ);
 
 
-		sceneDataPtr->attachShape(createDefaultMesh(worldX, worldY, worldZ));
+		//sceneDataPtr->attachShape(createDefaultMesh(worldX, worldY, worldZ));
+
+		sceneDataPtr->attachShape(createTransformedMesh(worldX, worldY, worldZ, DefaultShapeType::kTriangle));
+
 		//mEnginePtr->compileScene(*sceneDataPtr);
 
 		mTracker->compileSceneTest(*sceneDataPtr);

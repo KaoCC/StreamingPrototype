@@ -127,4 +127,14 @@ namespace SP {
 		return uvs.data();
 	}
 
+
+	// need to check other data such as normals ... ?
+	void Mesh::setTransform(const RadeonRays::matrix & transMat) {
+
+		for (auto i = 0; i < getNumVertices(); ++i) {
+			vertices[i] = transMat * vertices[i];
+		}
+
+	}
+
 }
