@@ -25,14 +25,14 @@ namespace SP {
 	// for testing
 	static SP::Mesh* createTransformedMesh(float worldX, float worldY, float worldZ, DefaultShapeType type) {
 
-		auto* defaultTriangle = createDefaultShape(type);
+		auto* defaultMesh = createDefaultShape(type);
 
 		// Transform !!!
 		const RadeonRays::matrix& transMat = RadeonRays::translation({worldX, worldY, worldZ});
-		defaultTriangle->setTransform(transMat);
+		defaultMesh->transform(transMat);
 
 
-		return defaultTriangle;
+		return defaultMesh;
 	}
 
 
@@ -297,7 +297,7 @@ namespace SP {
 		resume();
 	}
 
-	void RenderingManager::changeSceneWithCoordinates(float worldX, float worldY, float worldZ) {
+	void RenderingManager::changeSceneWithCoordinates(float worldX, float worldY, float worldZ, DefaultShapeType type) {
 
 		pause();
 
@@ -322,7 +322,10 @@ namespace SP {
 
 		//sceneDataPtr->attachShape(createDefaultMesh(worldX, worldY, worldZ));
 
-		sceneDataPtr->attachShape(createTransformedMesh(worldX, worldY, worldZ, DefaultShapeType::kTriangle));
+		auto* mesh = createTransformedMesh(worldX, worldY, worldZ, type);
+
+		sceneDataPtr->attachShape(mesh);
+		sceneDataPtr->attachAutoreleaseObject(mesh);		// consider using a smart pointer?
 
 		//mEnginePtr->compileScene(*sceneDataPtr);
 
@@ -340,6 +343,20 @@ namespace SP {
 
 		return dynamic_cast<const PerspectiveCamera&>(sceneDataPtr->getCamera(index));
 
+	}
+
+	void RenderingManager::createDefaultList() {
+
+		if (mDefaultList.empty()) {
+			// add support type here
+			mDefaultList.push_back(DefaultShapeType::kTriangle);
+			mDefaultList.push_back(DefaultShapeType::kSquare);
+		}
+
+	}
+
+	const std::vector<DefaultShapeType>& RenderingManager::getDefaultList() const {
+		return mDefaultList;
 	}
 
 
@@ -439,7 +456,6 @@ namespace SP {
 
 		mTracker->compileSceneTest(*sceneDataPtr);
 		//mEnginePtr->compileScene(*sceneDataPtr);
-
 	}
 
 	void RenderingManager::loadRadianceOutput(int subLFIdx, int subImgIdx) {

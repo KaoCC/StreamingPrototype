@@ -9,6 +9,7 @@
 
 #include "math/float3.h"
 
+#include "DefaultList.hpp"
 
 //#include <opencv2/opencv.hpp>
 
@@ -417,9 +418,17 @@ namespace SP {
 		std::cerr << "result: " << result.x << " " << result.y << " " << result.z << " " << result.w <<'\n';
 
 		const float wClip = result.w;
-		renderManagerPtr->changeSceneWithCoordinates(result.x / wClip, result.y / wClip, result.z / wClip);
+		renderManagerPtr->changeSceneWithCoordinates(result.x / wClip, result.y / wClip, result.z / wClip, mCurrentDefaultShape);
 
 
+	}
+
+	void ConfigManager::createDefaultList() {
+		renderManagerPtr->createDefaultList();
+	}
+
+	const std::vector<DefaultShapeType>& ConfigManager::getDefaultList() const {
+		return renderManagerPtr->getDefaultList();
 	}
 
 

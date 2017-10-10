@@ -70,7 +70,7 @@ namespace SP {
 		RadeonRays::float2 const* getUVs() const;
 
 
-		void setTransform(const RadeonRays::matrix& transMat);
+		void transform(const RadeonRays::matrix& transMat);
 
 		// disallow copying
 		Mesh(Mesh const&) = delete;

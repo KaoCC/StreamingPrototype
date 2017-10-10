@@ -24,6 +24,8 @@
 
 #include "ApiEngine.hpp"
 
+#include "DefaultList.hpp"
+
 namespace SP {
 
 
@@ -50,7 +52,7 @@ namespace SP {
 
 
 		// KAOCC: tmp testing
-		void changeSceneWithCoordinates(float worldX, float worldY, float worldZ);
+		void changeSceneWithCoordinates(float worldX, float worldY, float worldZ, DefaultShapeType type);
 
 		// testing 
 		const PerspectiveCamera& getPerspectiveCamera(size_t index) const;
@@ -58,6 +60,11 @@ namespace SP {
 
 		// tmp
 		//void compileScene();
+
+		// tmp, Default list
+
+		void createDefaultList();
+		const std::vector<DefaultShapeType>& getDefaultList() const;
 
 
 	private:
@@ -156,6 +163,10 @@ namespace SP {
 
 		bool mPauseFlag = false;
 
+
+
+		// default list
+		std::vector<DefaultShapeType> mDefaultList;
 
 	};
 
