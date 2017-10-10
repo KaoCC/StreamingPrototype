@@ -29,7 +29,7 @@ namespace SP {
 
 		// Transform !!!
 		const RadeonRays::matrix& transMat = RadeonRays::translation({worldX, worldY, worldZ});
-		defaultTriangle->setTransform(transMat);
+		defaultTriangle->transform(transMat);
 
 
 		return defaultTriangle;
