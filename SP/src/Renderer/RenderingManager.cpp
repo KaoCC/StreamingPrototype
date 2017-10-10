@@ -25,14 +25,14 @@ namespace SP {
 	// for testing
 	static SP::Mesh* createTransformedMesh(float worldX, float worldY, float worldZ, DefaultShapeType type) {
 
-		auto* defaultTriangle = createDefaultShape(type);
+		auto* defaultMesh = createDefaultShape(type);
 
 		// Transform !!!
 		const RadeonRays::matrix& transMat = RadeonRays::translation({worldX, worldY, worldZ});
-		defaultTriangle->transform(transMat);
+		defaultMesh->transform(transMat);
 
 
-		return defaultTriangle;
+		return defaultMesh;
 	}
 
 
@@ -439,7 +439,6 @@ namespace SP {
 
 		mTracker->compileSceneTest(*sceneDataPtr);
 		//mEnginePtr->compileScene(*sceneDataPtr);
-
 	}
 
 	void RenderingManager::loadRadianceOutput(int subLFIdx, int subImgIdx) {
