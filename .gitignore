@@ -48,7 +48,8 @@ Generated/*
 
 
 # workaround
-!3rdparty/**
+!3rdparty/
+3rdparty/*
 
 # Created by https://www.gitignore.io/api/clion+all
 
