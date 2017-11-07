@@ -151,7 +151,7 @@ namespace SP {
 		return dpdu;
 	}
 
-	void DifferentialGeometry::setDpDu(RadeonRays::float3 & newVal) {
+	void DifferentialGeometry::setDpDu(const RadeonRays::float3 & newVal) {
 		dpdu = newVal;
 	}
 
@@ -159,7 +159,7 @@ namespace SP {
 		return dpdv;
 	}
 
-	void DifferentialGeometry::setDpDv(RadeonRays::float3 & newVal) {
+	void DifferentialGeometry::setDpDv(const RadeonRays::float3 & newVal) {
 		dpdv = newVal;
 	}
 

@@ -37,10 +37,10 @@ namespace SP {
 		void setUV(const RadeonRays::float2&);
 
 		const RadeonRays::float3& getDpDu() const;
-		void setDpDu(RadeonRays::float3&);
+		void setDpDu(const RadeonRays::float3&);
 
 		const RadeonRays::float3& getDpDv() const;
-		void setDpDv(RadeonRays::float3&);
+		void setDpDv(const RadeonRays::float3&);
 
 		float getArea() const;
 
