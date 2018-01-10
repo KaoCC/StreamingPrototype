@@ -290,6 +290,11 @@ namespace SP {
 		renderManagerPtr->reset(state);
 	}
 
+	void ConfigManager::enterEditingState(EditingState state) {
+		std::cerr << "Editing state changes from " << (int)mEditingState << " to " << (int)state << std::endl;
+		mEditingState = state;
+	}
+
 
 	// testing 
 	//void ConfigManager::changeSceneWithCoordinatesCV(float x, float y) {
