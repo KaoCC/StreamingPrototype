@@ -387,9 +387,9 @@ namespace SP {
 					mCfgManagerRef.enterEditingState(ConfigManager::EditingState::kNormal);
 					break;
 				case StreamingFormat::EditOperation::SET_MODEL:
+					std::cerr << "Set moving model ID: " << editingMsg.model_id() << std::endl;
 					switch (mCfgManagerRef.getCurrentEditingState()) {
 					case ConfigManager::EditingState::kWaitForOperation:
-						std::cerr << "Set moving model ID" << editingMsg.model_id() << std::endl;
 						if (editingMsg.model_id() < 0) {
 							std::cerr << "model id < 0 ... Error ?" << std::endl;
 						}
