@@ -436,12 +436,7 @@ namespace SP {
 
 
 				// Link to RenderOutput
-
-				//fieldRef.setSubLightFieldRadianceWithIndex(i, j, dynamic_cast<RenderOutput*>(renderOutputData[mConfigRef.getNumberOfSubLFImages() * i + j]));
-
-				fieldRef[i][j].setRadiancePtr(std::dynamic_pointer_cast<RenderOutput>(renderOutputData[mConfigRef.getNumberOfSubLFImages() * i + j]));
-
-
+				fieldRef[i][j].setRadiancePtr(renderOutputData[mConfigRef.getNumberOfSubLFImages() * i + j]);
 
 				// load radiamce map if the flag is set
 
@@ -464,7 +459,7 @@ namespace SP {
 
 		unsigned outputId = mConfigRef.getNumberOfSubLFImages() * subLFIdx + subImgIdx;
 
-		std::shared_ptr<RenderOutput> renderOut = std::dynamic_pointer_cast<RenderOutput>(renderOutputData[outputId]);
+		std::shared_ptr<RenderOutput> renderOut = renderOutputData[outputId];
 
 		if (renderOut == nullptr) {
 			throw std::runtime_error("RenderOutput is null");

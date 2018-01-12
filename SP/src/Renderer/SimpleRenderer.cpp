@@ -24,25 +24,7 @@ namespace SP {
 	}
 
 
-	//std::shared_ptr<Output> SimpleRenderer::createOutput(std::uint32_t w, std::uint32_t h) const {
-	//	return std::make_shared<RenderOutput>(w, h);
-	//}
 
-	//void SimpleRenderer::deleteOutput(Output * output) const {
-	//	delete output;
-	//}
-
-
-	// KAOCC: tmp ! not an accurate approach
-	//void SimpleRenderer::clear(RadeonRays::float3 const& val, RenderOutput& output) const {
-	//	auto& rendOutRef = dynamic_cast<RenderOutput&>(output);        // test it !
-
-	//	auto& storedData = rendOutRef.getInternalStorage();
-
-	//	for (auto& data : storedData) {
-	//		data = val;
-	//	}
-	//}
 
 	void SimpleRenderer::preprocess(Scene const& scene) {
 	}
