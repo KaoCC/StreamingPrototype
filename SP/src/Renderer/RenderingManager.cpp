@@ -391,7 +391,7 @@ namespace SP {
 		// Set Output
 		renderOutputData.resize(renderFarm.size());
 		for (size_t i = 0; i < renderFarm.size(); ++i) {
-			renderOutputData[i] = renderFarm[i]->createOutput(mConfigRef.getScreenWidth(), mConfigRef.getScreenHeight());
+			renderOutputData[i] = std::make_shared<RenderOutput>(mConfigRef.getScreenWidth(), mConfigRef.getScreenHeight());
 			renderFarm[i]->setOutput(renderOutputData[i]);
 		}
 
@@ -470,7 +470,7 @@ namespace SP {
 			throw std::runtime_error("RenderOutput is null");
 		}
 
-		auto& outputData = renderOut->getInternalStorage();
+		auto& outputData = *renderOut;
 
 		OIIO_NAMESPACE_USING
 
@@ -508,7 +508,7 @@ namespace SP {
 		const int tmpSize = totalPixelNum * channels;
 
 		// check this !
-		outputData.resize(xRes * yRes);
+		outputData.resize(xRes, yRes);
 
 
 		// create a tmp buffer 
@@ -519,7 +519,7 @@ namespace SP {
 
 
 		//dump the tmp data to output
-		for (int i = 0; i < outputData.size(); ++i) {
+		for (int i = 0; i < outputData.getSize(); ++i) {
 			outputData[i].x = tmpBuff[i * channels];
 			outputData[i].y = tmpBuff[i * channels + 1];
 			outputData[i].z = tmpBuff[i * channels + 2];
@@ -587,7 +587,10 @@ namespace SP {
 
 			// tmp, need lock , need interrupt-based method
 			if (mConfigRef.isSceneChanged(farmIdx)) {
-				renderFarm[farmIdx]->clear(0.f, *(renderOutputData[farmIdx]));
+				//renderFarm[farmIdx]->clear(0.f, *(renderOutputData[farmIdx]));
+
+				renderOutputData[farmIdx]->resetToDefault();
+
 				mConfigRef.setSceneChangedFlag(farmIdx, false);
 			}
 

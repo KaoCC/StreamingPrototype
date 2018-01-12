@@ -84,7 +84,7 @@ namespace SP {
 	}
 
 	const Light* Scene::getSampleLightPtr(float sample, float & pdf) const {
-		size_t numLight = getNumLights();
+		std::size_t numLight = getNumLights();
 
 		if (numLight == 0) {
 			return nullptr;

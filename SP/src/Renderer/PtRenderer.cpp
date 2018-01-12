@@ -81,26 +81,15 @@ namespace SP {
 
 	}
 
-	std::shared_ptr<Output> PtRenderer::createOutput(std::uint32_t w, std::uint32_t h) const {
-		return std::make_shared<RenderOutput>(w, h);
-	}
+	//std::shared_ptr<Output> PtRenderer::createOutput(std::uint32_t w, std::uint32_t h) const {
+	//	return std::make_shared<RenderOutput>(w, h);
+	//}
 
 	//void PtRenderer::deleteOutput(Output * output) const {
 	//	delete output;
 	//}
 
-	void PtRenderer::clear(RadeonRays::float3 const& val, Output& output) const {
-		//throw std::runtime_error("Yet to be done");
 
-		RenderOutput& rendOutRef { dynamic_cast<RenderOutput&>(output) };        // test it !
-
-		auto& storedData = rendOutRef.getInternalStorage();
-
-		for (auto& data : storedData) {
-			data = val;
-		}
-
-	}
 
 	void PtRenderer::preprocess(Scene const& scene) {
 	}
@@ -192,26 +181,26 @@ namespace SP {
 		++mFrameCount;
 	}
 
-	void PtRenderer::setOutput(std::shared_ptr<Output> output) {
+	void PtRenderer::setOutput(std::shared_ptr<RenderOutput> output) {
 
 		if (!renderOutPtr || renderOutPtr->getWidth() < output->getWidth() || renderOutPtr->getHeight() < output->getHeight()) {
 			resizeWorkingSet(*output);
 		}
 
-		renderOutPtr = std::dynamic_pointer_cast<RenderOutput>(output);
+		renderOutPtr = output;
 	}
 
 
 	void PtRenderer::generatePrimaryRays(const Scene& scene, size_t camIdx) {
 
 
-		const uint32_t imageWidth = renderOutPtr->getWidth();
-		const uint32_t imageHeight = renderOutPtr->getHeight();
+		const auto imageWidth = renderOutPtr->getWidth();
+		const auto imageHeight = renderOutPtr->getHeight();
 
-		uint32_t rngseed = RadeonRays::rand_uint();
+		auto rngseed = RadeonRays::rand_uint();
 
-		for (uint32_t y = 0; y < imageHeight; ++y) {
-			for (uint32_t x = 0; x < imageWidth; ++x) {            // check this !
+		for (std::size_t y = 0; y < imageHeight; ++y) {
+			for (std::size_t x = 0; x < imageWidth; ++x) {            // check this !
 
 
 
@@ -221,7 +210,7 @@ namespace SP {
 				//randomSampler.dimension = 0;
 
 
-				uint32_t seed = x + imageWidth * y * rngseed;
+				const std::uint32_t seed = x + imageWidth * y * rngseed;
 				std::unique_ptr<Sampler> sampler = RandomSampler::create(seed);
 
 				//unsigned rnd = RadeonRays::rand_uint();		// test !
@@ -329,11 +318,11 @@ namespace SP {
 
 		auto& shadowRayArrayRef = renderData.host_shadowrays;
 		auto& lightSamplesArrayRef = renderData.host_lightSamples;
-		std::vector<RadeonRays::float3>& outRef = renderOutPtr->getInternalStorage();
+		auto& outRef = *renderOutPtr;
 
 		const std::vector<int>& pixelIndexArrayRef = renderData.host_pixelIndex[(pass) & 0x1];
 
-		uint32_t rngseed = RadeonRays::rand_uint();
+		std::uint32_t rngseed = RadeonRays::rand_uint();
 
 		//DifferentialGeometry diffGeo;
 
@@ -354,7 +343,7 @@ namespace SP {
 
 			// init sampler (random)
 			// TODO: change this to a function
-			uint32_t seed = pixelIndex * rngseed;
+			std::uint32_t seed = pixelIndex * rngseed;
 			//Sampler randomSampler;
 			//randomSampler.index = seed;
 			//randomSampler.scramble = 0;
@@ -644,7 +633,7 @@ namespace SP {
 
 				int volumeIndex = renderData.host_path[pixelIndex].getVolumeIdx();
 
-				std::vector<RadeonRays::float3>& outRef = renderOutPtr->getInternalStorage();
+				auto& outRef = *renderOutPtr;
 
 				if (volumeIndex == -1) {
 
@@ -662,7 +651,7 @@ namespace SP {
 
 
 
-			std::vector<RadeonRays::float3>& outRef = renderOutPtr->getInternalStorage();
+			auto& outRef = *renderOutPtr;
 			outRef[pixelIndex].w += 1.f;
 		}
 
@@ -674,7 +663,7 @@ namespace SP {
 
 		const std::vector<int>& pixelIndexArrayRef = renderData.host_pixelIndex[(pass) & 0x1];
 		const auto& lightSamplesArrayRef = renderData.host_lightSamples;
-		std::vector<RadeonRays::float3>& outRef = renderOutPtr->getInternalStorage();
+		auto& outRef = *renderOutPtr;
 
 		for (size_t i = 0; i < renderData.host_hitcount; ++i) {        // check upper bound !
 			int pixelIndex = pixelIndexArrayRef[i];

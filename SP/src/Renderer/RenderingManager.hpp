@@ -142,7 +142,7 @@ namespace SP {
 		//Encoder* encoder;
 		//ImageConfig::ImageBuffer accImageBuffer; // test
 
-		std::vector<std::shared_ptr<Output>> renderOutputData;
+		std::vector<std::shared_ptr<RenderOutput>> renderOutputData;
 
 		std::unique_ptr<ApiEngine> mEnginePtr;
 		std::unique_ptr<SceneTracker> mTracker;
