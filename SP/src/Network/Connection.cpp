@@ -381,6 +381,21 @@ namespace SP {
 					std::cerr << "Editing FINISH:" << std::endl;
 					mCfgManagerRef.enterState(ConfigManager::State::kPathTracing);
 					break;
+				case StreamingFormat::EditOperation::SET_MODEL_ID:
+					std::cerr << "Set model ID" << editingMsg.model_id() <<std::endl;
+					
+					if (editingMsg.model_id() < 0) {
+						std::cerr << "model id < 0 ... Error ?" << std::endl;
+					} else {
+
+						// check this ... lock or something ?
+						const auto& defaultList = mCfgManagerRef.getDefaultList();
+						mCfgManagerRef.setCurrnetDefaultShape(defaultList[editingMsg.model_id()]);
+
+					}			
+
+
+					break;
 				case StreamingFormat::EditOperation::UPDATE:
 					std::cerr << "Editing UPDATE:" << editingMsg.op() << ", screen X: " << editingMsg.screen_x() << ", screen Y: " << editingMsg.screen_y() << std::endl;
 					// TODO : enable when done 		
@@ -411,13 +426,17 @@ namespace SP {
 
 		editPtr->set_op(StreamingFormat::EditOperation::MODEL_LIST);
 		
-		// TODO: for test only
-		
-		int nModels = rand() % 15 + 1;
-		for (int i = 0;i < nModels;i++) {
-			editPtr->add_model_ids(i);
-		}
 
+		// create Default list
+
+		mCfgManagerRef.createDefaultList();
+		const auto& defaultList = mCfgManagerRef.getDefaultList();
+		
+		// check the value !!!
+		for (int i = 0;i < defaultList.size(); i++) {
+			editPtr->add_model_ids(static_cast<int>(defaultList[i]));		// cast ?
+		}
+		
 
 		controlPtr->set_allocated_editingmsg(editPtr);
 

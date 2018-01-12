@@ -2,15 +2,29 @@
 
 namespace SP {
 
-	Output::Output(std::uint32_t w, std::uint32_t h) : width(w), height(h) {
+	Output::Output(std::size_t w, std::size_t h) : width{ w }, height{ h } {
 	}
 
-	std::uint32_t Output::getWidth() const {
+	std::size_t Output::getWidth() const {
 		return width;
 	}
 
-	std::uint32_t Output::getHeight() const {
+	std::size_t Output::getHeight() const {
 		return height;
+	}
+
+	std::size_t Output::getSize() const {
+		return getStorageSize();
+	}
+
+	void Output::resize(std::size_t w, std::size_t h) {
+		width = w;
+		height = h;
+		resizeStorage(w * h);
+	}
+
+	void Output::resetToDefault() {
+		resetStorageDefault();
 	}
 
 }

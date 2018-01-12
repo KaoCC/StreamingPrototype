@@ -9,13 +9,19 @@
 
 #include "math/float3.h"
 
+#include "DefaultList.hpp"
 
 //#include <opencv2/opencv.hpp>
 
 namespace SP {
 
-	const RadeonRays::float3 ConfigManager::kCameraPos{ -2.f, 1.0f, 0.f };
-	const RadeonRays::float3 ConfigManager::kCameraAt{ 2.f, 1.0f, 0.f };
+	// For Conf
+	//const RadeonRays::float3 ConfigManager::kCameraPos{ 2.f, 1.8f, 3.f };
+	//const RadeonRays::float3 ConfigManager::kCameraAt{ 2.f, 1.8f, -1.f };
+	// For Sponza
+	const RadeonRays::float3 ConfigManager::kCameraPos{ 0.5f, 2.2f, 1.f };
+	const RadeonRays::float3 ConfigManager::kCameraAt{ 0.5f, 2.2f, -1.f };
+	// Common
 	const RadeonRays::float3 ConfigManager::kCameraUp{ 0.f, -1.f, 0.f };
 
 	ConfigManager::ConfigManager() : mImageLightField { kNumOfLFs, kNumOfSubLFImgs }, mCameraConfig { kCameraPos, kCameraAt, kCameraUp } {
@@ -412,9 +418,17 @@ namespace SP {
 		std::cerr << "result: " << result.x << " " << result.y << " " << result.z << " " << result.w <<'\n';
 
 		const float wClip = result.w;
-		renderManagerPtr->changeSceneWithCoordinates(result.x / wClip, result.y / wClip, result.z / wClip);
+		renderManagerPtr->changeSceneWithCoordinates(result.x / wClip, result.y / wClip, result.z / wClip, mCurrentDefaultShape);
 
 
+	}
+
+	void ConfigManager::createDefaultList() {
+		renderManagerPtr->createDefaultList();
+	}
+
+	const std::vector<DefaultShapeType>& ConfigManager::getDefaultList() const {
+		return renderManagerPtr->getDefaultList();
 	}
 
 

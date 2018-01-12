@@ -12,6 +12,8 @@
 
 #include "math/float3.h"
 
+#include "DefaultList.hpp"
+
 namespace SP {
 
 	class RenderingManager;
@@ -99,6 +101,20 @@ namespace SP {
 
 		void changeSceneWithCoordinates(float x, float y);
 
+		// default model list
+		void createDefaultList();
+		const std::vector<DefaultShapeType>& getDefaultList() const;
+
+		DefaultShapeType getCurrentDefaultShape()const {
+			return mCurrentDefaultShape;
+		}
+
+		void setCurrnetDefaultShape(DefaultShapeType type) {
+			mCurrentDefaultShape = type;
+		}
+
+
+
 	private:
 
 		uint32_t moduleID = 0;
@@ -153,6 +169,11 @@ namespace SP {
 
 		// workaround
 		RenderingManager* renderManagerPtr = nullptr;
+
+		// Default list
+
+		DefaultShapeType mCurrentDefaultShape;
+
 
 	};
 

@@ -14,7 +14,7 @@
 
 namespace SP {
 
-	class Output;
+	class RenderOutput;
 	class Scene;
 	class PerspectiveCamera;
 
@@ -30,7 +30,7 @@ namespace SP {
 		\param w Output surface width
 		\param h Output surface height
 		*/
-		virtual std::shared_ptr<Output> createOutput(std::uint32_t w, std::uint32_t h) const = 0;
+		//virtual std::shared_ptr<Output> createOutput(std::uint32_t w, std::uint32_t h) const = 0;
 
 		/**
 		\brief Delete given output.
@@ -45,7 +45,7 @@ namespace SP {
 		\param val Value to clear to
 		\param output Output to clear
 		*/
-		virtual void clear(RadeonRays::float3 const& val, Output& output) const = 0;
+		//virtual void clear(RadeonRays::float3 const& val, RenderOutput& output) const = 0;
 
 		/**
 		\brief Do necessary scene dependent computations and caching.
@@ -66,7 +66,7 @@ namespace SP {
 
 		\param output The output to render into.
 		*/
-		virtual void setOutput(std::shared_ptr<Output> output) = 0;		// TODO : review this API design !
+		virtual void setOutput(std::shared_ptr<RenderOutput> output) = 0;		// TODO : review this API design !
 
 
 		/**
@@ -83,6 +83,9 @@ namespace SP {
 
 	// helper function
 	void generateRandomRay(uint32_t rngseed, uint32_t x, uint32_t y, uint32_t imageWidth, uint32_t imageHeight, RadeonRays::ray& currentRay, const PerspectiveCamera& cameraPtr);
+
+
+
 
 
 }

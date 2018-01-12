@@ -7,29 +7,24 @@
 namespace SP {
 
 
+	// tmp , workaround
+	RadeonRays::float3 tmpGetValue(const Material* matPtr) {
+		auto single = dynamic_cast<const SingleBxDF*>(matPtr);
+
+		if (single) {
+			return single->getInputValue("albedo").floatValue;
+		} else {
+			// tmp
+			return RadeonRays::float3 {0.3f, 0.3f, 0.3f};
+		}
+
+	}
+
 	SimpleRenderer::SimpleRenderer(ApiEngine& engine) : mEngineRef { engine } {
 	}
 
 
-	std::shared_ptr<Output> SimpleRenderer::createOutput(std::uint32_t w, std::uint32_t h) const {
-		return std::make_shared<RenderOutput>(w, h);
-	}
 
-	//void SimpleRenderer::deleteOutput(Output * output) const {
-	//	delete output;
-	//}
-
-
-	// KAOCC: tmp ! not an accurate approach
-	void SimpleRenderer::clear(RadeonRays::float3 const& val, Output& output) const {
-		auto& rendOutRef = dynamic_cast<RenderOutput&>(output);        // test it !
-
-		auto& storedData = rendOutRef.getInternalStorage();
-
-		for (auto& data : storedData) {
-			data = val;
-		}
-	}
 
 	void SimpleRenderer::preprocess(Scene const& scene) {
 	}
@@ -50,27 +45,27 @@ namespace SP {
 		simpleShading(scene);
 	}
 
-	void SimpleRenderer::setOutput(std::shared_ptr<Output> output) {
+	void SimpleRenderer::setOutput(std::shared_ptr<RenderOutput> output) {
 
 		if (!mRenderOutPtr || mRenderOutPtr->getWidth() < output->getWidth() || mRenderOutPtr->getHeight() < output->getHeight()) {
 			resizeWorkingSet(*output);
 		}
 
-		mRenderOutPtr = std::dynamic_pointer_cast<RenderOutput>(output);
+		mRenderOutPtr = output;
 	}
 
 	SimpleRenderer::~SimpleRenderer() = default;
 
 	void SimpleRenderer::generatePrimaryRays(const Scene& scene, size_t camIdx) {
 
-		const uint32_t imageWidth = mRenderOutPtr->getWidth();
-		const uint32_t imageHeight = mRenderOutPtr->getHeight();
+		const std::size_t imageWidth = mRenderOutPtr->getWidth();
+		const std::size_t imageHeight = mRenderOutPtr->getHeight();
 
-		uint32_t rngseed = RadeonRays::rand_uint();
+		const std::uint32_t rngseed = RadeonRays::rand_uint();
 
 
-		for (uint32_t y = 0; y < imageHeight; ++y) {
-			for (uint32_t x = 0; x < imageWidth; ++x) {
+		for (std::uint32_t y = 0; y < imageHeight; ++y) {
+			for (std::uint32_t x = 0; x < imageWidth; ++x) {
 
 				const PerspectiveCamera& cameraRef { static_cast<const PerspectiveCamera&>(scene.getCamera(camIdx)) };
 				RadeonRays::ray& currentRay = mSimpleRenderDataPtr.host_rays[0][y * imageWidth + x];
@@ -98,12 +93,12 @@ namespace SP {
 
 		const std::vector<RadeonRays::ray>& rayArrayRef = mSimpleRenderDataPtr.host_rays[0];
 
-		std::vector<RadeonRays::float3>& outRef = mRenderOutPtr->getInternalStorage();
+		auto& outRef = *mRenderOutPtr;
 
 		//const std::vector<const Mesh*>& meshPtrs = mEngineRef.getInternalMeshPtrs();
 
 
-		for (size_t i = 0; i < mSimpleRenderDataPtr.host_hitcount; ++i) {
+		for (auto i = 0; i < mSimpleRenderDataPtr.host_hitcount; ++i) {
 
 			const RadeonRays::Intersection& isectRef = mSimpleRenderDataPtr.host_intersections[i];
 
@@ -161,7 +156,7 @@ namespace SP {
 
 
 				// FIXME: bug here for multi-bxdf
-				outRef[i] = matPtr->getInputValue("albedo").floatValue * RadeonRays::dot(-rayArrayRef[i].d, normal);        // check ray direction
+				outRef[i] = tmpGetValue(matPtr) * RadeonRays::dot(-rayArrayRef[i].d, normal);        // check ray direction
 
 			}
 

@@ -17,10 +17,26 @@
 
 #include "Scene/Material.hpp"
 
+#include "DefaultList.hpp"
+
 namespace SP {
 
 
-	// tmp
+	// for testing
+	static std::unique_ptr<Mesh> createTransformedMesh(float worldX, float worldY, float worldZ, DefaultShapeType type) {
+
+		auto defaultMesh = createDefaultShape(type);
+
+		// Transform !!!
+		const RadeonRays::matrix& transMat = RadeonRays::translation({worldX, worldY, worldZ});
+		defaultMesh->transform(transMat);
+
+
+		return defaultMesh;
+	}
+
+
+	// tmp, for testing only
 	static SP::Mesh* createDefaultMesh(float worldX, float worldY, float worldZ) {
 
 		// TODO: fix this !! Who's gonna release the memory for this ?
@@ -68,8 +84,6 @@ namespace SP {
 		std::vector<RadeonRays::float2> zero(numOfVertices);
 		std::fill(zero.begin(), zero.end(), RadeonRays::float2(0, 0));
 		mesh->setUVs(&zero[0], numOfVertices);
-
-
 
 		mesh->setName("Default");
 
@@ -283,7 +297,7 @@ namespace SP {
 		resume();
 	}
 
-	void RenderingManager::changeSceneWithCoordinates(float worldX, float worldY, float worldZ) {
+	void RenderingManager::changeSceneWithCoordinates(float worldX, float worldY, float worldZ, DefaultShapeType type) {
 
 		pause();
 
@@ -306,7 +320,13 @@ namespace SP {
 		//mEnginePtr->changeShape_test(worldX, worldY, worldZ);
 
 
-		sceneDataPtr->attachShape(createDefaultMesh(worldX, worldY, worldZ));
+		//sceneDataPtr->attachShape(createDefaultMesh(worldX, worldY, worldZ));
+
+		//auto* mesh = createTransformedMesh(worldX, worldY, worldZ, type);
+
+		sceneDataPtr->attachShape(createTransformedMesh(worldX, worldY, worldZ, type));
+		//sceneDataPtr->attachAutoreleaseObject(mesh);		// consider using a smart pointer?
+
 		//mEnginePtr->compileScene(*sceneDataPtr);
 
 		mTracker->compileSceneTest(*sceneDataPtr);
@@ -323,6 +343,20 @@ namespace SP {
 
 		return dynamic_cast<const PerspectiveCamera&>(sceneDataPtr->getCamera(index));
 
+	}
+
+	void RenderingManager::createDefaultList() {
+
+		if (mDefaultList.empty()) {
+			// add support type here
+			mDefaultList.push_back(DefaultShapeType::kTriangle);
+			mDefaultList.push_back(DefaultShapeType::kSquare);
+		}
+
+	}
+
+	const std::vector<DefaultShapeType>& RenderingManager::getDefaultList() const {
+		return mDefaultList;
 	}
 
 
@@ -357,7 +391,7 @@ namespace SP {
 		// Set Output
 		renderOutputData.resize(renderFarm.size());
 		for (size_t i = 0; i < renderFarm.size(); ++i) {
-			renderOutputData[i] = renderFarm[i]->createOutput(mConfigRef.getScreenWidth(), mConfigRef.getScreenHeight());
+			renderOutputData[i] = std::make_shared<RenderOutput>(mConfigRef.getScreenWidth(), mConfigRef.getScreenHeight());
 			renderFarm[i]->setOutput(renderOutputData[i]);
 		}
 
@@ -371,9 +405,15 @@ namespace SP {
 			for (size_t j = 0; j < mConfigRef.getNumberOfSubLFImages(); ++j) {
 
 				// KAOCC: TODO: add camera config
-				auto* cameraPtr = new PerspectiveCamera(camDefault.mCameraPos + RadeonRays::float3(0, kStep * j, -kStep * i),
-														camDefault.mCameraAt + RadeonRays::float3(0, kStep * j, -kStep * i), camDefault.mCameraUp);
-				sceneDataPtr->attachCamera(cameraPtr);
+
+				// Following is for camera look toward +X
+				//auto* cameraPtr = new PerspectiveCamera(camDefault.mCameraPos + RadeonRays::float3(0, kStep * j, -kStep * i),
+				//										camDefault.mCameraAt + RadeonRays::float3(0, kStep * j, -kStep * i), camDefault.mCameraUp);
+
+				// Following is for camera look toward -Z
+				auto cameraPtr =  std::make_unique<PerspectiveCamera>(camDefault.mCameraPos + RadeonRays::float3(-kStep * i, kStep * j,0),
+					camDefault.mCameraAt + RadeonRays::float3(-kStep * i, kStep * j, 0), camDefault.mCameraUp);
+
 
 				// Adjust sensor size based on current aspect ratio
 				float aspect = (float) mConfigRef.getScreenWidth() / mConfigRef.getScreenHeight();
@@ -391,17 +431,15 @@ namespace SP {
 				std::cout << "F-Stop: " << 1.f / (cameraPtr->getAperture() * 10.f) << "\n";
 				std::cout << "Sensor size: " << g_camera_sensor_size.x * 1000.f << "x" << g_camera_sensor_size.y * 1000.f << "mm\n";
 
+
+				sceneDataPtr->attachCamera(std::move(cameraPtr));
+
 				// test !
-				sceneDataPtr->attachAutoreleaseObject(cameraPtr);
+				//sceneDataPtr->attachAutoreleaseObject(cameraPtr);
 
 
 				// Link to RenderOutput
-
-				//fieldRef.setSubLightFieldRadianceWithIndex(i, j, dynamic_cast<RenderOutput*>(renderOutputData[mConfigRef.getNumberOfSubLFImages() * i + j]));
-
-				fieldRef[i][j].setRadiancePtr(std::dynamic_pointer_cast<RenderOutput>(renderOutputData[mConfigRef.getNumberOfSubLFImages() * i + j]));
-
-
+				fieldRef[i][j].setRadiancePtr(renderOutputData[mConfigRef.getNumberOfSubLFImages() * i + j]);
 
 				// load radiamce map if the flag is set
 
@@ -416,7 +454,6 @@ namespace SP {
 
 		mTracker->compileSceneTest(*sceneDataPtr);
 		//mEnginePtr->compileScene(*sceneDataPtr);
-
 	}
 
 	void RenderingManager::loadRadianceOutput(int subLFIdx, int subImgIdx) {
@@ -425,13 +462,13 @@ namespace SP {
 
 		unsigned outputId = mConfigRef.getNumberOfSubLFImages() * subLFIdx + subImgIdx;
 
-		std::shared_ptr<RenderOutput> renderOut = std::dynamic_pointer_cast<RenderOutput>(renderOutputData[outputId]);
+		std::shared_ptr<RenderOutput> renderOut = renderOutputData[outputId];
 
 		if (renderOut == nullptr) {
 			throw std::runtime_error("RenderOutput is null");
 		}
 
-		auto& outputData = renderOut->getInternalStorage();
+		auto& outputData = *renderOut;
 
 		OIIO_NAMESPACE_USING
 
@@ -469,7 +506,7 @@ namespace SP {
 		const int tmpSize = totalPixelNum * channels;
 
 		// check this !
-		outputData.resize(xRes * yRes);
+		outputData.resize(xRes, yRes);
 
 
 		// create a tmp buffer 
@@ -480,7 +517,7 @@ namespace SP {
 
 
 		//dump the tmp data to output
-		for (int i = 0; i < outputData.size(); ++i) {
+		for (int i = 0; i < outputData.getSize(); ++i) {
 			outputData[i].x = tmpBuff[i * channels];
 			outputData[i].y = tmpBuff[i * channels + 1];
 			outputData[i].z = tmpBuff[i * channels + 2];
@@ -548,7 +585,10 @@ namespace SP {
 
 			// tmp, need lock , need interrupt-based method
 			if (mConfigRef.isSceneChanged(farmIdx)) {
-				renderFarm[farmIdx]->clear(0.f, *(renderOutputData[farmIdx]));
+				//renderFarm[farmIdx]->clear(0.f, *(renderOutputData[farmIdx]));
+
+				renderOutputData[farmIdx]->resetToDefault();
+
 				mConfigRef.setSceneChangedFlag(farmIdx, false);
 			}
 

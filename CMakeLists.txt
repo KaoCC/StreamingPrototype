@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.3)
+cmake_minimum_required(VERSION 3.9)
 
 #set(CMAKE_BUILD_TYPE Release)
 
@@ -55,7 +55,7 @@ if (WIN32)
     message(STATUS "Boost_LIB_DIAGNOSTIC_DEFINITIONS ${Boost_LIB_DIAGNOSTIC_DEFINITIONS} ")
 endif ()
 
-find_package(Boost REQUIRED COMPONENTS system thread)
+find_package(Boost 1.63 REQUIRED COMPONENTS system thread filesystem)
 
 # x264
 find_package(x264 REQUIRED)

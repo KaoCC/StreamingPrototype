@@ -115,32 +115,52 @@ namespace SP {
 
 	}
 
-	RadeonRays::float3& DifferentialGeometry::getPosition() {
-		return pos;
-	}
+	//RadeonRays::float3& DifferentialGeometry::getPosition() {
+	//	return pos;
+	//}
 
 	const RadeonRays::float3& DifferentialGeometry::getPosition() const {
 		return pos;
 	}
 
-	RadeonRays::float3& DifferentialGeometry::getNormal() {
+	const RadeonRays::float3& DifferentialGeometry::getNormal() const {
 		return normal;
 	}
 
-	RadeonRays::float3& DifferentialGeometry::getNormalGeo() {
+	void DifferentialGeometry::setNormal(const RadeonRays::float3& n) {
+		normal = n;
+	}
+
+	const RadeonRays::float3& DifferentialGeometry::getNormalGeo() const {
 		return normalGeo;
 	}
 
-	RadeonRays::float2& DifferentialGeometry::getUV() {
+	void DifferentialGeometry::setNormalGeo(const RadeonRays::float3 & ng) {
+		normalGeo = ng;
+	}
+
+	const RadeonRays::float2& DifferentialGeometry::getUV() const{
 		return uv;
 	}
 
-	RadeonRays::float3& DifferentialGeometry::getDpDu() {
+	void DifferentialGeometry::setUV(const RadeonRays::float2 & newVal) {
+		uv = newVal;
+	}
+
+	const RadeonRays::float3& DifferentialGeometry::getDpDu() const {
 		return dpdu;
 	}
 
-	RadeonRays::float3& DifferentialGeometry::getDpDv() {
+	void DifferentialGeometry::setDpDu(const RadeonRays::float3 & newVal) {
+		dpdu = newVal;
+	}
+
+	const RadeonRays::float3& DifferentialGeometry::getDpDv() const {
 		return dpdv;
+	}
+
+	void DifferentialGeometry::setDpDv(const RadeonRays::float3 & newVal) {
+		dpdv = newVal;
 	}
 
 	float DifferentialGeometry::getArea() const {

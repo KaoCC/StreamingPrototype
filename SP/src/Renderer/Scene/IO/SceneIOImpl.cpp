@@ -81,7 +81,7 @@ namespace SP {
 		for (auto &objShape : objShapes) {
 
 			// KAOCC: design issue: unique_ptr or autorelease ?
-			Mesh* mesh = new Mesh();
+			auto mesh = std::make_unique<Mesh>();
 
 			// Set vertex and index data
 
@@ -113,11 +113,10 @@ namespace SP {
 			size_t idx = objShape.mesh.material_ids[0];
 			mesh->setMaterial(materials[idx]);
 
-			// Attach to the scene
-			scene->attachShape(mesh);
+
 
 			// Keep track of the object
-			scene->attachAutoreleaseObject(mesh);
+			//scene->attachAutoreleaseObject(mesh);
 
 			// If the mesh has emissive material, add AreaLight for it
 			if (emissives.find(materials[idx]) != emissives.cend()) {
@@ -127,12 +126,15 @@ namespace SP {
 
 					// yet to be done
 
-					AreaLight* light = new AreaLight(mesh, k);
-					scene->attachLight(light);
-					scene->attachAutoreleaseObject(light);
+					//auto light = std::make_unique<AreaLight>(mesh, k);
+					scene->attachLight(std::make_unique<AreaLight>(mesh.get(), k));
+					//scene->attachAutoreleaseObject(light);
 				}
 
 			}
+
+			// Attach to the scene
+			scene->attachShape(std::move(mesh));
 
 		}
 
@@ -159,7 +161,8 @@ namespace SP {
 			if (!mat.diffuse_texname.empty()) {
 				Texture* texture{ imageIO.loadImage(basepath + "/" + mat.diffuse_texname) };
 				material->setInputValue("albedo", texture);
-				scene.attachAutoreleaseObject(texture);
+				//scene.attachAutoreleaseObject(texture);
+
 
 			} else {
 
@@ -196,8 +199,8 @@ namespace SP {
 				material->setInputValue("base_material", diffusePart);
 				material->setInputValue("top_material", specularPart);
 
-				scene.attachAutoreleaseObject(diffusePart);
-				scene.attachAutoreleaseObject(specularPart);
+				//scene.attachAutoreleaseObject(diffusePart);
+				//scene.attachAutoreleaseObject(specularPart);
 				
 			} else {
 				// Otherwise create lambert
@@ -207,7 +210,7 @@ namespace SP {
 				if (!mat.diffuse_texname.empty()) {
 					Texture* texture{ imageIO.loadImage(basepath + "/" + mat.diffuse_texname) };
 					diffuse->setInputValue("albedo", texture);
-					scene.attachAutoreleaseObject(texture);
+					//scene.attachAutoreleaseObject(texture);
 				} else {
 					diffuse->setInputValue("albedo", RadeonRays::float3(mat.diffuse[0], mat.diffuse[1], mat.diffuse[2]));
 				}
@@ -217,7 +220,7 @@ namespace SP {
 				if (!mat.specular_highlight_texname.empty()) {
 					Texture* texture{ imageIO.loadImage(basepath + "/" + mat.specular_highlight_texname) };
 					diffuse->setInputValue("normal", texture);
-					scene.attachAutoreleaseObject(texture);
+					//scene.attachAutoreleaseObject(texture);
 				}
 
 				material = diffuse;
@@ -236,7 +239,7 @@ namespace SP {
 		material->setTwoSided(true);
 
 		// add to pool
-		scene.attachAutoreleaseObject(material);
+		//scene.attachAutoreleaseObject(material);
 
 		return material;
 	}

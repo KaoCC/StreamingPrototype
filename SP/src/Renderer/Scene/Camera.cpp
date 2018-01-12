@@ -10,6 +10,8 @@ namespace SP {
 		upVec = cross(rightVec, forwardVec);
 	}
 
+	PerspectiveCamera::~PerspectiveCamera() = default;
+
 	void PerspectiveCamera::setFocusDistance(float distance) {
 		focusDistance = distance;
 		setDirty(true);
@@ -74,5 +76,7 @@ namespace SP {
 	float PerspectiveCamera::getAspectRatio() const {
 		return aspect;
 	}
+
+	Camera::~Camera() = default;
 
 }

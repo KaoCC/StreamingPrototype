@@ -74,6 +74,8 @@ add_executable(
     ./src/Renderer/Sampler.hpp
     ./src/Renderer/SceneTracker.hpp
     ./src/Renderer/SimpleRenderer.hpp
+    ./src/Renderer/DefaultList.hpp
+    ./src/Renderer/DefaultList.cpp
 
     ./src/Renderer/Scene/IO/tiny_obj_loader.h
 

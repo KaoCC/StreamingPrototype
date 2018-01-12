@@ -33,6 +33,21 @@ namespace SP {
 		return indices.data();
 	}
 
+	void Mesh::setVertices(const std::vector<RadeonRays::float3>& inputVertices) {
+		vertices = inputVertices;
+
+		setDirty(true);
+	}
+
+	void Mesh::setVertices(const RadeonRays::float3 * local_vertices, std::size_t num_vertices) {
+
+		vertices.resize(num_vertices);
+
+		std::copy(local_vertices, local_vertices + num_vertices, vertices.data() );
+
+		setDirty(true);
+	}
+
 	void Mesh::setVertices(float const * local_vertices, std::size_t num_vertices) {
 
 		// Resize internal array and copy data
@@ -110,6 +125,16 @@ namespace SP {
 
 	RadeonRays::float2 const * Mesh::getUVs() const {
 		return uvs.data();
+	}
+
+
+	// need to check other data such as normals ... ?
+	void Mesh::transform(const RadeonRays::matrix & transMat) {
+
+		for (auto i = 0; i < getNumVertices(); ++i) {
+			vertices[i] = transMat * vertices[i];
+		}
+
 	}
 
 }

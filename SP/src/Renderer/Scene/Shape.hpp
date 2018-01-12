@@ -5,6 +5,7 @@
 
 #include "math/float3.h"
 #include "math/float2.h"
+#include "math/matrix.h"
 
 //#include <memory>
 
@@ -50,6 +51,7 @@ namespace SP {
 		std::uint32_t const* getIndices() const;
 
 		// Set and get vertex array
+		void setVertices(const std::vector<RadeonRays::float3>& inputVertices);
 		void setVertices(const RadeonRays::float3* local_vertices, std::size_t num_vertices);
 		void setVertices(float const* vertices, std::size_t num_vertices);
 		std::size_t getNumVertices() const;
@@ -66,6 +68,9 @@ namespace SP {
 		void setUVs(float const* uvs, std::size_t num_uvs);
 		std::size_t getNumUVs() const;
 		RadeonRays::float2 const* getUVs() const;
+
+
+		void transform(const RadeonRays::matrix& transMat);
 
 		// disallow copying
 		Mesh(Mesh const&) = delete;

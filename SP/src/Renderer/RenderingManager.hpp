@@ -24,6 +24,8 @@
 
 #include "ApiEngine.hpp"
 
+#include "DefaultList.hpp"
+
 namespace SP {
 
 
@@ -50,7 +52,7 @@ namespace SP {
 
 
 		// KAOCC: tmp testing
-		void changeSceneWithCoordinates(float worldX, float worldY, float worldZ);
+		void changeSceneWithCoordinates(float worldX, float worldY, float worldZ, DefaultShapeType type);
 
 		// testing 
 		const PerspectiveCamera& getPerspectiveCamera(size_t index) const;
@@ -58,6 +60,11 @@ namespace SP {
 
 		// tmp
 		//void compileScene();
+
+		// tmp, Default list
+
+		void createDefaultList();
+		const std::vector<DefaultShapeType>& getDefaultList() const;
 
 
 	private:
@@ -110,7 +117,7 @@ namespace SP {
 		const std::string defaultModelName = "conf_room_6.objm";
 
 		//tmp
-		const float kStep = 0.025f * 12;
+		const float kStep = 0.025f * 6;
 
 		// thread safe queue
 		const int kPauseTime = 100;
@@ -135,7 +142,7 @@ namespace SP {
 		//Encoder* encoder;
 		//ImageConfig::ImageBuffer accImageBuffer; // test
 
-		std::vector<std::shared_ptr<Output>> renderOutputData;
+		std::vector<std::shared_ptr<RenderOutput>> renderOutputData;
 
 		std::unique_ptr<ApiEngine> mEnginePtr;
 		std::unique_ptr<SceneTracker> mTracker;
@@ -156,6 +163,10 @@ namespace SP {
 
 		bool mPauseFlag = false;
 
+
+
+		// default list
+		std::vector<DefaultShapeType> mDefaultList;
 
 	};
 
