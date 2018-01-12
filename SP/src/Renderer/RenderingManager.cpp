@@ -23,9 +23,9 @@ namespace SP {
 
 
 	// for testing
-	static SP::Mesh* createTransformedMesh(float worldX, float worldY, float worldZ, DefaultShapeType type) {
+	static std::unique_ptr<Mesh> createTransformedMesh(float worldX, float worldY, float worldZ, DefaultShapeType type) {
 
-		auto* defaultMesh = createDefaultShape(type);
+		auto defaultMesh = createDefaultShape(type);
 
 		// Transform !!!
 		const RadeonRays::matrix& transMat = RadeonRays::translation({worldX, worldY, worldZ});
@@ -322,10 +322,10 @@ namespace SP {
 
 		//sceneDataPtr->attachShape(createDefaultMesh(worldX, worldY, worldZ));
 
-		auto* mesh = createTransformedMesh(worldX, worldY, worldZ, type);
+		//auto* mesh = createTransformedMesh(worldX, worldY, worldZ, type);
 
-		sceneDataPtr->attachShape(mesh);
-		sceneDataPtr->attachAutoreleaseObject(mesh);		// consider using a smart pointer?
+		sceneDataPtr->attachShape(createTransformedMesh(worldX, worldY, worldZ, type));
+		//sceneDataPtr->attachAutoreleaseObject(mesh);		// consider using a smart pointer?
 
 		//mEnginePtr->compileScene(*sceneDataPtr);
 
@@ -411,9 +411,9 @@ namespace SP {
 				//										camDefault.mCameraAt + RadeonRays::float3(0, kStep * j, -kStep * i), camDefault.mCameraUp);
 
 				// Following is for camera look toward -Z
-				auto* cameraPtr = new PerspectiveCamera(camDefault.mCameraPos + RadeonRays::float3(-kStep * i, kStep * j,0),
+				auto cameraPtr =  std::make_unique<PerspectiveCamera>(camDefault.mCameraPos + RadeonRays::float3(-kStep * i, kStep * j,0),
 					camDefault.mCameraAt + RadeonRays::float3(-kStep * i, kStep * j, 0), camDefault.mCameraUp);
-				sceneDataPtr->attachCamera(cameraPtr);
+
 
 				// Adjust sensor size based on current aspect ratio
 				float aspect = (float) mConfigRef.getScreenWidth() / mConfigRef.getScreenHeight();
@@ -431,8 +431,11 @@ namespace SP {
 				std::cout << "F-Stop: " << 1.f / (cameraPtr->getAperture() * 10.f) << "\n";
 				std::cout << "Sensor size: " << g_camera_sensor_size.x * 1000.f << "x" << g_camera_sensor_size.y * 1000.f << "mm\n";
 
+
+				sceneDataPtr->attachCamera(std::move(cameraPtr));
+
 				// test !
-				sceneDataPtr->attachAutoreleaseObject(cameraPtr);
+				//sceneDataPtr->attachAutoreleaseObject(cameraPtr);
 
 
 				// Link to RenderOutput

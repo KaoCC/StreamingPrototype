@@ -8,6 +8,7 @@
 
 #include <iostream>
 
+
 SP::Triangle::Triangle() {
 
 	RadeonRays::float4 vertices[] {
@@ -111,20 +112,20 @@ SP::Square::Square() {
 
 
 
-SP::Mesh* SP::createDefaultShape(DefaultShapeType type) {
+std::unique_ptr<SP::Mesh> SP::createDefaultShape(DefaultShapeType type) {
 
 	switch (type) {
 
 	case DefaultShapeType::kTriangle:
-		return new Triangle();
+		return std::make_unique<Triangle>();
 		break;
 	case DefaultShapeType::kSquare:
-		return new Square();
+		return std::make_unique<Square>();
 		break;
 
 	default:
 		// Error ?
-		return new Mesh();
+		return std::make_unique<Mesh>();
 		break;
 	}
 }

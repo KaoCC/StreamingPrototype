@@ -12,7 +12,7 @@ namespace SP {
 	class Camera : public SceneObject {
 	public:
 		Camera() = default;
-		virtual ~Camera() = default;
+		virtual ~Camera();
 	};
 
 
@@ -20,6 +20,7 @@ namespace SP {
 	public:
 		// camera position, camera look at, up vector
 		PerspectiveCamera(RadeonRays::float3 const& eye, RadeonRays::float3 const& at, RadeonRays::float3 const& up);
+		virtual ~PerspectiveCamera();
 
 		// Set camera focus distance in meters,
 		// this is essentially a distance from the lens to the focal plane.

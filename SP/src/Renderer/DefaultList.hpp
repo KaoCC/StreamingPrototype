@@ -33,7 +33,7 @@ namespace SP {
 	};
 
 
-	Mesh* createDefaultShape(DefaultShapeType type);
+	std::unique_ptr<Mesh> createDefaultShape(DefaultShapeType type);
 
 }
 
