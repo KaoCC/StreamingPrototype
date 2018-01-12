@@ -434,7 +434,7 @@ namespace SP {
 							StreamingFormat::Editing* editPtr{ new StreamingFormat::Editing };
 
 							editPtr->set_op(StreamingFormat::EditOperation::ADD_MODEL);
-							editPtr->set_model_id(editingMsg.model_id() + 10); // TODO: change model id here!
+							editPtr->set_model_id(editingMsg.model_id() + 10); // TODO: [Editing] change model id here!
 
 							controlPtr->set_allocated_editingmsg(editPtr);
 
