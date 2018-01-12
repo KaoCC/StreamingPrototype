@@ -96,8 +96,8 @@ namespace SP {
 		void reset();
 
 
-		std::uint32_t getWidth() const;
-		std::uint32_t getHeight() const;
+		std::size_t getWidth() const;
+		std::size_t getHeight() const;
 
 		// ...
 

@@ -18,7 +18,7 @@ namespace SP {
 		virtual void reset() = 0;
 
 		virtual bool hasNext() const = 0;
-		virtual const void* nextItem() = 0;
+		virtual const SceneObject* nextItem() = 0;
 
 		// Disable copy and 
 		Iterator(const Iterator&) = delete;
@@ -43,10 +43,10 @@ namespace SP {
 			return current != end;
 		}
 
-		virtual const void * nextItem() override {
+		virtual const SceneObject* nextItem() override {
 
 			if (hasNext()) {
-				return *(current++);
+				return &(**(current++));		// check this one
 			}
 
 			throw std::runtime_error("Iterator: No more NEXT");

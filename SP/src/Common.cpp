@@ -223,8 +223,8 @@ namespace SP {
 
 		std::cerr << "FileName: " << fileName << '\n';
 
-		const std::uint32_t xres = getWidth();
-		const std::uint32_t yres = getHeight();
+		const auto xres = getWidth();
+		const auto yres = getHeight();
 		const int channels = 3; // RGB
 
 		ImageOutput* imgOut{ ImageOutput::create(fileName) };
@@ -233,8 +233,8 @@ namespace SP {
 			throw std::runtime_error("Failed to create image: " + fileName);
 		}
 
-		const int totalNum = xres * yres;
-		const int tmpSz = totalNum * channels;
+		const auto totalNum = xres * yres;
+		const std::size_t tmpSz = totalNum * channels;
 
 		//tmp, may need lock
 		const auto& rr = radiancePtr->copyData();
@@ -267,7 +267,7 @@ namespace SP {
 		}
 	}
 
-	std::uint32_t ImageConfig::getWidth() const {
+	std::size_t ImageConfig::getWidth() const {
 		if (radiancePtr != nullptr) {
 			return radiancePtr->getWidth();
 		}
@@ -276,7 +276,7 @@ namespace SP {
 
     }
 
-	std::uint32_t ImageConfig::getHeight() const {
+	std::size_t ImageConfig::getHeight() const {
 		if (radiancePtr != nullptr) {
 			return radiancePtr->getHeight();
 		}

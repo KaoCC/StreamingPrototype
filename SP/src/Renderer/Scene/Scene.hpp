@@ -41,8 +41,8 @@ namespace SP {
 		
 
 		// Add or remove lights
-		void attachLight(Light const* light);
-		void detachLight(Light const* light);
+		void attachLight(std::unique_ptr<Light const> light);
+		void detachLight(std::unique_ptr<Light const> light);
 
 		// Get the number of lights in the scene
 		std::size_t getNumLights() const;
@@ -57,8 +57,8 @@ namespace SP {
 		
 
 		// Add or remove shapes
-		void attachShape(Shape const* shape);
-		void detachShape(Shape const* shape);
+		void attachShape(std::unique_ptr<Shape const> shape);
+		void detachShape(std::unique_ptr<Shape const> shape);
 
 		// Get number of shapes in the scene
 		std::size_t getNumShapes() const;
@@ -69,7 +69,7 @@ namespace SP {
 		const Shape& getShape(size_t shapeIdx) const;
 
 		// Set and get camera
-		void attachCamera(Camera const* camera);
+		void attachCamera(std::unique_ptr<Camera const> camera);
 		const Camera& getCamera(size_t camIdx) const;
 
 		// Get state change since last clear
@@ -83,8 +83,8 @@ namespace SP {
 		bool isValid() const;
 
 		// Autorelase objects are deleted when scene is destroyed
-		void attachAutoreleaseObject(SceneObject const* object);
-		void detachAutoreleaseObject(SceneObject const* object);
+		//void attachAutoreleaseObject(SceneObject const* object);
+		//void detachAutoreleaseObject(SceneObject const* object);
 
 		// Forbidden stuff
 		Scene(Scene const&) = delete;
