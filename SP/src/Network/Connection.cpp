@@ -94,6 +94,17 @@ namespace SP {
 		} else {
 			std::cerr << "[ Write Error ] Error Code: " << error << std::endl;
 			boost::system::error_code ignored_ec;
+
+			// KAOCC: Error here: the case in multi connection ?
+			// change back to Path Tracing if last state is editing (not kNormal)
+			if (mCfgManagerRef.getCurrentEditingState() != ConfigManager::EditingState::kNormal) {
+
+				mCfgManagerRef.enterState(ConfigManager::State::kPathTracing);
+				mCfgManagerRef.enterEditingState(ConfigManager::EditingState::kNormal);
+
+			}
+
+
 			//streamingSocket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ignored_ec);
 			//streamingSocket.close();
 		}
@@ -156,6 +167,9 @@ namespace SP {
 			responsePtr->set_allocated_defaultposmsg(defPosPtr);
 
 			responseVector.push_back(responsePtr);
+
+			mCfgManagerRef.enterEditingState(ConfigManager::EditingState::kNormal);
+
 
 			break;
 
@@ -270,7 +284,7 @@ namespace SP {
 				}
 
 
-				for (size_t k = subLfIndexOffset; k < subLFSz; k+= subLfIndexStep) {
+				for (auto k = subLfIndexOffset; k < subLFSz; k+= subLfIndexStep) {
 
 					// need to optimize for copying !
 					//ImageConfig imageData{ cfgManager.getImage() };
@@ -365,42 +379,93 @@ namespace SP {
 
 			if (msgPtr->controlmsg().has_editingmsg()) {
 				const auto& editingMsg = msgPtr->controlmsg().editingmsg();
-				// op is enum
-				// StreamingFormat::EditOperation.START(0)/FINISH(1)/UPDATE(2)
-
 
 				
 				// reset test
 				switch (editingMsg.op()) {
 				case StreamingFormat::EditOperation::START:
 					std::cerr << "Editing START:" << std::endl;
-					mCfgManagerRef.enterState(ConfigManager::State::kSimple);
+
 					writeModelIdList();
+
+					mCfgManagerRef.enterState(ConfigManager::State::kSimple);
+					mCfgManagerRef.enterEditingState(ConfigManager::EditingState::kWaitForOperation);
 					break;
 				case StreamingFormat::EditOperation::FINISH:
 					std::cerr << "Editing FINISH:" << std::endl;
 					mCfgManagerRef.enterState(ConfigManager::State::kPathTracing);
+					mCfgManagerRef.enterEditingState(ConfigManager::EditingState::kNormal);
 					break;
-				case StreamingFormat::EditOperation::SET_MODEL_ID:
-					std::cerr << "Set model ID" << editingMsg.model_id() <<std::endl;
-					
-					if (editingMsg.model_id() < 0) {
-						std::cerr << "model id < 0 ... Error ?" << std::endl;
-					} else {
+				case StreamingFormat::EditOperation::SET_MODEL:					std::cerr << "Set moving model ID" << editingMsg.model_id() << std::endl;
 
-						// check this ... lock or something ?
-						const auto& defaultList = mCfgManagerRef.getDefaultList();
-						mCfgManagerRef.setCurrnetDefaultShape(defaultList[editingMsg.model_id()]);
-
-					}			
-
+					switch (mCfgManagerRef.getCurrentEditingState()) {
+					case ConfigManager::EditingState::kWaitForOperation:
+						if (editingMsg.model_id() < 0) {
+							std::cerr << "model id < 0 ... Error ?" << std::endl;
+						}
+						else {
+							mCfgManagerRef.enterEditingState(ConfigManager::EditingState::kMoving);
+							// TODO: [Editing] Server should set the model to be moved
+						}
+						break;
+					case ConfigManager::EditingState::kMoving:
+						if (editingMsg.model_id() < 0) {
+							// cancel movinng
+							mCfgManagerRef.enterEditingState(ConfigManager::EditingState::kWaitForOperation);
+						}
+						else {
+							// change model
+							// TODO: [Editing] Server should set the model to be moved
+						}
+						break;
+					default:
+						std::cerr << "SET_MODEL can only be used in kWaitForOperation or kMoving state, current = " << (int)mCfgManagerRef.getCurrentEditingState() << std::endl;
+						break;
+					}
 
 					break;
+
+				case StreamingFormat::EditOperation::ADD_MODEL: {
+					if (mCfgManagerRef.getCurrentEditingState() == ConfigManager::EditingState::kWaitForOperation) {
+						std::cerr << "Adding new model ID" << editingMsg.model_id() << " to screen X: " << editingMsg.screen_x() << ", screen Y: " << editingMsg.screen_y() << std::endl;
+						if (editingMsg.model_id() < 0) {
+							std::cerr << "model id < 0 ... Error ?" << std::endl;
+						}
+						else {
+							// check this ... lock or something ?
+							const auto& defaultList = mCfgManagerRef.getDefaultList();
+							// set new model and set its possition
+							mCfgManagerRef.setCurrnetDefaultShape(defaultList[editingMsg.model_id()]);
+							// TODO : enable when done     
+							//mCfgManagerRef.changeSceneWithCoordinatesCV(editingMsg.screen_x(), editingMsg.screen_y());
+							mCfgManagerRef.changeSceneWithCoordinates(editingMsg.screen_x(), editingMsg.screen_y());;
+
+							// TODO: [Editing] return the new model ID after change scene
+							Packet::MessagePointer responsePtr{ new StreamingFormat::StreamingMessage };
+							StreamingFormat::Control* controlPtr{ new StreamingFormat::Control };
+							StreamingFormat::Editing* editPtr{ new StreamingFormat::Editing };
+							editPtr->set_op(StreamingFormat::EditOperation::ADD_MODEL);
+							editPtr->set_model_id(editingMsg.model_id() + 10); // TODO: [Editing] change model id here!
+							controlPtr->set_allocated_editingmsg(editPtr);
+							responsePtr->set_type(StreamingFormat::MessageType::MsgControl);
+							responsePtr->set_allocated_controlmsg(controlPtr);
+							writeResponse(responsePtr);
+						}
+					}
+					else {
+						std::cerr << "ADD_MODEL can only be used in kWaitForOperation state, current = " << (int)mCfgManagerRef.getCurrentEditingState() << std::endl;
+					}
+					break;
+				}
+
 				case StreamingFormat::EditOperation::UPDATE:
-					std::cerr << "Editing UPDATE:" << editingMsg.op() << ", screen X: " << editingMsg.screen_x() << ", screen Y: " << editingMsg.screen_y() << std::endl;
-					// TODO : enable when done 		
-					//mCfgManagerRef.changeSceneWithCoordinatesCV(editingMsg.screen_x(), editingMsg.screen_y());
-					mCfgManagerRef.changeSceneWithCoordinates(editingMsg.screen_x(), editingMsg.screen_y());
+					if (mCfgManagerRef.getCurrentEditingState() == ConfigManager::EditingState::kMoving) {
+						std::cerr << "Moving current model to screen X: " << editingMsg.screen_x() << ", screen Y: " << editingMsg.screen_y() << std::endl;
+						// TODO: [Editing] change the position of current moving model
+					}
+					else {
+						std::cerr << "UPDATE can only be used in kMoving state, current = " << (int)mCfgManagerRef.getCurrentEditingState() << std::endl;
+					}
 					break;
 				}
 			}
@@ -414,7 +479,6 @@ namespace SP {
 			// Throw ?
 			break;
 		}
-
 
 		return responseVector;
 	}
@@ -431,12 +495,18 @@ namespace SP {
 
 		mCfgManagerRef.createDefaultList();
 		const auto& defaultList = mCfgManagerRef.getDefaultList();
+
+		std::cerr << "Default list size:" << defaultList.size() << std::endl;
 		
 		// check the value !!!
-		for (int i = 0;i < defaultList.size(); i++) {
-			editPtr->add_model_ids(static_cast<int>(defaultList[i]));		// cast ?
+		for (auto i = 0;i < defaultList.size(); ++i) {
+			editPtr->add_add_model_ids(static_cast<int>(defaultList[i]));    // cast ?
 		}
 		
+
+		// TODO: [Editing] add current model id for moving
+		for (auto i = 0; i < defaultList.size(); ++i) {
+			editPtr->add_current_model_ids(static_cast<int>(defaultList[i]));		}
 
 		controlPtr->set_allocated_editingmsg(editPtr);
 
