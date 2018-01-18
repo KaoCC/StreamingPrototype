@@ -417,19 +417,19 @@ namespace SP {
 
 				// Adjust sensor size based on current aspect ratio
 				float aspect = (float) mConfigRef.getScreenWidth() / mConfigRef.getScreenHeight();
-				g_camera_sensor_size.y = g_camera_sensor_size.x / aspect;
+				cameraSensorSize.y = cameraSensorSize.x / aspect;
 
-				cameraPtr->setSensorSize(g_camera_sensor_size);
-				cameraPtr->setDepthRange(g_camera_zcap);
-				cameraPtr->setFocalLength(g_camera_focal_length);
-				cameraPtr->setFocusDistance(g_camera_focus_distance);
-				cameraPtr->setAperture(g_camera_aperture);
+				cameraPtr->setSensorSize(cameraSensorSize);
+				cameraPtr->setDepthRange(cameraZcap);
+				cameraPtr->setFocalLength(cameraFocalLength);
+				cameraPtr->setFocusDistance(cameraFocusDistance);
+				cameraPtr->setAperture(cameraAperture);
 
 				std::cout << "Camera type: " << (cameraPtr->getAperture() > 0.f ? "Physical" : "Pinhole") << "\n";            // This might cause problems
 				std::cout << "Lens focal length: " << cameraPtr->getFocalLength() * 1000.f << "mm\n";
 				std::cout << "Lens focus distance: " << cameraPtr->getFocusDistance() << "m\n";
 				std::cout << "F-Stop: " << 1.f / (cameraPtr->getAperture() * 10.f) << "\n";
-				std::cout << "Sensor size: " << g_camera_sensor_size.x * 1000.f << "x" << g_camera_sensor_size.y * 1000.f << "mm\n";
+				std::cout << "Sensor size: " << cameraSensorSize.x * 1000.f << "x" << cameraSensorSize.y * 1000.f << "mm\n";
 
 
 				sceneDataPtr->attachCamera(std::move(cameraPtr));
