@@ -347,16 +347,16 @@ namespace SP {
 
 	void RenderingManager::createDefaultList() {
 
-		if (mDefaultList.empty()) {
+		if (defaultShapeList.empty()) {
 			// add support type here
-			mDefaultList.push_back(DefaultShapeType::kTriangle);
-			mDefaultList.push_back(DefaultShapeType::kSquare);
+			defaultShapeList.push_back(DefaultShapeType::kTriangle);
+			defaultShapeList.push_back(DefaultShapeType::kSquare);
 		}
 
 	}
 
 	const std::vector<DefaultShapeType>& RenderingManager::getDefaultList() const {
-		return mDefaultList;
+		return defaultShapeList;
 	}
 
 

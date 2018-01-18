@@ -166,7 +166,7 @@ namespace SP {
 
 
 		// default list
-		std::vector<DefaultShapeType> mDefaultList;
+		std::vector<DefaultShapeType> defaultShapeList;
 
 	};
 
