@@ -7,6 +7,12 @@
 namespace SP {
 
 
+
+	// helper functions for command handling
+	// Yet to be done
+
+
+
 	Connection::ConnectionPointer Connection::create(boost::asio::io_service& ios, ConfigManager& configRef) {
 		return ConnectionPointer(new Connection(ios, configRef));
 	}
@@ -474,12 +480,18 @@ namespace SP {
 							Packet::MessagePointer responsePtr{ new StreamingFormat::StreamingMessage };
 
 							StreamingFormat::Control* controlPtr{ new StreamingFormat::Control };
-
 							StreamingFormat::Editing* editPtr{ new StreamingFormat::Editing };
 
-
 							editPtr->set_op(StreamingFormat::EditOperation::ADD_MODEL);
-							editPtr->set_model_id(editingMsg.model_id() + 10); // TODO: [Editing] change model id here!
+							//editPtr->set_model_id(editingMsg.model_id() + 10); // TODO: [Editing] change model id here!
+
+
+							auto newModelPtr = editPtr->add_current_model_infos();
+
+							// TODO: [Editing] change model id here! ID must not be duplicated with any existing models
+
+							newModelPtr->set_model_id(editingMsg.model_id() + 10); // THIS IS A PLACEHOLDER!
+							newModelPtr->set_model_name(std::string("Added Model ") + std::to_string(editingMsg.model_id()));
 
 							controlPtr->set_allocated_editingmsg(editPtr);
 
@@ -543,17 +555,27 @@ namespace SP {
 
 		std::cerr << "Default list size:" << defaultList.size() << std::endl;
 
-		
-		// check the value !!!
-		for (auto i = 0;i < defaultList.size(); ++i) {
-			editPtr->add_add_model_ids(static_cast<int>(defaultList[i]));    // cast ?
+	
+		// TODO: [Editing] fill the ModelInfo instead of ID only
+		for (auto i = 0; i < defaultList.size(); ++i) {
+			//editPtr->add_add_model_ids(static_cast<int>(defaultList[i]));    // cast ?
+
+			StreamingFormat::ModelInfo* modelPtr = editPtr->add_add_model_infos();			int modelId = static_cast<int>(defaultList[i]); // cast?
+			modelPtr->set_model_id(modelId);
+			modelPtr->set_model_name(std::string("New Model ") + std::to_string(modelId));
 		}
 		
 
 		// TODO: [Editing] add current model id for moving
+		// TODO: [Editing] fill the ModelInfo instead of ID only
 
 		for (auto i = 0; i < defaultList.size(); ++i) {
-			editPtr->add_current_model_ids(static_cast<int>(defaultList[i]));
+			//editPtr->add_current_model_ids(static_cast<int>(defaultList[i]));
+
+			StreamingFormat::ModelInfo* modelPtr = editPtr->add_current_model_infos();
+			int modelId = static_cast<int>(defaultList[i]); // cast?
+			modelPtr->set_model_id(modelId);
+			modelPtr->set_model_name(std::string("Current Model ") + std::to_string(modelId));
 		}
 
 
