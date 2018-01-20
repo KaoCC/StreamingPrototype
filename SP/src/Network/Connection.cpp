@@ -18,11 +18,11 @@ namespace SP {
 	}
 
 	Connection::Connection(boost::asio::io_service& ios, ConfigManager& configRef) :
-			streamingSocket(ios),
-			packet(Packet::MessagePointer(new StreamingFormat::StreamingMessage())),
-			mCfgManagerRef(configRef),
-			responsePacket(Packet::MessagePointer(new StreamingFormat::StreamingMessage())),
-			mEncoder(CreateEncoder(configRef.getScreenWidth(), configRef.getScreenHeight())) {
+		streamingSocket {ios},
+		packet{ std::make_shared<StreamingFormat::StreamingMessage>() },
+		mCfgManagerRef { configRef },
+		responsePacket{ std::make_shared<StreamingFormat::StreamingMessage>() },
+		mEncoder{ CreateEncoder(configRef.getScreenWidth(), configRef.getScreenHeight()) } {
 	}
 
 	void Connection::start() {
@@ -150,7 +150,7 @@ namespace SP {
 			// more from here
 			//...
 
-			Packet::MessagePointer responsePtr { new StreamingFormat::StreamingMessage };
+			Packet::MessagePointer responsePtr { std::make_shared<StreamingFormat::StreamingMessage>() };
 
 			// reply the default positions
 			responsePtr->set_type(StreamingFormat::MessageType::MsgDefaultPos);
@@ -232,7 +232,7 @@ namespace SP {
 			// insert rendering code & encoder here
 
 
-			uint8_t* rawPtr = mEncoder->getEncoderRawBuffer();
+			auto* rawPtr = mEncoder->getEncoderRawBuffer();
 
 			// TMP !!!
 			//size_t subLFIndex = mCfgManagerRef.getIndexOfSubLightField(dx);
@@ -245,7 +245,7 @@ namespace SP {
 
 			encodedDataQueue.clear();
 
-			for (const std::size_t subLFIndex : indexArray) {
+			for (const auto subLFIndex : indexArray) {
 
 
 				if (!lightFieldRef[subLFIndex].getRefreshState()) {
@@ -257,7 +257,7 @@ namespace SP {
 				//std::cerr << "Get new: " << subLFIndex << "\n";
 
 
-				Packet::MessagePointer responsePtr { new StreamingFormat::StreamingMessage };
+				Packet::MessagePointer responsePtr { std::make_shared<StreamingFormat::StreamingMessage>() };
 
 				// reply the images
 				responsePtr->set_type(StreamingFormat::MessageType::MsgImage);
@@ -351,7 +351,7 @@ namespace SP {
 
 		case StreamingFormat::MessageType::MsgEnding: {
 
-			Packet::MessagePointer responsePtr { new StreamingFormat::StreamingMessage };
+			Packet::MessagePointer responsePtr { std::make_shared<StreamingFormat::StreamingMessage>() };
 
 			// tmp: for testing only
 			// Echo the Ending msg back ?
@@ -477,7 +477,7 @@ namespace SP {
 
 							// TODO: [Editing] return the new model ID after change scene
 
-							Packet::MessagePointer responsePtr{ new StreamingFormat::StreamingMessage };
+							Packet::MessagePointer responsePtr{ std::make_shared<StreamingFormat::StreamingMessage>() };
 
 							StreamingFormat::Control* controlPtr{ new StreamingFormat::Control };
 							StreamingFormat::Editing* editPtr{ new StreamingFormat::Editing };
@@ -541,7 +541,7 @@ namespace SP {
 	}
 
 	void Connection::writeModelIdList() {
-		Packet::MessagePointer responsePtr{ new StreamingFormat::StreamingMessage };
+		Packet::MessagePointer responsePtr{ std::make_shared<StreamingFormat::StreamingMessage>() };
 		StreamingFormat::Control* controlPtr{ new StreamingFormat::Control };
 		StreamingFormat::Editing* editPtr{ new StreamingFormat::Editing };
 
