@@ -49,7 +49,7 @@ namespace SP {
 
 		//KAOCC: this is wrong !!! check pop wait !
 		// thread cleanup
-		std::for_each(mWorkerThreads.begin(), mWorkerThreads.end(), std::mem_fun_ref(&std::thread::join));
+		std::for_each(mWorkerThreads.begin(), mWorkerThreads.end(), std::mem_fn(&std::thread::join));
 	}
 
 	void ApiEngine::pause() {
