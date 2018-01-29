@@ -14,11 +14,9 @@ Streaming Prototype is a demo version of the Cloud-Based Rendering Engine that c
 
 Note: The RadeonRays framework may require [Embree](https://embree.github.io/) or [OpenCL](https://software.intel.com/en-us/intel-opencl) in order to support the corresponding backends.
 
-The following compilers are supported:
+Currently the following compilers are tested:
 
-- Visual Studio 2015 or 2017
-
-- GCC 5.4
+- Visual Studio 2017 Version 15.5.5
 
 ## Build
 
