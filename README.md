@@ -6,7 +6,7 @@ Streaming Prototype is a demo version of the Cloud-Based Rendering Engine that c
 - [C++17 Compiler](http://en.cppreference.com/w/cpp/compiler_support)
 - [CMake 3.10](https://cmake.org/)
 - [C++ Boost 1.63](http://www.boost.org/)
-- [Google Protocol Buffer v3.2.0](https://github.com/google/protobuf)
+- [Google Protocol Buffer v3.5.1.1](https://github.com/google/protobuf)
 - [x264](http://www.videolan.org/developers/x264.html)
 - [Radeon Rays](https://github.com/GPUOpen-LibrariesAndSDKs/RadeonRays_SDK)
 - [Heterogeneous Queue](https://github.com/KaoCC/HeterogeneousQueue)
