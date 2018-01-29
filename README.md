@@ -3,6 +3,8 @@ Streaming Prototype is a demo version of the Cloud-Based Rendering Engine that c
 
 ## System requirements and Dependencies
 
+- [C++17 Compiler](http://en.cppreference.com/w/cpp/compiler_support)
+- [CMake 3.10](https://cmake.org/)
 - [C++ Boost 1.63](http://www.boost.org/)
 - [Google Protocol Buffer v3.2.0](https://github.com/google/protobuf)
 - [x264](http://www.videolan.org/developers/x264.html)
@@ -36,9 +38,9 @@ We have recently changed from premake to cmake.
 
 ## Demo Video
 
-[Basic Scene](https://youtu.be/lMdvIzpLWpQ)
-[Arbitrary viewpoint in Conference](https://youtu.be/RelNG831QU0)
-[Wide angle viewing in Conference ](https://youtu.be/JWcialjxyy4)
-[Projection to ST plane in Sponza](https://youtu.be/JtGV25Jj2x8)
-[Full screen rotation in Sponza](https://youtu.be/XTZMCKUFCxA)
+- [Basic Scene](https://youtu.be/lMdvIzpLWpQ)
+- [Arbitrary viewpoint in Conference](https://youtu.be/RelNG831QU0)
+- [Wide angle viewing in Conference ](https://youtu.be/JWcialjxyy4)
+- [Projection to ST plane in Sponza](https://youtu.be/JtGV25Jj2x8)
+- [Full screen rotation in Sponza](https://youtu.be/XTZMCKUFCxA)
 
