@@ -560,14 +560,17 @@ namespace SP {
 		for (auto i = 0; i < defaultList.size(); ++i) {
 			//editPtr->add_add_model_ids(static_cast<int>(defaultList[i]));    // cast ?
 
-			StreamingFormat::ModelInfo* modelPtr = editPtr->add_add_model_infos();			int modelId = static_cast<int>(defaultList[i]); // cast?
+			StreamingFormat::ModelInfo* modelPtr = editPtr->add_add_model_infos();
+			int modelId = static_cast<int>(defaultList[i]); // cast?
 			modelPtr->set_model_id(modelId);
-			modelPtr->set_model_name(std::string("New Model ") + std::to_string(modelId));
+			modelPtr->set_model_name(std::string("New Model ") + std::to_string(modelId));
+
 		}
 		
 
 		// TODO: [Editing] add current model id for moving
-		// TODO: [Editing] fill the ModelInfo instead of ID only
+		// TODO: [Editing] fill the ModelInfo instead of ID only
+
 
 		for (auto i = 0; i < defaultList.size(); ++i) {
 			//editPtr->add_current_model_ids(static_cast<int>(defaultList[i]));
