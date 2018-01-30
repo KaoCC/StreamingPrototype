@@ -55,7 +55,7 @@ if (WIN32)
     message(STATUS "Boost_LIB_DIAGNOSTIC_DEFINITIONS ${Boost_LIB_DIAGNOSTIC_DEFINITIONS} ")
 endif ()
 
-find_package(Boost 1.63 REQUIRED COMPONENTS system thread filesystem)
+find_package(Boost 1.65.1 REQUIRED COMPONENTS system thread filesystem)
 
 # x264
 find_package(x264 REQUIRED)
