@@ -184,7 +184,7 @@ namespace SP {
 
 
 		// KAOCC: this is wrong ! check pop wait 
-		std::for_each(renderThreads.begin(), renderThreads.end(), std::mem_fun_ref(&std::thread::join));
+		std::for_each(renderThreads.begin(), renderThreads.end(), std::mem_fn(&std::thread::join));
 
 
 		// delete output
