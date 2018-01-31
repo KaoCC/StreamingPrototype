@@ -147,25 +147,25 @@ namespace SP {
 		return imageDataCache;
 	}
 
-	const ImageConfig::RadianceMap & ImageConfig::getRadianceMap() {
+	void ImageConfig::checkAndRefreshCache(){
 		if (getRefreshState()) {
-			// save the Radiance
+			// save the Radiance and depth
 			radiance = radiancePtr->copyData();
+			depth = radiancePtr->copyDepthData();
 
 			refreshCacheFlag = true;
 			setRefreshState(false);
 		}
+	}
+
+	const ImageConfig::RadianceMap & ImageConfig::getRadianceMap() {
+		checkAndRefreshCache();
 
 		return radiance;
 	}
 
 	const ImageConfig::DepthMap & ImageConfig::getDepthMap() {
-		if (getRefreshState()) {
-			// save the Radiance
-			depth = radiancePtr->copyDepthData();
-
-			// lctseng: depth map does not change cache state
-		}
+		checkAndRefreshCache();
 
 		return depth;
 	}

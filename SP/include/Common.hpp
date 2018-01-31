@@ -107,6 +107,7 @@ namespace SP {
 
 	private:
 
+		void checkAndRefreshCache();
 
 		// test
 		int imageID;
