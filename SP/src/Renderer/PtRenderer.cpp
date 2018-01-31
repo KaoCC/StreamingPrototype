@@ -113,6 +113,7 @@ namespace SP {
 		int maxrays = renderOutPtr->getWidth() * renderOutPtr->getHeight();
 		renderData.host_hitcount = maxrays;
 
+
 		for (unsigned pass = 0; pass < numOfBounces; ++pass) {
 
 			// clear hit buffer
@@ -136,7 +137,9 @@ namespace SP {
 			// --- RENDERING ---
 
 			// Shade V		(X)
-
+			if (pass == 0) {
+				computeDepthMap(scene);
+			}
 			// Shade Surface			// the key of rendering !
 			shadeSurface(scene, pass);
 
@@ -306,6 +309,29 @@ namespace SP {
 
 		renderData.host_lightSamples.clear();
 		renderData.host_lightSamples.resize(out.getWidth() * out.getHeight());
+
+	}
+
+	void PtRenderer::computeDepthMap(const Scene& scene) {
+		auto& outRef = *renderOutPtr;
+		const std::vector<RadeonRays::ray>& rayArrayRef = renderData.host_rays[0];
+		const std::vector<int>& pixelIndexArrayRef = renderData.host_pixelIndex[0];
+		auto& depthDataRef = outRef.getDepthData();
+		// default to nearest value: 0
+		//std::fill(depthDataRef.begin(), depthDataRef.end(), 0);
+		for (size_t i = 0; i < renderData.host_hitcount; ++i) {
+
+			size_t hitIndex = renderData.host_compactedIndex[i];
+			size_t pixelIndex = pixelIndexArrayRef[i];
+			const RadeonRays::Intersection& currentIntersect = renderData.host_intersections[hitIndex];
+			DifferentialGeometry diffGeo{ currentIntersect, scene };
+			auto& ray = rayArrayRef[hitIndex];
+
+			auto& hitPosition = diffGeo.getPosition();
+			float distance = std::sqrt((hitPosition - ray.o).sqnorm());
+
+			depthDataRef[pixelIndex] = distance;
+		}
 
 	}
 

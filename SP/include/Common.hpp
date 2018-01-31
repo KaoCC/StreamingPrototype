@@ -50,6 +50,7 @@ namespace SP {
 	public:
 		using ImageBuffer = std::vector<std::uint8_t>;
 		using RadianceMap = std::vector<RadeonRays::float3>;
+		using DepthMap = std::vector<float>;
 
 		ImageConfig() = default;
 
@@ -67,6 +68,9 @@ namespace SP {
 
 		// radiance 	
 		const RadianceMap& getRadianceMap();
+
+		// depth 	
+		const DepthMap& getDepthMap();
 
 
 		void setRadiancePtr(std::shared_ptr<SP::RenderOutput> renderOut);
@@ -110,6 +114,8 @@ namespace SP {
 
 		// Renderer result cache
 		RadianceMap radiance;
+		DepthMap depth;
+
 
 		//need lock ?
 		volatile bool refreshFlag = false;

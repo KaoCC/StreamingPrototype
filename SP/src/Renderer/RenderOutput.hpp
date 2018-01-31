@@ -19,6 +19,7 @@ namespace SP {
 
 		// tmp
 		std::vector<RadeonRays::float3> copyData() const;
+		std::vector<float> copyDepthData() const;
 
 		//tmp
 		//std::vector<RadeonRays::float3>& getInternalStorage();
@@ -28,7 +29,10 @@ namespace SP {
 		RadeonRays::float3& operator[](std::size_t pos);
 		const RadeonRays::float3& operator[](std::size_t pos) const;
 
+		float& getDepthValue(std::size_t pos);
+		const float& getDepthValue(std::size_t pos) const;
 
+		std::vector<float>& getDepthData();
 	private:
 
 
@@ -43,6 +47,7 @@ namespace SP {
 
 
 		std::vector<RadeonRays::float3> data;
+		std::vector<float> depthData;
 
 	};
 

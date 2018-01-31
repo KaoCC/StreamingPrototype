@@ -1,7 +1,7 @@
 #include "RenderOutput.hpp"
 
 namespace SP {
-	RenderOutput::RenderOutput(std::size_t w, std::size_t h) : Output(w, h), data(w * h) {
+	RenderOutput::RenderOutput(std::size_t w, std::size_t h) : Output(w, h), data(w * h), depthData(w * h) {
 
 
 	}
@@ -20,6 +20,10 @@ namespace SP {
 		return data;
 	}
 
+	std::vector<float> RenderOutput::copyDepthData() const {
+		return depthData;
+	}
+
 
 	RadeonRays::float3& RenderOutput::operator[](std::size_t pos) {
 		return data[pos];
@@ -29,17 +33,30 @@ namespace SP {
 		return data[pos];
 	}
 
+	float& RenderOutput::getDepthValue(std::size_t pos) {
+		return depthData[pos];
+	}
+
+	const float& RenderOutput::getDepthValue(std::size_t pos) const {
+		return depthData[pos];
+	}
+
 	std::size_t RenderOutput::getStorageSize() const {
 		return data.size();
 	}
 
 	void RenderOutput::resizeStorage(std::size_t newSize) {
 		data.resize(newSize);
+		depthData.resize(newSize);
 	}
 
 	void RenderOutput::resetStorageDefault() {
 		std::fill(data.begin(), data.end(), 0.0f);
+		std::fill(depthData.begin(), depthData.end(), 0.0f);
 	}
 
+	std::vector<float>& RenderOutput::getDepthData() {
+		return depthData;
+	}
 
 }

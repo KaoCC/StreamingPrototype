@@ -95,6 +95,8 @@ namespace SP {
 		// Shade background
 		void shadeBackground(unsigned pass);
 
+		// Depth
+		void computeDepthMap(const Scene& scene);
 
 		// Helper
 		void compactIndex();

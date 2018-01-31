@@ -159,6 +159,18 @@ namespace SP {
 		return radiance;
 	}
 
+	const ImageConfig::DepthMap & ImageConfig::getDepthMap() {
+		if (getRefreshState()) {
+			// save the Radiance
+			depth = radiancePtr->copyDepthData();
+
+			// lctseng: depth map does not change cache state
+		}
+
+		return depth;
+	}
+
+
 	void ImageConfig::setRadiancePtr(std::shared_ptr<SP::RenderOutput> renderOut) {
 		radiancePtr = renderOut;
 	}
