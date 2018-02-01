@@ -246,6 +246,12 @@ namespace SP {
 
 				currentRay.o.w = cameraRef.getDepthRange().y - cameraRef.getDepthRange().x;
 				currentRay.d.w = sampleBase.x;        // check
+				
+
+				currentRay.SetMaxT(std::numeric_limits<float>::max());
+				currentRay.SetTime(0.f);
+				currentRay.SetMask(0xFFFFFFFF);
+				currentRay.SetActive(true);
 
 
 				//currentRay.SetMask(0xFFFFFFFFF);
@@ -313,12 +319,13 @@ namespace SP {
 	}
 
 	void PtRenderer::computeDepthMap(const Scene& scene) {
+		
 		auto& outRef = *renderOutPtr;
 		const std::vector<RadeonRays::ray>& rayArrayRef = renderData.host_rays[0];
 		const std::vector<int>& pixelIndexArrayRef = renderData.host_pixelIndex[0];
 		auto& depthDataRef = outRef.getDepthData();
 		// default to nearest value: 0
-		//std::fill(depthDataRef.begin(), depthDataRef.end(), 0);
+		std::fill(depthDataRef.begin(), depthDataRef.end(), 0);
 		for (size_t i = 0; i < renderData.host_hitcount; ++i) {
 
 			size_t hitIndex = renderData.host_compactedIndex[i];
