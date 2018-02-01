@@ -28,6 +28,8 @@ namespace SP {
 
 		virtual void setOutput(std::shared_ptr<RenderOutput>  output) override;
 
+		void computeDepthMap(const Scene& scene);
+
 		~SimpleRenderer();
 
 	private:

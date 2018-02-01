@@ -23,6 +23,29 @@ namespace SP {
 	SimpleRenderer::SimpleRenderer(ApiEngine& engine) : mEngineRef { engine } {
 	}
 
+	void SimpleRenderer::computeDepthMap(const Scene& scene) {
+		auto& outRef = *mRenderOutPtr;
+		const std::vector<RadeonRays::ray>& rayArrayRef = renderData.host_rays[0];
+		auto& depthDataRef = outRef.getDepthData();
+		// default to nearest value: 0
+		//std::fill(depthDataRef.begin(), depthDataRef.end(), 0);
+		for (auto i = 0; i < renderData.host_hitcount; ++i) {
+			const RadeonRays::Intersection& currentIntersect = renderData.host_intersections[i];
+			if (currentIntersect.shapeid == -1) {
+				
+			}
+			else{
+				DifferentialGeometry diffGeo{ currentIntersect, scene };
+				auto& ray = rayArrayRef[i];
+
+				auto& hitPosition = diffGeo.getPosition();
+				float distance = std::sqrt((hitPosition - ray.o).sqnorm());
+
+				depthDataRef[i] = distance;
+			}
+		}
+
+	}
 
 
 
@@ -42,6 +65,7 @@ namespace SP {
 
 		mEngineRef.queryIntersection(renderData.host_rays[0], renderData.host_hitcount, renderData.host_intersections).wait();
 
+		computeDepthMap(scene);
 		simpleShading(scene);
 	}
 
