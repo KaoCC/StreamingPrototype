@@ -137,7 +137,7 @@ namespace SP {
 		//Packet::MessagePointer responsePtr{ new StreamingFormat::StreamingMessage };
 
 		switch (msgPtr->type()) {
-		case StreamingFormat::MessageType::MsgInit: {
+		case StreamingFormat::MessageType::MSG_INIT: {
 
 			// read the msg (init info)
 
@@ -153,7 +153,7 @@ namespace SP {
 			Packet::MessagePointer responsePtr { std::make_shared<StreamingFormat::StreamingMessage>() };
 
 			// reply the default positions
-			responsePtr->set_type(StreamingFormat::MessageType::MsgDefaultPos);
+			responsePtr->set_type(StreamingFormat::MessageType::MSG_DEFAULT_POS);
 
 			// must be on the heap
 			StreamingFormat::DefaultPos* defPosPtr { new StreamingFormat::DefaultPos };
@@ -181,13 +181,13 @@ namespace SP {
 
 		}
 
-		case StreamingFormat::MessageType::MsgDefaultPos: {
+		case StreamingFormat::MessageType::MSG_DEFAULT_POS: {
 			// Possible Error
 			// The server will not get this one!
 			break;
 		}
 
-		case StreamingFormat::MessageType::MsgCameraInfo: {
+		case StreamingFormat::MessageType::MSG_CAMERA_INFO: {
 
 			// read the msg (camera info)
 
@@ -260,7 +260,7 @@ namespace SP {
 				Packet::MessagePointer responsePtr { std::make_shared<StreamingFormat::StreamingMessage>() };
 
 				// reply the images
-				responsePtr->set_type(StreamingFormat::MessageType::MsgImage);
+				responsePtr->set_type(StreamingFormat::MessageType::MSG_IMAGE);
 
 				// test
 				//encodedDataVector.clear();
@@ -343,19 +343,19 @@ namespace SP {
 			break;
 		}
 
-		case StreamingFormat::MessageType::MsgImage: {
+		case StreamingFormat::MessageType::MSG_IMAGE: {
 			// Possible error
 			// The server will not get this one !
 			break;
 		}
 
-		case StreamingFormat::MessageType::MsgEnding: {
+		case StreamingFormat::MessageType::MSG_ENDING: {
 
 			Packet::MessagePointer responsePtr { std::make_shared<StreamingFormat::StreamingMessage>() };
 
 			// tmp: for testing only
 			// Echo the Ending msg back ?
-			responsePtr->set_type(StreamingFormat::MessageType::MsgEnding);
+			responsePtr->set_type(StreamingFormat::MessageType::MSG_ENDING);
 			responseVector.push_back(responsePtr);
 
 			// TODO: Close the connection ?
@@ -363,7 +363,7 @@ namespace SP {
 			break;
 		}
 
-		case StreamingFormat::MessageType::MsgControl: {
+		case StreamingFormat::MessageType::MSG_CONTROL: {
 			// test
 			std::cerr << "control msg\n";
 
@@ -495,7 +495,7 @@ namespace SP {
 
 							controlPtr->set_allocated_editingmsg(editPtr);
 
-							responsePtr->set_type(StreamingFormat::MessageType::MsgControl);
+							responsePtr->set_type(StreamingFormat::MessageType::MSG_CONTROL);
 							responsePtr->set_allocated_controlmsg(controlPtr);
 
 							writeResponse(responsePtr);
@@ -584,7 +584,7 @@ namespace SP {
 
 		controlPtr->set_allocated_editingmsg(editPtr);
 
-		responsePtr->set_type(StreamingFormat::MessageType::MsgControl);
+		responsePtr->set_type(StreamingFormat::MessageType::MSG_CONTROL);
 		responsePtr->set_allocated_controlmsg(controlPtr);
 
 
@@ -612,7 +612,7 @@ namespace SP {
 
 
 			// check if we need to write the image
-			if (msgPtr->type() == StreamingFormat::MessageType::MsgImage) {
+			if (msgPtr->type() == StreamingFormat::MessageType::MSG_IMAGE) {
 
 				//boost::asio::write(streamingSocket, boost::asio::buffer(cfgManager.getImageCache().getImageData()));
 				/*boost::asio::async_write(streamingSocket, boost::asio::buffer(encodedImageData),
