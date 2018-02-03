@@ -68,6 +68,14 @@ namespace SP {
 		*/
 		virtual void setOutput(std::shared_ptr<RenderOutput> output) = 0;		// TODO : review this API design !
 
+		/**
+		\brief Render depth map
+
+		\param output The output to render into.
+		*/
+		virtual void renderDepthMap(Scene const& scene, size_t configIdx) = 0;
+
+
 
 		/**
 		Forbidden stuff.

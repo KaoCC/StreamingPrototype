@@ -38,6 +38,7 @@ namespace SP {
 
 		virtual void setOutput(std::shared_ptr<RenderOutput> output) override;
 
+		virtual void renderDepthMap(Scene const& scene, size_t configIdx) override;
 
 
 		struct RenderData {
@@ -73,7 +74,7 @@ namespace SP {
 	protected:
 
 		// Generate rays
-		void generatePrimaryRays(const Scene& scene, size_t camIdx);
+		void generatePrimaryRays(const Scene& scene, size_t camIdx, bool useSampler = true);
 
 		void resizeWorkingSet(const Output& out);
 

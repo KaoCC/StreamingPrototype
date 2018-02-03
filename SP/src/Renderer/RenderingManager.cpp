@@ -14,6 +14,7 @@
 
 #include "OpenImageIO/imageio.h"
 
+#include "Common.hpp"
 
 #include "Scene/Material.hpp"
 
@@ -204,7 +205,8 @@ namespace SP {
 
 			for (size_t i = 0; i < mConfigRef.getNumberOfSubLFs(); ++i) {
 				for (size_t j = 0; j < mConfigRef.getNumberOfSubLFImages(); ++j) {
-					mTaskQueue.push(std::make_pair(i, j));
+
+					mTaskQueue.emplace(i,j,true);
 				}
 			}
 		}
@@ -475,7 +477,7 @@ namespace SP {
 
 		const std::string& subFix = std::to_string(outputId);
 
-		std::string filename = "radiance" + subFix + '-' + subFix + ".exr";
+		std::string filename = addPrefixPath("radiance" + subFix + '-' + subFix + ".exr");
 
 		std::cerr << "Load file name: " << filename << std::endl;
 
@@ -533,7 +535,7 @@ namespace SP {
 
 	void RenderingManager::renderingWorker() {
 
-		std::pair<int, int> taskIndex;
+		Task taskIndex;
 
 		while (true) {
 
@@ -564,8 +566,8 @@ namespace SP {
 
 			// async part
 
-			size_t subLFIdx = taskIndex.first;
-			size_t subImgIdx = taskIndex.second;
+			size_t subLFIdx = taskIndex.subLFIdx;
+			size_t subImgIdx = taskIndex.subImgIdx;
 
 			//std::cerr << "Worker " << subLFIdx << ' ' << subImgIdx << " starts !\n";
 
@@ -573,6 +575,10 @@ namespace SP {
 
 			// rendering
 			auto t1 = std::chrono::high_resolution_clock::now();
+			if(taskIndex.needRenderDepth){
+				renderFarm[farmIdx]->renderDepthMap(*sceneDataPtr, farmIdx);
+				taskIndex.needRenderDepth = false;
+			}
 			renderFarm[farmIdx]->render(*sceneDataPtr, farmIdx);
 			auto t2 = std::chrono::high_resolution_clock::now();
 
@@ -588,6 +594,8 @@ namespace SP {
 				//renderFarm[farmIdx]->clear(0.f, *(renderOutputData[farmIdx]));
 
 				renderOutputData[farmIdx]->resetToDefault();
+
+				taskIndex.needRenderDepth = true; // this task need to redraw depth
 
 				mConfigRef.setSceneChangedFlag(farmIdx, false);
 			}

@@ -69,6 +69,13 @@ namespace SP {
 
 	private:
 
+		struct Task {
+			size_t subLFIdx;
+			size_t subImgIdx;
+			bool needRenderDepth;
+			Task(size_t subLFIdx = -1, size_t subImgIdx = -1, bool needRenderDepth = true) :
+				subLFIdx(subLFIdx), subImgIdx(subImgIdx), needRenderDepth(needRenderDepth) {}
+		};
 
 		// for testing
 		//void testOutput(int id);
@@ -154,7 +161,7 @@ namespace SP {
 
 		std::mutex mQueueMutex;
 		std::condition_variable mQueueCV;
-		std::queue<std::pair<int, int>> mTaskQueue;
+		std::queue<Task> mTaskQueue;
 
 		unsigned mThreadCount = 0;
 		unsigned mWaitingCounter = 0;

@@ -78,6 +78,10 @@ namespace SP {
 		mRenderOutPtr = output;
 	}
 
+	void SimpleRenderer::renderDepthMap(Scene const & scene, size_t configIdx)
+	{
+	}
+
 	SimpleRenderer::~SimpleRenderer() = default;
 
 	void SimpleRenderer::generatePrimaryRays(const Scene& scene, size_t camIdx) {

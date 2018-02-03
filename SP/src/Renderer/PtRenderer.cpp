@@ -137,9 +137,7 @@ namespace SP {
 			// --- RENDERING ---
 
 			// Shade V		(X)
-			if (pass == 0) {
-				computeDepthMap(scene);
-			}
+
 			// Shade Surface			// the key of rendering !
 			shadeSurface(scene, pass);
 
@@ -194,7 +192,7 @@ namespace SP {
 	}
 
 
-	void PtRenderer::generatePrimaryRays(const Scene& scene, size_t camIdx) {
+	void PtRenderer::generatePrimaryRays(const Scene& scene, size_t camIdx, bool useSampler) {
 
 
 		const auto imageWidth = renderOutPtr->getWidth();
@@ -226,8 +224,13 @@ namespace SP {
 
 
 				RadeonRays::float2 imageSample;
-				imageSample.x = (float) x / imageWidth + sampleBase.x / imageWidth;
-				imageSample.y = (float) y / imageHeight + sampleBase.y / imageHeight;
+				imageSample.x = (float) x / imageWidth;
+				imageSample.y = (float) y / imageHeight;
+
+				if (useSampler) {
+					imageSample.x += sampleBase.x / imageWidth;
+					imageSample.y += sampleBase.y / imageHeight;
+				}
 
 				// Transform into [-0.5, 0.5]
 				RadeonRays::float2 hSample = imageSample - RadeonRays::float2(0.5f, 0.5f);
@@ -245,7 +248,15 @@ namespace SP {
 				currentRay.o = cameraRef.getPosition() + cameraRef.getDepthRange().x * currentRay.d;
 
 				currentRay.o.w = cameraRef.getDepthRange().y - cameraRef.getDepthRange().x;
-				currentRay.d.w = sampleBase.x;        // check
+
+				if (useSampler) {
+					currentRay.d.w = sampleBase.x;        // check
+				}
+				else {
+					// TODO: what to do when no use sampler?
+					currentRay.d.w = 1;
+				}
+				
 				
 
 				currentRay.SetMaxT(std::numeric_limits<float>::max());
@@ -318,6 +329,35 @@ namespace SP {
 
 	}
 
+	void PtRenderer::renderDepthMap(Scene const & scene, size_t configIdx)
+	{
+		//resizeWorkingSet(*renderOutPtr);
+		// ray gen 
+		generatePrimaryRays(scene, configIdx, false); // do not use sampler for depth map generation
+
+		std::copy(renderData.host_iota.begin(), renderData.host_iota.end(), renderData.host_pixelIndex[0].begin());
+		std::copy(renderData.host_iota.begin(), renderData.host_iota.end(), renderData.host_pixelIndex[1].begin());
+
+		// Number of rays 
+		int maxrays = renderOutPtr->getWidth() * renderOutPtr->getHeight();
+		renderData.host_hitcount = maxrays;
+
+		// clear hit buffer
+		std::fill(renderData.host_hits.begin(), renderData.host_hits.end(), 0);
+
+		// query nearest intersection
+		mEngineRef.queryIntersection(renderData.host_rays[0], renderData.host_hitcount, renderData.host_intersections).wait();
+
+		filterPathStream(0);
+
+		compactIndex();
+
+		restorePixelIndices(0);
+
+		// compute the hit into depth
+		computeDepthMap(scene);
+	}
+	
 	void PtRenderer::computeDepthMap(const Scene& scene) {
 		
 		auto& outRef = *renderOutPtr;
