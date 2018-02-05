@@ -173,14 +173,12 @@ namespace SP {
 		auto& outRef = *mRenderOutPtr;
 		const std::vector<RadeonRays::ray>& rayArrayRef = renderData.host_rays[0];
 		auto& depthDataRef = outRef.getDepthData();
-		int validRays = 0;
 		for (auto i = 0; i < renderData.host_hitcount; ++i) {
 			const RadeonRays::Intersection& currentIntersect = renderData.host_intersections[i];
 			if (currentIntersect.shapeid == -1) {
 
 			}
 			else {
-
 				DifferentialGeometry diffGeo{ currentIntersect, scene };
 				auto& ray = rayArrayRef[i];
 
@@ -188,13 +186,8 @@ namespace SP {
 				float distance = std::sqrt((hitPosition - ray.o).sqnorm());
 
 				depthDataRef[i] = distance;
-
-				if (i == 600) {
-					//	std::cerr << distance << std::endl;
-				}
 			}
 		}
-		//std::cerr << "Number of valid rays:" << validRays << std::endl;
 	}
 
 
