@@ -203,58 +203,10 @@ namespace SP {
 			for (std::size_t x = 0; x < imageWidth; ++x) {            // check this !
 
 
-
-				//Sampler randomSampler;
-				//randomSampler.index = seed;
-				//randomSampler.scramble = 0;
-				//randomSampler.dimension = 0;
-
-
-				const std::uint32_t seed = x + imageWidth * y * rngseed;
-				std::unique_ptr<Sampler> sampler = RandomSampler::create(seed);
-
-				//unsigned rnd = RadeonRays::rand_uint();		// test !
-				//unsigned scramble = rnd * 0x1fe3434f * ((frameCount + 133 * rnd) / (CorrelatedMultiJitterSampler::kDim * CorrelatedMultiJitterSampler::kDim));
-
-				//std::unique_ptr<Sampler> sampler = CorrelatedMultiJitterSampler::create(frameCount % (CorrelatedMultiJitterSampler::kDim  * CorrelatedMultiJitterSampler::kDim), 0, scramble);
-
-
-				RadeonRays::float2 sampleBase = sampler->sample2D();
-
-
-				RadeonRays::float2 imageSample;
-				imageSample.x = (float) x / imageWidth + sampleBase.x / imageWidth;
-				imageSample.y = (float) y / imageHeight + sampleBase.y / imageHeight;
-
-				// Transform into [-0.5, 0.5]
-				RadeonRays::float2 hSample = imageSample - RadeonRays::float2(0.5f, 0.5f);
-
-				// Transform into [-dim/2, dim/2]		
-				const PerspectiveCamera& cameraRef { static_cast<const PerspectiveCamera&>(scene.getCamera(camIdx)) };  // check this
-				RadeonRays::float2 cSample = hSample * cameraRef.getSensorSize();
-
-
-				// set ray
+				const PerspectiveCamera& cameraRef{ static_cast<const PerspectiveCamera&>(scene.getCamera(camIdx)) };
 				RadeonRays::ray& currentRay = renderData.host_rays[0][y * imageWidth + x];
+				generateRandomRay(rngseed, x, y, imageWidth, imageHeight, currentRay, cameraRef);
 
-				currentRay.d = RadeonRays::normalize(cameraRef.getFocalLength() * cameraRef.getForwardVector() + cSample.x * cameraRef.getRightVector() +
-													 cSample.y * cameraRef.getUpVector());
-				currentRay.o = cameraRef.getPosition() + cameraRef.getDepthRange().x * currentRay.d;
-
-				currentRay.o.w = cameraRef.getDepthRange().y - cameraRef.getDepthRange().x;
-				currentRay.d.w = sampleBase.x;        // check
-
-
-				//currentRay.SetMask(0xFFFFFFFFF);
-				//currentRay.extra.x = 0xFFFFFFFF;
-				//currentRay.extra.y = 0xFFFFFFFF;
-				//currentRay.padding = currentRay.extra;
-
-
-				//std::cerr << "Ray d x: " << currentRay.d.x << '\n';
-				//std::cerr << "Ray o y: " << currentRay.o.x << '\n';
-
-				// ...
 
 				// path ?
 				Path& path { renderData.host_path[y * imageWidth + x] };
