@@ -44,6 +44,7 @@ namespace SP {
 		};
 
 		void generatePrimaryRays(const Scene& scene, size_t camIdx);
+		void generateDepthRays(const Scene& scene, size_t camIdx);
 		void resizeWorkingSet(const Output& out);
 
 		void simpleShading(const Scene& scene);

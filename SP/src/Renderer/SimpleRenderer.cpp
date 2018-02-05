@@ -13,39 +13,17 @@ namespace SP {
 
 		if (single) {
 			return single->getInputValue("albedo").floatValue;
-		} else {
+		}
+		else {
 			// tmp
-			return RadeonRays::float3 {0.3f, 0.3f, 0.3f};
+			return RadeonRays::float3{ 0.3f, 0.3f, 0.3f };
 		}
 
 	}
 
-	SimpleRenderer::SimpleRenderer(ApiEngine& engine) : mEngineRef { engine } {
+	SimpleRenderer::SimpleRenderer(ApiEngine& engine) : mEngineRef{ engine } {
 	}
 
-	void SimpleRenderer::computeDepthMap(const Scene& scene) {
-		auto& outRef = *mRenderOutPtr;
-		const std::vector<RadeonRays::ray>& rayArrayRef = renderData.host_rays[0];
-		auto& depthDataRef = outRef.getDepthData();
-		// default to nearest value: 0
-		//std::fill(depthDataRef.begin(), depthDataRef.end(), 0);
-		for (auto i = 0; i < renderData.host_hitcount; ++i) {
-			const RadeonRays::Intersection& currentIntersect = renderData.host_intersections[i];
-			if (currentIntersect.shapeid == -1) {
-				
-			}
-			else{
-				DifferentialGeometry diffGeo{ currentIntersect, scene };
-				auto& ray = rayArrayRef[i];
-
-				auto& hitPosition = diffGeo.getPosition();
-				float distance = std::sqrt((hitPosition - ray.o).sqnorm());
-
-				depthDataRef[i] = distance;
-			}
-		}
-
-	}
 
 
 
@@ -65,7 +43,6 @@ namespace SP {
 
 		mEngineRef.queryIntersection(renderData.host_rays[0], renderData.host_hitcount, renderData.host_intersections).wait();
 
-		computeDepthMap(scene);
 		simpleShading(scene);
 	}
 
@@ -76,10 +53,6 @@ namespace SP {
 		}
 
 		mRenderOutPtr = output;
-	}
-
-	void SimpleRenderer::renderDepthMap(Scene const & scene, size_t configIdx)
-	{
 	}
 
 	SimpleRenderer::~SimpleRenderer() = default;
@@ -95,7 +68,7 @@ namespace SP {
 		for (std::uint32_t y = 0; y < imageHeight; ++y) {
 			for (std::uint32_t x = 0; x < imageWidth; ++x) {
 
-				const PerspectiveCamera& cameraRef { static_cast<const PerspectiveCamera&>(scene.getCamera(camIdx)) };
+				const PerspectiveCamera& cameraRef{ static_cast<const PerspectiveCamera&>(scene.getCamera(camIdx)) };
 				RadeonRays::ray& currentRay = renderData.host_rays[0][y * imageWidth + x];
 				generateRandomRay(rngseed, x, y, imageWidth, imageHeight, currentRay, cameraRef);
 
@@ -134,7 +107,8 @@ namespace SP {
 
 				// color black !
 				outRef[i] = RadeonRays::float3(0, 0, 0);
-			} else {
+			}
+			else {
 
 
 				int shapeId = isectRef.shapeid - 1;
@@ -176,7 +150,7 @@ namespace SP {
 				localUV.y = isectRef.uvwt.y;
 
 				auto normal = RadeonRays::normalize(
-						RadeonRays::transform_vector((1.f - localUV.x - localUV.y) * n0 + localUV.x * n1 + localUV.y * n2, matrixI));  //CHECK THIS !
+					RadeonRays::transform_vector((1.f - localUV.x - localUV.y) * n0 + localUV.x * n1 + localUV.y * n2, matrixI));  //CHECK THIS !
 
 				if (RadeonRays::dot(normal, -rayArrayRef[i].d) < 0) {
 					normal = -normal;
@@ -195,6 +169,110 @@ namespace SP {
 	}
 
 
-}
+	void SimpleRenderer::computeDepthMap(const Scene& scene) {
+		auto& outRef = *mRenderOutPtr;
+		const std::vector<RadeonRays::ray>& rayArrayRef = renderData.host_rays[0];
+		auto& depthDataRef = outRef.getDepthData();
+		int validRays = 0;
+		for (auto i = 0; i < renderData.host_hitcount; ++i) {
+			const RadeonRays::Intersection& currentIntersect = renderData.host_intersections[i];
+			if (currentIntersect.shapeid == -1) {
 
+			}
+			else {
+
+				DifferentialGeometry diffGeo{ currentIntersect, scene };
+				auto& ray = rayArrayRef[i];
+
+				auto& hitPosition = diffGeo.getPosition();
+				float distance = std::sqrt((hitPosition - ray.o).sqnorm());
+
+				depthDataRef[i] = distance;
+
+				if (i == 600) {
+					//	std::cerr << distance << std::endl;
+				}
+			}
+		}
+		//std::cerr << "Number of valid rays:" << validRays << std::endl;
+	}
+
+
+	void SimpleRenderer::renderDepthMap(Scene const & scene, size_t configIdx)
+	{
+
+		auto& outRef = *mRenderOutPtr;
+		auto& depthDataRef = outRef.getDepthData();
+		resizeWorkingSet(outRef);
+		// default to nearest value: 0
+		std::lock_guard<std::mutex>(outRef.depthLock);
+		std::fill(depthDataRef.begin(), depthDataRef.end(), 0.0f);
+
+		for (int i = 0; i < 1; i++) {
+			generateDepthRays(scene, configIdx);
+
+			int maxrays = mRenderOutPtr->getWidth() * mRenderOutPtr->getHeight();
+
+			renderData.host_hitcount = maxrays;
+
+			mEngineRef.queryIntersection(renderData.host_rays[0], renderData.host_hitcount, renderData.host_intersections).wait();
+
+			computeDepthMap(scene);
+		}
+	}
+
+	void SimpleRenderer::generateDepthRays(const Scene& scene, size_t camIdx) {
+		const std::size_t imageWidth = mRenderOutPtr->getWidth();
+		const std::size_t imageHeight = mRenderOutPtr->getHeight();
+
+		for (std::uint32_t y = 0; y < imageHeight; ++y) {
+			for (std::uint32_t x = 0; x < imageWidth; ++x) {
+
+				const PerspectiveCamera& cameraRef{ static_cast<const PerspectiveCamera&>(scene.getCamera(camIdx)) };
+				RadeonRays::ray& currentRay = renderData.host_rays[0][y * imageWidth + x];
+
+				RadeonRays::float2 imageSample;
+				imageSample.x = (float)x / imageWidth;
+				imageSample.y = (float)y / imageHeight;
+
+				if (imageSample.x == 0.5f) {
+					imageSample.x += 0.0001f;
+				}
+
+				if (imageSample.y == 0.5f) {
+					imageSample.y += 0.0001f;
+				}
+
+				// Transform into [-0.5, 0.5]
+				RadeonRays::float2 hSample = imageSample - RadeonRays::float2(0.5f, 0.5f);
+
+
+				// Transform into [-dim/2, dim/2]		
+				//const PerspectiveCamera* cameraPtr = static_cast<const PerspectiveCamera*>(scene.getCamera(camIdx));  // check this 
+				RadeonRays::float2 cSample = hSample * cameraRef.getSensorSize();
+
+
+				// set ray
+				//RadeonRays::ray& currentRay = renderData->host_rays[0][y * imageWidth + x];
+
+				if (y >= 1000 && y <= 150) {
+					cSample.y = 0;
+				}
+				currentRay.d = RadeonRays::normalize(cameraRef.getFocalLength() * cameraRef.getForwardVector() + cSample.x * cameraRef.getRightVector() + cSample.y * cameraRef.getUpVector());
+				currentRay.o = cameraRef.getPosition() + cameraRef.getDepthRange().x * currentRay.d;
+
+				currentRay.o.w = cameraRef.getDepthRange().y - cameraRef.getDepthRange().x;
+				currentRay.d.w = 1;		// check
+
+				currentRay.SetMaxT(std::numeric_limits<float>::max());
+				currentRay.SetTime(0.f);
+				currentRay.SetMask(0xFFFFFFFF);
+				currentRay.SetActive(true);
+			}
+		}
+	}
+
+
+
+}
 
