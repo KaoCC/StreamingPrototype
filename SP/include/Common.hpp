@@ -71,7 +71,7 @@ namespace SP {
 
 		// depth 	
 		const DepthMap& getDepthMap();
-
+		std::mutex& getDepthMutex();
 
 		void setRadiancePtr(std::shared_ptr<SP::RenderOutput> renderOut);
 

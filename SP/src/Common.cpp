@@ -170,6 +170,10 @@ namespace SP {
 		return depth;
 	}
 
+	std::mutex& ImageConfig::getDepthMutex() {
+		return radiancePtr->depthLock;
+	}
+
 
 	void ImageConfig::setRadiancePtr(std::shared_ptr<SP::RenderOutput> renderOut) {
 		radiancePtr = renderOut;

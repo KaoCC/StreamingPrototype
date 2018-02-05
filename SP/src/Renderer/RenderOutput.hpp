@@ -3,6 +3,7 @@
 
 #include "Output.hpp"
 #include <vector>
+#include <mutex>
 
 namespace SP {
 
@@ -33,6 +34,8 @@ namespace SP {
 		const float& getDepthValue(std::size_t pos) const;
 
 		std::vector<float>& getDepthData();
+
+		std::mutex depthLock;
 	private:
 
 
