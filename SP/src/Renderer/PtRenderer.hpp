@@ -74,7 +74,7 @@ namespace SP {
 	protected:
 
 		// Generate rays
-		void generatePrimaryRays(const Scene& scene, size_t camIdx, bool useSampler = true);
+		void generatePrimaryRays(const Scene& scene, size_t camIdx);
 
 		void resizeWorkingSet(const Output& out);
 
@@ -97,6 +97,7 @@ namespace SP {
 		void shadeBackground(unsigned pass);
 
 		// Depth
+		void generateDepthRays(const Scene& scene, size_t camIdx);
 		void computeDepthMap(const Scene& scene);
 
 		// Helper
