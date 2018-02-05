@@ -52,15 +52,13 @@ namespace SP {
 
 				auto diffusePart = mat->getInputValue("base_material");
 				diffGeo.setCurrentMaterial(diffusePart.matValue);
-			}
-			else {
+			} else {
 
 				// testing only
 				if (std::rand() % 10 == 0) {
 					auto specularPart = mat->getInputValue("top_material");
 					diffGeo.setCurrentMaterial(specularPart.matValue);
-				}
-				else {
+				} else {
 					auto diffusePart = mat->getInputValue("base_material");
 					diffGeo.setCurrentMaterial(diffusePart.matValue);
 				}
@@ -79,7 +77,7 @@ namespace SP {
 
 
 	PtRenderer::PtRenderer(unsigned num_bounces, ApiEngine& engine) :
-		numOfBounces{ num_bounces }, mEngineRef{ engine } {
+			numOfBounces { num_bounces }, mEngineRef { engine } {
 
 	}
 
@@ -206,10 +204,10 @@ namespace SP {
 
 
 
-																	  //Sampler randomSampler;
-																	  //randomSampler.index = seed;
-																	  //randomSampler.scramble = 0;
-																	  //randomSampler.dimension = 0;
+				//Sampler randomSampler;
+				//randomSampler.index = seed;
+				//randomSampler.scramble = 0;
+				//randomSampler.dimension = 0;
 
 
 				const std::uint32_t seed = x + imageWidth * y * rngseed;
@@ -225,14 +223,14 @@ namespace SP {
 
 
 				RadeonRays::float2 imageSample;
-				imageSample.x = (float)x / imageWidth + sampleBase.x / imageWidth;
-				imageSample.y = (float)y / imageHeight + sampleBase.y / imageHeight;
+				imageSample.x = (float) x / imageWidth + sampleBase.x / imageWidth;
+				imageSample.y = (float) y / imageHeight + sampleBase.y / imageHeight;
 
 				// Transform into [-0.5, 0.5]
 				RadeonRays::float2 hSample = imageSample - RadeonRays::float2(0.5f, 0.5f);
 
 				// Transform into [-dim/2, dim/2]		
-				const PerspectiveCamera& cameraRef{ static_cast<const PerspectiveCamera&>(scene.getCamera(camIdx)) };  // check this
+				const PerspectiveCamera& cameraRef { static_cast<const PerspectiveCamera&>(scene.getCamera(camIdx)) };  // check this
 				RadeonRays::float2 cSample = hSample * cameraRef.getSensorSize();
 
 
@@ -240,26 +238,26 @@ namespace SP {
 				RadeonRays::ray& currentRay = renderData.host_rays[0][y * imageWidth + x];
 
 				currentRay.d = RadeonRays::normalize(cameraRef.getFocalLength() * cameraRef.getForwardVector() + cSample.x * cameraRef.getRightVector() +
-					cSample.y * cameraRef.getUpVector());
+													 cSample.y * cameraRef.getUpVector());
 				currentRay.o = cameraRef.getPosition() + cameraRef.getDepthRange().x * currentRay.d;
 
 				currentRay.o.w = cameraRef.getDepthRange().y - cameraRef.getDepthRange().x;
 				currentRay.d.w = sampleBase.x;        // check
 
 
-													  //currentRay.SetMask(0xFFFFFFFFF);
-													  //currentRay.extra.x = 0xFFFFFFFF;
-													  //currentRay.extra.y = 0xFFFFFFFF;
-													  //currentRay.padding = currentRay.extra;
+				//currentRay.SetMask(0xFFFFFFFFF);
+				//currentRay.extra.x = 0xFFFFFFFF;
+				//currentRay.extra.y = 0xFFFFFFFF;
+				//currentRay.padding = currentRay.extra;
 
 
-													  //std::cerr << "Ray d x: " << currentRay.d.x << '\n';
-													  //std::cerr << "Ray o y: " << currentRay.o.x << '\n';
+				//std::cerr << "Ray d x: " << currentRay.d.x << '\n';
+				//std::cerr << "Ray o y: " << currentRay.o.x << '\n';
 
-													  // ...
+				// ...
 
-													  // path ?
-				Path& path{ renderData.host_path[y * imageWidth + x] };
+				// path ?
+				Path& path { renderData.host_path[y * imageWidth + x] };
 				path.initGen();
 			}
 		}
@@ -360,7 +358,7 @@ namespace SP {
 
 			// KAOCC: how to change this ?
 			//DifferentialGeometry diffGeo;
-			DifferentialGeometry diffGeo{ currentIntersect, scene };
+			DifferentialGeometry diffGeo { currentIntersect, scene };
 
 
 
@@ -503,8 +501,7 @@ namespace SP {
 
 				lightSamplesArrayRef[i] = radiance;
 
-			}
-			else {
+			} else {
 				shadowRayArrayRef[i].SetActive(false);
 				lightSamplesArrayRef[i] = 0.f;
 
@@ -517,8 +514,8 @@ namespace SP {
 			bool rrApplyFlag = pass > 3;
 			bool rrStopFlag = (sampler->sample1D() > qq) && rrApplyFlag;        // value ?		// wrong !
 
-																				//Sampler_Sample1D(&randomSampler) > qq
-																				// ...
+			//Sampler_Sample1D(&randomSampler) > qq
+			// ...
 
 			if (rrApplyFlag) {
 				currentPath.multiplyThroughput(1 / qq);
@@ -533,7 +530,7 @@ namespace SP {
 			bxdfwo = normalize(bxdfwo);
 			const RadeonRays::float3& t = bxdf * std::abs(RadeonRays::dot(diffGeo.getNormal(), bxdfwo));        // value ?
 
-																												//std::cerr << "T: " << t.sqnorm()  << " bxdfPDF: " << bxdfPDF << std::endl;
+			//std::cerr << "T: " << t.sqnorm()  << " bxdfPDF: " << bxdfPDF << std::endl;
 
 			if (t.sqnorm() > 0 && bxdfPDF > 0.f && !rrStopFlag) {
 
@@ -547,8 +544,7 @@ namespace SP {
 
 				indirectRayArrayRef[i] = RadeonRays::ray(indirectRay_orig, indirectRay_dir);
 
-			}
-			else {
+			} else {
 				currentPath.kill();
 				indirectRayArrayRef[i].SetActive(false);
 			}
@@ -643,8 +639,7 @@ namespace SP {
 
 					//outRef[pixelIndex] = ;
 
-				}
-				else {
+				} else {
 					// not support currently
 					throw std::runtime_error("Vol not support");
 				}
@@ -723,14 +718,12 @@ namespace SP {
 
 					renderData.host_hits[i] = (renderData.host_intersections[i].shapeid >= 0) ? 1 : 0;
 
-				}
-				else {
+				} else {
 					path.kill();
 					renderData.host_hits[i] = 0;
 				}
 
-			}
-			else {
+			} else {
 				renderData.host_hits[i] = 0;
 			}
 
@@ -776,6 +769,7 @@ namespace SP {
 
 	}
 
+	
 
 	void PtRenderer::computeDepthMap(const Scene& scene) {
 		auto& outRef = *renderOutPtr;
@@ -795,7 +789,7 @@ namespace SP {
 
 				depthDataRef[i] = distance;
 			}
-		}	
+		}
 	}
 
 
@@ -873,5 +867,5 @@ namespace SP {
 		}
 	}
 
-
 }
+
