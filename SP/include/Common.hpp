@@ -70,7 +70,8 @@ namespace SP {
 		const RadianceMap& getRadianceMap();
 
 		// depth 	
-		const DepthMap& getDepthMap();
+		const DepthMap& getProcessedDepthMap();
+		const DepthMap& getRawDepthMap();
 		std::mutex& getDepthMutex();
 
 		void setRadiancePtr(std::shared_ptr<SP::RenderOutput> renderOut);
@@ -117,11 +118,14 @@ namespace SP {
 		RadianceMap radiance;
 		DepthMap depth;
 
+		DepthMap depthCache;
+
 
 		//need lock ?
 		volatile bool refreshFlag = false;
 		
 		bool refreshCacheFlag = false;
+		bool refreshDepthFlag = false;
 
 		//workaround
 		std::unique_ptr<boost::shared_mutex> flagMutexPtr{new boost::shared_mutex()};

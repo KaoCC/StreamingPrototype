@@ -154,6 +154,7 @@ namespace SP {
 			depth = radiancePtr->copyDepthData();
 
 			refreshCacheFlag = true;
+			refreshDepthFlag = true;
 			setRefreshState(false);
 		}
 	}
@@ -164,7 +165,30 @@ namespace SP {
 		return radiance;
 	}
 
-	const ImageConfig::DepthMap & ImageConfig::getDepthMap() {
+	const ImageConfig::DepthMap & ImageConfig::getProcessedDepthMap()
+	{
+		if (refreshDepthFlag) {
+			refreshDepthFlag = false;
+
+			depthCache.resize(depth.size());
+
+			const size_t screenWidth = getWidth();
+			const size_t screenHeight = getHeight();
+
+			// current process: reverse row
+			auto srcIt = depth.begin();
+			auto dstIt = depthCache.end() - screenWidth;
+			for (size_t y = 0; y < screenHeight; ++y) {
+				std::copy(srcIt, srcIt + screenWidth, dstIt);
+				srcIt += screenWidth;
+				dstIt -= screenWidth;
+			}
+
+		}
+		return depthCache;
+	}
+
+	const ImageConfig::DepthMap & ImageConfig::getRawDepthMap() {
 		checkAndRefreshCache();
 
 		return depth;
