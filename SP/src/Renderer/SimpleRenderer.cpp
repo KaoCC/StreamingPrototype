@@ -218,10 +218,11 @@ namespace SP {
 		const std::size_t imageWidth = mRenderOutPtr->getWidth();
 		const std::size_t imageHeight = mRenderOutPtr->getHeight();
 
+		const PerspectiveCamera& cameraRef{ static_cast<const PerspectiveCamera&>(scene.getCamera(camIdx)) };
 		for (std::uint32_t y = 0; y < imageHeight; ++y) {
 			for (std::uint32_t x = 0; x < imageWidth; ++x) {
 
-				const PerspectiveCamera& cameraRef{ static_cast<const PerspectiveCamera&>(scene.getCamera(camIdx)) };
+				
 				RadeonRays::ray& currentRay = renderData.host_rays[0][y * imageWidth + x];
 
 				RadeonRays::float2 imageSample;
@@ -248,9 +249,6 @@ namespace SP {
 				// set ray
 				//RadeonRays::ray& currentRay = renderData->host_rays[0][y * imageWidth + x];
 
-				if (y >= 1000 && y <= 150) {
-					cSample.y = 0;
-				}
 				currentRay.d = RadeonRays::normalize(cameraRef.getFocalLength() * cameraRef.getForwardVector() + cSample.x * cameraRef.getRightVector() + cSample.y * cameraRef.getUpVector());
 				currentRay.o = cameraRef.getPosition() + cameraRef.getDepthRange().x * currentRay.d;
 
