@@ -42,10 +42,13 @@ namespace SP {
 		currentRay.o.w = cameraRef.getDepthRange().y - cameraRef.getDepthRange().x;
 		currentRay.d.w = sampleBase.x;		// check
 
+
+		// reset default state
 		currentRay.SetMaxT(std::numeric_limits<float>::max());
 		currentRay.SetTime(0.f);
 		currentRay.SetMask(0xFFFFFFFF);
 		currentRay.SetActive(true);
+
 	}
 
 
