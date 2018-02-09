@@ -723,10 +723,11 @@ namespace SP {
 
 	
 
-	void PtRenderer::computeDepthMap(const Scene& scene) {
+	void PtRenderer::computeDepthMap(const Scene& scene, size_t camIdx) {
 		auto& outRef = *renderOutPtr;
 		const std::vector<RadeonRays::ray>& rayArrayRef = renderData.host_rays[0];
 		auto& depthDataRef = outRef.getDepthData();
+		const PerspectiveCamera& cameraRef{ static_cast<const PerspectiveCamera&>(scene.getCamera(camIdx)) };
 		for (auto i = 0; i < renderData.host_hitcount; ++i) {
 			const RadeonRays::Intersection& currentIntersect = renderData.host_intersections[i];
 			if (currentIntersect.shapeid == -1) {
@@ -736,8 +737,11 @@ namespace SP {
 				DifferentialGeometry diffGeo{ currentIntersect, scene };
 				auto& ray = rayArrayRef[i];
 
+				// cosTheta = camForward dot ray dir
+				float cosTheta = RadeonRays::dot(cameraRef.getForwardVector(), ray.d);
+
 				auto& hitPosition = diffGeo.getPosition();
-				float distance = std::sqrt((hitPosition - ray.o).sqnorm());
+				float distance = std::sqrt((hitPosition - ray.o).sqnorm()) * cosTheta;
 
 				depthDataRef[i] = distance;
 			}
@@ -764,7 +768,7 @@ namespace SP {
 
 			mEngineRef.queryIntersection(renderData.host_rays[0], renderData.host_hitcount, renderData.host_intersections).wait();
 
-			computeDepthMap(scene);
+			computeDepthMap(scene, configIdx);
 		}
 	}
 

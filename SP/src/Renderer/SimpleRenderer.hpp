@@ -30,7 +30,7 @@ namespace SP {
 
 		virtual void renderDepthMap(Scene const& scene, size_t configIdx) override;
 
-		void computeDepthMap(const Scene& scene);
+		void computeDepthMap(Scene const& scene, size_t configIdx);
 
 		~SimpleRenderer();
 

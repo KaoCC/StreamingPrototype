@@ -98,7 +98,7 @@ namespace SP {
 
 		// Depth
 		void generateDepthRays(const Scene& scene, size_t camIdx);
-		void computeDepthMap(const Scene& scene);
+		void computeDepthMap(const Scene& scene, size_t camIdx);
 
 		// Helper
 		void compactIndex();
