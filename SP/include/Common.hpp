@@ -58,6 +58,10 @@ namespace SP {
 
 		ImageConfig(int localId, const std::string& path);
 
+		// test, for atomic
+		ImageConfig(const ImageConfig& rhs);
+		ImageConfig& operator=(const ImageConfig& rhs);
+
 		//size_t getByteSize() const {
 		//	return imageDataCache.size() * sizeof(uint8_t);
 		//}
@@ -79,10 +83,8 @@ namespace SP {
 			imageID = id;
 		}
 
-		// write: unique_lock
 		void setRefreshState(bool flag);
 
-		// read: shared_lock 
 		bool getRefreshState() const;
 
 
@@ -112,12 +114,12 @@ namespace SP {
 		RadianceMap radiance;
 
 		//need lock ?
-		volatile bool refreshFlag = false;
+		std::atomic<bool> refreshFlag = false;
 		
 		bool refreshCacheFlag = false;
 
 		//workaround
-		std::unique_ptr<boost::shared_mutex> flagMutexPtr{new boost::shared_mutex()};
+		//std::unique_ptr<boost::shared_mutex> flagMutexPtr{new boost::shared_mutex()};
 
 		// test
 		std::shared_ptr<SP::RenderOutput> radiancePtr;
