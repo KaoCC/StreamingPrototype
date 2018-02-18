@@ -291,6 +291,13 @@ namespace SP {
 	}
 
 
+	void ConfigManager::enterEditingState(EditingState state) {
+
+		std::cerr << "Editing state changes from " << static_cast<int>(mEditingState) << " to " << static_cast<int>(state) << std::endl;
+		mEditingState = state;
+	}
+
+
 	// testing 
 	//void ConfigManager::changeSceneWithCoordinatesCV(float x, float y) {
 	//	std::cerr << "recompile Scene with ST Plane coordinate" << std::endl;

@@ -3,8 +3,10 @@ Streaming Prototype is a demo version of the Cloud-Based Rendering Engine that c
 
 ## System requirements and Dependencies
 
-- [C++ Boost 1.63](http://www.boost.org/)
-- [Google Protocol Buffer v3.2.0](https://github.com/google/protobuf)
+- [C++17 Compiler](http://en.cppreference.com/w/cpp/compiler_support)
+- [CMake 3.10](https://cmake.org/)
+- [C++ Boost 1.65.1](http://www.boost.org/)
+- [Google Protocol Buffer v3.5.1.1](https://github.com/google/protobuf)
 - [x264](http://www.videolan.org/developers/x264.html)
 - [Radeon Rays](https://github.com/GPUOpen-LibrariesAndSDKs/RadeonRays_SDK)
 - [Heterogeneous Queue](https://github.com/KaoCC/HeterogeneousQueue)
@@ -12,11 +14,9 @@ Streaming Prototype is a demo version of the Cloud-Based Rendering Engine that c
 
 Note: The RadeonRays framework may require [Embree](https://embree.github.io/) or [OpenCL](https://software.intel.com/en-us/intel-opencl) in order to support the corresponding backends.
 
-The following compilers are supported:
+Currently the following compilers are tested:
 
-- Visual Studio 2015 or 2017
-
-- GCC 5.4
+- Visual Studio 2017 Version 15.5.5
 
 ## Build
 
@@ -36,9 +36,9 @@ We have recently changed from premake to cmake.
 
 ## Demo Video
 
-[Basic Scene](https://youtu.be/lMdvIzpLWpQ)
-[Arbitrary viewpoint in Conference](https://youtu.be/RelNG831QU0)
-[Wide angle viewing in Conference ](https://youtu.be/JWcialjxyy4)
-[Projection to ST plane in Sponza](https://youtu.be/JtGV25Jj2x8)
-[Full screen rotation in Sponza](https://youtu.be/XTZMCKUFCxA)
+- [Basic Scene](https://youtu.be/lMdvIzpLWpQ)
+- [Arbitrary viewpoint in Conference](https://youtu.be/RelNG831QU0)
+- [Wide angle viewing in Conference ](https://youtu.be/JWcialjxyy4)
+- [Projection to ST plane in Sponza](https://youtu.be/JtGV25Jj2x8)
+- [Full screen rotation in Sponza](https://youtu.be/XTZMCKUFCxA)
 

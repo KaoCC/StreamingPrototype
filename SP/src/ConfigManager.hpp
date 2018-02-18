@@ -96,6 +96,15 @@ namespace SP {
 
 		void enterState(State state);
 
+		// editing state 
+		enum class EditingState {
+			kNormal,
+			kWaitForOperation,
+			kMoving
+		};
+
+		void enterEditingState(EditingState state);
+
 		// test
 		//void changeSceneWithCoordinatesCV(float x, float y);
 
@@ -114,10 +123,15 @@ namespace SP {
 		}
 
 
+		EditingState getCurrentEditingState()const {
+			return mEditingState;
+		}
+
 
 	private:
 
 		uint32_t moduleID = 0;
+		EditingState mEditingState = EditingState::kNormal;
 
 		//CameraConfig cameraCfg;
 		//ScreenConfig screenCfg;
