@@ -3,23 +3,20 @@
 
 namespace SP {
 
-	LightField::LightField(std::size_t numOfSubLFs, std::size_t numOfSubLFImgs) : mNumOfSubLFs(numOfSubLFs), mNumOfSubLFImgs(numOfSubLFImgs) {
+	LightField::LightField(std::size_t numOfSubLFs, std::size_t numOfSubLFImgs) : mNumOfSubLFs(numOfSubLFs), mNumOfSubLFImgs(numOfSubLFImgs), 
+		subLFs{ numOfSubLFs, SubLightField(numOfSubLFImgs)} {
 
 		// test images
 		//const std::string kFilePath{ pathBase + "crown_" + std::to_string(index) + ".ppm" };
 
-		for (size_t i = 0; i < numOfSubLFs; ++i) {
-			//subLFs.push_back(SubLightField(i, this->pathBase));
-			subLFs.push_back(SubLightField(i, numOfSubLFImgs));
-		}
+
+		//for (size_t i = 0; i < numOfSubLFs; ++i) {
+		//	//subLFs.push_back(SubLightField(i, this->pathBase));
+		//	subLFs.emplace_back(SubLightField(numOfSubLFImgs));
+		//}
 	}
 
-	LightField::SubLightField::SubLightField(size_t index, std::size_t numOfSubLFImgs) : mNumOfImgs(numOfSubLFImgs) {
-
-		if (numOfSubLFImgs > 0) {
-			images.resize(numOfSubLFImgs);
-		}
-
+	LightField::SubLightField::SubLightField(std::size_t numOfSubLFImgs) : mNumOfImgs(numOfSubLFImgs), images{numOfSubLFImgs, ImageConfig()} {
 	}
 
 	ImageConfig & LightField::SubLightField::operator[](std::size_t index) {
@@ -30,6 +27,8 @@ namespace SP {
 		return images[index];
 	}
 
+
+	// this is wrong ...
 	bool LightField::SubLightField::getRefreshState() const {
 		bool status = false;
 
