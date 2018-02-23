@@ -108,6 +108,78 @@ SP::Square::Square() {
 }
 
 
+#include "Renderer\Scene\IO\tiny_obj_loader.h"
+
+
+// Warning: Ultra Ugly and Untested Code below ...
+SP::Budda::Budda() {
+
+	// KAOCC: Yet to be done ...
+
+	// load the budda from the scene data ...
+	// or hard code it
+
+
+	// data buffers
+	//tinyobj::attrib_t attrib;
+	std::vector<tinyobj::shape_t> objShapes;
+	std::vector<tinyobj::material_t> objMaterials;
+
+	// load the file
+
+	const std::string defaultPath = "Resources/Buddha";
+	const std::string defaultModelName = "buddha.objm";
+
+	std::string basepath = defaultPath;
+	basepath += "/";
+	std::string filename = basepath + defaultModelName;
+
+	std::string errorString;
+	bool status = tinyobj::LoadObj(objShapes, objMaterials, errorString, filename.c_str(), basepath.c_str());
+
+
+	// tmp
+	auto objShape = objShapes[0];			// <------------- CAREFUL
+
+	// vertices
+	size_t num_vertices = objShape.mesh.positions.size() / 3;
+	setVertices(&objShape.mesh.positions[0], num_vertices);
+
+
+	// normal
+	size_t num_normals = objShape.mesh.normals.size() / 3;
+	setNormals(&objShape.mesh.normals[0], num_normals);
+
+
+	// UV
+	size_t num_uvs = objShape.mesh.texcoords.size() / 2;
+
+	if (num_uvs) {
+		setUVs(&objShape.mesh.texcoords[0], num_uvs);
+	} else {
+
+		// Generate Zeros if we do not have UVs
+		std::vector<RadeonRays::float2> zero(num_vertices);
+		std::fill(zero.begin(), zero.end(), RadeonRays::float2(0, 0));
+		setUVs(&zero[0], num_vertices);
+	}
+
+	// Set indices
+	size_t num_indices = objShape.mesh.indices.size();
+	setIndices(reinterpret_cast<const std::uint32_t*>(&objShape.mesh.indices[0]), num_indices);
+
+
+	// Set material
+	std::unique_ptr<Material> diffuse = std::make_unique<SingleBxDF>(SingleBxDF::BxDFType::kLambert);
+	diffuse->setInputValue("albedo", RadeonRays::float3(10, 15, 10));
+
+	setMaterial(std::move(diffuse));
+
+}
+
+
+
+
 
 std::unique_ptr<SP::Mesh> SP::createDefaultShape(DefaultShapeType type) {
 
@@ -131,19 +203,5 @@ std::unique_ptr<SP::Mesh> SP::createDefaultShape(DefaultShapeType type) {
 	}
 }
 
-SP::Budda::Budda() {
-
-	// KAOCC: Yet to be done ...
-
-	// load the budda from the scene data ...
-	// or hard code it
 
 
-
-
-	throw std::runtime_error("Budda incomplete");
-
-
-
-
-}
