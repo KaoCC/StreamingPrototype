@@ -411,9 +411,7 @@ namespace SP {
 
 						if (editingMsg.model_id() < 0) {
 							std::cerr << "model id < 0 ... Error ?" << std::endl;
-						}
-
-						else {
+						} else {
 							mCfgManagerRef.enterEditingState(ConfigManager::EditingState::kMoving);
 
 							// TODO: [Editing] Server should set the model to be moved
@@ -427,9 +425,8 @@ namespace SP {
 						if (editingMsg.model_id() < 0) {
 							// cancel movinng
 							mCfgManagerRef.enterEditingState(ConfigManager::EditingState::kWaitForOperation);
-						}
 
-						else {
+						} else {
 
 							// change model
 
@@ -456,9 +453,7 @@ namespace SP {
 						if (editingMsg.model_id() < 0) {
 
 							std::cerr << "model id < 0 ... Error ?" << std::endl;
-						}
-
-						else {
+						} else {
 
 							// check this ... lock or something ?
 
@@ -490,6 +485,8 @@ namespace SP {
 
 							// TODO: [Editing] change model id here! ID must not be duplicated with any existing models
 
+
+
 							newModelPtr->set_model_id(editingMsg.model_id() + 10); // THIS IS A PLACEHOLDER!
 							newModelPtr->set_model_name(std::string("Added Model ") + std::to_string(editingMsg.model_id()));
 
@@ -501,9 +498,7 @@ namespace SP {
 							writeResponse(responsePtr);
 
 						}
-					}
-
-					else {
+					} else {
 						std::cerr << "ADD_MODEL can only be used in kWaitForOperation state, current = " << (int)mCfgManagerRef.getCurrentEditingState() << std::endl;
 					}
 
@@ -517,9 +512,10 @@ namespace SP {
 						std::cerr << "Moving current model to screen X: " << editingMsg.screen_x() << ", screen Y: " << editingMsg.screen_y() << std::endl;
 
 						// TODO: [Editing] change the position of current moving model
-					}
 
-					else {
+
+
+					} else {
 						std::cerr << "UPDATE can only be used in kMoving state, current = " << (int)mCfgManagerRef.getCurrentEditingState() << std::endl;
 					}
 
@@ -566,6 +562,7 @@ namespace SP {
 			modelPtr->set_model_name(std::string("New Model ") + std::to_string(modelId));
 
 		}
+
 		
 
 		// TODO: [Editing] add current model id for moving

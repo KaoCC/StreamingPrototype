@@ -37,6 +37,8 @@ namespace SP {
 
 
 	// tmp, for testing only
+	// legacy code, not use anymore
+	[[deprecated("testing code")]]
 	static SP::Mesh* createDefaultMesh(float worldX, float worldY, float worldZ) {
 
 		// TODO: fix this !! Who's gonna release the memory for this ?
@@ -349,8 +351,11 @@ namespace SP {
 
 		if (defaultShapeList.empty()) {
 			// add support type here
-			defaultShapeList.push_back(DefaultShapeType::kTriangle);
-			defaultShapeList.push_back(DefaultShapeType::kSquare);
+			//defaultShapeList.push_back(DefaultShapeType::kTriangle);
+			//defaultShapeList.push_back(DefaultShapeType::kSquare);
+			//defaultShapeList.push_back(DefaultShapeType::kBudda);
+
+			defaultShapeList = { DefaultShapeType::kTriangle , DefaultShapeType::kSquare , DefaultShapeType::kBudda };
 		}
 
 	}

@@ -9,13 +9,18 @@ namespace SP {
 
 	// tmp , workaround
 	RadeonRays::float3 tmpGetValue(const Material* matPtr) {
-		auto single = dynamic_cast<const SingleBxDF*>(matPtr);
+		
 
-		if (single) {
+		if (auto single = dynamic_cast<const SingleBxDF*>(matPtr)) {
 			return single->getInputValue("albedo").floatValue;
-		} else {
+		} else if (auto multi = dynamic_cast<const MultiBxDF*>(matPtr)) {
+
+			auto diffusePart = multi->getInputValue("base_material");
+			auto singleMat = diffusePart.matValue;
+			return singleMat->getInputValue("albedo").floatValue;
+
 			// tmp
-			return RadeonRays::float3 {0.3f, 0.3f, 0.3f};
+			//return RadeonRays::float3 {0.3f, 0.3f, 0.3f};
 		}
 
 	}
