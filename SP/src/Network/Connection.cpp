@@ -562,6 +562,7 @@ namespace SP {
 			modelPtr->set_model_name(std::string("New Model ") + std::to_string(modelId));
 
 		}
+
 		
 
 		// TODO: [Editing] add current model id for moving
