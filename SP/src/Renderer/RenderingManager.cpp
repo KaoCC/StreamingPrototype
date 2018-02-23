@@ -88,10 +88,10 @@ namespace SP {
 		mesh->setName("Default");
 
 		// memory leak !
-		Material* diffuse = new SingleBxDF(SingleBxDF::BxDFType::kLambert);
+		std::unique_ptr<Material> diffuse = std::make_unique<SingleBxDF>(SingleBxDF::BxDFType::kLambert);
 		diffuse->setInputValue("albedo", RadeonRays::float3(10, 10, 10));
 
-		mesh->setMaterial(diffuse);
+		mesh->setMaterial(std::move(diffuse));
 
 		return mesh;
 	}

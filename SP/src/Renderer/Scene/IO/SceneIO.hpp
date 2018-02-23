@@ -10,11 +10,11 @@ namespace SP {
 	class SceneIO {
 	public:
 		// Create OBJ scene loader
-		static SceneIO* createSceneIO();
+		static std::unique_ptr<SceneIO> createSceneIO();
 
 		// for testing only
 		// Create test scene loader
-		static SceneIO* createSceneIOTest();
+		//static SceneIO* createSceneIOTest();
 
 		// Constructor
 		SceneIO() = default;
@@ -22,7 +22,7 @@ namespace SP {
 		virtual ~SceneIO() = default;
 
 		// Load the scene from file using resourse base path
-		virtual Scene* loadScene(std::string const& filename, std::string const& basepath) const = 0;
+		virtual std::unique_ptr<Scene> loadScene(std::string const& filename, std::string const& basepath) const = 0;
 
 		// Disallow copying
 		SceneIO(SceneIO const&) = delete;

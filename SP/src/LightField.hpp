@@ -14,7 +14,7 @@ namespace SP {
 		class SubLightField {
 
 		public:
-			SubLightField(std::size_t numOfSubLFImgs);
+			explicit SubLightField(std::size_t numOfSubLFImgs);
 
 			// test
 			//SubLightField(size_t index, const std::string& basePath);

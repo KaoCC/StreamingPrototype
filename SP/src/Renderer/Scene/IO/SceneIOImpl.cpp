@@ -26,14 +26,14 @@ namespace SP {
 
 	public:
 		// Load scene from file
-		Scene* loadScene(std::string const& filename, std::string const& basepath) const override;
+		std::unique_ptr<Scene> loadScene(std::string const& filename, std::string const& basepath) const override;
 
 	private:
-		Material const* parseMaterial(const ImageIO& imageIO, tinyobj::material_t const& mat, std::string const& basepath, Scene& scene) const;
+		std::unique_ptr<Material const> parseMaterial(const ImageIO& imageIO, tinyobj::material_t const& mat, std::string const& basepath, Scene& scene) const;
 	};
 
 
-	Scene * SceneIOImpl::loadScene(std::string const & filename, std::string const & basepath) const {
+	std::unique_ptr<Scene> SceneIOImpl::loadScene(std::string const& filename, std::string const& basepath) const {
 
 		//using namespace tinyobj;
 
@@ -58,22 +58,22 @@ namespace SP {
 		}
 
 		// Allocate Scene
-		Scene* scene{ new Scene() };
+		std::unique_ptr<Scene> scenePtr{ std::make_unique<Scene>() };
 
 		// Enumerate and translate materials
 		// Keep track of emissive subset
 		std::set<Material const*> emissives;
-		std::vector<Material const*> materials(objMaterials.size());
+		std::vector<std::shared_ptr<Material const>> materials(objMaterials.size());
 
 		auto imageIO = ImageIO::createImageIO() ;
 
 		for (size_t i = 0; i < objMaterials.size(); ++i) {
 			// parse the materials
-			materials[i] = parseMaterial(*imageIO, objMaterials[i], basepath, *scene);
+			materials[i] = parseMaterial(*imageIO, objMaterials[i], basepath, *scenePtr);
 
 			// emission stuff !!!
 			if (materials[i]->hasEmission()) {
-				emissives.insert(materials[i]);
+				emissives.insert(materials[i].get());
 			}
 
 		}
@@ -119,7 +119,7 @@ namespace SP {
 			//scene->attachAutoreleaseObject(mesh);
 
 			// If the mesh has emissive material, add AreaLight for it
-			if (emissives.find(materials[idx]) != emissives.cend()) {
+			if (emissives.find(materials[idx].get()) != emissives.cend()) {
 
 				// Add area light for each polygon (triangle-based) of emissive mesh
 				for (int k = 0; k < mesh->getNumIndices() / 3; ++k) {
@@ -127,14 +127,14 @@ namespace SP {
 					// yet to be done
 
 					//auto light = std::make_unique<AreaLight>(mesh, k);
-					scene->attachLight(std::make_unique<AreaLight>(mesh.get(), k));
+					scenePtr->attachLight(std::make_unique<AreaLight>(mesh.get(), k));
 					//scene->attachAutoreleaseObject(light);
 				}
 
 			}
 
 			// Attach to the scene
-			scene->attachShape(std::move(mesh));
+			scenePtr->attachShape(std::move(mesh));
 
 		}
 
@@ -142,20 +142,20 @@ namespace SP {
 		// add Image Based Light ?
 		// HDR ?
 
-		return scene;
+		return scenePtr;
 	}
 
 	// Yet to be done
-	Material const * SceneIOImpl::parseMaterial(const ImageIO & imageIO, tinyobj::material_t const & mat, std::string const & basepath, Scene & scene) const {
+	std::unique_ptr<Material const> SceneIOImpl::parseMaterial(const ImageIO & imageIO, tinyobj::material_t const & mat, std::string const & basepath, Scene& scene) const {
 
 		RadeonRays::float3 emission(mat.emission[0], mat.emission[1], mat.emission[2]);
 
-		Material* material = nullptr;
+		std::unique_ptr<Material> material;
 
 		// check for emissive
 		if (emission.sqnorm() > 0) {
 
-			material = new SingleBxDF(SingleBxDF::BxDFType::kEmissive);
+			material.reset(new SingleBxDF(SingleBxDF::BxDFType::kEmissive));
 
 			// albedo ?
 			if (!mat.diffuse_texname.empty()) {
@@ -178,7 +178,7 @@ namespace SP {
 				// Yet to be done !
 				//throw std::runtime_error("MultiBXDF: Yet to be done");
 
-				material = new MultiBxDF(MultiBxDF::MultiType::kFresnelBlend);
+				material.reset(new MultiBxDF(MultiBxDF::MultiType::kFresnelBlend));
 				material->setInputValue("ior", RadeonRays::float4(1.5f, 1.5f, 1.5f, 1.5f));
 
 				Material* diffusePart { new SingleBxDF(SingleBxDF::BxDFType::kLambert) };
@@ -204,7 +204,7 @@ namespace SP {
 				
 			} else {
 				// Otherwise create lambert
-				Material* diffuse = new SingleBxDF(SingleBxDF::BxDFType::kLambert);
+				std::unique_ptr<Material> diffuse = std::make_unique<SingleBxDF>(SingleBxDF::BxDFType::kLambert);
 
 				// Set albedo
 				if (!mat.diffuse_texname.empty()) {
@@ -223,7 +223,7 @@ namespace SP {
 					//scene.attachAutoreleaseObject(texture);
 				}
 
-				material = diffuse;
+				material = std::move(diffuse);
 			}
 
 		}
@@ -247,7 +247,7 @@ namespace SP {
 
 
 
-	SceneIO * SceneIO::createSceneIO() {
-		return new SceneIOImpl();
+	std::unique_ptr<SceneIO> SceneIO::createSceneIO() {
+		return std::make_unique<SceneIOImpl>();
 	}
 }
