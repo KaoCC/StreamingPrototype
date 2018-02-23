@@ -3,6 +3,10 @@
 
 #include "Sampler.hpp"
 
+#include "Renderer\Scene\Texture.hpp"
+#include "DifferentialGeometry.hpp"
+
+
 // test
 #include <iostream>
 

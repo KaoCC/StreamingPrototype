@@ -119,6 +119,7 @@ namespace SP {
 		refreshCacheFlag = rhs.refreshCacheFlag;
 		radiancePtr = rhs.radiancePtr;
 
+		return *this;
 	}
 
 	const ImageConfig::ImageBuffer & ImageConfig::getImageCacheData() {
