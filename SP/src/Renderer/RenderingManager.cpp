@@ -349,8 +349,11 @@ namespace SP {
 
 		if (defaultShapeList.empty()) {
 			// add support type here
-			defaultShapeList.push_back(DefaultShapeType::kTriangle);
-			defaultShapeList.push_back(DefaultShapeType::kSquare);
+			//defaultShapeList.push_back(DefaultShapeType::kTriangle);
+			//defaultShapeList.push_back(DefaultShapeType::kSquare);
+			//defaultShapeList.push_back(DefaultShapeType::kBudda);
+
+			defaultShapeList = { DefaultShapeType::kTriangle , DefaultShapeType::kSquare , DefaultShapeType::kBudda };
 		}
 
 	}

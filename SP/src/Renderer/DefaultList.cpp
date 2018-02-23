@@ -123,6 +123,10 @@ std::unique_ptr<SP::Mesh> SP::createDefaultShape(DefaultShapeType type) {
 		return std::make_unique<Square>();
 		break;
 
+	case DefaultShapeType::kBudda:
+		return std::make_unique<Budda>();
+		break;
+
 	default:
 		// Error ?
 		return std::make_unique<Mesh>();
@@ -130,4 +134,19 @@ std::unique_ptr<SP::Mesh> SP::createDefaultShape(DefaultShapeType type) {
 	}
 }
 
+SP::Budda::Budda() {
 
+	// KAOCC: Yet to be done ...
+
+	// load the budda from the scene data ...
+	// or hard code it
+
+
+
+
+	throw std::runtime_error("Budda incomplete");
+
+
+
+
+}
