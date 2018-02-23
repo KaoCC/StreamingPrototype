@@ -9,7 +9,11 @@
 
 //#include <memory>
 
+#include "Material.hpp"
+
 #include <vector>
+#include <memory>
+
 
 namespace SP {
 
@@ -25,15 +29,15 @@ namespace SP {
 		virtual ~Shape() = 0;
 
 		// Get and set material
-		void setMaterial(Material const* matPtr);
-		Material const* getMaterial() const;
+		void setMaterial(std::shared_ptr<Material const> matPtr);
+		Material const& getMaterial() const;
 
 		// disallow copying
 		Shape(Shape const&) = delete;
 		Shape& operator = (Shape const&) = delete;
 
 	private:
-		Material const* materialPtr;
+		std::shared_ptr<Material const> materialPtr;
 	};
 
 	inline Shape::~Shape() {

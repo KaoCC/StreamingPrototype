@@ -112,7 +112,7 @@ namespace SP {
 				int shapeId = isectRef.shapeid - 1;
 				const Mesh& meshData = dynamic_cast<const Mesh&>(scene.getShape(shapeId));
 
-				const Material* matPtr = meshData.getMaterial();
+				const Material& matRef = meshData.getMaterial();
 
 
 				const uint32_t* indexArray = meshData.getIndices();
@@ -156,7 +156,7 @@ namespace SP {
 
 
 				// FIXME: bug here for multi-bxdf
-				outRef[i] = tmpGetValue(matPtr) * RadeonRays::dot(-rayArrayRef[i].d, normal);        // check ray direction
+				outRef[i] = tmpGetValue(&matRef) * RadeonRays::dot(-rayArrayRef[i].d, normal);        // check ray direction
 
 			}
 

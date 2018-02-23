@@ -64,7 +64,7 @@ namespace SP {
 		}
 
 		// Material ?
-		matPtr = meshData.getMaterial();
+		matPtr = &(meshData.getMaterial());
 
 		//workaround
 		currentMat = matPtr;

@@ -98,12 +98,12 @@ namespace SP {
 		wo = p - diffGeo.getPosition();
 		pdf = 1.f / std::sqrt(((RadeonRays::cross(v2 - v0, v2 - v1)) * 0.5f).sqnorm());
 
-		const Material* matPtr = getShape()->getMaterial();
+		const Material& matRef = getShape()->getMaterial();
 
 
 		// Texture_GetValue3f(mat.kx.xyz, tx, TEXTURE_ARGS_IDX(mat.kxmapidx));
 		// KAOCC: texture is not supported yet ...
-		const RadeonRays::float3& ke = matPtr->getInputValue("albedo").floatValue;
+		const RadeonRays::float3& ke = matRef.getInputValue("albedo").floatValue;
 
 		const RadeonRays::float3& v = -RadeonRays::normalize(wo);
 

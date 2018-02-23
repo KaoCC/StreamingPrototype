@@ -5,14 +5,14 @@
 //#include "math/float3.h"
 //#include "math/matrix.h"
 
-#include "Scene/Material.hpp"
+//#include "Scene/Material.hpp"
 #include "Scene/Scene.hpp"
 #include "Scene/Shape.hpp"
 #include "radeon_rays.h"
 
 namespace SP {
 
-
+	class Material;
 
 	class DifferentialGeometry {
 

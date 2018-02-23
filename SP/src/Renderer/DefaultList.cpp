@@ -48,11 +48,11 @@ SP::Triangle::Triangle() {
 
 	setName("DefaultTriangle");
 
-	// memory leak !
-	Material* diffuse = new SingleBxDF(SingleBxDF::BxDFType::kLambert);
+
+	std::unique_ptr<Material> diffuse = std::make_unique<SingleBxDF>(SingleBxDF::BxDFType::kLambert);
 	diffuse->setInputValue("albedo", RadeonRays::float3(10, 15, 10));
 
-	setMaterial(diffuse);
+	setMaterial(std::move(diffuse));
 
 }
 
@@ -101,13 +101,10 @@ SP::Square::Square() {
 
 	setName("DefaultSquare");
 
-
-	// memory leak !
-	Material* diffuse = new SingleBxDF(SingleBxDF::BxDFType::kLambert);
+	std::unique_ptr<Material> diffuse = std::make_unique<SingleBxDF>(SingleBxDF::BxDFType::kLambert);
 	diffuse->setInputValue("albedo", RadeonRays::float3(15, 10, 10));
 
-	setMaterial(diffuse);
-
+	setMaterial(std::move(diffuse));
 }
 
 
