@@ -327,7 +327,6 @@ namespace SP {
 		//auto* mesh = createTransformedMesh(worldX, worldY, worldZ, type);
 
 		sceneDataPtr->attachShape(createTransformedMesh(worldX, worldY, worldZ, type));
-		//sceneDataPtr->attachAutoreleaseObject(mesh);		// consider using a smart pointer?
 
 		//mEnginePtr->compileScene(*sceneDataPtr);
 
@@ -339,6 +338,10 @@ namespace SP {
 		mEnginePtr->resume();
 		resume();
 
+	}
+
+	void RenderingManager::removeLastShape() {
+		sceneDataPtr->detachLastShape();
 	}
 
 	const PerspectiveCamera & RenderingManager::getPerspectiveCamera(size_t index) const {

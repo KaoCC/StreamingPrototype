@@ -113,6 +113,14 @@ namespace SP {
 		}
 	}
 
+	std::unique_ptr<Shape const> Scene::detachLastShape() {
+		auto shape = std::move(scenePtr->shapes.back());
+		scenePtr->shapes.pop_back();
+		setDirtyFlag(kShapes);
+
+		return shape;
+	}
+
 	std::size_t Scene::getNumShapes() const {
 		return scenePtr->shapes.size();
 	}

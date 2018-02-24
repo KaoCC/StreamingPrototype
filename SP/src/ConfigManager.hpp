@@ -110,6 +110,10 @@ namespace SP {
 
 		void changeSceneWithCoordinates(float x, float y);
 
+		// tmp API
+		void fakeMove(float x, float y);		// top-level API
+		void removeLast();
+
 		// default model list
 		void createDefaultList();
 		const std::vector<DefaultShapeType>& getDefaultList() const;

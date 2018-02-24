@@ -430,6 +430,19 @@ namespace SP {
 
 	}
 
+	void ConfigManager::fakeMove(float x, float y) {
+
+		// check if the flag of the ADD is true
+		// missing ..
+
+		removeLast();
+		changeSceneWithCoordinates(x, y);
+	}
+
+	void ConfigManager::removeLast() {
+		renderManagerPtr->removeLastShape();
+	}
+
 	void ConfigManager::createDefaultList() {
 		renderManagerPtr->createDefaultList();
 	}

@@ -432,6 +432,12 @@ namespace SP {
 
 							// TODO: [Editing] Server should set the model to be moved
 
+
+							// KAOCC:  fake move ...
+							std::cerr << "Fake move ... (SET_MODEL/kMoving)\n";
+							mCfgManagerRef.fakeMove(editingMsg.screen_x(), editingMsg.screen_y());
+
+
 						}
 
 						break;
@@ -467,7 +473,7 @@ namespace SP {
 
 							//mCfgManagerRef.changeSceneWithCoordinatesCV(editingMsg.screen_x(), editingMsg.screen_y());
 
-							mCfgManagerRef.changeSceneWithCoordinates(editingMsg.screen_x(), editingMsg.screen_y());;
+							mCfgManagerRef.changeSceneWithCoordinates(editingMsg.screen_x(), editingMsg.screen_y());
 
 
 							// TODO: [Editing] return the new model ID after change scene
@@ -513,6 +519,8 @@ namespace SP {
 
 						// TODO: [Editing] change the position of current moving model
 
+						std::cerr << "Fake move ... (UPDATE)\n";
+						mCfgManagerRef.fakeMove(editingMsg.screen_x(), editingMsg.screen_y());
 
 
 					} else {

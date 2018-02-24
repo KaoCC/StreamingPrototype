@@ -60,6 +60,9 @@ namespace SP {
 		void attachShape(std::unique_ptr<Shape const> shape);
 		void detachShape(std::unique_ptr<Shape const> shape);
 
+		// tmp API
+		std::unique_ptr<Shape const> detachLastShape();
+
 		// Get number of shapes in the scene
 		std::size_t getNumShapes() const;
 		// Get shape iterator
