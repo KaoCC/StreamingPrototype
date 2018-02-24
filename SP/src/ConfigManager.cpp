@@ -435,7 +435,7 @@ namespace SP {
 		// check if the flag of the ADD is true
 		// missing ..
 
-		removeLast();
+		removeLast();		// <--------- CAREFUL !  need to stop threads first
 		changeSceneWithCoordinates(x, y);
 	}
 

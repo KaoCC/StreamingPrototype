@@ -53,7 +53,9 @@ namespace SP {
 
 		// KAOCC: tmp testing
 		void changeSceneWithCoordinates(float worldX, float worldY, float worldZ, DefaultShapeType type);
+
 		void removeLastShape();
+
 
 		// testing 
 		const PerspectiveCamera& getPerspectiveCamera(size_t index) const;

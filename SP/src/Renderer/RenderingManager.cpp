@@ -340,8 +340,24 @@ namespace SP {
 
 	}
 
+
 	void RenderingManager::removeLastShape() {
+
+
+		pause();
+
+		mEnginePtr->pause();
+		mEnginePtr->clear();
+
+		std::cerr << "detachLastShape ..." << std::endl;
+
 		sceneDataPtr->detachLastShape();
+		mTracker->compileSceneTest(*sceneDataPtr);
+
+
+		mEnginePtr->resume();
+		resume();
+
 	}
 
 	const PerspectiveCamera & RenderingManager::getPerspectiveCamera(size_t index) const {
