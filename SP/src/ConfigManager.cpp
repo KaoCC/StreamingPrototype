@@ -413,7 +413,7 @@ namespace SP {
 		float yNDC = 2 * (y / kHeight) - 1;
 		std::cerr << "NDC (x, y): " << xNDC << " " << yNDC << " " << std::endl;
 
-		const float kDefaultDepth = -0.1;
+		const float kDefaultDepth = -0.1f;
 
 		RadeonRays::float4 inputMat { xNDC, yNDC, kDefaultDepth, 1 };
 		RadeonRays::matrix transMat { RadeonRays::inverse(projMat * viewMat) };

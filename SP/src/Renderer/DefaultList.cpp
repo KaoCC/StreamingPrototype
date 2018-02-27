@@ -112,7 +112,7 @@ SP::Square::Square() {
 
 
 // Warning: Ultra Ugly and Untested Code below ...
-SP::Budda::Budda() {
+SP::Buddha::Buddha() {
 
 	// KAOCC: Yet to be done ...
 
@@ -192,8 +192,8 @@ std::unique_ptr<SP::Mesh> SP::createDefaultShape(DefaultShapeType type) {
 		return std::make_unique<Square>();
 		break;
 
-	case DefaultShapeType::kBudda:
-		return std::make_unique<Budda>();
+	case DefaultShapeType::kBuddha:
+		return std::make_unique<Buddha>();
 		break;
 
 	default:

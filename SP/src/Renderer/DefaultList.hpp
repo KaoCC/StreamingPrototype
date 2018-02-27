@@ -17,7 +17,7 @@ namespace SP {
 	enum class DefaultShapeType {
 		kTriangle,
 		kSquare,
-		kBudda		// KAOCC: not really a shape ...
+		kBuddha		// KAOCC: not really a shape ...
 	};
 
 
@@ -33,9 +33,9 @@ namespace SP {
 		Square();
 	};
 
-	class Budda : public Mesh {
+	class Buddha : public Mesh {
 	public:
-		Budda();
+		Buddha();
 	};
 
 

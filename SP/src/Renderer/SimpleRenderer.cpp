@@ -21,6 +21,10 @@ namespace SP {
 
 			// tmp
 			//return RadeonRays::float3 {0.3f, 0.3f, 0.3f};
+		} else {
+			// tmp
+
+			return RadeonRays::float3{ 0.3f, 0.3f, 0.3f };
 		}
 
 	}
