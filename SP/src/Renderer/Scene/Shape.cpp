@@ -7,12 +7,12 @@ namespace SP {
 	Shape::Shape() : materialPtr(nullptr) {
 	}
 
-	void Shape::setMaterial(Material const * matPtr) {
+	void Shape::setMaterial(std::shared_ptr<Material const> matPtr) {
 		materialPtr = matPtr;
 	}
 
-	Material const * Shape::getMaterial() const {
-		return materialPtr;
+	Material const& Shape::getMaterial() const {
+		return *materialPtr;
 	}
 
 	void Mesh::setIndices(std::uint32_t const * ind, std::size_t num_indices) {

@@ -4,12 +4,12 @@ package StreamingFormat;
 
 
 enum MessageType {
-  MsgInit = 0;
-  MsgDefaultPos = 1;
-  MsgCameraInfo = 2;
-  MsgImage = 3;
-  MsgEnding = 4;
-  MsgControl = 5;
+  MSG_INIT = 0;
+  MSG_DEFAULT_POS = 1;
+  MSG_CAMERA_INFO = 2;
+  MSG_IMAGE = 3;
+  MSG_ENDING = 4;
+  MSG_CONTROL = 5;
 }
 
 
@@ -53,20 +53,33 @@ message Camera {
 enum EditOperation {
   START = 0;
   FINISH = 1;
-  UPDATE = 2;
-  MODEL_LIST = 3;
-  SET_MODEL_ID = 4;
+  UPDATE = 2; // param: screenX, screenY
+  MODEL_LIST = 3; // param: currentModelInfos, addModelInfos
+  SET_MODEL = 4; // param: modelId
+  ADD_MODEL = 5; // param: modelId, screenX, screenY
+  CONFIRM_ADD = 6; // param: currentModelInfos
+}
+
+message ModelInfo {
+  int32 model_id = 1;
+  string model_name = 2;
+  // screen xy is for displaying current position, valid only for existing model
+  float screen_x = 3;
+  float screen_y = 4;
+  // model image in PNG format
+  bytes model_image = 5;
 }
 
 message Editing {
   EditOperation op = 1;
-  // screen x are only valid in UPDATE op
+  // screen x,y are only valid in: UPDATE, ADD_MODEL
   float screen_x = 2;
   float screen_y = 3;
-  // model_ids is only valid in MODEL_LIST op
-  repeated int32 model_ids = 4;
-  // model_id is only valid in SET_MODEL_ID op
-  int32 model_id = 5;
+  // modelIds is only valid in: MODEL_LIST, CONFIRM_ADD
+  repeated ModelInfo current_model_infos = 4; // for existing models
+  repeated ModelInfo add_model_infos = 5; // for list of new models
+  // modelId is only valid in: SET_MODEL, ADD_MODEL
+  int32 model_id = 6;
 }
 
 message Control {

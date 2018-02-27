@@ -1,11 +1,14 @@
 #ifndef _SP_BXDFHELPER_HPP_
 #define _SP_BXDFHELPER_HPP_
 
-#include "Scene/Material.hpp"
+//#include "Scene/Material.hpp"
+
+#include "radeon_rays.h"
 
 namespace SP {
 
-
+	class Material;
+	class DifferentialGeometry;
 
 
 	class BxDFHelper {

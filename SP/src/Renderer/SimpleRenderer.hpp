@@ -45,7 +45,7 @@ namespace SP {
 		void simpleShading(const Scene& scene);
 
 		ApiEngine& mEngineRef;
-		SimpleRenderData mSimpleRenderDataPtr;
+		SimpleRenderData renderData;
 
 		std::shared_ptr<RenderOutput> mRenderOutPtr;
 

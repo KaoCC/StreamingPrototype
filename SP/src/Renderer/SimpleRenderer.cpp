@@ -9,13 +9,22 @@ namespace SP {
 
 	// tmp , workaround
 	RadeonRays::float3 tmpGetValue(const Material* matPtr) {
-		auto single = dynamic_cast<const SingleBxDF*>(matPtr);
+		
 
-		if (single) {
+		if (auto single = dynamic_cast<const SingleBxDF*>(matPtr)) {
 			return single->getInputValue("albedo").floatValue;
+		} else if (auto multi = dynamic_cast<const MultiBxDF*>(matPtr)) {
+
+			auto diffusePart = multi->getInputValue("base_material");
+			auto singleMat = diffusePart.matValue;
+			return singleMat->getInputValue("albedo").floatValue;
+
+			// tmp
+			//return RadeonRays::float3 {0.3f, 0.3f, 0.3f};
 		} else {
 			// tmp
-			return RadeonRays::float3 {0.3f, 0.3f, 0.3f};
+
+			return RadeonRays::float3{ 0.3f, 0.3f, 0.3f };
 		}
 
 	}
@@ -37,10 +46,10 @@ namespace SP {
 
 		int maxrays = mRenderOutPtr->getWidth() * mRenderOutPtr->getHeight();
 
-		mSimpleRenderDataPtr.host_hitcount = maxrays;
+		renderData.host_hitcount = maxrays;
 
 
-		mEngineRef.queryIntersection(mSimpleRenderDataPtr.host_rays[0], mSimpleRenderDataPtr.host_hitcount, mSimpleRenderDataPtr.host_intersections).wait();
+		mEngineRef.queryIntersection(renderData.host_rays[0], renderData.host_hitcount, renderData.host_intersections).wait();
 
 		simpleShading(scene);
 	}
@@ -68,7 +77,7 @@ namespace SP {
 			for (std::uint32_t x = 0; x < imageWidth; ++x) {
 
 				const PerspectiveCamera& cameraRef { static_cast<const PerspectiveCamera&>(scene.getCamera(camIdx)) };
-				RadeonRays::ray& currentRay = mSimpleRenderDataPtr.host_rays[0][y * imageWidth + x];
+				RadeonRays::ray& currentRay = renderData.host_rays[0][y * imageWidth + x];
 				generateRandomRay(rngseed, x, y, imageWidth, imageHeight, currentRay, cameraRef);
 
 			}
@@ -79,28 +88,28 @@ namespace SP {
 
 	void SimpleRenderer::resizeWorkingSet(const Output& out) {
 
-		mSimpleRenderDataPtr.host_rays[0].clear();
-		mSimpleRenderDataPtr.host_rays[0].resize(out.getWidth() * out.getHeight());
+		renderData.host_rays[0].clear();
+		renderData.host_rays[0].resize(out.getWidth() * out.getHeight());
 
-		mSimpleRenderDataPtr.host_intersections.clear();
-		mSimpleRenderDataPtr.host_intersections.resize(out.getWidth() * out.getHeight());
+		renderData.host_intersections.clear();
+		renderData.host_intersections.resize(out.getWidth() * out.getHeight());
 
-		mSimpleRenderDataPtr.host_hitcount = 0;
+		renderData.host_hitcount = 0;
 
 	}
 
 	void SimpleRenderer::simpleShading(const Scene& scene) {
 
-		const std::vector<RadeonRays::ray>& rayArrayRef = mSimpleRenderDataPtr.host_rays[0];
+		const std::vector<RadeonRays::ray>& rayArrayRef = renderData.host_rays[0];
 
 		auto& outRef = *mRenderOutPtr;
 
 		//const std::vector<const Mesh*>& meshPtrs = mEngineRef.getInternalMeshPtrs();
 
 
-		for (auto i = 0; i < mSimpleRenderDataPtr.host_hitcount; ++i) {
+		for (auto i = 0; i < renderData.host_hitcount; ++i) {
 
-			const RadeonRays::Intersection& isectRef = mSimpleRenderDataPtr.host_intersections[i];
+			const RadeonRays::Intersection& isectRef = renderData.host_intersections[i];
 
 			if (isectRef.shapeid == -1) {
 
@@ -112,7 +121,7 @@ namespace SP {
 				int shapeId = isectRef.shapeid - 1;
 				const Mesh& meshData = dynamic_cast<const Mesh&>(scene.getShape(shapeId));
 
-				const Material* matPtr = meshData.getMaterial();
+				const Material& matRef = meshData.getMaterial();
 
 
 				const uint32_t* indexArray = meshData.getIndices();
@@ -156,7 +165,7 @@ namespace SP {
 
 
 				// FIXME: bug here for multi-bxdf
-				outRef[i] = tmpGetValue(matPtr) * RadeonRays::dot(-rayArrayRef[i].d, normal);        // check ray direction
+				outRef[i] = tmpGetValue(&matRef) * RadeonRays::dot(-rayArrayRef[i].d, normal);        // check ray direction
 
 			}
 

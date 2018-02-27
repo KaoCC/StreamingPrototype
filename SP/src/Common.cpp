@@ -107,6 +107,21 @@ namespace SP {
 
 	}
 
+	ImageConfig::ImageConfig(const ImageConfig & rhs) : imageID{ rhs.imageID }, imageDataCache{ rhs.imageDataCache }, radiance{ rhs.radiance },
+		refreshFlag{ rhs.refreshFlag.load() }, refreshCacheFlag{ rhs.refreshCacheFlag }, radiancePtr{ rhs.radiancePtr } {
+	}
+
+	ImageConfig & ImageConfig::operator=(const ImageConfig & rhs) {
+		imageID = rhs.imageID;
+		imageDataCache = rhs.imageDataCache;
+		radiance = rhs.radiance;
+		refreshFlag = rhs.refreshFlag.load();
+		refreshCacheFlag = rhs.refreshCacheFlag;
+		radiancePtr = rhs.radiancePtr;
+
+		return *this;
+	}
+
 	const ImageConfig::ImageBuffer & ImageConfig::getImageCacheData() {
 		// get Radiance Map
 		// Note: will check the refresh flag
@@ -164,19 +179,11 @@ namespace SP {
 	}
 
 	void ImageConfig::setRefreshState(bool flag) {
-		std::unique_lock<boost::shared_mutex> flagLock{ *flagMutexPtr };
 		refreshFlag = flag;
 	}
 
 	bool ImageConfig::getRefreshState() const {
-		bool tmpState = false;
-
-		{
-			boost::shared_lock<boost::shared_mutex> flagLock{ *flagMutexPtr };
-			tmpState = refreshFlag;
-		}
-
-		return tmpState;
+		return refreshFlag;
 	}
 
 	void ImageConfig::storeToPPM() {

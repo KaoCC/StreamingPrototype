@@ -7,16 +7,22 @@
 namespace SP {
 
 
+
+	// helper functions for command handling
+	// Yet to be done
+
+
+
 	Connection::ConnectionPointer Connection::create(boost::asio::io_service& ios, ConfigManager& configRef) {
 		return ConnectionPointer(new Connection(ios, configRef));
 	}
 
 	Connection::Connection(boost::asio::io_service& ios, ConfigManager& configRef) :
-			streamingSocket(ios),
-			packet(Packet::MessagePointer(new StreamingFormat::StreamingMessage())),
-			mCfgManagerRef(configRef),
-			responsePacket(Packet::MessagePointer(new StreamingFormat::StreamingMessage())),
-			mEncoder(CreateEncoder(configRef.getScreenWidth(), configRef.getScreenHeight())) {
+		streamingSocket {ios},
+		packet{ std::make_shared<StreamingFormat::StreamingMessage>() },
+		mCfgManagerRef { configRef },
+		responsePacket{ std::make_shared<StreamingFormat::StreamingMessage>() },
+		mEncoder{ CreateEncoder(configRef.getScreenWidth(), configRef.getScreenHeight()) } {
 	}
 
 	void Connection::start() {
@@ -94,6 +100,17 @@ namespace SP {
 		} else {
 			std::cerr << "[ Write Error ] Error Code: " << error << std::endl;
 			boost::system::error_code ignored_ec;
+
+			// KAOCC: Error here: the case in multi connection ?
+			// change back to Path Tracing if last state is editing (not kNormal)
+			if (mCfgManagerRef.getCurrentEditingState() != ConfigManager::EditingState::kNormal) {
+
+				mCfgManagerRef.enterState(ConfigManager::State::kPathTracing);
+				mCfgManagerRef.enterEditingState(ConfigManager::EditingState::kNormal);
+
+			}
+
+
 			//streamingSocket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ignored_ec);
 			//streamingSocket.close();
 		}
@@ -120,7 +137,7 @@ namespace SP {
 		//Packet::MessagePointer responsePtr{ new StreamingFormat::StreamingMessage };
 
 		switch (msgPtr->type()) {
-		case StreamingFormat::MessageType::MsgInit: {
+		case StreamingFormat::MessageType::MSG_INIT: {
 
 			// read the msg (init info)
 
@@ -133,10 +150,10 @@ namespace SP {
 			// more from here
 			//...
 
-			Packet::MessagePointer responsePtr { new StreamingFormat::StreamingMessage };
+			Packet::MessagePointer responsePtr { std::make_shared<StreamingFormat::StreamingMessage>() };
 
 			// reply the default positions
-			responsePtr->set_type(StreamingFormat::MessageType::MsgDefaultPos);
+			responsePtr->set_type(StreamingFormat::MessageType::MSG_DEFAULT_POS);
 
 			// must be on the heap
 			StreamingFormat::DefaultPos* defPosPtr { new StreamingFormat::DefaultPos };
@@ -157,17 +174,20 @@ namespace SP {
 
 			responseVector.push_back(responsePtr);
 
+			mCfgManagerRef.enterEditingState(ConfigManager::EditingState::kNormal);
+
+
 			break;
 
 		}
 
-		case StreamingFormat::MessageType::MsgDefaultPos: {
+		case StreamingFormat::MessageType::MSG_DEFAULT_POS: {
 			// Possible Error
 			// The server will not get this one!
 			break;
 		}
 
-		case StreamingFormat::MessageType::MsgCameraInfo: {
+		case StreamingFormat::MessageType::MSG_CAMERA_INFO: {
 
 			// read the msg (camera info)
 
@@ -212,7 +232,7 @@ namespace SP {
 			// insert rendering code & encoder here
 
 
-			uint8_t* rawPtr = mEncoder->getEncoderRawBuffer();
+			auto* rawPtr = mEncoder->getEncoderRawBuffer();
 
 			// TMP !!!
 			//size_t subLFIndex = mCfgManagerRef.getIndexOfSubLightField(dx);
@@ -225,7 +245,7 @@ namespace SP {
 
 			encodedDataQueue.clear();
 
-			for (const std::size_t subLFIndex : indexArray) {
+			for (const auto subLFIndex : indexArray) {
 
 
 				if (!lightFieldRef[subLFIndex].getRefreshState()) {
@@ -237,10 +257,10 @@ namespace SP {
 				//std::cerr << "Get new: " << subLFIndex << "\n";
 
 
-				Packet::MessagePointer responsePtr { new StreamingFormat::StreamingMessage };
+				Packet::MessagePointer responsePtr { std::make_shared<StreamingFormat::StreamingMessage>() };
 
 				// reply the images
-				responsePtr->set_type(StreamingFormat::MessageType::MsgImage);
+				responsePtr->set_type(StreamingFormat::MessageType::MSG_IMAGE);
 
 				// test
 				//encodedDataVector.clear();
@@ -270,7 +290,7 @@ namespace SP {
 				}
 
 
-				for (size_t k = subLfIndexOffset; k < subLFSz; k+= subLfIndexStep) {
+				for (auto k = subLfIndexOffset; k < subLFSz; k+= subLfIndexStep) {
 
 					// need to optimize for copying !
 					//ImageConfig imageData{ cfgManager.getImage() };
@@ -323,19 +343,19 @@ namespace SP {
 			break;
 		}
 
-		case StreamingFormat::MessageType::MsgImage: {
+		case StreamingFormat::MessageType::MSG_IMAGE: {
 			// Possible error
 			// The server will not get this one !
 			break;
 		}
 
-		case StreamingFormat::MessageType::MsgEnding: {
+		case StreamingFormat::MessageType::MSG_ENDING: {
 
-			Packet::MessagePointer responsePtr { new StreamingFormat::StreamingMessage };
+			Packet::MessagePointer responsePtr { std::make_shared<StreamingFormat::StreamingMessage>() };
 
 			// tmp: for testing only
 			// Echo the Ending msg back ?
-			responsePtr->set_type(StreamingFormat::MessageType::MsgEnding);
+			responsePtr->set_type(StreamingFormat::MessageType::MSG_ENDING);
 			responseVector.push_back(responsePtr);
 
 			// TODO: Close the connection ?
@@ -343,7 +363,7 @@ namespace SP {
 			break;
 		}
 
-		case StreamingFormat::MessageType::MsgControl: {
+		case StreamingFormat::MessageType::MSG_CONTROL: {
 			// test
 			std::cerr << "control msg\n";
 
@@ -365,42 +385,140 @@ namespace SP {
 
 			if (msgPtr->controlmsg().has_editingmsg()) {
 				const auto& editingMsg = msgPtr->controlmsg().editingmsg();
-				// op is enum
-				// StreamingFormat::EditOperation.START(0)/FINISH(1)/UPDATE(2)
-
 
 				
 				// reset test
 				switch (editingMsg.op()) {
 				case StreamingFormat::EditOperation::START:
 					std::cerr << "Editing START:" << std::endl;
-					mCfgManagerRef.enterState(ConfigManager::State::kSimple);
+
 					writeModelIdList();
+
+					mCfgManagerRef.enterState(ConfigManager::State::kSimple);
+					mCfgManagerRef.enterEditingState(ConfigManager::EditingState::kWaitForOperation);
 					break;
 				case StreamingFormat::EditOperation::FINISH:
 					std::cerr << "Editing FINISH:" << std::endl;
 					mCfgManagerRef.enterState(ConfigManager::State::kPathTracing);
+					mCfgManagerRef.enterEditingState(ConfigManager::EditingState::kNormal);
+
 					break;
-				case StreamingFormat::EditOperation::SET_MODEL_ID:
-					std::cerr << "Set model ID" << editingMsg.model_id() <<std::endl;
-					
-					if (editingMsg.model_id() < 0) {
-						std::cerr << "model id < 0 ... Error ?" << std::endl;
+				case StreamingFormat::EditOperation::SET_MODEL:
+					std::cerr << "Set moving model ID" << editingMsg.model_id() << std::endl;
+
+					switch (mCfgManagerRef.getCurrentEditingState()) {
+					case ConfigManager::EditingState::kWaitForOperation:
+
+						if (editingMsg.model_id() < 0) {
+							std::cerr << "model id < 0 ... Error ?" << std::endl;
+						} else {
+							mCfgManagerRef.enterEditingState(ConfigManager::EditingState::kMoving);
+
+							// TODO: [Editing] Server should set the model to be moved
+
+						}
+
+						break;
+
+					case ConfigManager::EditingState::kMoving:
+
+						if (editingMsg.model_id() < 0) {
+							// cancel movinng
+							mCfgManagerRef.enterEditingState(ConfigManager::EditingState::kWaitForOperation);
+
+						} else {
+
+							// change model
+
+							// TODO: [Editing] Server should set the model to be moved
+
+						}
+
+						break;
+
+					default:
+						std::cerr << "SET_MODEL can only be used in kWaitForOperation or kMoving state, current = " << (int)mCfgManagerRef.getCurrentEditingState() << std::endl;
+						break;
+					}
+
+
+					break;
+
+				case StreamingFormat::EditOperation::ADD_MODEL: {
+
+					if (mCfgManagerRef.getCurrentEditingState() == ConfigManager::EditingState::kWaitForOperation) {
+
+						std::cerr << "Adding new model ID" << editingMsg.model_id() << " to screen X: " << editingMsg.screen_x() << ", screen Y: " << editingMsg.screen_y() << std::endl;
+
+						if (editingMsg.model_id() < 0) {
+
+							std::cerr << "model id < 0 ... Error ?" << std::endl;
+						} else {
+
+							// check this ... lock or something ?
+
+							const auto& defaultList = mCfgManagerRef.getDefaultList();
+
+							// set new model and set its possition
+
+							mCfgManagerRef.setCurrnetDefaultShape(defaultList[editingMsg.model_id()]);
+
+							// TODO : enable when done     
+
+							//mCfgManagerRef.changeSceneWithCoordinatesCV(editingMsg.screen_x(), editingMsg.screen_y());
+
+							mCfgManagerRef.changeSceneWithCoordinates(editingMsg.screen_x(), editingMsg.screen_y());;
+
+
+							// TODO: [Editing] return the new model ID after change scene
+
+							Packet::MessagePointer responsePtr{ std::make_shared<StreamingFormat::StreamingMessage>() };
+
+							StreamingFormat::Control* controlPtr{ new StreamingFormat::Control };
+							StreamingFormat::Editing* editPtr{ new StreamingFormat::Editing };
+
+							editPtr->set_op(StreamingFormat::EditOperation::ADD_MODEL);
+							//editPtr->set_model_id(editingMsg.model_id() + 10); // TODO: [Editing] change model id here!
+
+
+							auto newModelPtr = editPtr->add_current_model_infos();
+
+							// TODO: [Editing] change model id here! ID must not be duplicated with any existing models
+
+
+
+							newModelPtr->set_model_id(editingMsg.model_id() + 10); // THIS IS A PLACEHOLDER!
+							newModelPtr->set_model_name(std::string("Added Model ") + std::to_string(editingMsg.model_id()));
+
+							controlPtr->set_allocated_editingmsg(editPtr);
+
+							responsePtr->set_type(StreamingFormat::MessageType::MSG_CONTROL);
+							responsePtr->set_allocated_controlmsg(controlPtr);
+
+							writeResponse(responsePtr);
+
+						}
 					} else {
-
-						// check this ... lock or something ?
-						const auto& defaultList = mCfgManagerRef.getDefaultList();
-						mCfgManagerRef.setCurrnetDefaultShape(defaultList[editingMsg.model_id()]);
-
-					}			
-
+						std::cerr << "ADD_MODEL can only be used in kWaitForOperation state, current = " << (int)mCfgManagerRef.getCurrentEditingState() << std::endl;
+					}
 
 					break;
+				}
+
+
 				case StreamingFormat::EditOperation::UPDATE:
-					std::cerr << "Editing UPDATE:" << editingMsg.op() << ", screen X: " << editingMsg.screen_x() << ", screen Y: " << editingMsg.screen_y() << std::endl;
-					// TODO : enable when done 		
-					//mCfgManagerRef.changeSceneWithCoordinatesCV(editingMsg.screen_x(), editingMsg.screen_y());
-					mCfgManagerRef.changeSceneWithCoordinates(editingMsg.screen_x(), editingMsg.screen_y());
+					if (mCfgManagerRef.getCurrentEditingState() == ConfigManager::EditingState::kMoving) {
+
+						std::cerr << "Moving current model to screen X: " << editingMsg.screen_x() << ", screen Y: " << editingMsg.screen_y() << std::endl;
+
+						// TODO: [Editing] change the position of current moving model
+
+
+
+					} else {
+						std::cerr << "UPDATE can only be used in kMoving state, current = " << (int)mCfgManagerRef.getCurrentEditingState() << std::endl;
+					}
+
 					break;
 				}
 			}
@@ -415,12 +533,11 @@ namespace SP {
 			break;
 		}
 
-
 		return responseVector;
 	}
 
 	void Connection::writeModelIdList() {
-		Packet::MessagePointer responsePtr{ new StreamingFormat::StreamingMessage };
+		Packet::MessagePointer responsePtr{ std::make_shared<StreamingFormat::StreamingMessage>() };
 		StreamingFormat::Control* controlPtr{ new StreamingFormat::Control };
 		StreamingFormat::Editing* editPtr{ new StreamingFormat::Editing };
 
@@ -431,16 +548,40 @@ namespace SP {
 
 		mCfgManagerRef.createDefaultList();
 		const auto& defaultList = mCfgManagerRef.getDefaultList();
-		
-		// check the value !!!
-		for (int i = 0;i < defaultList.size(); i++) {
-			editPtr->add_model_ids(static_cast<int>(defaultList[i]));		// cast ?
+
+		std::cerr << "Default list size:" << defaultList.size() << std::endl;
+
+	
+		// TODO: [Editing] fill the ModelInfo instead of ID only
+		for (auto i = 0; i < defaultList.size(); ++i) {
+			//editPtr->add_add_model_ids(static_cast<int>(defaultList[i]));    // cast ?
+
+			StreamingFormat::ModelInfo* modelPtr = editPtr->add_add_model_infos();
+			int modelId = static_cast<int>(defaultList[i]); // cast?
+			modelPtr->set_model_id(modelId);
+			modelPtr->set_model_name(std::string("New Model ") + std::to_string(modelId));
+
 		}
+
 		
+
+		// TODO: [Editing] add current model id for moving
+		// TODO: [Editing] fill the ModelInfo instead of ID only
+
+
+		for (auto i = 0; i < defaultList.size(); ++i) {
+			//editPtr->add_current_model_ids(static_cast<int>(defaultList[i]));
+
+			StreamingFormat::ModelInfo* modelPtr = editPtr->add_current_model_infos();
+			int modelId = static_cast<int>(defaultList[i]); // cast?
+			modelPtr->set_model_id(modelId);
+			modelPtr->set_model_name(std::string("Current Model ") + std::to_string(modelId));
+		}
+
 
 		controlPtr->set_allocated_editingmsg(editPtr);
 
-		responsePtr->set_type(StreamingFormat::MessageType::MsgControl);
+		responsePtr->set_type(StreamingFormat::MessageType::MSG_CONTROL);
 		responsePtr->set_allocated_controlmsg(controlPtr);
 
 
@@ -468,7 +609,7 @@ namespace SP {
 
 
 			// check if we need to write the image
-			if (msgPtr->type() == StreamingFormat::MessageType::MsgImage) {
+			if (msgPtr->type() == StreamingFormat::MessageType::MSG_IMAGE) {
 
 				//boost::asio::write(streamingSocket, boost::asio::buffer(cfgManager.getImageCache().getImageData()));
 				/*boost::asio::async_write(streamingSocket, boost::asio::buffer(encodedImageData),

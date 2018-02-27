@@ -3,16 +3,18 @@
 
 #include "SceneObject.hpp"
 
-#include "Texture.hpp"
+//#include "Texture.hpp"
 #include "math/float3.h"
 
 #include <set>
 #include <map>
 
-#include "../DifferentialGeometry.hpp"
+//#include "../DifferentialGeometry.hpp"
 
 namespace SP {
 
+
+	class Texture;
 
 	class Material : public SceneObject {
 
