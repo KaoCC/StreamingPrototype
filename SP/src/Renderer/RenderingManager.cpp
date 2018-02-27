@@ -355,7 +355,7 @@ namespace SP {
 			//defaultShapeList.push_back(DefaultShapeType::kSquare);
 			//defaultShapeList.push_back(DefaultShapeType::kBudda);
 
-			defaultShapeList = { DefaultShapeType::kTriangle , DefaultShapeType::kSquare , DefaultShapeType::kBudda };
+			defaultShapeList = { DefaultShapeType::kTriangle , DefaultShapeType::kSquare , DefaultShapeType::kBuddha };
 		}
 
 	}
@@ -421,7 +421,7 @@ namespace SP {
 
 
 				// Adjust sensor size based on current aspect ratio
-				float aspect = (float) mConfigRef.getScreenWidth() / mConfigRef.getScreenHeight();
+				float aspect = static_cast<float>(mConfigRef.getScreenWidth() / mConfigRef.getScreenHeight());
 				cameraSensorSize.y = cameraSensorSize.x / aspect;
 
 				cameraPtr->setSensorSize(cameraSensorSize);
