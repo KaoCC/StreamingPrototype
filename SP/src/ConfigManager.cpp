@@ -280,6 +280,11 @@ namespace SP {
 		renderManagerPtr = renManPtr;
 	}
 
+	RenderingManager* ConfigManager::getRenderManagerPtr()
+	{
+		return renderManagerPtr;
+	}
+
 
 	void ConfigManager::enterState(State state) {
 

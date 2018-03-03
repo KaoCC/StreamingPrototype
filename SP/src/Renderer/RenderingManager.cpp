@@ -200,16 +200,16 @@ namespace SP {
 		std::cerr << "Start Render Thread" << std::endl;
 
 
-		{
-			std::lock_guard<std::mutex> queueLock { mQueueMutex };
+		//{
+		//	std::lock_guard<std::mutex> queueLock { mQueueMutex };
 
-			for (size_t i = 0; i < mConfigRef.getNumberOfSubLFs(); ++i) {
-				for (size_t j = 0; j < mConfigRef.getNumberOfSubLFImages(); ++j) {
+		//	for (size_t i = 0; i < mConfigRef.getNumberOfSubLFs(); ++i) {
+		//		for (size_t j = 0; j < mConfigRef.getNumberOfSubLFImages(); ++j) {
 
-					mTaskQueue.emplace(i,j,true);
-				}
-			}
-		}
+		//			mTaskQueue.emplace(i,j,true);
+		//		}
+		//	}
+		//}
 
 		unsigned int numOfThreads = std::thread::hardware_concurrency();
 
@@ -228,6 +228,23 @@ namespace SP {
 			renderThreads.push_back(std::thread(&RenderingManager::renderingWorker, this));
 		}
 
+	}
+
+	void RenderingManager::enqueueRenderTask(const Task & task)
+	{
+		{
+			std::lock_guard<std::mutex> queueLock{ mQueueMutex };
+			mTaskQueue.push(task);
+		}
+		mQueueCV.notify_one();
+	}
+
+	void RenderingManager::enqueueRenderTask(size_t subLFIdx, size_t subImgIdx, bool needRenderDepth, int sampleCount){
+		{
+			std::lock_guard<std::mutex> queueLock{ mQueueMutex };
+			mTaskQueue.emplace(subLFIdx, subImgIdx, needRenderDepth, sampleCount);
+		}
+		mQueueCV.notify_one();
 	}
 
 	void RenderingManager::pause() {
@@ -607,9 +624,17 @@ namespace SP {
 			// for saving images
 			fieldRef[subLFIdx][subImgIdx].setId(farmIdx);
 
-
 			// push back the task
+			// if sampleCount > 0 or == -1
+			bool continueRender = taskIndex.sampleCount == -1;
+			if (taskIndex.sampleCount > 1) {
+				taskIndex.sampleCount -= 1;
+				std::cerr << "Task " << taskIndex.subLFIdx << ", " << taskIndex.subImgIdx << ": " << taskIndex.sampleCount << std::endl;
+				continueRender = true;
+			}
+			if(continueRender)
 			{
+
 				std::lock_guard<std::mutex> queueLock { mQueueMutex };
 				mTaskQueue.push(std::move(taskIndex));
 

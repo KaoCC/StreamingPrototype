@@ -87,6 +87,7 @@ namespace SP {
 
 		// workaround
 		void setRenderManagerPtr(RenderingManager* renManPtr);
+		RenderingManager* getRenderManagerPtr();
 
 		// reset states
 		enum class State {
