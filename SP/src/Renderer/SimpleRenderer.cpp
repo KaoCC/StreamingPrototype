@@ -31,7 +31,7 @@ namespace SP {
 	}
 
 	// OBJ viewer
-	void SimpleRenderer::render(Scene const& scene, size_t configIdx) {
+	void SimpleRenderer::render(Scene const& scene, size_t configIdx, const RenderingTask& renderingTask) {
 
 
 		generatePrimaryRays(scene, configIdx);
@@ -196,7 +196,7 @@ namespace SP {
 	}
 
 
-	void SimpleRenderer::renderDepthMap(Scene const & scene, size_t configIdx)
+	void SimpleRenderer::renderDepthMap(Scene const & scene, size_t configIdx, const RenderingTask& renderingTask)
 	{
 
 		auto& outRef = *mRenderOutPtr;

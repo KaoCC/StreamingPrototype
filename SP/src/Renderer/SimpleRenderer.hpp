@@ -24,11 +24,11 @@ namespace SP {
 
 		virtual void preprocess(Scene const & scene) override;
 
-		virtual void render(Scene const & scene, size_t configIdx) override;
+		virtual void render(Scene const & scene, size_t configIdx, const RenderingTask& renderingTask) override;
 
 		virtual void setOutput(std::shared_ptr<RenderOutput>  output) override;
 
-		virtual void renderDepthMap(Scene const& scene, size_t configIdx) override;
+		virtual void renderDepthMap(Scene const& scene, size_t configIdx, const RenderingTask& renderingTask) override;
 
 		void computeDepthMap(Scene const& scene, size_t configIdx);
 

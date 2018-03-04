@@ -95,7 +95,7 @@ namespace SP {
 	}
 
 	// this is the entry point of the main path tracing algorithm
-	void PtRenderer::render(Scene const& scene, size_t configIdx) {
+	void PtRenderer::render(Scene const& scene, size_t configIdx, const RenderingTask& renderingTask) {
 
 		//auto api = sceneTracker.getIntersectionApi();
 		//sceneTracker.compileSceneTest(scene);
@@ -749,7 +749,7 @@ namespace SP {
 	}
 
 
-	void PtRenderer::renderDepthMap(Scene const & scene, size_t configIdx)
+	void PtRenderer::renderDepthMap(Scene const & scene, size_t configIdx, const RenderingTask& renderingTask)
 	{
 
 		auto& outRef = *renderOutPtr;

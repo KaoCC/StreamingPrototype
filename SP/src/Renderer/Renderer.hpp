@@ -12,6 +12,8 @@
 
 #include <memory>
 
+#include <Common.hpp>
+
 namespace SP {
 
 	class RenderOutput;
@@ -59,7 +61,7 @@ namespace SP {
 
 		\param scene Scene to render
 		*/
-		virtual void render(Scene const& scene, size_t configIdx) = 0;
+		virtual void render(Scene const& scene, size_t configIdx, const RenderingTask& renderingTask) = 0;
 
 		/**
 		\brief Set the output for rendering.
@@ -73,7 +75,7 @@ namespace SP {
 
 		\param output The output to render into.
 		*/
-		virtual void renderDepthMap(Scene const& scene, size_t configIdx) = 0;
+		virtual void renderDepthMap(Scene const& scene, size_t configIdx, const RenderingTask& renderingTask) = 0;
 
 
 

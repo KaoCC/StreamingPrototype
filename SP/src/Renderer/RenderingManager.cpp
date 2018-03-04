@@ -230,7 +230,7 @@ namespace SP {
 
 	}
 
-	void RenderingManager::enqueueRenderTask(const Task & task)
+	void RenderingManager::enqueueRenderTask(const RenderingTask & task)
 	{
 		{
 			std::lock_guard<std::mutex> queueLock{ mQueueMutex };
@@ -552,7 +552,7 @@ namespace SP {
 
 	void RenderingManager::renderingWorker() {
 
-		Task taskIndex;
+		RenderingTask taskIndex;
 
 		while (true) {
 
@@ -580,7 +580,7 @@ namespace SP {
 
 			}
 
-
+			std::cerr << "Task " << taskIndex.subLFIdx << ", " << taskIndex.subImgIdx << ": " << taskIndex.sampleCount << std::endl;
 			// async part
 
 			size_t subLFIdx = taskIndex.subLFIdx;
@@ -593,10 +593,10 @@ namespace SP {
 			// rendering
 			auto t1 = std::chrono::high_resolution_clock::now();
 			if(taskIndex.needRenderDepth){
-				renderFarm[farmIdx]->renderDepthMap(*sceneDataPtr, farmIdx);
+				renderFarm[farmIdx]->renderDepthMap(*sceneDataPtr, farmIdx, taskIndex);
 				taskIndex.needRenderDepth = false;
 			}
-			renderFarm[farmIdx]->render(*sceneDataPtr, farmIdx);
+			renderFarm[farmIdx]->render(*sceneDataPtr, farmIdx, taskIndex);
 			auto t2 = std::chrono::high_resolution_clock::now();
 
 			// test
@@ -629,7 +629,6 @@ namespace SP {
 			bool continueRender = taskIndex.sampleCount == -1;
 			if (taskIndex.sampleCount > 1) {
 				taskIndex.sampleCount -= 1;
-				std::cerr << "Task " << taskIndex.subLFIdx << ", " << taskIndex.subImgIdx << ": " << taskIndex.sampleCount << std::endl;
 				continueRender = true;
 			}
 			if(continueRender)

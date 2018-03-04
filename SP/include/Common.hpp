@@ -136,6 +136,17 @@ namespace SP {
 	};
 
 
+	using ImageMask = std::vector<uint8_t>;
+
+	struct RenderingTask {
+		size_t subLFIdx;
+		size_t subImgIdx;
+		bool needRenderDepth;
+		int sampleCount;
+		ImageMask mask;
+		RenderingTask(size_t subLFIdx = 0, size_t subImgIdx = 0, bool needRenderDepth = true, int sampleCount = -1) :
+			subLFIdx(subLFIdx), subImgIdx(subImgIdx), needRenderDepth(needRenderDepth), sampleCount(sampleCount) {}
+	};
 
 
 }

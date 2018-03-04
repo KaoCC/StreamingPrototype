@@ -34,14 +34,6 @@ namespace SP {
 
 	public:
 
-		struct Task {
-			size_t subLFIdx;
-			size_t subImgIdx;
-			bool needRenderDepth;
-			int sampleCount;
-			Task(size_t subLFIdx = -1, size_t subImgIdx = -1, bool needRenderDepth = true, int sampleCount = -1) :
-				subLFIdx(subLFIdx), subImgIdx(subImgIdx), needRenderDepth(needRenderDepth), sampleCount(sampleCount) {}
-		};
 
 		RenderingManager() = delete;
 
@@ -52,8 +44,8 @@ namespace SP {
 
 		void startRenderThread();
 
-		void enqueueRenderTask(const Task& task);
-		void enqueueRenderTask(size_t subLFIdx = -1, size_t subImgIdx = -1, bool needRenderDepth = true, int sampleCount = -1);
+		void enqueueRenderTask(const RenderingTask& task);
+		void enqueueRenderTask(size_t subLFIdx = 0, size_t subImgIdx = 0, bool needRenderDepth = true, int sampleCount = -1);
 
 
 		void pause();
@@ -167,7 +159,7 @@ namespace SP {
 
 		std::mutex mQueueMutex;
 		std::condition_variable mQueueCV;
-		std::queue<Task> mTaskQueue;
+		std::queue<RenderingTask> mTaskQueue;
 
 		unsigned mThreadCount = 0;
 		unsigned mWaitingCounter = 0;
