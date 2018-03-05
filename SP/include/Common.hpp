@@ -75,6 +75,7 @@ namespace SP {
 		std::mutex& getDepthMutex();
 
 		void setRadiancePtr(std::shared_ptr<SP::RenderOutput> renderOut);
+		std::shared_ptr<SP::RenderOutput> getRadiancePtr();
 
 		int getID() const {
 			return imageID;
@@ -144,6 +145,8 @@ namespace SP {
 		bool needRenderDepth;
 		int sampleCount;
 		ImageMask mask;
+		RenderOutputPtr renderOutPtr;
+
 		RenderingTask(size_t subLFIdx = 0, size_t subImgIdx = 0, bool needRenderDepth = true, int sampleCount = -1) :
 			subLFIdx(subLFIdx), subImgIdx(subImgIdx), needRenderDepth(needRenderDepth), sampleCount(sampleCount) {}
 		

@@ -34,11 +34,11 @@ namespace SP {
 
 		virtual void preprocess(Scene const & scene) override;
 
-		virtual void render(Scene const & scene, size_t configIdx, const RenderingTask& renderingTask) override;
+		virtual void render(Scene const & scene, size_t configIdx, RenderingTask& renderingTask) override;
 
 		virtual void setOutput(std::shared_ptr<RenderOutput> output) override;
 
-		virtual void renderDepthMap(Scene const& scene, size_t configIdx, const RenderingTask& renderingTask) override;
+		virtual void renderDepthMap(Scene const& scene, size_t configIdx, RenderingTask& renderingTask) override;
 
 
 		struct RenderData {
@@ -80,13 +80,13 @@ namespace SP {
 
 
 		// Shade first hit
-		void shadeSurface(const Scene& scene, unsigned pass);
+		void shadeSurface(const Scene& scene, unsigned pass, RenderingTask& renderingTask);
 		// Evaluate volume
 		void evaluateVolume(unsigned pass);
 		// Handle missing rays
-		void shadeMiss(unsigned pass);
+		void shadeMiss(unsigned pass, RenderingTask& renderingTask);
 		// Gather light samples and account for visibility
-		void gatherLightSamples(unsigned pass);
+		void gatherLightSamples(unsigned pass, RenderingTask& renderingTask);
 		// Restore pixel indices after compaction
 		void restorePixelIndices(unsigned pass);
 		// Convert intersection info to compaction predicate
@@ -98,7 +98,7 @@ namespace SP {
 
 		// Depth
 		void generateDepthRays(const Scene& scene, size_t camIdx);
-		void computeDepthMap(const Scene& scene, size_t camIdx);
+		void computeDepthMap(const Scene& scene, size_t camIdx, RenderingTask& renderingTask);
 
 		// Helper
 		void compactIndex();

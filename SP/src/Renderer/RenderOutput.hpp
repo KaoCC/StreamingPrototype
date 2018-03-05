@@ -62,6 +62,7 @@ namespace SP {
 
 
 
+	using RenderOutputPtr = std::shared_ptr<RenderOutput>;
 
 
 }

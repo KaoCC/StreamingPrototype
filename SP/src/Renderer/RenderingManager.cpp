@@ -592,7 +592,7 @@ namespace SP {
 
 			// rendering
 			auto t1 = std::chrono::high_resolution_clock::now();
-			if(taskIndex.needRenderDepth){
+			if (taskIndex.needRenderDepth) {
 				renderFarm[farmIdx]->renderDepthMap(*sceneDataPtr, farmIdx, taskIndex);
 				taskIndex.needRenderDepth = false;
 			}
@@ -619,7 +619,9 @@ namespace SP {
 
 			auto& fieldRef = mConfigRef.getLightField();
 
-			fieldRef[subLFIdx][subImgIdx].setRefreshState(true);
+			if (taskIndex.renderOutPtr == nullptr) {
+				fieldRef[subLFIdx][subImgIdx].setRefreshState(true);
+			}
 
 			// for saving images
 			fieldRef[subLFIdx][subImgIdx].setId(farmIdx);

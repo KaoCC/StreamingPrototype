@@ -203,6 +203,11 @@ namespace SP {
 		radiancePtr = renderOut;
 	}
 
+	std::shared_ptr<SP::RenderOutput> ImageConfig::getRadiancePtr()
+	{
+		return radiancePtr;
+	}
+
 	void ImageConfig::setRefreshState(bool flag) {
 		std::unique_lock<boost::shared_mutex> flagLock{ *flagMutexPtr };
 		refreshFlag = flag;

@@ -95,7 +95,7 @@ namespace SP {
 	}
 
 	// this is the entry point of the main path tracing algorithm
-	void PtRenderer::render(Scene const& scene, size_t configIdx, const RenderingTask& renderingTask) {
+	void PtRenderer::render(Scene const& scene, size_t configIdx, RenderingTask& renderingTask) {
 
 		//auto api = sceneTracker.getIntersectionApi();
 		//sceneTracker.compileSceneTest(scene);
@@ -131,10 +131,10 @@ namespace SP {
 			// Shade V		(X)
 
 			// Shade Surface			// the key of rendering !
-			shadeSurface(scene, pass);
+			shadeSurface(scene, pass, renderingTask);
 
 			if (pass == 0) {
-				shadeMiss(pass);
+				shadeMiss(pass, renderingTask);
 			}
 
 
@@ -165,7 +165,7 @@ namespace SP {
 
 			//std::cerr << "Shadow: " << shadowCount << '\n';
 
-			gatherLightSamples(pass);
+			gatherLightSamples(pass, renderingTask);
 
 		}
 
@@ -288,7 +288,7 @@ namespace SP {
 	}
 
 
-	void PtRenderer::shadeSurface(const Scene& scene, unsigned pass) {
+	void PtRenderer::shadeSurface(const Scene& scene, unsigned pass, RenderingTask& renderingTask) {
 
 
 		const std::vector<RadeonRays::ray>& rayArrayRef = renderData.host_rays[pass & 0x1];
@@ -296,7 +296,8 @@ namespace SP {
 
 		auto& shadowRayArrayRef = renderData.host_shadowrays;
 		auto& lightSamplesArrayRef = renderData.host_lightSamples;
-		auto& outRef = *renderOutPtr;
+
+		auto& outRef = renderingTask.renderOutPtr == nullptr ? *renderOutPtr : *renderingTask.renderOutPtr;
 
 		const std::vector<int>& pixelIndexArrayRef = renderData.host_pixelIndex[(pass) & 0x1];
 
@@ -594,7 +595,7 @@ namespace SP {
 	}
 
 
-	void PtRenderer::shadeMiss(unsigned pass) {
+	void PtRenderer::shadeMiss(unsigned pass, RenderingTask& renderingTask) {
 
 		const std::vector<int>& pixelIndexArrayRef = renderData.host_pixelIndex[(pass + 1) & 0x1];
 
@@ -611,7 +612,7 @@ namespace SP {
 
 				int volumeIndex = renderData.host_path[pixelIndex].getVolumeIdx();
 
-				auto& outRef = *renderOutPtr;
+				auto& outRef = renderingTask.renderOutPtr == nullptr ? *renderOutPtr : *renderingTask.renderOutPtr;
 
 				if (volumeIndex == -1) {
 
@@ -629,19 +630,19 @@ namespace SP {
 
 
 
-			auto& outRef = *renderOutPtr;
+			auto& outRef = renderingTask.renderOutPtr == nullptr ? *renderOutPtr : *renderingTask.renderOutPtr;
 			outRef[pixelIndex].w += 1.f;
 		}
 
 
 	}
 
-	void PtRenderer::gatherLightSamples(unsigned pass) {
+	void PtRenderer::gatherLightSamples(unsigned pass, RenderingTask& renderingTask) {
 
 
 		const std::vector<int>& pixelIndexArrayRef = renderData.host_pixelIndex[(pass) & 0x1];
 		const auto& lightSamplesArrayRef = renderData.host_lightSamples;
-		auto& outRef = *renderOutPtr;
+		auto& outRef = renderingTask.renderOutPtr == nullptr ? *renderOutPtr : *renderingTask.renderOutPtr;
 
 		for (size_t i = 0; i < renderData.host_hitcount; ++i) {        // check upper bound !
 			int pixelIndex = pixelIndexArrayRef[i];
@@ -749,8 +750,8 @@ namespace SP {
 
 	
 
-	void PtRenderer::computeDepthMap(const Scene& scene, size_t camIdx) {
-		auto& outRef = *renderOutPtr;
+	void PtRenderer::computeDepthMap(const Scene& scene, size_t camIdx, RenderingTask& renderingTask) {
+		auto& outRef = renderingTask.renderOutPtr == nullptr ? *renderOutPtr : *renderingTask.renderOutPtr;
 		const std::vector<RadeonRays::ray>& rayArrayRef = renderData.host_rays[0];
 		auto& depthDataRef = outRef.getDepthData();
 		const PerspectiveCamera& cameraRef{ static_cast<const PerspectiveCamera&>(scene.getCamera(camIdx)) };
@@ -775,10 +776,10 @@ namespace SP {
 	}
 
 
-	void PtRenderer::renderDepthMap(Scene const & scene, size_t configIdx, const RenderingTask& renderingTask)
+	void PtRenderer::renderDepthMap(Scene const & scene, size_t configIdx, RenderingTask& renderingTask)
 	{
 
-		auto& outRef = *renderOutPtr;
+		auto& outRef = renderingTask.renderOutPtr == nullptr ? *renderOutPtr : *renderingTask.renderOutPtr;
 		auto& depthDataRef = outRef.getDepthData();
 		resizeWorkingSet(outRef);
 		// default to nearest value: 0
@@ -794,7 +795,7 @@ namespace SP {
 
 			mEngineRef.queryIntersection(renderData.host_rays[0], renderData.host_hitcount, renderData.host_intersections).wait();
 
-			computeDepthMap(scene, configIdx);
+			computeDepthMap(scene, configIdx, renderingTask);
 		}
 	}
 
