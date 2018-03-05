@@ -326,6 +326,12 @@ namespace SP {
     }
 
 
+	void RenderingTask::initMask(size_t width, size_t height, int value)
+	{
+		mask.resize(width * height);
+		std::fill(mask.begin(), mask.end(), value);
+	}
+
 }
 
 

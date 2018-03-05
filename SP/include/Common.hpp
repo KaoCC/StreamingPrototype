@@ -146,6 +146,8 @@ namespace SP {
 		ImageMask mask;
 		RenderingTask(size_t subLFIdx = 0, size_t subImgIdx = 0, bool needRenderDepth = true, int sampleCount = -1) :
 			subLFIdx(subLFIdx), subImgIdx(subImgIdx), needRenderDepth(needRenderDepth), sampleCount(sampleCount) {}
+		
+		void initMask(size_t width, size_t height, int value = 0);
 	};
 
 

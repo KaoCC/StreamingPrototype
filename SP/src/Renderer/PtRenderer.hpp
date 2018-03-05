@@ -74,7 +74,7 @@ namespace SP {
 	protected:
 
 		// Generate rays
-		void generatePrimaryRays(const Scene& scene, size_t camIdx);
+		void generatePrimaryRays(const Scene& scene, size_t camIdx, const RenderingTask& renderingTask);
 
 		void resizeWorkingSet(const Output& out);
 

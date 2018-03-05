@@ -103,15 +103,8 @@ namespace SP {
 		//mEngineRef->compileScene(scene);
 
 
-		// ray gen ?
-		generatePrimaryRays(scene, configIdx);
-
-		std::copy(renderData.host_iota.begin(), renderData.host_iota.end(), renderData.host_pixelIndex[0].begin());
-		std::copy(renderData.host_iota.begin(), renderData.host_iota.end(), renderData.host_pixelIndex[1].begin());
-
-		// Number of rays 
-		int maxrays = renderOutPtr->getWidth() * renderOutPtr->getHeight();
-		renderData.host_hitcount = maxrays;
+		// ray gen and pixel index
+		generatePrimaryRays(scene, configIdx, renderingTask);
 
 		for (unsigned pass = 0; pass < numOfBounces; ++pass) {
 
@@ -191,29 +184,62 @@ namespace SP {
 	}
 
 
-	void PtRenderer::generatePrimaryRays(const Scene& scene, size_t camIdx) {
+	void PtRenderer::generatePrimaryRays(const Scene& scene, size_t camIdx, const RenderingTask& renderingTask) {
 
 
 		const auto imageWidth = renderOutPtr->getWidth();
 		const auto imageHeight = renderOutPtr->getHeight();
 
 		auto rngseed = RadeonRays::rand_uint();
+		const PerspectiveCamera& cameraRef{ static_cast<const PerspectiveCamera&>(scene.getCamera(camIdx)) };
 
-		for (std::size_t y = 0; y < imageHeight; ++y) {
-			for (std::size_t x = 0; x < imageWidth; ++x) {            // check this !
+		if (renderingTask.mask.empty()) {
+			// default: no mask and generate all rays
+			for (std::size_t y = 0; y < imageHeight; ++y) {
+				for (std::size_t x = 0; x < imageWidth; ++x) {            // check this !
+					RadeonRays::ray& currentRay = renderData.host_rays[0][y * imageWidth + x];
+					generateRandomRay(rngseed, x, y, imageWidth, imageHeight, currentRay, cameraRef);
 
 
-				const PerspectiveCamera& cameraRef{ static_cast<const PerspectiveCamera&>(scene.getCamera(camIdx)) };
-				RadeonRays::ray& currentRay = renderData.host_rays[0][y * imageWidth + x];
-				generateRandomRay(rngseed, x, y, imageWidth, imageHeight, currentRay, cameraRef);
-
-
-				// path ?
-				Path& path { renderData.host_path[y * imageWidth + x] };
-				path.initGen();
+					// path ?
+					Path& path{ renderData.host_path[y * imageWidth + x] };
+					path.initGen();
+				}
 			}
+			// Number of rays 
+			renderData.host_hitcount = renderOutPtr->getWidth() * renderOutPtr->getHeight();
+			// Pixel index
+			std::copy(renderData.host_iota.begin(), renderData.host_iota.end(), renderData.host_pixelIndex[0].begin());
+			std::copy(renderData.host_iota.begin(), renderData.host_iota.end(), renderData.host_pixelIndex[1].begin());
 		}
+		else {
+			// generate masked ray
+			auto& hostRays = renderData.host_rays[0];
+			int rayIndex = 0;
+			for (std::size_t y = 0; y < imageHeight; ++y) {
+				for (std::size_t x = 0; x < imageWidth; ++x) {
+					int pixelIndex = y * imageWidth + x;
+					if (renderingTask.mask[pixelIndex]) {
+						// gen rays
+						RadeonRays::ray& currentRay = hostRays[rayIndex];
+						generateRandomRay(rngseed, x, y, imageWidth, imageHeight, currentRay, cameraRef);
 
+						// path generated at pixeled area!
+						Path& path{ renderData.host_path[pixelIndex] };
+						path.initGen();
+
+						// pixel index
+						renderData.host_pixelIndex[1][rayIndex] = pixelIndex;
+
+						++rayIndex;
+					}
+				}
+			}
+			// Number of rays 
+			renderData.host_hitcount = rayIndex;
+			// Pixel index
+			std::copy(renderData.host_iota.begin(), renderData.host_iota.end(), renderData.host_pixelIndex[0].begin());
+		}
 	}
 
 	void PtRenderer::resizeWorkingSet(const Output& out) {
