@@ -44,7 +44,7 @@ namespace SP {
 
 		void startRenderThread();
 
-		void enqueueRenderTask(const RenderingTask& task);
+		void enqueueRenderTask(std::shared_ptr<RenderingTask> taskPtr);
 		void enqueueRenderTask(size_t subLFIdx = 0, size_t subImgIdx = 0, bool needRenderDepth = true, int sampleCount = -1);
 
 
@@ -159,7 +159,7 @@ namespace SP {
 
 		std::mutex mQueueMutex;
 		std::condition_variable mQueueCV;
-		std::queue<RenderingTask> mTaskQueue;
+		std::queue<std::shared_ptr<RenderingTask>> mTaskQueue;
 
 		unsigned mThreadCount = 0;
 		unsigned mWaitingCounter = 0;

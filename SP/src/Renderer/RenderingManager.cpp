@@ -230,11 +230,11 @@ namespace SP {
 
 	}
 
-	void RenderingManager::enqueueRenderTask(const RenderingTask & task)
+	void RenderingManager::enqueueRenderTask(std::shared_ptr<RenderingTask> taskPtr)
 	{
 		{
 			std::lock_guard<std::mutex> queueLock{ mQueueMutex };
-			mTaskQueue.push(task);
+			mTaskQueue.push(taskPtr);
 		}
 		mQueueCV.notify_one();
 	}
@@ -242,7 +242,9 @@ namespace SP {
 	void RenderingManager::enqueueRenderTask(size_t subLFIdx, size_t subImgIdx, bool needRenderDepth, int sampleCount){
 		{
 			std::lock_guard<std::mutex> queueLock{ mQueueMutex };
-			mTaskQueue.emplace(subLFIdx, subImgIdx, needRenderDepth, sampleCount);
+			std::shared_ptr<RenderingTask> taskPtr{ new RenderingTask(subLFIdx, subImgIdx, needRenderDepth, sampleCount) };
+
+			mTaskQueue.push(taskPtr);
 		}
 		mQueueCV.notify_one();
 	}
@@ -552,7 +554,7 @@ namespace SP {
 
 	void RenderingManager::renderingWorker() {
 
-		RenderingTask taskIndex;
+		std::shared_ptr<RenderingTask> taskPtr;
 
 		while (true) {
 
@@ -575,16 +577,18 @@ namespace SP {
 				}
 
 
-				taskIndex = std::move(mTaskQueue.front());
+				taskPtr = mTaskQueue.front();
 				mTaskQueue.pop();
 
 			}
 
-			std::cerr << "Task " << taskIndex.subLFIdx << ", " << taskIndex.subImgIdx << ": " << taskIndex.sampleCount << std::endl;
+			auto& task = *taskPtr;
+
+			std::cerr << "Task " << task.subLFIdx << ", " << task.subImgIdx << ": " << task.sampleCount << std::endl;
 			// async part
 
-			size_t subLFIdx = taskIndex.subLFIdx;
-			size_t subImgIdx = taskIndex.subImgIdx;
+			size_t subLFIdx = task.subLFIdx;
+			size_t subImgIdx = task.subImgIdx;
 
 			//std::cerr << "Worker " << subLFIdx << ' ' << subImgIdx << " starts !\n";
 
@@ -592,18 +596,18 @@ namespace SP {
 
 			// rendering
 			auto t1 = std::chrono::high_resolution_clock::now();
-			if (taskIndex.needRenderDepth) {
-				renderFarm[farmIdx]->renderDepthMap(*sceneDataPtr, farmIdx, taskIndex);
-				taskIndex.needRenderDepth = false;
+			if (task.needRenderDepth) {
+				renderFarm[farmIdx]->renderDepthMap(*sceneDataPtr, farmIdx, task);
+				task.needRenderDepth = false;
 			}
-			renderFarm[farmIdx]->render(*sceneDataPtr, farmIdx, taskIndex);
+			renderFarm[farmIdx]->render(*sceneDataPtr, farmIdx, task);
 			auto t2 = std::chrono::high_resolution_clock::now();
 
 			// test
-			//if (farmIdx == 0) {
-			//	std::cerr << "FarmIndex: " << farmIdx << " Update time: " 
-			//		<< std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1).count() << std::endl;
-			//}
+			if (farmIdx == 0) {
+				std::cerr << "FarmIndex: " << farmIdx << " Update time: "
+					<< std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1).count() << std::endl;
+			}
 
 
 			// tmp, need lock , need interrupt-based method
@@ -612,14 +616,14 @@ namespace SP {
 
 				renderOutputData[farmIdx]->resetToDefault();
 
-				taskIndex.needRenderDepth = true; // this task need to redraw depth
+				task.needRenderDepth = true; // this task need to redraw depth
 
 				mConfigRef.setSceneChangedFlag(farmIdx, false);
 			}
 
 			auto& fieldRef = mConfigRef.getLightField();
 
-			if (taskIndex.renderOutPtr == nullptr) {
+			if (task.renderOutPtr == nullptr) {
 				fieldRef[subLFIdx][subImgIdx].setRefreshState(true);
 			}
 
@@ -628,16 +632,16 @@ namespace SP {
 
 			// push back the task
 			// if sampleCount > 0 or == -1
-			bool continueRender = taskIndex.sampleCount == -1;
-			if (taskIndex.sampleCount > 1) {
-				taskIndex.sampleCount -= 1;
+			bool continueRender = task.sampleCount == -1;
+			if (task.sampleCount > 1) {
+				task.sampleCount -= 1;
 				continueRender = true;
 			}
 			if(continueRender)
 			{
 
 				std::lock_guard<std::mutex> queueLock { mQueueMutex };
-				mTaskQueue.push(std::move(taskIndex));
+				mTaskQueue.push(taskPtr);
 
 				// TODO : Two tasks with the same ID can not be in the queue at the same time ! Need a fix.
 
