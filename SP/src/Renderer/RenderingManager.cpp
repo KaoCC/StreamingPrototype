@@ -646,6 +646,13 @@ namespace SP {
 				// TODO : Two tasks with the same ID can not be in the queue at the same time ! Need a fix.
 
 			}
+			else {
+				// notify CV
+				std::unique_lock<std::mutex> taskLock(task.mutex); // protect the 'rendered' var
+				task.rendered = true;
+				taskLock.unlock();
+				task.renderCV.notify_one();
+			}
 			mQueueCV.notify_one();
 
 		}
