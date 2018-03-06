@@ -604,34 +604,38 @@ namespace SP {
 
 			int pixelIndex = pixelIndexArrayRef[i];
 
+			if (renderingTask.mask.size() == 0 || renderingTask.mask[pixelIndex]) {
+				// filter out masked area
 
-			// this part is not complete yet
-			// texture is not support yet
-			/*  Test Area */
-			if (renderData.host_intersections[i].shapeid < 0) {
 
-				int volumeIndex = renderData.host_path[pixelIndex].getVolumeIdx();
+				// this part is not complete yet
+				// texture is not support yet
+				/*  Test Area */
+				if (renderData.host_intersections[i].shapeid < 0) {
 
-				auto& outRef = renderingTask.renderOutPtr == nullptr ? *renderOutPtr : *renderingTask.renderOutPtr;
+					int volumeIndex = renderData.host_path[pixelIndex].getVolumeIdx();
 
-				if (volumeIndex == -1) {
+					auto& outRef = renderingTask.renderOutPtr == nullptr ? *renderOutPtr : *renderingTask.renderOutPtr;
 
-					//outRef[pixelIndex] = ;
+					if (volumeIndex == -1) {
 
-				} else {
-					// not support currently
-					throw std::runtime_error("Vol not support");
+						//outRef[pixelIndex] = ;
+
+					}
+					else {
+						// not support currently
+						throw std::runtime_error("Vol not support");
+					}
+
+					// Yet to be done
 				}
 
-				// Yet to be done
+				/* EOF */
+
+
+				auto& outRef = renderingTask.renderOutPtr == nullptr ? *renderOutPtr : *renderingTask.renderOutPtr;
+				outRef[pixelIndex].w += 1.f;
 			}
-
-			/* EOF */
-
-
-
-			auto& outRef = renderingTask.renderOutPtr == nullptr ? *renderOutPtr : *renderingTask.renderOutPtr;
-			outRef[pixelIndex].w += 1.f;
 		}
 
 
