@@ -71,6 +71,10 @@ namespace SP {
 		const std::vector<DefaultShapeType>& getDefaultList() const;
 
 
+		float getStep() const { return kStep; }
+		Scene& getScene() { return *sceneDataPtr; }
+		RadeonRays::float2 getCameraSensorSize() const { return cameraSensorSize; }
+		float getCameraFocalLength() const { return cameraFocalLength; }
 	private:
 
 		
