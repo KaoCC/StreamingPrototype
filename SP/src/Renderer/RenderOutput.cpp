@@ -55,6 +55,11 @@ namespace SP {
 		std::fill(depthData.begin(), depthData.end(), 0.0f);
 	}
 
+	std::vector<RadeonRays::float3>& RenderOutput::getData()
+	{
+		return data;
+	}
+
 	std::vector<float>& RenderOutput::getDepthData() {
 		return depthData;
 	}

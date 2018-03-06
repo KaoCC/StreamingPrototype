@@ -31,12 +31,13 @@ namespace SP {
 		void resize(std::size_t w, std::size_t h);
 		void resetToDefault();
 
+		virtual void resetStorageDefault() = 0;
 
 	private:
 
 		virtual std::size_t getStorageSize() const = 0;
 		virtual void resizeStorage(std::size_t newSize) = 0;
-		virtual void resetStorageDefault() = 0;
+		
 
 		std::size_t width;
 		std::size_t height;

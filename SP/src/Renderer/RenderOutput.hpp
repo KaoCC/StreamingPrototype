@@ -33,7 +33,10 @@ namespace SP {
 		float& getDepthValue(std::size_t pos);
 		const float& getDepthValue(std::size_t pos) const;
 
+		std::vector<RadeonRays::float3>& getData();
 		std::vector<float>& getDepthData();
+
+		virtual void resetStorageDefault() override;
 
 		std::mutex depthLock;
 	private:
@@ -44,8 +47,6 @@ namespace SP {
 		virtual std::size_t getStorageSize() const override;
 
 		virtual void resizeStorage(std::size_t newSize) override;
-
-		virtual void resetStorageDefault() override;
 
 
 
