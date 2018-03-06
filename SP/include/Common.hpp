@@ -143,6 +143,7 @@ namespace SP {
 		size_t subLFIdx;
 		size_t subImgIdx;
 		bool needRenderDepth;
+		bool needRenderColor = true;
 		int sampleCount;
 		ImageMask mask;
 		RenderOutputPtr renderOutPtr;

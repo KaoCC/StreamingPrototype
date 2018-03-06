@@ -600,7 +600,9 @@ namespace SP {
 				renderFarm[farmIdx]->renderDepthMap(*sceneDataPtr, farmIdx, task);
 				task.needRenderDepth = false;
 			}
-			renderFarm[farmIdx]->render(*sceneDataPtr, farmIdx, task);
+			if (task.needRenderColor) {
+				renderFarm[farmIdx]->render(*sceneDataPtr, farmIdx, task);
+			}
 			auto t2 = std::chrono::high_resolution_clock::now();
 
 			// test
