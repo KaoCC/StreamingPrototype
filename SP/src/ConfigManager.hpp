@@ -128,6 +128,14 @@ namespace SP {
 			return mEditingState;
 		}
 
+		void setDisplaySampleMap(bool val) {
+			mDisplaySampleMap = val;
+		}
+
+		bool getDisplaySampleMap() const {
+			return mDisplaySampleMap;
+		}
+
 
 	private:
 
@@ -189,6 +197,9 @@ namespace SP {
 
 		DefaultShapeType mCurrentDefaultShape;
 
+		// depth test
+		bool mDisplaySampleMap = false;
+		
 
 	};
 

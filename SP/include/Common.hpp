@@ -105,6 +105,15 @@ namespace SP {
 		std::size_t getWidth() const;
 		std::size_t getHeight() const;
 
+		void setDisplaySampleMap(bool val) {
+			mDisplaySampleMap = val;
+		}
+
+		bool getDisplaySampleMap() const {
+			return mDisplaySampleMap;
+		}
+
+
 		// ...
 
 	private:
@@ -133,6 +142,9 @@ namespace SP {
 
 		// test
 		std::shared_ptr<SP::RenderOutput> radiancePtr;
+
+
+		bool mDisplaySampleMap = false;
 
 	};
 

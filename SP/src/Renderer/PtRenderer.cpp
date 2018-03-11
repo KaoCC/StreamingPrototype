@@ -837,11 +837,10 @@ namespace SP {
 				// set ray
 				//RadeonRays::ray& currentRay = renderData->host_rays[0][y * imageWidth + x];
 
-				if (y >= 1000 && y <= 150) {
-					cSample.y = 0;
-				}
 				currentRay.d = RadeonRays::normalize(cameraRef.getFocalLength() * cameraRef.getForwardVector() + cSample.x * cameraRef.getRightVector() + cSample.y * cameraRef.getUpVector());
 				currentRay.o = cameraRef.getPosition() + cameraRef.getDepthRange().x * currentRay.d;
+
+
 
 				currentRay.o.w = cameraRef.getDepthRange().y - cameraRef.getDepthRange().x;
 				currentRay.d.w = 1;		// check

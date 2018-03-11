@@ -132,9 +132,28 @@ namespace SP {
 
 					const RadeonRays::float3& val = tmpRadiance[(screenHeight - 1 - y) * screenWidth + x];
 
-					imageDataCache[currentindex] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(val.x / val.w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
-					imageDataCache[currentindex + 1] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(val.y / val.w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
-					imageDataCache[currentindex + 2] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(val.z / val.w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
+					if (mDisplaySampleMap) {
+						
+						uint8_t value;
+						if (val.w > 25.f) {
+							value = 255;
+						}
+						else {
+							value = val.w * 10;
+						}
+						
+						
+						imageDataCache[currentindex] = value;
+						imageDataCache[currentindex + 1] = value;
+						imageDataCache[currentindex + 2] = value;
+					}
+					else {
+						imageDataCache[currentindex] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(val.x / val.w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
+						imageDataCache[currentindex + 1] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(val.y / val.w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
+						imageDataCache[currentindex + 2] = static_cast<uint8_t>(RadeonRays::clamp(RadeonRays::clamp(pow(val.z / val.w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255));
+					}
+
+
 
 					currentindex += kStride;
 				}
