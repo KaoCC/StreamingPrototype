@@ -75,6 +75,10 @@ namespace SP {
 		Scene& getScene() { return *sceneDataPtr; }
 		RadeonRays::float2 getCameraSensorSize() const { return cameraSensorSize; }
 		float getCameraFocalLength() const { return cameraFocalLength; }
+
+
+		// compute image PSNR, index for LF index. -1 for all light field
+		void computePSNR(int index);
 	private:
 
 		
@@ -124,6 +128,15 @@ namespace SP {
 		// tmp
 		const std::string defaultPath = "Resources/Conf";
 		const std::string defaultModelName = "conf_room_6.objm";
+		// tmp PSNR
+		//const std::string kGroundTruthImageFolder = "Multi_Layer_4x4_full+twoRows+twoCols+Rows+Cols+twoImgs+remain_2048spp_colorMap";
+		const std::string kGroundTruthImageFolder = "Multi_Layer_4x4_single_512spp";
+		bool mGroundTruthLoaded = false;
+		std::vector<std::shared_ptr<RenderOutput>> mGroundTruthOutputData;
+		std::vector<double> mLargeImageBuffers[2];
+
+
+		void loadGroundTruthData();
 
 		//tmp
 		const float kStep = 0.025f * 6;

@@ -20,6 +20,8 @@
 
 #include "DefaultList.hpp"
 
+#include <boost/filesystem.hpp>
+
 namespace SP {
 
 
@@ -381,6 +383,48 @@ namespace SP {
 	}
 
 
+	void RenderingManager::computePSNR(int index) 
+	{
+		if (index < 0) {
+			for (int i = 0; i < mConfigRef.getNumberOfSubLFs(); i++) {
+				for (int j = 0; j < mConfigRef.getNumberOfSubLFImages(); j++) {
+					computePSNR(i * mConfigRef.getNumberOfSubLFImages() + j);
+				}
+			}
+		}
+		else {
+			const size_t kStride = 3;
+			const float gamma = 2.2f;  // tmp gamma
+			int totalPixels = mConfigRef.getScreenWidth() * mConfigRef.getScreenHeight();
+			// check ground truth
+			if (!mGroundTruthLoaded) {
+				loadGroundTruthData();
+				// tmp: init some tmp data structures
+				for (auto& buffer : mLargeImageBuffers) {
+					buffer.resize(totalPixels * kStride);
+				}
+			}
+			auto& groundOutput = *mGroundTruthOutputData[index];
+			auto& targetOutput = *renderOutputData[index];
+			// compute color diff for all pixels and all channels
+			double sse = 0.0; // sum of square error
+			for (int i = 0; i < totalPixels; i++) {
+				auto radianceGND = groundOutput[i];
+				auto radianceTarget = targetOutput[i];
+				for (int channel = 0; channel < kStride; channel++) {
+					double valueGND = RadeonRays::clamp(RadeonRays::clamp(pow(radianceGND[channel] / radianceGND.w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255);
+					double valueTarget = RadeonRays::clamp(RadeonRays::clamp(pow(radianceTarget[channel] / radianceTarget.w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255);
+					// compute diff square for each channel
+					sse += pow(valueGND - valueTarget, 2.0);
+				}
+			}
+			// comptue mse
+			double mse = (sse / (double)(totalPixels * kStride));  
+			double psnr = 10.0 * log10((255 * 255) / (mse + 0.0000001));
+			std::cerr << std::fixed << "error for index " << index << ", MSE = " << mse << " , PSNR = " << psnr << std::endl;
+		}
+	}
+
 	void RenderingManager::initData(bool loadRadianceFlag) {
 
 
@@ -660,6 +704,98 @@ namespace SP {
 		}
 
 
+	}
+
+	void RenderingManager::loadGroundTruthData()
+	{
+		// allocate output
+		mGroundTruthOutputData.resize(renderFarm.size());
+		for (size_t i = 0; i < renderFarm.size(); ++i) {
+			mGroundTruthOutputData[i] = std::make_shared<RenderOutput>(mConfigRef.getScreenWidth(), mConfigRef.getScreenHeight());
+		}
+		// load output images with folder prefix
+		// load Radiance Map to RenderOut
+
+		for (int subLFIdx = 0; subLFIdx < mConfigRef.getNumberOfSubLFs(); subLFIdx++) {
+			for (int subImgIdx = 0; subImgIdx < mConfigRef.getNumberOfSubLFImages(); subImgIdx++) {
+
+				std::cerr << "Loading ground truth: " << subLFIdx << ", " << subImgIdx << std::endl;
+
+				unsigned outputId = mConfigRef.getNumberOfSubLFImages() * subLFIdx + subImgIdx;
+
+				std::shared_ptr<RenderOutput> renderOut = mGroundTruthOutputData[outputId];
+
+				if (renderOut == nullptr) {
+					throw std::runtime_error("RenderOutput is null");
+				}
+
+				auto& outputData = *renderOut;
+
+				OIIO_NAMESPACE_USING
+
+
+				const std::string& subFix = std::to_string(outputId);
+
+				std::string filename = boost::filesystem::path(kGroundTruthImageFolder).append("radiance" + subFix + '-' + subFix + ".exr").generic_string();
+
+				std::cerr << "Load file name: " << filename << std::endl;
+
+				ImageInput* input = ImageInput::open(filename);
+
+				if (input == nullptr) {
+					std::cerr << "Failed to load image: " + filename << std::endl;
+					return; // terminate loading
+				}
+
+
+				const ImageSpec imgSpec = input->spec();
+				int xRes = imgSpec.width;
+				int yRes = imgSpec.height;
+
+				int channels = imgSpec.nchannels;    // check
+
+				const ParamValue* par{ imgSpec.find_attribute("gammarank", TypeDesc::FLOAT) };
+
+				float wVal = 10.0f;        // tmp value
+				if (par != nullptr) {
+					wVal = *(static_cast<const float*>(par->data()));
+				}
+				else {
+					std::cerr << "MetaData (gammarank) not found, roll back to the default" << std::endl;
+				}
+
+				const int totalPixelNum = xRes * yRes;
+
+				const int tmpSize = totalPixelNum * channels;
+
+				// check this !
+				outputData.resize(xRes, yRes);
+
+
+				// create a tmp buffer 
+				float* tmpBuff{ new float[tmpSize] };
+
+				// copy to outputData
+				input->read_image(TypeDesc::FLOAT, tmpBuff);
+
+
+				//dump the tmp data to output
+				for (int i = 0; i < outputData.getSize(); ++i) {
+					outputData[i].x = tmpBuff[i * channels];
+					outputData[i].y = tmpBuff[i * channels + 1];
+					outputData[i].z = tmpBuff[i * channels + 2];
+					outputData[i].w = wVal;
+				}
+
+				// close
+				input->close();
+				delete input;
+				delete[] tmpBuff;
+			}
+		}
+
+		// set flag
+		mGroundTruthLoaded = true;
 	}
 
 
