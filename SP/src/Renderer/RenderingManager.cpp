@@ -383,14 +383,18 @@ namespace SP {
 	}
 
 
-	void RenderingManager::computePSNR(int index) 
+	double RenderingManager::computePSNR(int index) 
 	{
 		if (index < 0) {
+			double sum = 0;
+			double count = 0;
 			for (int i = 0; i < mConfigRef.getNumberOfSubLFs(); i++) {
 				for (int j = 0; j < mConfigRef.getNumberOfSubLFImages(); j++) {
-					computePSNR(i * mConfigRef.getNumberOfSubLFImages() + j);
+					sum += computePSNR(i * mConfigRef.getNumberOfSubLFImages() + j);
+					count += 1;
 				}
 			}
+			return sum / count;
 		}
 		else {
 			const size_t kStride = 3;
@@ -409,19 +413,23 @@ namespace SP {
 			// compute color diff for all pixels and all channels
 			double sse = 0.0; // sum of square error
 			for (int i = 0; i < totalPixels; i++) {
-				auto radianceGND = groundOutput[i];
-				auto radianceTarget = targetOutput[i];
-				for (int channel = 0; channel < kStride; channel++) {
-					double valueGND = RadeonRays::clamp(RadeonRays::clamp(pow(radianceGND[channel] / radianceGND.w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255);
-					double valueTarget = RadeonRays::clamp(RadeonRays::clamp(pow(radianceTarget[channel] / radianceTarget.w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255);
-					// compute diff square for each channel
-					sse += pow(valueGND - valueTarget, 2.0);
+				auto& radianceGND = groundOutput[i];
+				auto& radianceTarget = targetOutput[i];
+				// only consider pixel with at least one sample
+				if (radianceTarget.w >= 1.f) {
+					for (int channel = 0; channel < kStride; channel++) {
+						double valueGND = RadeonRays::clamp(RadeonRays::clamp(pow(radianceGND[channel] / radianceGND.w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255);
+						double valueTarget = RadeonRays::clamp(RadeonRays::clamp(pow(radianceTarget[channel] / radianceTarget.w, 1.f / gamma), 0.f, 1.f) * 255, 0, 255);
+						// compute diff square for each channel
+						sse += pow(valueGND - valueTarget, 2.0);
+					}
 				}
 			}
 			// comptue mse
 			double mse = (sse / (double)(totalPixels * kStride));  
 			double psnr = 10.0 * log10((255 * 255) / (mse + 0.0000001));
 			std::cerr << std::fixed << "error for index " << index << ", MSE = " << mse << " , PSNR = " << psnr << std::endl;
+			return psnr;
 		}
 	}
 

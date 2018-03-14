@@ -78,7 +78,7 @@ namespace SP {
 
 
 		// compute image PSNR, index for LF index. -1 for all light field
-		void computePSNR(int index);
+		double computePSNR(int index);
 	private:
 
 		
