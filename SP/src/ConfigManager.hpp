@@ -137,6 +137,9 @@ namespace SP {
 		}
 
 
+		// tmp: test for display variance
+		bool mDisplayVariance = false;
+
 	private:
 
 		uint32_t moduleID = 0;
