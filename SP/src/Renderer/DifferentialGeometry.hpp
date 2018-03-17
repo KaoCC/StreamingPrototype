@@ -17,6 +17,7 @@ namespace SP {
 	class DifferentialGeometry {
 
 	public:
+		DifferentialGeometry() {} // tmp, for empty value initialization, should not use directly...
 		DifferentialGeometry(const RadeonRays::Intersection& isectRef, const Scene& scene);
 
 		//void fill(const RadeonRays::Intersection& isectRef, const Scene& scene);

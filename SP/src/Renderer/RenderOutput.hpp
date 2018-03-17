@@ -3,6 +3,7 @@
 
 #include "radeon_rays.h"
 #include "Output.hpp"
+#include "DifferentialGeometry.hpp"
 #include <vector>
 #include <mutex>
 
@@ -38,6 +39,7 @@ namespace SP {
 		std::vector<float>& getDepthData();
 
 		std::vector<RadeonRays::Intersection>& getIntersectionData();
+		std::vector<DifferentialGeometry>& getDiffGeoData();
 
 		virtual void resetStorageDefault() override;
 
@@ -56,6 +58,7 @@ namespace SP {
 		std::vector<RadeonRays::float3> data;
 		std::vector<float> depthData;
 		std::vector<RadeonRays::Intersection> intersectionData;
+		std::vector<DifferentialGeometry> diffGeoData;
 
 	};
 

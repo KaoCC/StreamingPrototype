@@ -759,6 +759,7 @@ namespace SP {
 		const std::vector<RadeonRays::ray>& rayArrayRef = renderData.host_rays[0];
 		auto& depthDataRef = outRef.getDepthData();
 		auto& intersectionDataRef = outRef.getIntersectionData();
+		auto& diffGeoDataRef = outRef.getDiffGeoData();
 		const PerspectiveCamera& cameraRef{ static_cast<const PerspectiveCamera&>(scene.getCamera(camIdx)) };
 		for (auto i = 0; i < renderData.host_hitcount; ++i) {
 			const RadeonRays::Intersection& currentIntersect = renderData.host_intersections[i];
@@ -769,6 +770,7 @@ namespace SP {
 			}
 			else {
 				DifferentialGeometry diffGeo{ currentIntersect, scene };
+				diffGeoDataRef[i] = diffGeo;
 				auto& ray = rayArrayRef[i];
 
 				// cosTheta = camForward dot ray dir
