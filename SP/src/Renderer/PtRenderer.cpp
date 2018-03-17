@@ -758,9 +758,12 @@ namespace SP {
 		auto& outRef = renderingTask.renderOutPtr == nullptr ? *renderOutPtr : *renderingTask.renderOutPtr;
 		const std::vector<RadeonRays::ray>& rayArrayRef = renderData.host_rays[0];
 		auto& depthDataRef = outRef.getDepthData();
+		auto& intersectionDataRef = outRef.getIntersectionData();
 		const PerspectiveCamera& cameraRef{ static_cast<const PerspectiveCamera&>(scene.getCamera(camIdx)) };
 		for (auto i = 0; i < renderData.host_hitcount; ++i) {
 			const RadeonRays::Intersection& currentIntersect = renderData.host_intersections[i];
+			// tmp: record intersection
+			intersectionDataRef[i] = currentIntersect;
 			if (currentIntersect.shapeid == -1) {
 
 			}

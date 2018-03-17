@@ -1,6 +1,7 @@
 #ifndef _SP_RENDEROUTPUT_HPP_
 #define _SP_RENDEROUTPUT_HPP_
 
+#include "radeon_rays.h"
 #include "Output.hpp"
 #include <vector>
 #include <mutex>
@@ -36,6 +37,8 @@ namespace SP {
 		std::vector<RadeonRays::float3>& getData();
 		std::vector<float>& getDepthData();
 
+		std::vector<RadeonRays::Intersection>& getIntersectionData();
+
 		virtual void resetStorageDefault() override;
 
 		std::mutex depthLock;
@@ -52,6 +55,7 @@ namespace SP {
 
 		std::vector<RadeonRays::float3> data;
 		std::vector<float> depthData;
+		std::vector<RadeonRays::Intersection> intersectionData;
 
 	};
 

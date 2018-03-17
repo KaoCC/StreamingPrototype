@@ -1,7 +1,7 @@
 #include "RenderOutput.hpp"
 
 namespace SP {
-	RenderOutput::RenderOutput(std::size_t w, std::size_t h) : Output(w, h), data(w * h), depthData(w * h) {
+	RenderOutput::RenderOutput(std::size_t w, std::size_t h) : Output(w, h), data(w * h), depthData(w * h), intersectionData(w  * h) {
 
 
 	}
@@ -48,11 +48,13 @@ namespace SP {
 	void RenderOutput::resizeStorage(std::size_t newSize) {
 		data.resize(newSize);
 		depthData.resize(newSize);
+		intersectionData.resize(newSize);
 	}
 
 	void RenderOutput::resetStorageDefault() {
 		std::fill(data.begin(), data.end(), 0.0f);
 		std::fill(depthData.begin(), depthData.end(), 0.0f);
+		std::fill(intersectionData.begin(), intersectionData.end(), RadeonRays::Intersection());
 	}
 
 	std::vector<RadeonRays::float3>& RenderOutput::getData()
@@ -62,6 +64,11 @@ namespace SP {
 
 	std::vector<float>& RenderOutput::getDepthData() {
 		return depthData;
+	}
+
+	std::vector<RadeonRays::Intersection>& RenderOutput::getIntersectionData()
+	{
+		return intersectionData;
 	}
 
 }

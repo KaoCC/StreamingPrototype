@@ -139,6 +139,8 @@ namespace SP {
 
 		// tmp: test for display variance
 		bool mDisplayVariance = false;
+		bool mDisplayBoundary = false;
+
 
 	private:
 
