@@ -594,7 +594,7 @@ namespace SP {
 			outputData[i].x = tmpBuff[i * channels];
 			outputData[i].y = tmpBuff[i * channels + 1];
 			outputData[i].z = tmpBuff[i * channels + 2];
-			outputData[i].w = wVal;
+			outputData[i].w = tmpBuff[i * channels + 3];
 		}
 
 		// close

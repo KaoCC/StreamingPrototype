@@ -289,7 +289,7 @@ namespace SP {
 
 		const auto xres = getWidth();
 		const auto yres = getHeight();
-		const int channels = 3; // RGB
+		const int channels = 4; // RGBW
 
 		ImageOutput* imgOut{ ImageOutput::create(fileName) };
 
@@ -309,6 +309,7 @@ namespace SP {
 			tmp[i * channels] = rr[i].x;
 			tmp[i * channels + 1] = rr[i].y;
 			tmp[i * channels + 2] = rr[i].z;
+			tmp[i * channels + 3] = rr[i].w;
 		}
 
 		ImageSpec spec(xres, yres, channels, TypeDesc::FLOAT);
