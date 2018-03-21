@@ -127,6 +127,10 @@ namespace SP {
 
 			size_t currentindex = 0;
 
+			// tmp
+			const float maxW = 256;
+			const float wRatio = 200.0 / maxW;
+
 			for (size_t y = 0; y < screenHeight; ++y) {
 				for (size_t x = 0; x < screenWidth; ++x) {
 
@@ -135,11 +139,12 @@ namespace SP {
 					if (mDisplaySampleMap) {
 						
 						uint8_t value;
-						if (val.w > 25.f) {
+						
+						if ( val.w * wRatio > 255) {
 							value = 255;
 						}
 						else {
-							value = val.w * 10;
+							value = val.w * wRatio;
 						}
 						
 						
