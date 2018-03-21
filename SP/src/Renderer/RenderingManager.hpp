@@ -79,6 +79,9 @@ namespace SP {
 
 		// compute image PSNR, index for LF index. -1 for all light field
 		double computePSNR(int index);
+
+		const std::string& getDefaultModelName() const { return defaultModelName; }
+		std::string getDefaultModelNameWithoutExtension() const;
 	private:
 
 		

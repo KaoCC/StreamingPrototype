@@ -433,6 +433,13 @@ namespace SP {
 		}
 	}
 
+	std::string RenderingManager::getDefaultModelNameWithoutExtension() const
+	{
+		auto pos = defaultModelName.find_last_of('.');
+		std::string result = defaultModelName.substr(0, pos);
+		return result;
+	}
+
 	void RenderingManager::initData(bool loadRadianceFlag) {
 
 
