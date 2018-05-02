@@ -169,12 +169,12 @@ namespace SP {
 		// Defaults !
 
 		// Screen
-		static const std::size_t kWidth = 256;
-		static const std::size_t kHeight = 256;
+		static const std::size_t kWidth = 512;
+		static const std::size_t kHeight = 512;
 
 		// LFs
-		static const std::size_t kNumOfLFs = 8;
-		static const std::size_t kNumOfSubLFImgs = 8;
+		static const std::size_t kNumOfLFs = 4;
+		static const std::size_t kNumOfSubLFImgs = 4;
 
 
 		// A set: one camera, one render, one output, one thread

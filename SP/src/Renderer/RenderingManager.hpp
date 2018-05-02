@@ -118,9 +118,9 @@ namespace SP {
 		//const RadeonRays::float3 kCameraAt = RadeonRays::float3(0.f, 1.f, 0.f);
 		//const RadeonRays::float3 kCameraUp = RadeonRays::float3(0.f, 1.f, 0.f);
 
-		RadeonRays::float2 cameraSensorSize = RadeonRays::float2(0.036f, 0.024f);  // default full frame sensor 36x24 mm
+		RadeonRays::float2 cameraSensorSize = RadeonRays::float2(0.036f, 0.036f);  // default full frame sensor 36x24 mm
 		RadeonRays::float2 cameraZcap = RadeonRays::float2(0.0f, 30.f);
-		float cameraFocalLength = 0.010f; // 35mm lens
+		float cameraFocalLength = 0.020f; // 35mm lens
 		float cameraFocusDistance = 1.f;
 		float cameraAperture = 0.f;
 
@@ -129,11 +129,27 @@ namespace SP {
 
 
 		// tmp
-		const std::string defaultPath = "Resources/Conf";
-		const std::string defaultModelName = "conf_room_6.objm";
+#if USE_SPONZA
+		const std::string defaultPath = "Resources/Sponza";
+		const std::string defaultModelName = "sponza-small-blue.objm";
+
 		// tmp PSNR
-		//const std::string kGroundTruthImageFolder = "Multi_Layer_4x4_full+twoRows+twoCols+Rows+Cols+twoImgs+remain_2048spp_colorMap";
-		const std::string kGroundTruthImageFolder = "Multi_Layer_4x4_single_512spp";
+		const std::string kGroundTruthImageFolder = "dim512-sponza-4x4_single_4096spp-8thr";
+
+#elif USE_BOX
+		const std::string defaultPath = "Resources/CornellBox";
+		const std::string defaultModelName = "box-grossy-1.objm";
+
+		// tmp PSNR
+		const std::string kGroundTruthImageFolder = "dim512-box-grossy-1-4x4_single-4096spp-8thr";
+#else
+		const std::string defaultPath = "Resources/Conf";
+		const std::string defaultModelName = "conf_room_9.objm";
+
+		// tmp PSNR
+		const std::string kGroundTruthImageFolder = "dim512-conf-9-4x4_single_4096spp-8thr";
+#endif
+
 		bool mGroundTruthLoaded = false;
 		std::vector<std::shared_ptr<RenderOutput>> mGroundTruthOutputData;
 		std::vector<double> mLargeImageBuffers[2];
@@ -142,7 +158,8 @@ namespace SP {
 		void loadGroundTruthData();
 
 		//tmp
-		const float kStep = 0.025f * 6;
+		//const float kStep = 0.025f * 6 * 3;
+		const float kStep = 0.25f * 2.f;
 
 		// thread safe queue
 		const int kPauseTime = 100;

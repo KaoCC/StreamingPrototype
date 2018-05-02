@@ -22,8 +22,16 @@ namespace SP {
 		RadeonRays::float2 sampleBase = sampler->sample2D();
 
 		RadeonRays::float2 imageSample;
-		imageSample.x = (float)x / imageWidth + sampleBase.x / imageWidth;
-		imageSample.y = (float)y / imageHeight + sampleBase.y / imageHeight;
+		imageSample.x = (float)x / imageWidth;// +sampleBase.x / imageWidth;
+		imageSample.y = (float)y / imageHeight;// +sampleBase.y / imageHeight;
+
+		if (imageSample.x == 0.5f) {
+			imageSample.x += 0.0001f;
+		}
+
+		if (imageSample.y == 0.5f) {
+			imageSample.y += 0.0001f;
+		}
 
 		// Transform into [-0.5, 0.5]
 		RadeonRays::float2 hSample = imageSample - RadeonRays::float2(0.5f, 0.5f);

@@ -15,12 +15,52 @@
 
 namespace SP {
 
+#if USE_SPONZA
+	const RadeonRays::float3 ConfigManager::kCameraPos{ 2.5f, 3.2f, 1.f };
+	const RadeonRays::float3 ConfigManager::kCameraAt{ -1.0f, 3.2f, 1.f };
+#elif USE_BOX
+	const RadeonRays::float3 ConfigManager::kCameraPos{ 0.4f, 0.7f, 3.0f };
+	const RadeonRays::float3 ConfigManager::kCameraAt{ 0.4f, 0.7f, -3.5f };
+#else
+	const RadeonRays::float3 ConfigManager::kCameraPos{ 2.f, 1.f, 2.5f };
+	const RadeonRays::float3 ConfigManager::kCameraAt{ 2.f, 1.f, -1.5f };
+#endif
+
+	
 	// For Conf
-	//const RadeonRays::float3 ConfigManager::kCameraPos{ 2.f, 1.8f, 3.f };
-	//const RadeonRays::float3 ConfigManager::kCameraAt{ 2.f, 1.8f, -1.f };
+
+	// 8x8, step = 1.4
+	//const RadeonRays::float3 ConfigManager::kCameraPos{ 3.f, 0.7f, 2.5f };
+	//const RadeonRays::float3 ConfigManager::kCameraAt{ 3.f, 0.7f, -1.5f };
+
+	// 5x5, step = 1.8
+	//const RadeonRays::float3 ConfigManager::kCameraPos{ 2.5f, 1.f, 2.5f };
+	//const RadeonRays::float3 ConfigManager::kCameraAt{ 2.5f, 1.f, -1.5f };
+
+	// 4x4
+	//const RadeonRays::float3 ConfigManager::kCameraPos{ 2.f, 1.f, 2.5f };
+	//const RadeonRays::float3 ConfigManager::kCameraAt{ 2.f, 1.f, -1.5f };
+
+	// 2x2
+	//const RadeonRays::float3 ConfigManager::kCameraPos{ 2.f, 2.2f, 2.5f }; 
+	//const RadeonRays::float3 ConfigManager::kCameraAt{ 2.f, 2.2f, -1.5f }; 
+
+	// 2x2 specular
+	//const RadeonRays::float3 ConfigManager::kCameraPos{ 1.2f, 2.5f, 2.5f };
+	//const RadeonRays::float3 ConfigManager::kCameraAt{ 1.2f, 2.5f, -1.5f };
+
 	// For Sponza
-	const RadeonRays::float3 ConfigManager::kCameraPos{ 0.5f, 2.2f, 1.f };
-	const RadeonRays::float3 ConfigManager::kCameraAt{ 0.5f, 2.2f, -1.f };
+	//const RadeonRays::float3 ConfigManager::kCameraPos{ 0.5f, 2.2f, 1.f };
+	//const RadeonRays::float3 ConfigManager::kCameraAt{ 0.5f, 2.2f, -1.f };
+
+	// For Sponza2
+	//const RadeonRays::float3 ConfigManager::kCameraPos{ 2.5f, 3.2f, 1.f };
+	//const RadeonRays::float3 ConfigManager::kCameraAt{ -1.0f, 3.2f, 1.f };
+
+	// For Box
+	//const RadeonRays::float3 ConfigManager::kCameraPos{ 0.4f, 0.7f, 3.0f };
+	//const RadeonRays::float3 ConfigManager::kCameraAt{ 0.4f, 0.7f, -3.5f };
+
 	// Common
 	const RadeonRays::float3 ConfigManager::kCameraUp{ 0.f, -1.f, 0.f };
 

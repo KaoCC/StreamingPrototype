@@ -20,7 +20,7 @@
 namespace SP {
 
 	// helper function for adding path
-	static std::string addPrefixPath(const std::string& fileName) {
+	std::string addPrefixPath(const std::string& fileName) {
 
 		const boost::filesystem::path kDefaultConfigFile { "folder_config.txt" };
 
@@ -123,7 +123,11 @@ namespace SP {
 			imageDataCache.resize(tmpRadiance.size() * kStride);
 
 			// tmp gamma
+#if USE_BOX
+			const float gamma = 2.2f * 2;
+#else
 			const float gamma = 2.2f;
+#endif
 
 			size_t currentindex = 0;
 

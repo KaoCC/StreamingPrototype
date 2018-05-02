@@ -491,9 +491,31 @@ namespace SP {
 				//										camDefault.mCameraAt + RadeonRays::float3(0, kStep * j, -kStep * i), camDefault.mCameraUp);
 
 				// Following is for camera look toward -Z
-				auto cameraPtr =  std::make_unique<PerspectiveCamera>(camDefault.mCameraPos + RadeonRays::float3(-kStep * i, kStep * j,0),
-					camDefault.mCameraAt + RadeonRays::float3(-kStep * i, kStep * j, 0), camDefault.mCameraUp);
+				//auto cameraPtr =  std::make_unique<PerspectiveCamera>(camDefault.mCameraPos + RadeonRays::float3(-kStep * i, kStep * j,0),
+				//	camDefault.mCameraAt + RadeonRays::float3(-kStep * i, kStep * j, 0), camDefault.mCameraUp);
 
+				// Horz
+				float x, y;
+				
+#if USE_SPONZA
+
+				x = -kStep * i;
+				y = kStep * j * 0.2f;
+
+				auto cameraPtr = std::make_unique<PerspectiveCamera>(camDefault.mCameraPos + RadeonRays::float3(0, y, x),
+					camDefault.mCameraAt + RadeonRays::float3(0, y, x), camDefault.mCameraUp);
+
+#else
+				// For Others
+				x = -kStep * i;
+				y = kStep * j;
+
+				auto cameraPtr = std::make_unique<PerspectiveCamera>(camDefault.mCameraPos + RadeonRays::float3(x, y, 0),
+					camDefault.mCameraAt + RadeonRays::float3(x, y, 0), camDefault.mCameraUp);
+
+#endif	
+
+				
 
 				// Adjust sensor size based on current aspect ratio
 				float aspect = (float) mConfigRef.getScreenWidth() / mConfigRef.getScreenHeight();

@@ -18,10 +18,17 @@
 #include <boost/thread/shared_mutex.hpp>
 #include <boost/thread/locks.hpp>
 
+#define USE_SPONZA 0
+#define USE_BOX 0
+// default to conf room
+
 // tmp
 #include "Renderer/RenderOutput.hpp"
 
 namespace SP {
+
+	// helper function for adding path
+	std::string addPrefixPath(const std::string& fileName);
 
 	struct CameraConfig {
 
